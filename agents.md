@@ -58,6 +58,37 @@ Kullanıcılar aşağıdaki unvanlardan birini seçer. Unvan sonradan değiştir
 
 ---
 
+## 🧩 Temel Tasarım İlkeleri
+
+> **⚠️ Bu bölümdeki ilkeler, projenin en başından itibaren tüm ekran, widget ve navigasyon tasarımlarında mutlaka uygulanmalıdır.**
+
+### Genişletilebilirlik & Modülerlik (Extensibility-First)
+
+Tüm arayüz bileşenleri, ileride kolayca güncellenebilecek, genişletilebilecek ve yeni öğeler eklenebilecek şekilde tasarlanmalıdır. Hiçbir ekran veya bileşen "son hali" olarak düşünülmemeli; her zaman evrilebilir bir yapıda inşa edilmelidir.
+
+#### Kurallar
+
+1. **Ekranlar Bileşen Tabanlı Olmalı:**
+   - Her ekran, bağımsız ve yeniden kullanılabilir widget'lardan oluşmalı.
+   - Bir ekrana yeni bir bölüm (section), kart veya buton eklemek mevcut kodu bozmadan yapılabilmeli.
+   - Widget'lar birbirine sıkı sıkıya bağlı olmamalı (loose coupling).
+
+2. **Yeni İçerik Türleri Kolayca Eklenebilmeli:**
+   - Mevcut post türlerine (vaka, soru) yeni türler eklenebilecek şekilde soyutlama yapılmalı.
+   - Feed, arama ve filtreleme mekanizmaları yeni içerik türlerini destekleyecek şekilde genelleştirilmiş olmalı.
+
+3. **Ayarlar ve Profil Sayfaları Genişletilebilir Olmalı:**
+   - Ayarlar sayfasına yeni seçenekler eklemek, sadece bir liste öğesi eklemekle mümkün olmalı.
+   - Profil sayfasına yeni sekmeler veya bilgi alanları kolayca entegre edilebilmeli.
+
+4. **Tasarım Sistemi Ölçeklenebilir Olmalı:**
+   - Renk paleti, tipografi ve spacing değerleri merkezi bir tema dosyasından yönetilmeli.
+   - Yeni bir tema veya renk varyasyonu eklemek minimum değişiklik gerektirmeli.
+
+> **Özet:** "Bugün 5 sekmeli bir menü, yarın 6 sekmeli olabilir. Bugün 2 post türü var, yarın 4 olabilir. Bugün basit bir profil sayfası, yarın çok sekmeli bir profil olabilir." Bu yaklaşım, her ekran ve bileşen için geçerlidir.
+
+---
+
 ## 📝 İçerik Türleri
 
 ### 1. Vaka (Case Post)
