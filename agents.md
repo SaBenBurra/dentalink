@@ -2,6 +2,8 @@
 
 > Diş hekimleri ve diş hekimliği öğrencileri için tasarlanmış, vaka paylaşımı, forum ve profesyonel ağ oluşturma odaklı mobil sosyal platform. LinkedIn'in diş hekimliği mesleğine özelleşmiş versiyonu.
 
+> **📌 İlgili Dosya:** Geliştirme fazları ve ilerleme durumu için [`progress.md`](./progress.md) dosyasını da oku.
+
 ---
 
 ## 📱 Genel Bilgiler
@@ -597,44 +599,6 @@ Splash Screen
 - Karanlık ve aydınlık mod için ayrı renk paletleri tanımlanacak
 - Modern, temiz ve profesyonel bir tasarım dili hedefleniyor
 - Tıbbi/dental bir tema rengi kullanılacak (ör. mavi-yeşil tonları)
-
----
-
-## 📋 Geliştirme Fazları (Önerilen)
-
-### Faz 1 — Temel Altyapı
-- [ ] Flutter projesi oluşturma
-- [ ] Supabase entegrasyonu
-- [ ] Kimlik doğrulama (e-posta, Google, telefon)
-- [ ] Tema sistemi (karanlık/aydınlık)
-- [ ] Lokalizasyon altyapısı
-- [ ] Navigasyon yapısı (go_router)
-
-### Faz 2 — Çekirdek Özellikler
-- [ ] Kullanıcı profili (görüntüleme & düzenleme)
-- [ ] Vaka oluşturma & görüntüleme
-- [ ] Soru oluşturma & görüntüleme
-- [ ] Beğeni & yorum sistemi
-- [ ] Takip sistemi
-- [ ] Ana sayfa akışı (kronolojik & algoritmik)
-
-### Faz 3 — Gelişmiş Özellikler
-- [ ] Soru-cevap: "En İyi Cevap" seçimi
-- [ ] Gelişmiş arama & filtreleme
-- [ ] Etiket sistemi
-- [ ] Kaydetme (bookmark)
-- [ ] Mesajlaşma (DM)
-
-### Faz 4 — Bildirim & Gamification
-- [ ] Push bildirimler (FCM)
-- [ ] Uygulama içi bildirimler
-- [ ] Rozet & başarım sistemi
-
-### Faz 5 — İleri Özellikler
-- [ ] İş ilanları
-- [ ] Kullanıcı raporlama & engelleme
-- [ ] İçerik moderasyonu
-- [ ] Kullanıcı doğrulama (diploma)
 
 ---
 
