@@ -11,13 +11,19 @@ const List<Locale> appSupportedLocales = [
 
 /// Cihazın sistem dilini okuyarak uygulamanın başlangıç dilini belirler.
 ///
-/// Cihaz dili Türkçe ise → [Locale('tr')]
+/// Yalnızca **birincil** sistem diline bakılır (listede ilk sıradaki).
+/// Cihazın birincil dili Türkçe ise → [Locale('tr')]
 /// Diğer tüm diller için → [Locale('en')]
+///
+/// Not: [PlatformDispatcher.instance.locales] tüm tercih edilen dilleri
+/// sırasıyla döner. İkincil dillere bakılmaz; aksi takdirde kullanıcı
+/// İngilizce'yi birincil dil yapsa bile listede Türkçe varsa yanlış
+/// sonuç dönerdi.
 Locale _resolveDeviceLocale() {
   final systemLocales = ui.PlatformDispatcher.instance.locales;
-  if (systemLocales.any((l) => l.languageCode == 'tr')) {
-    return const Locale('tr');
-  }
+  if (systemLocales.isEmpty) return const Locale('en');
+  final primary = systemLocales.first;
+  if (primary.languageCode == 'tr') return const Locale('tr');
   return const Locale('en');
 }
 

@@ -260,17 +260,17 @@ abstract class AppLocalizations {
   /// **'Devam etmek için giriş yap'**
   String get loginSubtitle;
 
-  /// email inputunda yazan metin
-  ///
-  /// In tr, this message translates to:
-  /// **'e-posta adresini gir'**
-  String get emailInputText;
-
   /// Giriş butonu etiketi
   ///
   /// In tr, this message translates to:
   /// **'Devam Et'**
   String get loginButton;
+
+  /// giriş butonuyla oauth arasındaki metin
+  ///
+  /// In tr, this message translates to:
+  /// **'ya da'**
+  String get textBeetweenLoginAndOauth;
 
   /// Google giriş butonu
   ///
@@ -335,7 +335,7 @@ abstract class AppLocalizations {
   /// E-posta alanı ipucu
   ///
   /// In tr, this message translates to:
-  /// **'ornek@email.com'**
+  /// **'e-posta adresini gir'**
   String get emailHint;
 
   /// Şifre alanı etiketi

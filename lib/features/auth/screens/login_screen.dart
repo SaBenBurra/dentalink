@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -108,6 +109,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context); // ← bunu ekle
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Resolve themed colors
@@ -230,7 +232,7 @@ class _LoginScreenState extends State<LoginScreen>
 
                             // Text Headers
                             Text(
-                              'Hoşgeldin!',
+                              l10n.loginTitle,
                               style: AppTextStyles.headlineMedium.copyWith(
                                 color: textPrimaryColor,
                                 fontWeight: FontWeight.bold,
@@ -238,7 +240,7 @@ class _LoginScreenState extends State<LoginScreen>
                             ),
                             const SizedBox(height: AppDimensions.spacing8),
                             Text(
-                              'Devam etmek için giriş yap',
+                              l10n.loginSubtitle,
                               style: AppTextStyles.bodyMedium.copyWith(
                                 color: textSecondaryColor,
                                 fontWeight: FontWeight.w500,
@@ -265,7 +267,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   _buildGlassInputField(
                                     controller: _emailController,
                                     focusNode: _emailFocusNode,
-                                    placeholder: 'e-posta adresini gir',
+                                    placeholder: l10n.emailHint,
                                     icon: Icons.mail_outline,
                                     keyboardType: TextInputType.emailAddress,
                                     errorText: _emailError,
@@ -497,6 +499,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Widget _buildSubmitButton() {
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryButtonColor = isDark
         ? const Color(0xFF008B7A)
@@ -530,7 +533,7 @@ class _LoginScreenState extends State<LoginScreen>
                 opacity: _isLoading ? 0.0 : 1.0,
                 duration: AppDimensions.animFast,
                 child: Text(
-                  'Devam Et',
+                  l10n.loginButton,
                   style: AppTextStyles.button.copyWith(
                     color: Colors.white,
                     fontSize: 16,
@@ -556,6 +559,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   // ── "ya da" ayırıcı ───────────────────────────────────────────────────
   Widget _buildDivider(bool isDark, Color textSecondaryColor) {
+    final l10n = AppLocalizations.of(context);
     final lineColor = isDark
         ? Colors.white.withOpacity(0.12)
         : Colors.black.withOpacity(0.10);
@@ -567,7 +571,7 @@ class _LoginScreenState extends State<LoginScreen>
             horizontal: AppDimensions.spacing12,
           ),
           child: Text(
-            'ya da',
+            l10n.textBeetweenLoginAndOauth,
             style: AppTextStyles.bodySmall.copyWith(
               color: textSecondaryColor,
               fontWeight: FontWeight.w500,
@@ -585,6 +589,7 @@ class _LoginScreenState extends State<LoginScreen>
     Color glassBgColor,
     Color glassBorderColor,
   ) {
+    final l10n = AppLocalizations.of(context);
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
       child: BackdropFilter(
@@ -608,7 +613,7 @@ class _LoginScreenState extends State<LoginScreen>
               ),
               const SizedBox(width: AppDimensions.spacing12),
               Text(
-                'Google ile devam et',
+                l10n.loginWithGoogle,
                 style: AppTextStyles.bodyMedium.copyWith(
                   color: isDark
                       ? AppColors.darkTextPrimary

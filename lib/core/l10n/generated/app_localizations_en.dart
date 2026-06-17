@@ -84,16 +84,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navProfile => 'Profile';
 
   @override
-  String get loginTitle => 'Sign In';
+  String get loginTitle => 'Welcome!';
 
   @override
-  String get loginSubtitle => 'Sign in to your account';
+  String get loginSubtitle => 'Sign in to continue';
 
   @override
-  String get emailInputText => 'e-posta adresini gir';
+  String get loginButton => 'Continue';
 
   @override
-  String get loginButton => 'Sign In';
+  String get textBeetweenLoginAndOauth => 'or';
 
   @override
   String get loginWithGoogle => 'Continue with Google';
@@ -126,7 +126,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get email => 'Email';
 
   @override
-  String get emailHint => 'example@email.com';
+  String get emailHint => 'enter your e-mail address';
 
   @override
   String get password => 'Password';

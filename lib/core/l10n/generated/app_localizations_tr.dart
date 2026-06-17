@@ -90,10 +90,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get loginSubtitle => 'Devam etmek için giriş yap';
 
   @override
-  String get emailInputText => 'e-posta adresini gir';
+  String get loginButton => 'Devam Et';
 
   @override
-  String get loginButton => 'Devam Et';
+  String get textBeetweenLoginAndOauth => 'ya da';
 
   @override
   String get loginWithGoogle => 'Google ile devam et';
@@ -126,7 +126,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get email => 'E-posta';
 
   @override
-  String get emailHint => 'ornek@email.com';
+  String get emailHint => 'e-posta adresini gir';
 
   @override
   String get password => 'Şifre';
