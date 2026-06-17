@@ -11,7 +11,8 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen>
+    with TickerProviderStateMixin {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -55,7 +56,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   double _getShakeOffset(double progress) {
     // Generates a sine wave shake pattern: 0 -> -6 -> 6 -> -6 -> 6 -> 0
     final double sine = double.parse((progress * 3 * 3.14159).toString());
-    return 8 * double.parse((progress < 0.5 ? progress : 1.0 - progress).toString()) * double.parse((sine >= 0 ? 1 : -1).toString());
+    return 8 *
+        double.parse((progress < 0.5 ? progress : 1.0 - progress).toString()) *
+        double.parse((sine >= 0 ? 1 : -1).toString());
   }
 
   void _clearErrors() {
@@ -117,11 +120,21 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Resolve themed colors
-    final backgroundColor = isDark ? const Color(0xFF11211F) : AppColors.bgGradientStart;
-    final glassBgColor = isDark ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.6);
-    final glassBorderColor = isDark ? Colors.white.withOpacity(0.12) : Colors.white.withOpacity(0.8);
-    final textPrimaryColor = isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
-    final textSecondaryColor = isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+    final backgroundColor = isDark
+        ? const Color(0xFF11211F)
+        : AppColors.bgGradientStart;
+    final glassBgColor = isDark
+        ? Colors.black.withOpacity(0.4)
+        : Colors.white.withOpacity(0.6);
+    final glassBorderColor = isDark
+        ? Colors.white.withOpacity(0.12)
+        : Colors.white.withOpacity(0.8);
+    final textPrimaryColor = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.lightTextPrimary;
+    final textSecondaryColor = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.lightTextSecondary;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -133,14 +146,17 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
               child: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [AppColors.bgGradientStart, AppColors.bgGradientEnd],
+                    colors: [
+                      AppColors.bgGradientStart,
+                      AppColors.bgGradientEnd,
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                 ),
               ),
             ),
-          
+
           // Decorative Circle top-left
           Positioned(
             left: -100,
@@ -150,7 +166,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: (isDark ? AppColors.primaryLight : AppColors.primary).withOpacity(isDark ? 0.08 : 0.12),
+                color: (isDark ? AppColors.primaryLight : AppColors.primary)
+                    .withOpacity(isDark ? 0.08 : 0.12),
               ),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
@@ -168,7 +185,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: (isDark ? AppColors.secondaryLight : AppColors.secondary).withOpacity(isDark ? 0.06 : 0.10),
+                color: (isDark ? AppColors.secondaryLight : AppColors.secondary)
+                    .withOpacity(isDark ? 0.06 : 0.10),
               ),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 90, sigmaY: 90),
@@ -178,190 +196,166 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
           ),
 
           // 2. Main Scrollable Container
+          // LayoutBuilder captures the real available height so we can pass it
+          // as minHeight to ConstrainedBox. This lets the Column centre itself
+          // vertically when content is shorter than the screen, and scroll
+          // naturally when the keyboard pushes it (avoids Spacer/Expanded
+          // inside SingleChildScrollView which causes RenderBox crashes).
           SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing24),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: AppDimensions.maxContentWidth),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: AppDimensions.spacing32),
-
-                      // Tooth Logo Circle Panel
-                      _buildLogoHeader(isDark, glassBgColor, glassBorderColor),
-
-                      const SizedBox(height: AppDimensions.spacing24),
-
-                      // Text Headers
-                      Text(
-                        'Welcome back',
-                        style: AppTextStyles.headlineMedium.copyWith(
-                          color: textPrimaryColor,
-                          fontWeight: FontWeight.bold,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppDimensions.spacing24,
+                    vertical: 0,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight:
+                          constraints.maxHeight -
+                          AppDimensions.spacing24 *
+                              2, // subtract vertical padding
+                      maxWidth: AppDimensions.maxContentWidth,
+                    ),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: AppDimensions.maxContentWidth,
                         ),
-                      ),
-                      const SizedBox(height: AppDimensions.spacing8),
-                      Text(
-                        'Securely connect with your peers.',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: textSecondaryColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-
-                      const SizedBox(height: AppDimensions.spacing40),
-
-                      // Login Form Fields
-                      AnimatedBuilder(
-                        animation: _shakeController,
-                        builder: (context, child) {
-                          final shakeVal = _shakeController.value;
-                          final offset = _getShakeOffset(shakeVal);
-                          return Transform.translate(
-                            offset: Offset(offset, 0),
-                            child: child,
-                          );
-                        },
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            // Email Input
-                            _buildGlassInputField(
-                              controller: _emailController,
-                              focusNode: _emailFocusNode,
-                              placeholder: 'Dr. Email Address',
-                              icon: Icons.mail_outline,
-                              keyboardType: TextInputType.emailAddress,
-                              errorText: _emailError,
-                              onChanged: (_) => _clearErrors(),
-                              isDark: isDark,
-                              glassBgColor: glassBgColor,
-                              glassBorderColor: glassBorderColor,
-                            ),
-                            
-                            if (_emailError != null) ...[
-                              const SizedBox(height: AppDimensions.spacing6),
-                              Padding(
-                                padding: const EdgeInsets.only(left: AppDimensions.spacing8),
-                                child: Text(
-                                  _emailError!,
-                                  style: AppTextStyles.bodySmall.copyWith(
-                                    color: AppColors.error,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-
-                            const SizedBox(height: AppDimensions.spacing16),
-
-                            // Password Input
-                            _buildGlassInputField(
-                              controller: _passwordController,
-                              focusNode: _passwordFocusNode,
-                              placeholder: 'Password',
-                              icon: Icons.lock_outline,
-                              obscureText: !_isPasswordVisible,
-                              errorText: _passwordError,
-                              onChanged: (_) => _clearErrors(),
-                              isDark: isDark,
-                              glassBgColor: glassBgColor,
-                              glassBorderColor: glassBorderColor,
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _isPasswordVisible
-                                      ? Icons.visibility_outlined
-                                      : Icons.visibility_off_outlined,
-                                  color: AppColors.lightIcon,
-                                  size: AppDimensions.iconMedium,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _isPasswordVisible = !_isPasswordVisible;
-                                  });
-                                },
-                              ),
-                            ),
-
-                            if (_passwordError != null) ...[
-                              const SizedBox(height: AppDimensions.spacing6),
-                              Padding(
-                                padding: const EdgeInsets.only(left: AppDimensions.spacing8),
-                                child: Text(
-                                  _passwordError!,
-                                  style: AppTextStyles.bodySmall.copyWith(
-                                    color: AppColors.error,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-
-                            const SizedBox(height: AppDimensions.spacing12),
-
-                            // Forgot Password Link
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: TextButton(
-                                onPressed: () {},
-                                style: TextButton.styleFrom(
-                                  foregroundColor: AppColors.secondaryLight,
-                                  padding: EdgeInsets.zero,
-                                  minimumSize: Size.zero,
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                ),
-                                child: Text(
-                                  'Forgot Password?',
-                                  style: AppTextStyles.bodyMedium.copyWith(
-                                    color: AppColors.secondary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
+                            // Tooth Logo Circle Panel
+                            _buildLogoHeader(
+                              isDark,
+                              glassBgColor,
+                              glassBorderColor,
                             ),
 
                             const SizedBox(height: AppDimensions.spacing24),
 
-                            // Submit Button
-                            _buildSubmitButton(),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: AppDimensions.spacing32),
-
-                      // Toggle Auth Mode (Register)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'New to Dentist Connect? ',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: textSecondaryColor,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: _triggerErrorDemo,
-                            child: Text(
-                              'Create Account',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: (isDark ? AppColors.primaryLight : AppColors.primary),
+                            // Text Headers
+                            Text(
+                              'Hoşgeldin!',
+                              style: AppTextStyles.headlineMedium.copyWith(
+                                color: textPrimaryColor,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
+                            const SizedBox(height: AppDimensions.spacing8),
+                            Text(
+                              'Devam etmek için giriş yap',
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: textSecondaryColor,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
 
-                      const SizedBox(height: AppDimensions.spacing32),
-                    ],
+                            const SizedBox(height: AppDimensions.spacing40),
+
+                            // Login Form Fields
+                            AnimatedBuilder(
+                              animation: _shakeController,
+                              builder: (context, child) {
+                                final shakeVal = _shakeController.value;
+                                final offset = _getShakeOffset(shakeVal);
+                                return Transform.translate(
+                                  offset: Offset(offset, 0),
+                                  child: child,
+                                );
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  // Email Input
+                                  _buildGlassInputField(
+                                    controller: _emailController,
+                                    focusNode: _emailFocusNode,
+                                    placeholder: 'e-posta adresini gir',
+                                    icon: Icons.mail_outline,
+                                    keyboardType: TextInputType.emailAddress,
+                                    errorText: _emailError,
+                                    onChanged: (_) => _clearErrors(),
+                                    isDark: isDark,
+                                    glassBgColor: glassBgColor,
+                                    glassBorderColor: glassBorderColor,
+                                  ),
+
+                                  if (_emailError != null) ...[
+                                    const SizedBox(
+                                      height: AppDimensions.spacing6,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: AppDimensions.spacing8,
+                                      ),
+                                      child: Text(
+                                        _emailError!,
+                                        style: AppTextStyles.bodySmall.copyWith(
+                                          color: AppColors.error,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+
+                                  const SizedBox(
+                                    height: AppDimensions.spacing16,
+                                  ),
+
+                                  if (_passwordError != null) ...[
+                                    const SizedBox(
+                                      height: AppDimensions.spacing6,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: AppDimensions.spacing8,
+                                      ),
+                                      child: Text(
+                                        _passwordError!,
+                                        style: AppTextStyles.bodySmall.copyWith(
+                                          color: AppColors.error,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+
+                                  // Submit Button
+                                  _buildSubmitButton(),
+
+                                  const SizedBox(
+                                    height: AppDimensions.spacing24,
+                                  ),
+
+                                  // Divider — "or"
+                                  _buildDivider(isDark, textSecondaryColor),
+
+                                  const SizedBox(
+                                    height: AppDimensions.spacing24,
+                                  ),
+
+                                  // Google Sign-In Button (visual only)
+                                  _buildGoogleButton(
+                                    isDark,
+                                    glassBgColor,
+                                    glassBorderColor,
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: AppDimensions.spacing32),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
         ],
@@ -369,7 +363,11 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     );
   }
 
-  Widget _buildLogoHeader(bool isDark, Color glassBgColor, Color glassBorderColor) {
+  Widget _buildLogoHeader(
+    bool isDark,
+    Color glassBgColor,
+    Color glassBorderColor,
+  ) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
       child: BackdropFilter(
@@ -380,16 +378,13 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: glassBgColor,
-            border: Border.all(
-              color: glassBorderColor,
-              width: 1,
-            ),
+            border: Border.all(color: glassBorderColor, width: 1),
             boxShadow: const [
               BoxShadow(
                 color: AppColors.glassShadow,
                 blurRadius: 40,
                 offset: Offset(0, 10),
-              )
+              ),
             ],
           ),
           child: Center(
@@ -436,7 +431,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       bgOpacityColor = AppColors.error.withOpacity(isDark ? 0.08 : 0.03);
     } else if (hasFocus) {
       borderColor = isDark ? AppColors.primaryLight : const Color(0xFF13B9A5);
-      bgOpacityColor = (isDark ? AppColors.primaryLight : const Color(0xFF13B9A5)).withOpacity(isDark ? 0.15 : 0.08);
+      bgOpacityColor =
+          (isDark ? AppColors.primaryLight : const Color(0xFF13B9A5))
+              .withOpacity(isDark ? 0.15 : 0.08);
       scale = 1.015;
       shadowOpacity = 0.15;
     }
@@ -451,17 +448,14 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
           color: bgOpacityColor,
-          border: Border.all(
-            color: borderColor,
-            width: hasFocus ? 1.5 : 1.0,
-          ),
+          border: Border.all(color: borderColor, width: hasFocus ? 1.5 : 1.0),
           boxShadow: [
             BoxShadow(
               color: (isDark ? AppColors.primaryLight : const Color(0xFF13B9A5))
                   .withOpacity(shadowOpacity),
               blurRadius: 16,
               offset: const Offset(0, 4),
-            )
+            ),
           ],
         ),
         child: ClipRRect(
@@ -476,7 +470,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                 keyboardType: keyboardType,
                 onChanged: onChanged,
                 style: AppTextStyles.bodyLarge.copyWith(
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.lightTextPrimary,
                   fontWeight: FontWeight.w600,
                 ),
                 decoration: InputDecoration(
@@ -488,7 +484,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                   prefixIcon: Icon(
                     icon,
                     color: hasFocus && !hasError
-                        ? (isDark ? AppColors.primaryLight : const Color(0xFF13B9A5))
+                        ? (isDark
+                              ? AppColors.primaryLight
+                              : const Color(0xFF13B9A5))
                         : (hasError ? AppColors.error : AppColors.lightIcon),
                     size: AppDimensions.iconMedium,
                   ),
@@ -509,7 +507,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
 
   Widget _buildSubmitButton() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryButtonColor = isDark ? const Color(0xFF008B7A) : const Color(0xFF13B9A5);
+    final primaryButtonColor = isDark
+        ? const Color(0xFF008B7A)
+        : const Color(0xFF13B9A5);
 
     return Material(
       color: Colors.transparent,
@@ -517,16 +517,18 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         onTap: _isLoading ? null : _simulateLogin,
         borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
         child: Ink(
-          height: AppDimensions.buttonHeightLarge,
+          height: AppDimensions.buttonHeight,
           decoration: BoxDecoration(
             color: primaryButtonColor,
             borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF13B9A5).withOpacity(isDark ? 0.15 : 0.25),
+                color: const Color(
+                  0xFF13B9A5,
+                ).withOpacity(isDark ? 0.15 : 0.25),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
-              )
+              ),
             ],
           ),
           child: Stack(
@@ -537,7 +539,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                 opacity: _isLoading ? 0.0 : 1.0,
                 duration: AppDimensions.animFast,
                 child: Text(
-                  'Sign In to Clinic',
+                  'Devam Et',
                   style: AppTextStyles.button.copyWith(
                     color: Colors.white,
                     fontSize: 16,
@@ -560,6 +562,75 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       ),
     );
   }
+
+  // ── "ya da" ayırıcı ───────────────────────────────────────────────────
+  Widget _buildDivider(bool isDark, Color textSecondaryColor) {
+    final lineColor = isDark
+        ? Colors.white.withOpacity(0.12)
+        : Colors.black.withOpacity(0.10);
+    return Row(
+      children: [
+        Expanded(child: Divider(color: lineColor, thickness: 1)),
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.spacing12,
+          ),
+          child: Text(
+            'ya da',
+            style: AppTextStyles.bodySmall.copyWith(
+              color: textSecondaryColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        Expanded(child: Divider(color: lineColor, thickness: 1)),
+      ],
+    );
+  }
+
+  // ── Google butonu (sadece görsel) ──────────────────────────────────────
+  Widget _buildGoogleButton(
+    bool isDark,
+    Color glassBgColor,
+    Color glassBorderColor,
+  ) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Container(
+          height: AppDimensions.buttonHeightLarge,
+          decoration: BoxDecoration(
+            color: glassBgColor,
+            borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+            border: Border.all(color: glassBorderColor, width: 1),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.network(
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Google_Favicon_2025.svg/120px-Google_Favicon_2025.svg.png',
+                width: 22,
+                height: 22,
+                errorBuilder: (_, __, ___) =>
+                    const Icon(Icons.language, size: 22, color: Colors.grey),
+              ),
+              const SizedBox(width: AppDimensions.spacing12),
+              Text(
+                'Google ile devam et',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.lightTextPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _LoadingDot extends StatefulWidget {
@@ -570,7 +641,8 @@ class _LoadingDot extends StatefulWidget {
   State<_LoadingDot> createState() => _LoadingDotState();
 }
 
-class _LoadingDotState extends State<_LoadingDot> with SingleTickerProviderStateMixin {
+class _LoadingDotState extends State<_LoadingDot>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -582,12 +654,10 @@ class _LoadingDotState extends State<_LoadingDot> with SingleTickerProviderState
       duration: const Duration(milliseconds: 1000),
     );
 
-    _animation = Tween<double>(begin: 0.3, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
-    );
+    _animation = Tween<double>(
+      begin: 0.3,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     Future.delayed(Duration(milliseconds: widget.delayMs), () {
       if (mounted) {
@@ -644,44 +714,62 @@ class ToothPainter extends CustomPainter {
 
     // Left crown curve
     path.cubicTo(
-      size.width * 0.38, size.height * 0.12,
-      size.width * 0.12, size.height * 0.15,
-      size.width * 0.18, size.height * 0.45,
+      size.width * 0.38,
+      size.height * 0.12,
+      size.width * 0.12,
+      size.height * 0.15,
+      size.width * 0.18,
+      size.height * 0.45,
     );
 
     // Left root curve
     path.cubicTo(
-      size.width * 0.20, size.height * 0.60,
-      size.width * 0.22, size.height * 0.85,
-      size.width * 0.32, size.height * 0.88,
+      size.width * 0.20,
+      size.height * 0.60,
+      size.width * 0.22,
+      size.height * 0.85,
+      size.width * 0.32,
+      size.height * 0.88,
     );
 
     // Left root tip and middle cleft
     path.cubicTo(
-      size.width * 0.36, size.height * 0.89,
-      size.width * 0.44, size.height * 0.75,
-      size.width * 0.50, size.height * 0.75,
+      size.width * 0.36,
+      size.height * 0.89,
+      size.width * 0.44,
+      size.height * 0.75,
+      size.width * 0.50,
+      size.height * 0.75,
     );
 
     // Right root tip and cleft
     path.cubicTo(
-      size.width * 0.56, size.height * 0.75,
-      size.width * 0.64, size.height * 0.89,
-      size.width * 0.68, size.height * 0.88,
+      size.width * 0.56,
+      size.height * 0.75,
+      size.width * 0.64,
+      size.height * 0.89,
+      size.width * 0.68,
+      size.height * 0.88,
     );
 
     // Right root curve
     path.cubicTo(
-      size.width * 0.78, size.height * 0.85,
-      size.width * 0.80, size.height * 0.60,
-      size.width * 0.82, size.height * 0.45,
+      size.width * 0.78,
+      size.height * 0.85,
+      size.width * 0.80,
+      size.height * 0.60,
+      size.width * 0.82,
+      size.height * 0.45,
     );
 
     // Right crown curve
     path.cubicTo(
-      size.width * 0.88, size.height * 0.15,
-      size.width * 0.62, size.height * 0.12,
-      size.width * 0.50, size.height * 0.28,
+      size.width * 0.88,
+      size.height * 0.15,
+      size.width * 0.62,
+      size.height * 0.12,
+      size.width * 0.50,
+      size.height * 0.28,
     );
 
     path.close();
