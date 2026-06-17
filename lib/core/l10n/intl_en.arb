@@ -30,7 +30,7 @@
 
   "loginTitle": "Welcome!",
   "loginSubtitle": "Sign in to continue",
-  "emailInputText": "Enter your e-mail address"
+  "emailInputText": "Enter your e-mail address",
   "loginButton": "Continue",
   "textBeetweenLoginAndOauth": "or",
   "loginWithGoogle": "Continue with Google",
