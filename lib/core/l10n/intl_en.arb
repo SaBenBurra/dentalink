@@ -30,7 +30,6 @@
 
   "loginTitle": "Welcome!",
   "loginSubtitle": "Sign in to continue",
-  "emailInputText": "Enter your e-mail address",
   "loginButton": "Continue",
   "textBeetweenLoginAndOauth": "or",
   "loginWithGoogle": "Continue with Google",
@@ -44,7 +43,7 @@
   "forgotPassword": "Forgot Password",
 
   "email": "Email",
-  "emailHint": "example@email.com",
+  "emailHint": "enter your e-mail address",
   "password": "Password",
   "passwordHint": "Enter your password",
   "confirmPassword": "Confirm Password",

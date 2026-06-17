@@ -82,9 +82,6 @@
   "loginSubtitle": "Devam etmek için giriş yap",
   "@loginSubtitle": { "description": "Giriş ekranı alt başlığı" },
 
-  "emailInputText": "e-posta adresini gir",
-  "@emailInputText": {"description": "email inputunda yazan metin"},
-
   "loginButton": "Devam Et",
   "@loginButton": { "description": "Giriş butonu etiketi" },
 
@@ -121,7 +118,7 @@
   "email": "E-posta",
   "@email": { "description": "E-posta alanı etiketi" },
 
-  "emailHint": "ornek@email.com",
+  "emailHint": "e-posta adresini gir",
   "@emailHint": { "description": "E-posta alanı ipucu" },
 
   "password": "Şifre",
