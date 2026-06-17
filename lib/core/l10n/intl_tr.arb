@@ -1,0 +1,482 @@
+{
+  "@@locale": "tr",
+
+  "appName": "DentLink",
+  "@appName": { "description": "Uygulamanın adı" },
+
+  "appTagline": "Diş Hekimleri İçin Sosyal Platform",
+  "@appTagline": { "description": "Uygulama sloganı" },
+
+  "loading": "Yükleniyor...",
+  "@loading": { "description": "Genel yükleniyor mesajı" },
+
+  "retry": "Tekrar Dene",
+  "@retry": { "description": "Yeniden deneme butonu etiketi" },
+
+  "cancel": "İptal",
+  "@cancel": { "description": "İptal butonu etiketi" },
+
+  "save": "Kaydet",
+  "@save": { "description": "Kaydet butonu etiketi" },
+
+  "delete": "Sil",
+  "@delete": { "description": "Sil butonu etiketi" },
+
+  "confirm": "Onayla",
+  "@confirm": { "description": "Onay butonu etiketi" },
+
+  "close": "Kapat",
+  "@close": { "description": "Kapat butonu etiketi" },
+
+  "edit": "Düzenle",
+  "@edit": { "description": "Düzenle butonu etiketi" },
+
+  "done": "Tamam",
+  "@done": { "description": "Tamam butonu etiketi" },
+
+  "error": "Hata",
+  "@error": { "description": "Genel hata başlığı" },
+
+  "unknownError": "Bilinmeyen bir hata oluştu.",
+  "@unknownError": { "description": "Bilinmeyen hata mesajı" },
+
+  "networkError": "İnternet bağlantısı kontrol edin.",
+  "@networkError": { "description": "Ağ hatası mesajı" },
+
+  "noResults": "Sonuç bulunamadı.",
+  "@noResults": { "description": "Boş sonuç mesajı" },
+
+  "emptyFeed": "Henüz gönderi yok.",
+  "@emptyFeed": { "description": "Boş feed mesajı" },
+
+  "seeAll": "Tümünü Gör",
+  "@seeAll": { "description": "Tümünü gör bağlantısı" },
+
+  "sharePost": "Gönderiyi Paylaş",
+  "@sharePost": { "description": "Gönderi paylaş seçeneği" },
+
+  "report": "Şikayet Et",
+  "@report": { "description": "Şikayet et seçeneği" },
+
+  "moreOptions": "Daha Fazla Seçenek",
+  "@moreOptions": { "description": "Daha fazla seçenek tooltip" },
+
+  "navFeed": "Ana Sayfa",
+  "@navFeed": { "description": "Alt navigasyon - Ana Sayfa" },
+
+  "navExplore": "Keşfet",
+  "@navExplore": { "description": "Alt navigasyon - Keşfet" },
+
+  "navCreate": "Oluştur",
+  "@navCreate": { "description": "Alt navigasyon - Oluştur" },
+
+  "navMessages": "Mesajlar",
+  "@navMessages": { "description": "Alt navigasyon - Mesajlar" },
+
+  "navProfile": "Profil",
+  "@navProfile": { "description": "Alt navigasyon - Profil" },
+
+  "loginTitle": "Giriş Yap",
+  "@loginTitle": { "description": "Giriş ekranı başlığı" },
+
+  "loginSubtitle": "Hesabına giriş yap",
+  "@loginSubtitle": { "description": "Giriş ekranı alt başlığı" },
+
+  "loginButton": "Giriş Yap",
+  "@loginButton": { "description": "Giriş butonu etiketi" },
+
+  "loginWithGoogle": "Google ile Giriş Yap",
+  "@loginWithGoogle": { "description": "Google giriş butonu" },
+
+  "loginWithPhone": "Telefon ile Giriş Yap",
+  "@loginWithPhone": { "description": "Telefon giriş butonu" },
+
+  "noAccount": "Hesabın yok mu?",
+  "@noAccount": { "description": "Kayıt yönlendirme metni" },
+
+  "registerNow": "Kayıt Ol",
+  "@registerNow": { "description": "Kayıt ol bağlantısı" },
+
+  "registerTitle": "Hesap Oluştur",
+  "@registerTitle": { "description": "Kayıt ekranı başlığı" },
+
+  "registerButton": "Kayıt Ol",
+  "@registerButton": { "description": "Kayıt ol butonu etiketi" },
+
+  "alreadyHaveAccount": "Zaten hesabın var mı?",
+  "@alreadyHaveAccount": { "description": "Giriş yönlendirme metni" },
+
+  "signIn": "Giriş Yap",
+  "@signIn": { "description": "Giriş yap bağlantısı" },
+
+  "forgotPassword": "Şifremi Unuttum",
+  "@forgotPassword": { "description": "Şifremi unuttum bağlantısı" },
+
+  "email": "E-posta",
+  "@email": { "description": "E-posta alanı etiketi" },
+
+  "emailHint": "ornek@email.com",
+  "@emailHint": { "description": "E-posta alanı ipucu" },
+
+  "password": "Şifre",
+  "@password": { "description": "Şifre alanı etiketi" },
+
+  "passwordHint": "Şifrenizi girin",
+  "@passwordHint": { "description": "Şifre alanı ipucu" },
+
+  "confirmPassword": "Şifreyi Onayla",
+  "@confirmPassword": { "description": "Şifre onay alanı etiketi" },
+
+  "phone": "Telefon Numarası",
+  "@phone": { "description": "Telefon alanı etiketi" },
+
+  "phoneHint": "+90 5xx xxx xx xx",
+  "@phoneHint": { "description": "Telefon alanı ipucu" },
+
+  "verificationCode": "Doğrulama Kodu",
+  "@verificationCode": { "description": "Doğrulama kodu alanı etiketi" },
+
+  "sendCode": "Kod Gönder",
+  "@sendCode": { "description": "Kod gönder butonu" },
+
+  "verifyCode": "Kodu Doğrula",
+  "@verifyCode": { "description": "Kodu doğrula butonu" },
+
+  "titleSelection": "Unvan Seçimi",
+  "@titleSelection": { "description": "Unvan seçim ekranı başlığı" },
+
+  "titleSelectionSubtitle": "Kendinizi en iyi tanımlayan unvanı seçin",
+  "@titleSelectionSubtitle": { "description": "Unvan seçim alt başlığı" },
+
+  "titleStudent": "Öğrenci",
+  "@titleStudent": { "description": "Öğrenci unvanı" },
+
+  "titleGeneralDentist": "Diş Hekimi (Genel Pratisyen)",
+  "@titleGeneralDentist": { "description": "Genel pratisyen unvanı" },
+
+  "titleEndodontist": "Endodontist",
+  "@titleEndodontist": { "description": "Endodontist unvanı" },
+
+  "titleOrthodontist": "Ortodontist",
+  "@titleOrthodontist": { "description": "Ortodontist unvanı" },
+
+  "titlePeriodontologist": "Periodontolog",
+  "@titlePeriodontologist": { "description": "Periodontolog unvanı" },
+
+  "titleProsthodontist": "Protez Uzmanı",
+  "@titleProsthodontist": { "description": "Protez uzmanı unvanı" },
+
+  "titlePedodontist": "Pedodontist",
+  "@titlePedodontist": { "description": "Pedodontist unvanı" },
+
+  "titleOralSurgeon": "Ağız, Diş ve Çene Cerrahı",
+  "@titleOralSurgeon": { "description": "Ağız, Diş ve Çene Cerrahı unvanı" },
+
+  "titleOralRadiologist": "Ağız, Diş ve Çene Radyoloğu",
+  "@titleOralRadiologist": { "description": "Radyoloji uzmanı unvanı" },
+
+  "titleOralDiagnostics": "Oral Diagnoz Uzmanı",
+  "@titleOralDiagnostics": { "description": "Oral diagnoz uzmanı unvanı" },
+
+  "titleRestorativeDentistry": "Restoratif Diş Tedavisi Uzmanı",
+  "@titleRestorativeDentistry": { "description": "Restoratif uzmanı unvanı" },
+
+  "profileTitle": "Profil",
+  "@profileTitle": { "description": "Profil ekranı başlığı" },
+
+  "editProfile": "Profili Düzenle",
+  "@editProfile": { "description": "Profili düzenle butonu" },
+
+  "followers": "Takipçi",
+  "@followers": { "description": "Takipçi etiketi" },
+
+  "following": "Takip",
+  "@following": { "description": "Takip edilen etiketi" },
+
+  "posts": "Gönderi",
+  "@posts": { "description": "Gönderi sayısı etiketi" },
+
+  "followButton": "Takip Et",
+  "@followButton": { "description": "Takip et butonu" },
+
+  "unfollowButton": "Takibi Bırak",
+  "@unfollowButton": { "description": "Takibi bırak butonu" },
+
+  "messageButton": "Mesaj Gönder",
+  "@messageButton": { "description": "Mesaj gönder butonu" },
+
+  "bio": "Biyografi",
+  "@bio": { "description": "Biyografi alanı etiketi" },
+
+  "university": "Üniversite",
+  "@university": { "description": "Üniversite alanı etiketi" },
+
+  "city": "Şehir",
+  "@city": { "description": "Şehir alanı etiketi" },
+
+  "experienceYears": "Deneyim Yılı",
+  "@experienceYears": { "description": "Deneyim yılı etiketi" },
+
+  "workplace": "Çalıştığı Klinik/Hastane",
+  "@workplace": { "description": "Çalışma yeri etiketi" },
+
+  "profileBadges": "Rozetlerim",
+  "@profileBadges": { "description": "Rozetler sekmesi" },
+
+  "profileCases": "Vakalarım",
+  "@profileCases": { "description": "Vakalar sekmesi" },
+
+  "profileQuestions": "Sorularım",
+  "@profileQuestions": { "description": "Sorular sekmesi" },
+
+  "profileSaved": "Kaydedilenler",
+  "@profileSaved": { "description": "Kaydedilenler sekmesi" },
+
+  "casePost": "Vaka",
+  "@casePost": { "description": "Vaka gönderi türü etiketi" },
+
+  "questionPost": "Soru",
+  "@questionPost": { "description": "Soru gönderi türü etiketi" },
+
+  "createPost": "Gönderi Oluştur",
+  "@createPost": { "description": "Gönderi oluştur başlığı" },
+
+  "createCase": "Vaka Paylaş",
+  "@createCase": { "description": "Vaka paylaş butonu/başlığı" },
+
+  "createQuestion": "Soru Sor",
+  "@createQuestion": { "description": "Soru sor butonu/başlığı" },
+
+  "postTitle": "Başlık",
+  "@postTitle": { "description": "Gönderi başlığı alanı" },
+
+  "postContent": "Açıklama",
+  "@postContent": { "description": "Gönderi içerik alanı" },
+
+  "postBranch": "Branş",
+  "@postBranch": { "description": "Branş seçim alanı" },
+
+  "postTags": "Etiketler",
+  "@postTags": { "description": "Etiketler alanı" },
+
+  "addTag": "Etiket Ekle",
+  "@addTag": { "description": "Etiket ekleme ipucu" },
+
+  "addImages": "Görsel Ekle",
+  "@addImages": { "description": "Görsel ekleme butonu" },
+
+  "maxImagesReached": "En fazla 10 görsel ekleyebilirsiniz.",
+  "@maxImagesReached": { "description": "Maksimum görsel uyarısı" },
+
+  "publish": "Yayınla",
+  "@publish": { "description": "Yayınla butonu" },
+
+  "branchPedodontics": "Pedodonti",
+  "@branchPedodontics": { "description": "Pedodonti branşı" },
+
+  "branchEndodontics": "Endodonti",
+  "@branchEndodontics": { "description": "Endodonti branşı" },
+
+  "branchOrthodontics": "Ortodonti",
+  "@branchOrthodontics": { "description": "Ortodonti branşı" },
+
+  "branchPeriodontology": "Periodontoloji",
+  "@branchPeriodontology": { "description": "Periodontoloji branşı" },
+
+  "branchProsthodontics": "Protetik Diş Tedavisi",
+  "@branchProsthodontics": { "description": "Protetik Diş Tedavisi branşı" },
+
+  "branchOralSurgery": "Ağız, Diş ve Çene Cerrahisi",
+  "@branchOralSurgery": { "description": "Ağız, Diş ve Çene Cerrahisi branşı" },
+
+  "branchOralRadiology": "Ağız, Diş ve Çene Radyolojisi",
+  "@branchOralRadiology": { "description": "Ağız, Diş ve Çene Radyolojisi branşı" },
+
+  "branchOralDiagnosis": "Oral Diagnoz",
+  "@branchOralDiagnosis": { "description": "Oral Diagnoz branşı" },
+
+  "branchRestorativeDentistry": "Restoratif Diş Tedavisi",
+  "@branchRestorativeDentistry": { "description": "Restoratif Diş Tedavisi branşı" },
+
+  "feedChronological": "Son Eklenen",
+  "@feedChronological": { "description": "Kronolojik akış tab etiketi" },
+
+  "feedAlgorithmic": "Öne Çıkan",
+  "@feedAlgorithmic": { "description": "Algoritmik akış tab etiketi" },
+
+  "likesCount": "{count} beğeni",
+  "@likesCount": {
+    "description": "Beğeni sayısı",
+    "placeholders": {
+      "count": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+
+  "commentsCount": "{count} yorum",
+  "@commentsCount": {
+    "description": "Yorum sayısı",
+    "placeholders": {
+      "count": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+
+  "answersCount": "{count} cevap",
+  "@answersCount": {
+    "description": "Cevap sayısı",
+    "placeholders": {
+      "count": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+
+  "bestAnswer": "En İyi Cevap",
+  "@bestAnswer": { "description": "En iyi cevap rozeti" },
+
+  "markAsBestAnswer": "En İyi Cevap Seç",
+  "@markAsBestAnswer": { "description": "En iyi cevap işaretle butonu" },
+
+  "writeComment": "Yorum yaz...",
+  "@writeComment": { "description": "Yorum yazma alanı ipucu" },
+
+  "writeAnswer": "Cevabını yaz...",
+  "@writeAnswer": { "description": "Cevap yazma alanı ipucu" },
+
+  "sendMessage": "Gönder",
+  "@sendMessage": { "description": "Mesaj gönder butonu" },
+
+  "exploreTitle": "Keşfet",
+  "@exploreTitle": { "description": "Keşfet ekranı başlığı" },
+
+  "searchHint": "Vaka, soru veya kullanıcı ara...",
+  "@searchHint": { "description": "Arama alanı ipucu" },
+
+  "filterByBranch": "Branşa Göre",
+  "@filterByBranch": { "description": "Branş filtresi" },
+
+  "filterByTitle": "Unvana Göre",
+  "@filterByTitle": { "description": "Unvan filtresi" },
+
+  "filterByType": "Türe Göre",
+  "@filterByType": { "description": "İçerik türü filtresi" },
+
+  "filterByTag": "Etikete Göre",
+  "@filterByTag": { "description": "Etiket filtresi" },
+
+  "clearFilters": "Filtreleri Temizle",
+  "@clearFilters": { "description": "Filtreleri temizle butonu" },
+
+  "messagesTitle": "Mesajlar",
+  "@messagesTitle": { "description": "Mesajlar ekranı başlığı" },
+
+  "noMessages": "Henüz mesajınız yok.",
+  "@noMessages": { "description": "Boş mesaj listesi" },
+
+  "typeMessage": "Mesajınızı yazın...",
+  "@typeMessage": { "description": "Mesaj yazma alanı ipucu" },
+
+  "notificationsTitle": "Bildirimler",
+  "@notificationsTitle": { "description": "Bildirimler ekranı başlığı" },
+
+  "noNotifications": "Henüz bildiriminiz yok.",
+  "@noNotifications": { "description": "Boş bildirim listesi" },
+
+  "notifLiked": "{name} gönderinizi beğendi.",
+  "@notifLiked": {
+    "description": "Beğeni bildirimi",
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "notifCommented": "{name} gönderinize yorum yaptı.",
+  "@notifCommented": {
+    "description": "Yorum bildirimi",
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "notifFollowed": "{name} sizi takip etmeye başladı.",
+  "@notifFollowed": {
+    "description": "Takip bildirimi",
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "notifMessage": "{name} size mesaj gönderdi.",
+  "@notifMessage": {
+    "description": "Mesaj bildirimi",
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "bookmarksTitle": "Kaydedilenler",
+  "@bookmarksTitle": { "description": "Kaydedilenler ekranı başlığı" },
+
+  "noBookmarks": "Henüz kaydedilen gönderi yok.",
+  "@noBookmarks": { "description": "Boş kayıt listesi" },
+
+  "settingsTitle": "Ayarlar",
+  "@settingsTitle": { "description": "Ayarlar ekranı başlığı" },
+
+  "settingsTheme": "Tema",
+  "@settingsTheme": { "description": "Tema ayarı etiketi" },
+
+  "settingsThemeLight": "Açık",
+  "@settingsThemeLight": { "description": "Açık tema seçeneği" },
+
+  "settingsThemeDark": "Koyu",
+  "@settingsThemeDark": { "description": "Koyu tema seçeneği" },
+
+  "settingsThemeSystem": "Sistem Varsayılanı",
+  "@settingsThemeSystem": { "description": "Sistem teması seçeneği" },
+
+  "settingsLanguage": "Dil",
+  "@settingsLanguage": { "description": "Dil ayarı etiketi" },
+
+  "settingsNotifications": "Bildirimler",
+  "@settingsNotifications": { "description": "Bildirim ayarları etiketi" },
+
+  "settingsAccount": "Hesap",
+  "@settingsAccount": { "description": "Hesap ayarları etiketi" },
+
+  "settingsLogout": "Çıkış Yap",
+  "@settingsLogout": { "description": "Çıkış yap butonu" },
+
+  "settingsLogoutConfirm": "Çıkış yapmak istediğinize emin misiniz?",
+  "@settingsLogoutConfirm": { "description": "Çıkış onay mesajı" },
+
+  "languageTurkish": "Türkçe",
+  "@languageTurkish": { "description": "Türkçe dil seçeneği" },
+
+  "languageEnglish": "İngilizce",
+  "@languageEnglish": { "description": "İngilizce dil seçeneği" },
+
+  "badgeExpert": "Uzman",
+  "@badgeExpert": { "description": "Uzman rozeti adı" },
+
+  "badgePopular": "Popüler",
+  "@badgePopular": { "description": "Popüler rozeti adı" },
+
+  "badgeHelper": "Yardımsever",
+  "@badgeHelper": { "description": "Yardımsever rozeti adı" },
+
+  "badgeNewMember": "Yeni Üye",
+  "@badgeNewMember": { "description": "Yeni üye rozeti adı" },
+
+  "validationRequired": "Bu alan zorunludur.",
+  "@validationRequired": { "description": "Zorunlu alan hata mesajı" },
+
+  "validationEmailInvalid": "Geçerli bir e-posta adresi girin.",
+  "@validationEmailInvalid": { "description": "Geçersiz e-posta hata mesajı" },
+
+  "validationPasswordMinLength": "Şifre en az 8 karakter olmalıdır.",
+  "@validationPasswordMinLength": { "description": "Şifre minimum uzunluk hata mesajı" },
+
+  "validationPasswordMismatch": "Şifreler eşleşmiyor.",
+  "@validationPasswordMismatch": { "description": "Şifre uyuşmazlığı hata mesajı" },
+
+  "validationPhoneInvalid": "Geçerli bir telefon numarası girin.",
+  "@validationPhoneInvalid": { "description": "Geçersiz telefon hata mesajı" }
+}

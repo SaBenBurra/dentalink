@@ -1,0 +1,211 @@
+{
+  "@@locale": "en",
+
+  "appName": "DentLink",
+  "appTagline": "Social Platform for Dentists",
+  "loading": "Loading...",
+  "retry": "Retry",
+  "cancel": "Cancel",
+  "save": "Save",
+  "delete": "Delete",
+  "confirm": "Confirm",
+  "close": "Close",
+  "edit": "Edit",
+  "done": "Done",
+  "error": "Error",
+  "unknownError": "An unknown error occurred.",
+  "networkError": "Please check your internet connection.",
+  "noResults": "No results found.",
+  "emptyFeed": "No posts yet.",
+  "seeAll": "See All",
+  "sharePost": "Share Post",
+  "report": "Report",
+  "moreOptions": "More Options",
+
+  "navFeed": "Home",
+  "navExplore": "Explore",
+  "navCreate": "Create",
+  "navMessages": "Messages",
+  "navProfile": "Profile",
+
+  "loginTitle": "Sign In",
+  "loginSubtitle": "Sign in to your account",
+  "loginButton": "Sign In",
+  "loginWithGoogle": "Continue with Google",
+  "loginWithPhone": "Continue with Phone",
+  "noAccount": "Don't have an account?",
+  "registerNow": "Sign Up",
+  "registerTitle": "Create Account",
+  "registerButton": "Sign Up",
+  "alreadyHaveAccount": "Already have an account?",
+  "signIn": "Sign In",
+  "forgotPassword": "Forgot Password",
+
+  "email": "Email",
+  "emailHint": "example@email.com",
+  "password": "Password",
+  "passwordHint": "Enter your password",
+  "confirmPassword": "Confirm Password",
+  "phone": "Phone Number",
+  "phoneHint": "+1 xxx xxx xxxx",
+  "verificationCode": "Verification Code",
+  "sendCode": "Send Code",
+  "verifyCode": "Verify Code",
+
+  "titleSelection": "Select Title",
+  "titleSelectionSubtitle": "Choose the title that best describes you",
+  "titleStudent": "Student",
+  "titleGeneralDentist": "Dentist (General Practitioner)",
+  "titleEndodontist": "Endodontist",
+  "titleOrthodontist": "Orthodontist",
+  "titlePeriodontologist": "Periodontologist",
+  "titleProsthodontist": "Prosthodontist",
+  "titlePedodontist": "Pedodontist",
+  "titleOralSurgeon": "Oral and Maxillofacial Surgeon",
+  "titleOralRadiologist": "Oral and Maxillofacial Radiologist",
+  "titleOralDiagnostics": "Oral Diagnosis Specialist",
+  "titleRestorativeDentistry": "Restorative Dentistry Specialist",
+
+  "profileTitle": "Profile",
+  "editProfile": "Edit Profile",
+  "followers": "Followers",
+  "following": "Following",
+  "posts": "Posts",
+  "followButton": "Follow",
+  "unfollowButton": "Unfollow",
+  "messageButton": "Send Message",
+  "bio": "Bio",
+  "university": "University",
+  "city": "City",
+  "experienceYears": "Years of Experience",
+  "workplace": "Clinic / Hospital",
+  "profileBadges": "My Badges",
+  "profileCases": "My Cases",
+  "profileQuestions": "My Questions",
+  "profileSaved": "Saved",
+
+  "casePost": "Case",
+  "questionPost": "Question",
+  "createPost": "Create Post",
+  "createCase": "Share Case",
+  "createQuestion": "Ask Question",
+  "postTitle": "Title",
+  "postContent": "Description",
+  "postBranch": "Branch",
+  "postTags": "Tags",
+  "addTag": "Add Tag",
+  "addImages": "Add Images",
+  "maxImagesReached": "You can add up to 10 images.",
+  "publish": "Publish",
+
+  "branchPedodontics": "Pedodontics",
+  "branchEndodontics": "Endodontics",
+  "branchOrthodontics": "Orthodontics",
+  "branchPeriodontology": "Periodontology",
+  "branchProsthodontics": "Prosthodontics",
+  "branchOralSurgery": "Oral and Maxillofacial Surgery",
+  "branchOralRadiology": "Oral and Maxillofacial Radiology",
+  "branchOralDiagnosis": "Oral Diagnosis",
+  "branchRestorativeDentistry": "Restorative Dentistry",
+
+  "feedChronological": "Latest",
+  "feedAlgorithmic": "Top Picks",
+
+  "likesCount": "{count} likes",
+  "@likesCount": {
+    "placeholders": {
+      "count": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+
+  "commentsCount": "{count} comments",
+  "@commentsCount": {
+    "placeholders": {
+      "count": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+
+  "answersCount": "{count} answers",
+  "@answersCount": {
+    "placeholders": {
+      "count": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+
+  "bestAnswer": "Best Answer",
+  "markAsBestAnswer": "Mark as Best Answer",
+  "writeComment": "Write a comment...",
+  "writeAnswer": "Write your answer...",
+  "sendMessage": "Send",
+
+  "exploreTitle": "Explore",
+  "searchHint": "Search cases, questions or users...",
+  "filterByBranch": "By Branch",
+  "filterByTitle": "By Title",
+  "filterByType": "By Type",
+  "filterByTag": "By Tag",
+  "clearFilters": "Clear Filters",
+
+  "messagesTitle": "Messages",
+  "noMessages": "No messages yet.",
+  "typeMessage": "Type a message...",
+
+  "notificationsTitle": "Notifications",
+  "noNotifications": "No notifications yet.",
+
+  "notifLiked": "{name} liked your post.",
+  "@notifLiked": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "notifCommented": "{name} commented on your post.",
+  "@notifCommented": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "notifFollowed": "{name} started following you.",
+  "@notifFollowed": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "notifMessage": "{name} sent you a message.",
+  "@notifMessage": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "bookmarksTitle": "Saved",
+  "noBookmarks": "No saved posts yet.",
+
+  "settingsTitle": "Settings",
+  "settingsTheme": "Theme",
+  "settingsThemeLight": "Light",
+  "settingsThemeDark": "Dark",
+  "settingsThemeSystem": "System Default",
+  "settingsLanguage": "Language",
+  "settingsNotifications": "Notifications",
+  "settingsAccount": "Account",
+  "settingsLogout": "Sign Out",
+  "settingsLogoutConfirm": "Are you sure you want to sign out?",
+
+  "languageTurkish": "Turkish",
+  "languageEnglish": "English",
+
+  "badgeExpert": "Expert",
+  "badgePopular": "Popular",
+  "badgeHelper": "Helper",
+  "badgeNewMember": "New Member",
+
+  "validationRequired": "This field is required.",
+  "validationEmailInvalid": "Please enter a valid email address.",
+  "validationPasswordMinLength": "Password must be at least 8 characters.",
+  "validationPasswordMismatch": "Passwords do not match.",
+  "validationPhoneInvalid": "Please enter a valid phone number."
+}
