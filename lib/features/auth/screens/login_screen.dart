@@ -19,7 +19,6 @@ class _LoginScreenState extends State<LoginScreen>
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
 
-  bool _isPasswordVisible = false;
   bool _isLoading = false;
 
   String? _emailError;
@@ -104,14 +103,6 @@ class _LoginScreenState extends State<LoginScreen>
           ),
         );
       }
-    });
-  }
-
-  void _triggerErrorDemo() {
-    _shakeController.forward();
-    setState(() {
-      _emailError = 'Please enter a valid clinical email.';
-      _passwordError = 'Incorrect password.';
     });
   }
 
