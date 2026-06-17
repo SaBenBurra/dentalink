@@ -251,25 +251,31 @@ abstract class AppLocalizations {
   /// Giriş ekranı başlığı
   ///
   /// In tr, this message translates to:
-  /// **'Giriş Yap'**
+  /// **'Hoşgeldin!'**
   String get loginTitle;
 
   /// Giriş ekranı alt başlığı
   ///
   /// In tr, this message translates to:
-  /// **'Hesabına giriş yap'**
+  /// **'Devam etmek için giriş yap'**
   String get loginSubtitle;
+
+  /// email inputunda yazan metin
+  ///
+  /// In tr, this message translates to:
+  /// **'e-posta adresini gir'**
+  String get emailInputText;
 
   /// Giriş butonu etiketi
   ///
   /// In tr, this message translates to:
-  /// **'Giriş Yap'**
+  /// **'Devam Et'**
   String get loginButton;
 
   /// Google giriş butonu
   ///
   /// In tr, this message translates to:
-  /// **'Google ile Giriş Yap'**
+  /// **'Google ile devam et'**
   String get loginWithGoogle;
 
   /// Telefon giriş butonu

@@ -76,16 +76,22 @@
   "navProfile": "Profil",
   "@navProfile": { "description": "Alt navigasyon - Profil" },
 
-  "loginTitle": "Giriş Yap",
+  "loginTitle": "Hoşgeldin!",
   "@loginTitle": { "description": "Giriş ekranı başlığı" },
 
-  "loginSubtitle": "Hesabına giriş yap",
+  "loginSubtitle": "Devam etmek için giriş yap",
   "@loginSubtitle": { "description": "Giriş ekranı alt başlığı" },
 
-  "loginButton": "Giriş Yap",
+  "emailInputText": "e-posta adresini gir",
+  "@emailInputText": {"description": "email inputunda yazan metin"},
+
+  "loginButton": "Devam Et",
   "@loginButton": { "description": "Giriş butonu etiketi" },
 
-  "loginWithGoogle": "Google ile Giriş Yap",
+  "textBeetweenLoginAndOauth": "ya da",
+  "@textBeetweenLoginAndOauth": {"description": "giriş butonuyla oauth arasındaki metin"},
+
+  "loginWithGoogle": "Google ile devam et",
   "@loginWithGoogle": { "description": "Google giriş butonu" },
 
   "loginWithPhone": "Telefon ile Giriş Yap",

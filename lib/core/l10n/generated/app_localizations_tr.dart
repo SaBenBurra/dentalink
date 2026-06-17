@@ -84,16 +84,19 @@ class AppLocalizationsTr extends AppLocalizations {
   String get navProfile => 'Profil';
 
   @override
-  String get loginTitle => 'Giriş Yap';
+  String get loginTitle => 'Hoşgeldin!';
 
   @override
-  String get loginSubtitle => 'Hesabına giriş yap';
+  String get loginSubtitle => 'Devam etmek için giriş yap';
 
   @override
-  String get loginButton => 'Giriş Yap';
+  String get emailInputText => 'e-posta adresini gir';
 
   @override
-  String get loginWithGoogle => 'Google ile Giriş Yap';
+  String get loginButton => 'Devam Et';
+
+  @override
+  String get loginWithGoogle => 'Google ile devam et';
 
   @override
   String get loginWithPhone => 'Telefon ile Giriş Yap';

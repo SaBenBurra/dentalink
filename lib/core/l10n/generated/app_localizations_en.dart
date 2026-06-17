@@ -90,6 +90,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginSubtitle => 'Sign in to your account';
 
   @override
+  String get emailInputText => 'e-posta adresini gir';
+
+  @override
   String get loginButton => 'Sign In';
 
   @override
