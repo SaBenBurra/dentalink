@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen>
   void _simulateLogin() {
     _clearErrors();
     final email = _emailController.text.trim();
-    final password = _passwordController.text;
+    final _ = _passwordController.text;
 
     setState(() {
       _isLoading = true;
