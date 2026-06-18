@@ -194,7 +194,6 @@ Kullanıcı iki sıralama modu arasında **tab ile geçiş** yapabilir:
 ---
 
 ## 🏅 Rozetler & Başarımlar (Gamification)
-
 Kullanıcıların motivasyonunu artırmak için rozet sistemi.
 
 ### Rozet Örnekleri
@@ -223,6 +222,22 @@ Kullanıcıların motivasyonunu artırmak için rozet sistemi.
 ### Temel Tablolar
 
 ```
+-- ─────────────────────────────────────────────────────────────────
+-- DÜZELTME #13: branch serbest metin yerine PostgreSQL ENUM
+-- ─────────────────────────────────────────────────────────────────
+CREATE TYPE dental_branch AS ENUM (
+  'pedodonti', 'endodonti', 'ortodonti', 'periodontoloji',
+  'protetik_dis_tedavisi', 'agiz_dis_cene_cerrahisi',
+  'agiz_dis_cene_radyolojisi', 'oral_diagnoz', 'restoratif_dis_tedavisi'
+);
+
+-- ─────────────────────────────────────────────────────────────────
+-- DÜZELTME #10: bildirim tipi ENUM (best_answer + badge eklendi)
+-- ─────────────────────────────────────────────────────────────────
+CREATE TYPE notification_type AS ENUM (
+  'like', 'comment', 'follow', 'message', 'best_answer', 'badge'
+);
+
 users
 ├── id (UUID, PK)
 ├── email
@@ -236,6 +251,13 @@ users
 ├── city
 ├── experience_years
 ├── workplace (klinik/hastane)
+├── followers_count      INT DEFAULT 0           -- #5 denormalize sayaç
+├── following_count      INT DEFAULT 0           -- #5 denormalize sayaç
+├── posts_count          INT DEFAULT 0           -- #5 denormalize sayaç
+├── onboarding_completed BOOL DEFAULT false      -- #9 onboarding bir kez gösterilsin
+├── is_verified          BOOL DEFAULT false      -- #9 Faz 6: diploma doğrulama
+├── last_seen_at         TIMESTAMPTZ             -- #9 mesajlaşmada çevrimiçi göstergesi
+├── notification_preferences JSONB DEFAULT '{}'  -- #9 hangi bildirimler gelsin
 ├── created_at
 └── updated_at
 
@@ -245,8 +267,12 @@ posts
 ├── type (enum: 'case', 'question')
 ├── title
 ├── content
-├── branch (nullable, vaka için zorunlu)
+├── branch dental_branch (nullable, vaka için zorunlu) -- #13 ENUM tipine alındı
 ├── is_solved (soru için, en iyi cevap seçildi mi)
+├── like_count      INT DEFAULT 0               -- #5 denormalize sayaç (trigger ile güncellenir)
+├── comment_count   INT DEFAULT 0               -- #5 denormalize sayaç (trigger ile güncellenir)
+├── bookmark_count  INT DEFAULT 0               -- #5 denormalize sayaç (trigger ile güncellenir)
+├── view_count      INT DEFAULT 0               -- #6 algoritmik feed için görüntülenme sayısı
 ├── created_at
 └── updated_at
 
@@ -257,14 +283,24 @@ post_images
 ├── order_index
 └── created_at
 
+-- #6 Algoritmik feed: kim hangi postu gördü (dedup + sinyal)
+post_views
+├── user_id (FK → users)
+├── post_id (FK → posts)
+└── viewed_at
+-- PRIMARY KEY (user_id, post_id)
+
 tags
 ├── id (UUID, PK)
-├── name (unique)
+├── name        TEXT UNIQUE                     -- "Kanal Tedavisi"
+├── slug        TEXT UNIQUE                     -- #7 "kanal-tedavisi" (URL-safe)
+├── usage_count INT DEFAULT 0                   -- #7 popüler etiket önerisi için
 └── created_at
 
 post_tags
 ├── post_id (FK → posts)
-└── tag_id (FK → tags)
+└── tag_id  (FK → tags)
+-- PRIMARY KEY (post_id, tag_id)                -- #12 composite PK, duplicate engeller
 
 comments
 ├── id (UUID, PK)
@@ -277,42 +313,59 @@ comments
 
 likes
 ├── id (UUID, PK)
-├── user_id (FK → users)
-├── post_id (FK → posts, nullable)
+├── user_id    (FK → users)
+├── post_id    (FK → posts,    nullable)
 ├── comment_id (FK → comments, nullable)
 └── created_at
+-- CHECK: (post_id IS NOT NULL AND comment_id IS NULL)   -- #2 tam olarak biri dolu olmalı
+--     OR (post_id IS NULL AND comment_id IS NOT NULL)
+-- UNIQUE (user_id, post_id)                             -- #2 aynı postu iki kez beğenemez
+-- UNIQUE (user_id, comment_id)                          -- #2 aynı yorumu iki kez beğenemez
 
 follows
-├── follower_id (FK → users)
+├── follower_id  (FK → users)
 ├── following_id (FK → users)
 └── created_at
+-- PRIMARY KEY (follower_id, following_id)
+-- CHECK: follower_id <> following_id                    -- #3 kendini takip engeli
+-- UNIQUE (follower_id, following_id)                    -- #3 duplicate engeli
 
 bookmarks
 ├── user_id (FK → users)
 ├── post_id (FK → posts)
 └── created_at
+-- PRIMARY KEY (user_id, post_id)
+-- UNIQUE (user_id, post_id)                             -- #4 aynı postu iki kez kaydedemez
 
 messages
-├── id (UUID, PK)
-├── sender_id (FK → users)
+├── id          (UUID, PK)
+├── sender_id   (FK → users)
 ├── receiver_id (FK → users)
 ├── content
 ├── is_read
+├── deleted_at  TIMESTAMPTZ NULL                -- #11 soft delete, "Bu mesaj silindi" göstergesi
 └── created_at
 
+-- #1 DÜZELTME: last_message_id kaldırıldı → dairesel FK çözüldü
+-- last_message_id yerine last_message_at + last_message_preview kullanılır
+-- Trigger: yeni mesaj insert edilince conversations güncellenir
 conversations
 ├── id (UUID, PK)
-├── user1_id (FK → users)
-├── user2_id (FK → users)
-├── last_message_id (FK → messages)
+├── user1_id             (FK → users)
+├── user2_id             (FK → users)
+├── last_message_at      TIMESTAMPTZ             -- #1 dairesel FK yerine timestamp
+├── last_message_preview TEXT                    -- #1 son mesajın ilk 100 karakteri
+├── user1_unread_count   INT DEFAULT 0           -- #14 N+1 sorgu yerine denormalize
+├── user2_unread_count   INT DEFAULT 0           -- #14 N+1 sorgu yerine denormalize
 └── updated_at
+-- UNIQUE (user1_id, user2_id)
 
 notifications
-├── id (UUID, PK)
-├── user_id (FK → users)
-├── type (enum: 'like', 'comment', 'follow', 'message')
-├── actor_id (FK → users)
-├── post_id (FK → posts, nullable)
+├── id         (UUID, PK)
+├── user_id    (FK → users)
+├── type       notification_type              -- #10 best_answer + badge eklendi
+├── actor_id   (FK → users)
+├── post_id    (FK → posts,    nullable)
 ├── comment_id (FK → comments, nullable)
 ├── is_read
 └── created_at
@@ -325,9 +378,51 @@ badges
 └── criteria (JSON)
 
 user_badges
-├── user_id (FK → users)
-├── badge_id (FK → badges)
+├── user_id   (FK → users)
+├── badge_id  (FK → badges)
 └── earned_at
+-- PRIMARY KEY (user_id, badge_id)
+
+-- #8 Faz 5: FCM push bildirimleri için çok cihaz desteği
+push_tokens
+├── id       (UUID, PK)
+├── user_id  (FK → users)
+├── token    TEXT UNIQUE
+├── platform TEXT  -- 'android' | 'ios'
+└── created_at
+
+-- #15 Faz 6: İş İlanları (iskelet, detaylar netleşecek)
+job_posts
+├── id          (UUID, PK)
+├── user_id     (FK → users)  -- ilan veren
+├── title       TEXT
+├── description TEXT
+├── city        TEXT
+├── workplace   TEXT
+├── is_active   BOOL DEFAULT true
+├── created_at
+└── updated_at
+
+-- #16 Faz 6: Kullanıcı Engelleme
+blocks
+├── blocker_id (FK → users)
+├── blocked_id (FK → users)
+└── created_at
+-- PRIMARY KEY (blocker_id, blocked_id)
+-- CHECK: blocker_id <> blocked_id
+-- UNIQUE (blocker_id, blocked_id)
+
+-- #16 Faz 6: İçerik / Kullanıcı Raporlama
+reports
+├── id          (UUID, PK)
+├── reporter_id (FK → users)
+├── post_id     (FK → posts,    nullable)
+├── comment_id  (FK → comments, nullable)
+├── user_id     (FK → users,    nullable)  -- raporlanan kullanıcı
+├── reason      TEXT
+├── status      TEXT DEFAULT 'pending'     -- 'pending' | 'reviewed' | 'dismissed'
+└── created_at
+-- CHECK: tam olarak biri non-null (post_id / comment_id / user_id)
 ```
 
 ### Supabase Servisleri
