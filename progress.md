@@ -8,7 +8,7 @@
 - [x] Flutter projesi oluşturma
 - [x] Tema sistemi (karanlık/aydınlık)
 - [x] Lokalizasyon altyapısı (TR + EN, ARB tabanlı, flutter gen-l10n)
-- [ ] Navigasyon yapısı (go_router + bottom nav shell)
+- [x] Navigasyon yapısı (go_router + bottom nav shell)
 - [ ] Mock data katmanı (provider'lar mock veri döndürecek şekilde)
 - [ ] Paylaşılan temel widget'lar (avatar, loading, empty state, hata widget'ı)
 

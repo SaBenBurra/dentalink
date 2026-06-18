@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/l10n/generated/app_localizations.dart';
+import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
-import 'features/auth/screens/login_screen.dart';
 import 'providers/locale_provider.dart';
 import 'providers/theme_provider.dart';
 
@@ -24,9 +24,12 @@ class MainApp extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeModeProvider);
 
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'DentLink',
       debugShowCheckedModeBanner: false,
+
+      // Router
+      routerConfig: appRouter,
 
       // Tema
       theme: AppTheme.light,
@@ -42,8 +45,7 @@ class MainApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-
-      home: const LoginScreen(),
     );
   }
 }
+

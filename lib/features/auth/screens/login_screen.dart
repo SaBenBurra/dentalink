@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -87,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen>
         _isLoading = false;
       });
 
-      if (email.contains('error') || email.isEmpty || password.isEmpty) {
+      if (email.contains('error') || email.isEmpty) {
         // Trigger shake and display errors
         _shakeController.forward();
         setState(() {
@@ -95,14 +96,8 @@ class _LoginScreenState extends State<LoginScreen>
           _passwordError = 'Incorrect password.';
         });
       } else {
-        // Successful login mock
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Login successful as $email!'),
-            backgroundColor: AppColors.success,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        // Successful login mock — ana akışa geç
+        if (mounted) context.go('/feed');
       }
     });
   }
@@ -117,11 +112,11 @@ class _LoginScreenState extends State<LoginScreen>
         ? const Color(0xFF11211F)
         : AppColors.bgGradientStart;
     final glassBgColor = isDark
-        ? Colors.black.withOpacity(0.4)
-        : Colors.white.withOpacity(0.6);
+        ? Colors.black.withValues(alpha: 0.4)
+        : Colors.white.withValues(alpha: 0.6);
     final glassBorderColor = isDark
-        ? Colors.white.withOpacity(0.12)
-        : Colors.white.withOpacity(0.8);
+        ? Colors.white.withValues(alpha: 0.12)
+        : Colors.white.withValues(alpha: 0.8);
     final textPrimaryColor = isDark
         ? AppColors.darkTextPrimary
         : AppColors.lightTextPrimary;
@@ -160,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: (isDark ? AppColors.primaryLight : AppColors.primary)
-                    .withOpacity(isDark ? 0.08 : 0.12),
+                    .withValues(alpha: isDark ? 0.08 : 0.12),
               ),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
@@ -179,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: (isDark ? AppColors.secondaryLight : AppColors.secondary)
-                    .withOpacity(isDark ? 0.06 : 0.10),
+                    .withValues(alpha: isDark ? 0.06 : 0.10),
               ),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 90, sigmaY: 90),
@@ -420,13 +415,13 @@ class _LoginScreenState extends State<LoginScreen>
     double shadowOpacity = 0.0;
 
     if (hasError) {
-      borderColor = AppColors.error.withOpacity(0.8);
-      bgOpacityColor = AppColors.error.withOpacity(isDark ? 0.08 : 0.03);
+      borderColor = AppColors.error.withValues(alpha: 0.8);
+      bgOpacityColor = AppColors.error.withValues(alpha: isDark ? 0.08 : 0.03);
     } else if (hasFocus) {
       borderColor = isDark ? AppColors.primaryLight : const Color(0xFF13B9A5);
       bgOpacityColor =
           (isDark ? AppColors.primaryLight : const Color(0xFF13B9A5))
-              .withOpacity(isDark ? 0.15 : 0.08);
+              .withValues(alpha: isDark ? 0.15 : 0.08);
       scale = 1.015;
       shadowOpacity = 0.15;
     }
@@ -445,7 +440,7 @@ class _LoginScreenState extends State<LoginScreen>
           boxShadow: [
             BoxShadow(
               color: (isDark ? AppColors.primaryLight : const Color(0xFF13B9A5))
-                  .withOpacity(shadowOpacity),
+                  .withValues(alpha: shadowOpacity),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
@@ -471,7 +466,7 @@ class _LoginScreenState extends State<LoginScreen>
                 decoration: InputDecoration(
                   hintText: placeholder,
                   hintStyle: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.lightIcon.withOpacity(0.7),
+                    color: AppColors.lightIcon.withValues(alpha: 0.7),
                     fontWeight: FontWeight.w500,
                   ),
                   prefixIcon: Icon(
@@ -519,7 +514,7 @@ class _LoginScreenState extends State<LoginScreen>
               BoxShadow(
                 color: const Color(
                   0xFF13B9A5,
-                ).withOpacity(isDark ? 0.15 : 0.25),
+                ).withValues(alpha: isDark ? 0.15 : 0.25),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -561,8 +556,8 @@ class _LoginScreenState extends State<LoginScreen>
   Widget _buildDivider(bool isDark, Color textSecondaryColor) {
     final l10n = AppLocalizations.of(context);
     final lineColor = isDark
-        ? Colors.white.withOpacity(0.12)
-        : Colors.black.withOpacity(0.10);
+        ? Colors.white.withValues(alpha: 0.12)
+        : Colors.black.withValues(alpha: 0.10);
     return Row(
       children: [
         Expanded(child: Divider(color: lineColor, thickness: 1)),
@@ -608,7 +603,7 @@ class _LoginScreenState extends State<LoginScreen>
                 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Google_Favicon_2025.svg/120px-Google_Favicon_2025.svg.png',
                 width: 22,
                 height: 22,
-                errorBuilder: (_, __, ___) =>
+                errorBuilder: (_, _, _) =>
                     const Icon(Icons.language, size: 22, color: Colors.grey),
               ),
               const SizedBox(width: AppDimensions.spacing12),
