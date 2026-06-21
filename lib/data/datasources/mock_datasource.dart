@@ -268,6 +268,25 @@ class MockDatasource {
       lastSeenAt: _ago(hours: 1),
       createdAt: _ago(days: 90),
     ),
+    UserModel(
+      id: 'u10',
+      email: 'mert.kaya@dentlink.com',
+      fullName: 'Dr. Mert Kaya',
+      username: 'mert_kaya',
+      title: UserTitle.disHekimiGenelPratisyen,
+      bio: 'Genel Diş Hekimi. Oral diagnoz ve tedavi planlaması üzerine yoğunlaşıyorum.',
+      university: 'İstanbul Üniversitesi',
+      city: 'İstanbul',
+      experienceYears: 6,
+      workplace: 'Kaya Dental Klinik',
+      followersCount: 112,
+      followingCount: 45,
+      postsCount: 10,
+      isVerified: true,
+      onboardingCompleted: true,
+      lastSeenAt: _ago(minutes: 15),
+      createdAt: _ago(days: 120),
+    ),
   ];
 
   // ─── Yardımcı: ID'ye göre kullanıcı bul ──────────────────────────────────

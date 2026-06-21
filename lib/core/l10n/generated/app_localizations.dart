@@ -710,6 +710,24 @@ abstract class AppLocalizations {
   /// **'Öne Çıkan'**
   String get feedAlgorithmic;
 
+  /// Akış filtre - Tümü
+  ///
+  /// In tr, this message translates to:
+  /// **'Tümü'**
+  String get feedFilterAll;
+
+  /// Akış filtre - Vakalar
+  ///
+  /// In tr, this message translates to:
+  /// **'Vakalar 📸'**
+  String get feedFilterCases;
+
+  /// Akış filtre - Sorular
+  ///
+  /// In tr, this message translates to:
+  /// **'Sorular ❓'**
+  String get feedFilterQuestions;
+
   /// Beğeni sayısı
   ///
   /// In tr, this message translates to:

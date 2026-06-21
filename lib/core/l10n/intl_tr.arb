@@ -307,6 +307,13 @@
   "feedAlgorithmic": "Öne Çıkan",
   "@feedAlgorithmic": { "description": "Algoritmik akış tab etiketi" },
 
+  "feedFilterAll": "Tümü",
+  "@feedFilterAll": { "description": "Akış filtre - Tümü" },
+  "feedFilterCases": "Vakalar 📸",
+  "@feedFilterCases": { "description": "Akış filtre - Vakalar" },
+  "feedFilterQuestions": "Sorular ❓",
+  "@feedFilterQuestions": { "description": "Akış filtre - Sorular" },
+
   "likesCount": "{count} beğeni",
   "@likesCount": {
     "description": "Beğeni sayısı",

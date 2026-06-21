@@ -316,6 +316,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedAlgorithmic => 'Top Picks';
 
   @override
+  String get feedFilterAll => 'All';
+
+  @override
+  String get feedFilterCases => 'Cases 📸';
+
+  @override
+  String get feedFilterQuestions => 'Questions ❓';
+
+  @override
   String likesCount(int count) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);

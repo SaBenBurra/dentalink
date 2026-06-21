@@ -316,6 +316,15 @@ class AppLocalizationsTr extends AppLocalizations {
   String get feedAlgorithmic => 'Öne Çıkan';
 
   @override
+  String get feedFilterAll => 'Tümü';
+
+  @override
+  String get feedFilterCases => 'Vakalar 📸';
+
+  @override
+  String get feedFilterQuestions => 'Sorular ❓';
+
+  @override
   String likesCount(int count) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);

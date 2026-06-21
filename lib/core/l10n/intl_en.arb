@@ -111,6 +111,9 @@
 
   "feedChronological": "Latest",
   "feedAlgorithmic": "Top Picks",
+  "feedFilterAll": "All",
+  "feedFilterCases": "Cases 📸",
+  "feedFilterQuestions": "Questions ❓",
 
   "likesCount": "{count} likes",
   "@likesCount": {
