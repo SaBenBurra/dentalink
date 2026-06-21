@@ -34,8 +34,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _expFocusNode = FocusNode();
   final _bioFocusNode = FocusNode();
 
-
-
   UserTitle? _selectedTitle;
   int _selectedAvatarIndex = 0;
   bool _isCompleting = false;
