@@ -19,8 +19,8 @@ Tüm ekranlar placeholder/mock verilerle görsel olarak tamamlanır. Hiçbir bac
 
 - [/] **Auth ekranları:** Login (şifresiz/doğrulama kodlu tamamlandı), Register (çok adımlı tamamlandı), Unvan Seçimi (kart gridli tamamlandı), Onboarding (beklemede)
 - [x] **Feed ekranı:** Kronolojik/algoritmik tab'lar, vaka kartları, soru kartları (mock)
-- [ ] **Vaka detay ekranı:** Görsel galerisi, yorum bölümü, beğeni/kaydetme butonları
-- [ ] **Soru detay ekranı:** Cevaplar, "En İyi Cevap" rozeti
+- [x] **Vaka detay ekranı:** Görsel galerisi, yorum bölümü, beğeni/kaydetme butonları
+- [x] **Soru detay ekranı:** Cevaplar, "En İyi Cevap" rozeti
 - [ ] **Post oluşturma ekranları:** Vaka oluştur, soru oluştur (form arayüzleri)
 - [ ] **Profil ekranı:** Profil başlığı, istatistikler, sekmeli post listesi, rozet vitrin
 - [ ] **Profil düzenleme ekranı**

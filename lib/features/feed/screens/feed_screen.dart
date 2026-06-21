@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
@@ -236,10 +237,10 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
                                       .read(feedProvider.notifier)
                                       .toggleBookmark(post.id),
                                   onCommentTap: () {
-                                    // Navigate to comments / details
+                                    context.push('/feed/case/${post.id}');
                                   },
                                   onTap: () {
-                                    // Navigate to details
+                                    context.push('/feed/case/${post.id}');
                                   },
                                 ),
                               );
@@ -255,10 +256,10 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
                                       .read(feedProvider.notifier)
                                       .toggleBookmark(post.id),
                                   onCommentTap: () {
-                                    // Navigate to comments / details
+                                    context.push('/feed/question/${post.id}');
                                   },
                                   onTap: () {
-                                    // Navigate to details
+                                    context.push('/feed/question/${post.id}');
                                   },
                                 ),
                               );

@@ -7,12 +7,16 @@ import '../../features/messaging/screens/conversations_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/search/screens/search_screen.dart';
 import '../../features/shell/main_shell.dart';
+import '../../features/post/screens/case_detail_screen.dart';
+import '../../features/post/screens/question_detail_screen.dart';
 
 /// DentLink uygulama router'ı.
 ///
 /// Navigasyon yapısı:
 ///   /login            → LoginScreen
 ///   /register         → RegisterScreen
+///   /feed/case/:id    → CaseDetailScreen
+///   /feed/question/:id → QuestionDetailScreen
 ///   /                 → redirect → /login
 ///   ShellRoute        → MainShell (bottom nav)
 ///     /feed           → FeedScreen
@@ -35,6 +39,24 @@ final GoRouter appRouter = GoRouter(
       path: '/register',
       name: 'register',
       builder: (context, state) => const RegisterScreen(),
+    ),
+
+    // ── Gönderi Detayları (Root level - Bottom Nav gizlenir) ─
+    GoRoute(
+      path: '/feed/case/:id',
+      name: 'caseDetail',
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        return CaseDetailScreen(postId: id);
+      },
+    ),
+    GoRoute(
+      path: '/feed/question/:id',
+      name: 'questionDetail',
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        return QuestionDetailScreen(postId: id);
+      },
     ),
 
     // ── Ana Kabuk (Bottom Nav Shell) ───────────────────────

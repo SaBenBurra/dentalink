@@ -6,13 +6,39 @@ import 'feed_provider.dart';
 // Tek Post Detay Provider
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// Belirli bir postun detayını getirir.
-/// postRepositoryProvider'ı paylaşır — ayrı bir repository provider'a gerek yok.
-final postDetailProvider = AutoDisposeFutureProvider.family<PostModel, String>(
-  (ref, postId) async {
-    return ref.read(postRepositoryProvider).getPostById(postId);
-  },
-);
+class PostDetailNotifier extends AutoDisposeFamilyAsyncNotifier<PostModel, String> {
+  @override
+  Future<PostModel> build(String arg) async {
+    return ref.read(postRepositoryProvider).getPostById(arg);
+  }
+
+  Future<void> toggleLike() async {
+    final post = state.valueOrNull;
+    if (post == null) return;
+    final repo = ref.read(postRepositoryProvider);
+    final updated = post.isLiked
+        ? await repo.unlikePost(arg)
+        : await repo.likePost(arg);
+    state = AsyncData(updated);
+    ref.invalidate(feedProvider);
+  }
+
+  Future<void> toggleBookmark() async {
+    final post = state.valueOrNull;
+    if (post == null) return;
+    final repo = ref.read(postRepositoryProvider);
+    final updated = post.isBookmarked
+        ? await repo.unbookmarkPost(arg)
+        : await repo.bookmarkPost(arg);
+    state = AsyncData(updated);
+    ref.invalidate(feedProvider);
+  }
+}
+
+final postDetailProvider = AsyncNotifierProvider.autoDispose
+    .family<PostDetailNotifier, PostModel, String>(() {
+  return PostDetailNotifier();
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Kullanıcı Postları Provider
