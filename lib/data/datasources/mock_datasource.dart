@@ -24,25 +24,71 @@ class MockDatasource {
   // ─── Yardımcı zaman üreticileri ──────────────────────────────────────────
 
   static DateTime _ago({int days = 0, int hours = 0, int minutes = 0}) {
-    return DateTime.now()
-        .subtract(Duration(days: days, hours: hours, minutes: minutes));
+    return DateTime.now().subtract(
+      Duration(days: days, hours: hours, minutes: minutes),
+    );
   }
 
   // ─── Etiketler ───────────────────────────────────────────────────────────
 
   static final List<TagModel> tags = [
-    const TagModel(id: 't1', name: 'Kanal Tedavisi', slug: 'kanal-tedavisi', usageCount: 48),
-    const TagModel(id: 't2', name: 'Kompozit', slug: 'kompozit', usageCount: 37),
+    const TagModel(
+      id: 't1',
+      name: 'Kanal Tedavisi',
+      slug: 'kanal-tedavisi',
+      usageCount: 48,
+    ),
+    const TagModel(
+      id: 't2',
+      name: 'Kompozit',
+      slug: 'kompozit',
+      usageCount: 37,
+    ),
     const TagModel(id: 't3', name: 'Implant', slug: 'implant', usageCount: 65),
-    const TagModel(id: 't4', name: 'Zirkonyum', slug: 'zirkonyum', usageCount: 29),
+    const TagModel(
+      id: 't4',
+      name: 'Zirkonyum',
+      slug: 'zirkonyum',
+      usageCount: 29,
+    ),
     const TagModel(id: 't5', name: 'Veneer', slug: 'veneer', usageCount: 22),
-    const TagModel(id: 't6', name: 'Ortodontik Tedavi', slug: 'ortodontik-tedavi', usageCount: 41),
-    const TagModel(id: 't7', name: 'Periodontal Tedavi', slug: 'periodontal-tedavi', usageCount: 19),
-    const TagModel(id: 't8', name: 'Gömülü Diş', slug: 'gomulu-dis', usageCount: 33),
-    const TagModel(id: 't9', name: 'Süt Dişi', slug: 'sut-disi', usageCount: 15),
-    const TagModel(id: 't10', name: 'Diş Beyazlatma', slug: 'dis-beyazlatma', usageCount: 28),
+    const TagModel(
+      id: 't6',
+      name: 'Ortodontik Tedavi',
+      slug: 'ortodontik-tedavi',
+      usageCount: 41,
+    ),
+    const TagModel(
+      id: 't7',
+      name: 'Periodontal Tedavi',
+      slug: 'periodontal-tedavi',
+      usageCount: 19,
+    ),
+    const TagModel(
+      id: 't8',
+      name: 'Gömülü Diş',
+      slug: 'gomulu-dis',
+      usageCount: 33,
+    ),
+    const TagModel(
+      id: 't9',
+      name: 'Süt Dişi',
+      slug: 'sut-disi',
+      usageCount: 15,
+    ),
+    const TagModel(
+      id: 't10',
+      name: 'Diş Beyazlatma',
+      slug: 'dis-beyazlatma',
+      usageCount: 28,
+    ),
     const TagModel(id: 't11', name: 'Apse', slug: 'apse', usageCount: 11),
-    const TagModel(id: 't12', name: 'Porselen', slug: 'porselen', usageCount: 24),
+    const TagModel(
+      id: 't12',
+      name: 'Porselen',
+      slug: 'porselen',
+      usageCount: 24,
+    ),
   ];
 
   // ─── Kullanıcılar ─────────────────────────────────────────────────────────
@@ -54,7 +100,8 @@ class MockDatasource {
       fullName: 'Dr. Ahmet Yılmaz',
       username: 'ahmet_yilmaz',
       title: UserTitle.endodontist,
-      bio: 'Endodonti uzmanı. Karmaşık kanal tedavileri ve apikal cerrahide 8 yıllık deneyim.',
+      bio:
+          'Endodonti uzmanı. Karmaşık kanal tedavileri ve apikal cerrahide 8 yıllık deneyim.',
       university: 'Hacettepe Üniversitesi',
       city: 'İstanbul',
       experienceYears: 8,
@@ -73,7 +120,8 @@ class MockDatasource {
       fullName: 'Dr. Zeynep Kaya',
       username: 'zeynep_kaya',
       title: UserTitle.ortodontist,
-      bio: 'Ortodonti uzmanı. İnvisalign ve lingual ortodonti konularında deneyimliyim.',
+      bio:
+          'Ortodonti uzmanı. İnvisalign ve lingual ortodonti konularında deneyimliyim.',
       university: 'Gazi Üniversitesi',
       city: 'Ankara',
       experienceYears: 5,
@@ -91,7 +139,8 @@ class MockDatasource {
       fullName: 'Dr. Mehmet Demir',
       username: 'mehmet_demir',
       title: UserTitle.protezUzmani,
-      bio: 'Protetik diş tedavisi uzmanı. Tam protez ve implant üstü protezlerde 12 yıllık tecrübe.',
+      bio:
+          'Protetik diş tedavisi uzmanı. Tam protez ve implant üstü protezlerde 12 yıllık tecrübe.',
       university: 'Ege Üniversitesi',
       city: 'İzmir',
       experienceYears: 12,
@@ -110,7 +159,8 @@ class MockDatasource {
       fullName: 'Dr. Ayşe Çelik',
       username: 'ayse_celik',
       title: UserTitle.pedodontist,
-      bio: 'Çocuk diş hekimliği uzmanı. Anksiyeteli çocuklarda davranış yönetimi üzerine çalışıyorum.',
+      bio:
+          'Çocuk diş hekimliği uzmanı. Anksiyeteli çocuklarda davranış yönetimi üzerine çalışıyorum.',
       university: 'Uludağ Üniversitesi',
       city: 'Bursa',
       experienceYears: 3,
@@ -128,7 +178,8 @@ class MockDatasource {
       fullName: 'Dr. Can Arslan',
       username: 'can_arslan',
       title: UserTitle.periodontolog,
-      bio: 'Periodontoloji uzmanı. Lazer periodontal tedavi ve doku rejenerasyonunda deneyimliyim.',
+      bio:
+          'Periodontoloji uzmanı. Lazer periodontal tedavi ve doku rejenerasyonunda deneyimliyim.',
       university: 'Marmara Üniversitesi',
       city: 'İstanbul',
       experienceYears: 7,
@@ -146,7 +197,8 @@ class MockDatasource {
       fullName: 'Dr. Elif Şahin',
       username: 'elif_sahin',
       title: UserTitle.restoratifDisTedavisi,
-      bio: 'Restoratif diş tedavisi uzmanı. Estetik diş hekimliği ve minimal invaziv yaklaşımlar.',
+      bio:
+          'Restoratif diş tedavisi uzmanı. Estetik diş hekimliği ve minimal invaziv yaklaşımlar.',
       university: 'Ankara Üniversitesi',
       city: 'Ankara',
       experienceYears: 4,
@@ -164,7 +216,8 @@ class MockDatasource {
       fullName: 'Dr. Berk Yücel',
       username: 'berk_yucel',
       title: UserTitle.disHekimiGenelPratisyen,
-      bio: 'Genel pratisyen diş hekimi. Takım çalışmasına ve sürekli öğrenmeye inanıyorum.',
+      bio:
+          'Genel pratisyen diş hekimi. Takım çalışmasına ve sürekli öğrenmeye inanıyorum.',
       university: 'Ege Üniversitesi',
       city: 'İzmir',
       experienceYears: 2,
@@ -182,7 +235,8 @@ class MockDatasource {
       fullName: 'Dr. Selin Doğan',
       username: 'selin_dogan',
       title: UserTitle.agizDisCeneCerrahisi,
-      bio: 'Ağız, diş ve çene cerrahı. Ortognatik cerrahi ve dental implant cerrahisi alanında uzmanım.',
+      bio:
+          'Ağız, diş ve çene cerrahı. Ortognatik cerrahi ve dental implant cerrahisi alanında uzmanım.',
       university: 'Akdeniz Üniversitesi',
       city: 'Antalya',
       experienceYears: 9,
@@ -201,7 +255,8 @@ class MockDatasource {
       fullName: 'Furkan Çiftçi',
       username: 'furkan_ciftci',
       title: UserTitle.ogrenci,
-      bio: '5. sınıf diş hekimliği öğrencisi. Endodonti alanında uzmanlaşmak istiyorum.',
+      bio:
+          '5. sınıf diş hekimliği öğrencisi. Endodonti alanında uzmanlaşmak istiyorum.',
       university: 'İstanbul Üniversitesi',
       city: 'İstanbul',
       experienceYears: null,
@@ -213,36 +268,16 @@ class MockDatasource {
       lastSeenAt: _ago(hours: 1),
       createdAt: _ago(days: 90),
     ),
-    UserModel(
-      id: 'u10',
-      email: 'naz.aydin@dentlink.com',
-      fullName: 'Dr. Naz Aydın',
-      username: 'naz_aydin',
-      title: UserTitle.oralDiagnoz,
-      bio: 'Oral diagnoz uzmanı. Ağız kanseri erken tanısı ve sistemik hastalıkların ağız bulgularıyla ilgileniyorum.',
-      university: 'Ege Üniversitesi',
-      city: 'İzmir',
-      experienceYears: 6,
-      workplace: 'Ege Diş Polikliniği',
-      followersCount: 167,
-      followingCount: 73,
-      postsCount: 11,
-      onboardingCompleted: true,
-      lastSeenAt: _ago(hours: 4),
-      createdAt: _ago(days: 340),
-    ),
   ];
 
   // ─── Yardımcı: ID'ye göre kullanıcı bul ──────────────────────────────────
 
-  static UserModel userById(String id) =>
-      users.firstWhere((u) => u.id == id);
+  static UserModel userById(String id) => users.firstWhere((u) => u.id == id);
 
   // ─── Gönderiler ───────────────────────────────────────────────────────────
 
   static final List<PostModel> posts = [
     // ── VAKALAR (10) ─────────────────────────────────────────────────────
-
     PostModel(
       id: 'p1',
       userId: 'u1',
@@ -301,7 +336,8 @@ class MockDatasource {
       id: 'p3',
       userId: 'u2',
       type: PostType.casePost,
-      title: 'Yetişkinde İskelet Sınıf III — Camouflage ile Ortodontik Yaklaşım',
+      title:
+          'Yetişkinde İskelet Sınıf III — Camouflage ile Ortodontik Yaklaşım',
       content:
           '24 yaşında bayan hasta, belirgin alt çene öne uzanması şikayetiyle başvurdu. '
           'Sefalometrik analizde ANB: -3°, Wits appraisal: -5 mm. '
@@ -505,12 +541,12 @@ class MockDatasource {
     ),
 
     // ── SORULAR (10) ─────────────────────────────────────────────────────
-
     PostModel(
       id: 'p11',
       userId: 'u9',
       type: PostType.question,
-      title: 'ProTaper Gold vs. WaveOne Gold — Retreatment\'da hangisini tercih edersiniz?',
+      title:
+          'ProTaper Gold vs. WaveOne Gold — Retreatment\'da hangisini tercih edersiniz?',
       content:
           'Klinik rotasyonumda bir retreatment vakasıyla karşılaştım. '
           'Asistanım ProTaper Gold retreatment eğelerini önerdi ama süpervizörüm WaveOne Gold\'u tercih etti. '
@@ -559,7 +595,8 @@ class MockDatasource {
       id: 'p13',
       userId: 'u4',
       type: PostType.question,
-      title: 'Çocuklarda dental fobia — hangi sedasyon protokolünü önerirsiniz?',
+      title:
+          'Çocuklarda dental fobia — hangi sedasyon protokolünü önerirsiniz?',
       content:
           '4 yaşında şiddetli dental fobisi olan bir hastam var. '
           'N2O yeterli olmadı. Midazolam oral sedasyon protokolünü uygulayan var mı? '
@@ -583,7 +620,8 @@ class MockDatasource {
       id: 'p14',
       userId: 'u6',
       type: PostType.question,
-      title: 'Kompozit veneer vs. porselen veneer: estetik kalıcılık açısından fark var mı?',
+      title:
+          'Kompozit veneer vs. porselen veneer: estetik kalıcılık açısından fark var mı?',
       content:
           'Hasta florizis nedeniyle 8 ön dişte veneer istiyor. '
           'Bütçe kısıtlı, kompozit veneer önerdim. '
@@ -754,115 +792,169 @@ class MockDatasource {
 
   // ─── Yardımcı: ID'ye göre post bul ───────────────────────────────────────
 
-  static PostModel postById(String id) =>
-      posts.firstWhere((p) => p.id == id);
+  static PostModel postById(String id) => posts.firstWhere((p) => p.id == id);
 
   // ─── Yorumlar (post ID'ye göre map) ──────────────────────────────────────
 
   static final Map<String, List<CommentModel>> comments = {
     'p1': [
       CommentModel(
-        id: 'c1', postId: 'p1', userId: 'u5', content:
-        'Mükemmel vaka sunumu. MB2 kanalının CBCT ile tespiti kritik bir adım. '
-        'Sizin gibi vakalar ilerleyen dönemde retrospektif çalışmaya dönüştürülebilir.',
-        likeCount: 12, isLiked: false,
-        createdAt: _ago(days: 2, hours: 3), updatedAt: _ago(days: 2, hours: 3),
+        id: 'c1',
+        postId: 'p1',
+        userId: 'u5',
+        content:
+            'Mükemmel vaka sunumu. MB2 kanalının CBCT ile tespiti kritik bir adım. '
+            'Sizin gibi vakalar ilerleyen dönemde retrospektif çalışmaya dönüştürülebilir.',
+        likeCount: 12,
+        isLiked: false,
+        createdAt: _ago(days: 2, hours: 3),
+        updatedAt: _ago(days: 2, hours: 3),
         author: userById('u5'),
       ),
       CommentModel(
-        id: 'c2', postId: 'p1', userId: 'u9', content:
-        'Kalsifiye MB2 kanalında ultrasonik uç kullanımı konusunda soru sormak istiyorum: '
-        'Hangi güç seviyesinde çalıştınız? Perforasyon riski ne kadardı?',
-        likeCount: 5, isLiked: false,
-        createdAt: _ago(days: 2, hours: 2), updatedAt: _ago(days: 2, hours: 2),
+        id: 'c2',
+        postId: 'p1',
+        userId: 'u9',
+        content:
+            'Kalsifiye MB2 kanalında ultrasonik uç kullanımı konusunda soru sormak istiyorum: '
+            'Hangi güç seviyesinde çalıştınız? Perforasyon riski ne kadardı?',
+        likeCount: 5,
+        isLiked: false,
+        createdAt: _ago(days: 2, hours: 2),
+        updatedAt: _ago(days: 2, hours: 2),
         author: userById('u9'),
       ),
       CommentModel(
-        id: 'c3', postId: 'p1', userId: 'u1', content:
-        '@Furkan güç seviyesini minimal tuttum (3-4 watt). Sürekli irrigasyon altında çalışmak şart. '
-        'Dentin duvarını takip etmek için büyütme sistemi (mikroskop) olmazsa olmaz.',
-        likeCount: 18, isLiked: true,
-        createdAt: _ago(days: 2, hours: 1), updatedAt: _ago(days: 2, hours: 1),
+        id: 'c3',
+        postId: 'p1',
+        userId: 'u1',
+        content:
+            '@Furkan güç seviyesini minimal tuttum (3-4 watt). Sürekli irrigasyon altında çalışmak şart. '
+            'Dentin duvarını takip etmek için büyütme sistemi (mikroskop) olmazsa olmaz.',
+        likeCount: 18,
+        isLiked: true,
+        createdAt: _ago(days: 2, hours: 1),
+        updatedAt: _ago(days: 2, hours: 1),
         author: userById('u1'),
       ),
     ],
     'p2': [
       CommentModel(
-        id: 'c4', postId: 'p2', userId: 'u8', content:
-        'Posterior açılı implant seçimi için kullandığınız simülasyon yazılımı hangisiydi? '
-        'Nobel Clinician mı yoksa coDiagnostiX mi?',
-        likeCount: 7, isLiked: false,
-        createdAt: _ago(days: 4, hours: 5), updatedAt: _ago(days: 4, hours: 5),
+        id: 'c4',
+        postId: 'p2',
+        userId: 'u8',
+        content:
+            'Posterior açılı implant seçimi için kullandığınız simülasyon yazılımı hangisiydi? '
+            'Nobel Clinician mı yoksa coDiagnostiX mi?',
+        likeCount: 7,
+        isLiked: false,
+        createdAt: _ago(days: 4, hours: 5),
+        updatedAt: _ago(days: 4, hours: 5),
         author: userById('u8'),
       ),
       CommentModel(
-        id: 'c5', postId: 'p2', userId: 'u3', content:
-        'Nobel Clinician kullandık. Cerrahi kılavuz üretimi için planlamayı fabrikaya gönderdik. '
-        'Flapless cerrahi yapabildik, iyileşme süreci çok daha rahat oldu hasta için.',
-        likeCount: 21, isLiked: false,
-        createdAt: _ago(days: 4, hours: 4), updatedAt: _ago(days: 4, hours: 4),
+        id: 'c5',
+        postId: 'p2',
+        userId: 'u3',
+        content:
+            'Nobel Clinician kullandık. Cerrahi kılavuz üretimi için planlamayı fabrikaya gönderdik. '
+            'Flapless cerrahi yapabildik, iyileşme süreci çok daha rahat oldu hasta için.',
+        likeCount: 21,
+        isLiked: false,
+        createdAt: _ago(days: 4, hours: 4),
+        updatedAt: _ago(days: 4, hours: 4),
         author: userById('u3'),
       ),
     ],
     'p11': [
       CommentModel(
-        id: 'c6', postId: 'p11', userId: 'u1',
+        id: 'c6',
+        postId: 'p11',
+        userId: 'u1',
         content:
-        'Kalsifiye kanallarda PTG Retreatment serisini tercih ediyorum. '
-        'Daha agresif kesme kapasitesi var ama bu avantaj aynı zamanda risk de. '
-        'Tecrübesiz ellerde dentin duvarını zedeleme riski WaveOne Gold\'dan daha yüksek.',
-        isBestAnswer: true, likeCount: 34, isLiked: true,
-        createdAt: _ago(days: 1, hours: 8), updatedAt: _ago(days: 1, hours: 8),
+            'Kalsifiye kanallarda PTG Retreatment serisini tercih ediyorum. '
+            'Daha agresif kesme kapasitesi var ama bu avantaj aynı zamanda risk de. '
+            'Tecrübesiz ellerde dentin duvarını zedeleme riski WaveOne Gold\'dan daha yüksek.',
+        isBestAnswer: true,
+        likeCount: 34,
+        isLiked: true,
+        createdAt: _ago(days: 1, hours: 8),
+        updatedAt: _ago(days: 1, hours: 8),
         author: userById('u1'),
       ),
       CommentModel(
-        id: 'c7', postId: 'p11', userId: 'u5', content:
-        'WaveOne Gold reciprokal hareket sayesinde kanal duvarında daha az stres oluşturuyor. '
-        'Kavisli kanallarda tercihim kesinlikle WaveOne Gold. '
-        'Bates et al. 2023 RCT\'si her ikisini de iyi buluyor ama WaveOne Gold daha az döngüsel yorulma.',
-        likeCount: 19, isLiked: false,
-        createdAt: _ago(days: 1, hours: 6), updatedAt: _ago(days: 1, hours: 6),
+        id: 'c7',
+        postId: 'p11',
+        userId: 'u5',
+        content:
+            'WaveOne Gold reciprokal hareket sayesinde kanal duvarında daha az stres oluşturuyor. '
+            'Kavisli kanallarda tercihim kesinlikle WaveOne Gold. '
+            'Bates et al. 2023 RCT\'si her ikisini de iyi buluyor ama WaveOne Gold daha az döngüsel yorulma.',
+        likeCount: 19,
+        isLiked: false,
+        createdAt: _ago(days: 1, hours: 6),
+        updatedAt: _ago(days: 1, hours: 6),
         author: userById('u5'),
       ),
     ],
     'p13': [
       CommentModel(
-        id: 'c8', postId: 'p13', userId: 'u4',
+        id: 'c8',
+        postId: 'p13',
+        userId: 'u4',
         content:
-        '4 yaşında midazolam oral sedasyon için 0.3-0.5 mg/kg dozunu kullanıyorum, '
-        'maks 10 mg. Uygulama 20-30 dk önce yapılmalı. '
-        'Pulsoksimetre ve kapnografi ile izleme şart. Ebeveyne onam formu mutlaka imzalatılmalı. '
-        'Bakım veren de süreci anlamalı.',
-        isBestAnswer: true, likeCount: 28, isLiked: false,
-        createdAt: _ago(days: 5, hours: 3), updatedAt: _ago(days: 5, hours: 3),
+            '4 yaşında midazolam oral sedasyon için 0.3-0.5 mg/kg dozunu kullanıyorum, '
+            'maks 10 mg. Uygulama 20-30 dk önce yapılmalı. '
+            'Pulsoksimetre ve kapnografi ile izleme şart. Ebeveyne onam formu mutlaka imzalatılmalı. '
+            'Bakım veren de süreci anlamalı.',
+        isBestAnswer: true,
+        likeCount: 28,
+        isLiked: false,
+        createdAt: _ago(days: 5, hours: 3),
+        updatedAt: _ago(days: 5, hours: 3),
         author: userById('u4'),
       ),
       CommentModel(
-        id: 'c9', postId: 'p13', userId: 'u8', content:
-        'Anestezi uzmanı desteğiyle propofol sedasyon da değerlendirebilirsiniz. '
-        'Ama pedodonti kliniklerinde genellikle N2O + midazolam kombine kullanımı yeterli oluyor.',
-        likeCount: 14, isLiked: false,
-        createdAt: _ago(days: 5, hours: 1), updatedAt: _ago(days: 5, hours: 1),
+        id: 'c9',
+        postId: 'p13',
+        userId: 'u8',
+        content:
+            'Anestezi uzmanı desteğiyle propofol sedasyon da değerlendirebilirsiniz. '
+            'Ama pedodonti kliniklerinde genellikle N2O + midazolam kombine kullanımı yeterli oluyor.',
+        likeCount: 14,
+        isLiked: false,
+        createdAt: _ago(days: 5, hours: 1),
+        updatedAt: _ago(days: 5, hours: 1),
         author: userById('u8'),
       ),
     ],
     'p16': [
       CommentModel(
-        id: 'c10', postId: 'p16', userId: 'u1',
+        id: 'c10',
+        postId: 'p16',
+        userId: 'u1',
         content:
-        'Akut pulpitiste Biers block (intraosseöz anestezi) çok etkili. '
-        'X-tip sistemiyle inferior bloğu geçip kemik içine anestezi yapıyorum. '
-        'Etkisi çok hızlı ve tam. Hasta rahatlıyor.',
-        isBestAnswer: true, likeCount: 41, isLiked: true,
-        createdAt: _ago(days: 10, hours: 4), updatedAt: _ago(days: 10, hours: 4),
+            'Akut pulpitiste Biers block (intraosseöz anestezi) çok etkili. '
+            'X-tip sistemiyle inferior bloğu geçip kemik içine anestezi yapıyorum. '
+            'Etkisi çok hızlı ve tam. Hasta rahatlıyor.',
+        isBestAnswer: true,
+        likeCount: 41,
+        isLiked: true,
+        createdAt: _ago(days: 10, hours: 4),
+        updatedAt: _ago(days: 10, hours: 4),
         author: userById('u1'),
       ),
       CommentModel(
-        id: 'c11', postId: 'p16', userId: 'u5', content:
-        'İntraligamentöz enjeksiyon da hızlı ve etkili. '
-        'Ultrashort igneyle yavaş enjeksiyon yapılmalı. Sistemik etki minimumdur.',
-        likeCount: 22, isLiked: false,
-        createdAt: _ago(days: 10, hours: 2), updatedAt: _ago(days: 10, hours: 2),
+        id: 'c11',
+        postId: 'p16',
+        userId: 'u5',
+        content:
+            'İntraligamentöz enjeksiyon da hızlı ve etkili. '
+            'Ultrashort igneyle yavaş enjeksiyon yapılmalı. Sistemik etki minimumdur.',
+        likeCount: 22,
+        isLiked: false,
+        createdAt: _ago(days: 10, hours: 2),
+        updatedAt: _ago(days: 10, hours: 2),
         author: userById('u5'),
       ),
     ],
@@ -897,53 +989,85 @@ class MockDatasource {
   static final Map<String, List<MessageModel>> messages = {
     'conv1': [
       MessageModel(
-        id: 'm1', senderId: 'u3', receiverId: 'u1',
-        content: 'Merhaba Dr. Ahmet, All-on-4 vakamda zirkonyum üst yapı için hangi labı kullanıyorsunuz?',
-        isRead: true, createdAt: _ago(hours: 2),
+        id: 'm1',
+        senderId: 'u3',
+        receiverId: 'u1',
+        content:
+            'Merhaba Dr. Ahmet, All-on-4 vakamda zirkonyum üst yapı için hangi labı kullanıyorsunuz?',
+        isRead: true,
+        createdAt: _ago(hours: 2),
       ),
       MessageModel(
-        id: 'm2', senderId: 'u1', receiverId: 'u3',
-        content: 'Merhaba, İstanbul\'da Denta-Lab ile çalışıyorum. Çok memnunum, kalite tutarlı.',
-        isRead: true, createdAt: _ago(hours: 1, minutes: 45),
+        id: 'm2',
+        senderId: 'u1',
+        receiverId: 'u3',
+        content:
+            'Merhaba, İstanbul\'da Denta-Lab ile çalışıyorum. Çok memnunum, kalite tutarlı.',
+        isRead: true,
+        createdAt: _ago(hours: 1, minutes: 45),
       ),
       MessageModel(
-        id: 'm3', senderId: 'u3', receiverId: 'u1',
+        id: 'm3',
+        senderId: 'u3',
+        receiverId: 'u1',
         content: 'Zirkonyum üst yapı için hangi labı kullanıyorsunuz?',
-        isRead: false, createdAt: _ago(minutes: 30),
+        isRead: false,
+        createdAt: _ago(minutes: 30),
       ),
       MessageModel(
-        id: 'm4', senderId: 'u3', receiverId: 'u1',
+        id: 'm4',
+        senderId: 'u3',
+        receiverId: 'u1',
         content: 'Fiyat teklifi alabilir miyim acaba?',
-        isRead: false, createdAt: _ago(minutes: 28),
+        isRead: false,
+        createdAt: _ago(minutes: 28),
       ),
     ],
     'conv2': [
       MessageModel(
-        id: 'm5', senderId: 'u1', receiverId: 'u5',
-        content: 'Can bey, Perşembe öğleden sonra birlikte vaka değerlendirmek ister misiniz?',
-        isRead: true, createdAt: _ago(hours: 4),
+        id: 'm5',
+        senderId: 'u1',
+        receiverId: 'u5',
+        content:
+            'Can bey, Perşembe öğleden sonra birlikte vaka değerlendirmek ister misiniz?',
+        isRead: true,
+        createdAt: _ago(hours: 4),
       ),
       MessageModel(
-        id: 'm6', senderId: 'u5', receiverId: 'u1',
+        id: 'm6',
+        senderId: 'u5',
+        receiverId: 'u1',
         content: 'Tabii ki, Perşembe günü uygun olur.',
-        isRead: true, createdAt: _ago(hours: 3),
+        isRead: true,
+        createdAt: _ago(hours: 3),
       ),
     ],
     'conv3': [
       MessageModel(
-        id: 'm7', senderId: 'u9', receiverId: 'u1',
-        content: 'Dr. Ahmet hocam, kalsifiye kanal vakası için danışabilir miyim?',
-        isRead: true, createdAt: _ago(days: 1, hours: 5),
+        id: 'm7',
+        senderId: 'u9',
+        receiverId: 'u1',
+        content:
+            'Dr. Ahmet hocam, kalsifiye kanal vakası için danışabilir miyim?',
+        isRead: true,
+        createdAt: _ago(days: 1, hours: 5),
       ),
       MessageModel(
-        id: 'm8', senderId: 'u1', receiverId: 'u9',
+        id: 'm8',
+        senderId: 'u1',
+        receiverId: 'u9',
         content: 'Tabii Furkan, dinliyorum. Ne tür bir sorunla karşılaştın?',
-        isRead: true, createdAt: _ago(days: 1, hours: 4),
+        isRead: true,
+        createdAt: _ago(days: 1, hours: 4),
       ),
       MessageModel(
-        id: 'm9', senderId: 'u9', receiverId: 'u1',
-        content: 'Anlattınız, çok yardımcı oldunuz. Teşekkürler, çok faydalı oldu!',
-        isRead: true, createdAt: _ago(days: 1),
+        id: 'm9',
+        senderId: 'u9',
+        receiverId: 'u1',
+        content:
+            'Anlattınız, çok yardımcı oldunuz. Teşekkürler, çok faydalı oldu!',
+        isRead: true,
+        createdAt: _ago(days: 1),
       ),
     ],
   };
@@ -952,54 +1076,80 @@ class MockDatasource {
 
   static final List<NotificationModel> notifications = [
     NotificationModel(
-      id: 'n1', type: NotificationType.like,
-      actor: userById('u3'), postId: 'p1',
-      isRead: false, createdAt: _ago(minutes: 15),
-    ),
-    NotificationModel(
-      id: 'n2', type: NotificationType.comment,
-      actor: userById('u5'), postId: 'p1',
-      isRead: false, createdAt: _ago(hours: 1),
-    ),
-    NotificationModel(
-      id: 'n3', type: NotificationType.follow,
-      actor: userById('u9'),
-      isRead: false, createdAt: _ago(hours: 3),
-    ),
-    NotificationModel(
-      id: 'n4', type: NotificationType.like,
-      actor: userById('u2'), postId: 'p10',
-      isRead: true, createdAt: _ago(hours: 6),
-    ),
-    NotificationModel(
-      id: 'n5', type: NotificationType.comment,
-      actor: userById('u4'), postId: 'p10',
-      isRead: true, createdAt: _ago(hours: 8),
-    ),
-    NotificationModel(
-      id: 'n6', type: NotificationType.message,
+      id: 'n1',
+      type: NotificationType.like,
       actor: userById('u3'),
-      isRead: true, createdAt: _ago(hours: 12),
+      postId: 'p1',
+      isRead: false,
+      createdAt: _ago(minutes: 15),
     ),
     NotificationModel(
-      id: 'n7', type: NotificationType.bestAnswer,
-      actor: userById('u9'), commentId: 'c3',
-      isRead: true, createdAt: _ago(days: 1),
+      id: 'n2',
+      type: NotificationType.comment,
+      actor: userById('u5'),
+      postId: 'p1',
+      isRead: false,
+      createdAt: _ago(hours: 1),
     ),
     NotificationModel(
-      id: 'n8', type: NotificationType.follow,
+      id: 'n3',
+      type: NotificationType.follow,
+      actor: userById('u9'),
+      isRead: false,
+      createdAt: _ago(hours: 3),
+    ),
+    NotificationModel(
+      id: 'n4',
+      type: NotificationType.like,
+      actor: userById('u2'),
+      postId: 'p10',
+      isRead: true,
+      createdAt: _ago(hours: 6),
+    ),
+    NotificationModel(
+      id: 'n5',
+      type: NotificationType.comment,
+      actor: userById('u4'),
+      postId: 'p10',
+      isRead: true,
+      createdAt: _ago(hours: 8),
+    ),
+    NotificationModel(
+      id: 'n6',
+      type: NotificationType.message,
+      actor: userById('u3'),
+      isRead: true,
+      createdAt: _ago(hours: 12),
+    ),
+    NotificationModel(
+      id: 'n7',
+      type: NotificationType.bestAnswer,
+      actor: userById('u9'),
+      commentId: 'c3',
+      isRead: true,
+      createdAt: _ago(days: 1),
+    ),
+    NotificationModel(
+      id: 'n8',
+      type: NotificationType.follow,
       actor: userById('u8'),
-      isRead: true, createdAt: _ago(days: 2),
+      isRead: true,
+      createdAt: _ago(days: 2),
     ),
     NotificationModel(
-      id: 'n9', type: NotificationType.like,
-      actor: userById('u6'), postId: 'p1',
-      isRead: true, createdAt: _ago(days: 3),
+      id: 'n9',
+      type: NotificationType.like,
+      actor: userById('u6'),
+      postId: 'p1',
+      isRead: true,
+      createdAt: _ago(days: 3),
     ),
     NotificationModel(
-      id: 'n10', type: NotificationType.badge,
+      id: 'n10',
+      type: NotificationType.badge,
       actor: userById('u1'),
-      isRead: true, createdAt: _ago(days: 4),
+      isRead: true,
+      createdAt: _ago(days: 4),
     ),
   ];
 
@@ -1007,19 +1157,22 @@ class MockDatasource {
 
   static final List<BadgeModel> userBadges = [
     BadgeModel(
-      id: 'b1', name: 'Uzman Endodontist',
+      id: 'b1',
+      name: 'Uzman Endodontist',
       description: 'Endodonti branşında 10\'dan fazla vaka paylaştı.',
       iconName: 'verified',
       earnedAt: _ago(days: 30),
     ),
     BadgeModel(
-      id: 'b2', name: 'Topluluk Yıldızı',
+      id: 'b2',
+      name: 'Topluluk Yıldızı',
       description: 'Gönderileri toplam 500+ beğeni aldı.',
       iconName: 'star',
       earnedAt: _ago(days: 60),
     ),
     BadgeModel(
-      id: 'b3', name: 'Yardımsever',
+      id: 'b3',
+      name: 'Yardımsever',
       description: '5+ soruda "En İyi Cevap" seçildi.',
       iconName: 'emoji_events',
       earnedAt: _ago(days: 90),

@@ -2,6 +2,8 @@
 /// Faz 3'te Supabase'in PostgreSQL enum'larıyla eşleştirilir.
 library;
 
+import 'package:flutter/material.dart';
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Kullanıcı Unvanları
 // ─────────────────────────────────────────────────────────────────────────────
@@ -16,7 +18,6 @@ enum UserTitle {
   pedodontist,
   agizDisCeneCerrahisi,
   agizDisCeneRadyoloji,
-  oralDiagnoz,
   restoratifDisTedavisi;
 
   String get displayName {
@@ -39,10 +40,33 @@ enum UserTitle {
         return 'Ağız, Diş ve Çene Cerrahı';
       case UserTitle.agizDisCeneRadyoloji:
         return 'Ağız, Diş ve Çene Radyoloğu';
-      case UserTitle.oralDiagnoz:
-        return 'Oral Diagnoz Uzmanı';
       case UserTitle.restoratifDisTedavisi:
         return 'Restoratif Diş Tedavisi Uzmanı';
+    }
+  }
+
+  IconData get titleIcon {
+    switch (this) {
+      case UserTitle.ogrenci:
+        return Icons.school_outlined;
+      case UserTitle.disHekimiGenelPratisyen:
+        return Icons.medical_services_outlined;
+      case UserTitle.endodontist:
+        return Icons.biotech_outlined;
+      case UserTitle.ortodontist:
+        return Icons.align_horizontal_center_outlined;
+      case UserTitle.periodontolog:
+        return Icons.layers_outlined;
+      case UserTitle.protezUzmani:
+        return Icons.grid_view_outlined;
+      case UserTitle.pedodontist:
+        return Icons.child_care_outlined;
+      case UserTitle.agizDisCeneCerrahisi:
+        return Icons.healing_outlined;
+      case UserTitle.agizDisCeneRadyoloji:
+        return Icons.settings_system_daydream_outlined;
+      case UserTitle.restoratifDisTedavisi:
+        return Icons.auto_awesome_outlined;
     }
   }
 }
