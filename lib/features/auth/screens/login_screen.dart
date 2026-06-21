@@ -28,6 +28,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   bool _showContinueButton = false;
   bool _isLoading = false;
   bool _isSuccess = false;
+  bool _isRegisteredUser = false;
   String? _errorText;
 
   // Shake animation controller
@@ -116,32 +117,24 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     // Simulate database lookup
     Future.delayed(const Duration(milliseconds: 1000), () {
       if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-      });
 
       // Check if user is registered in MockDatasource
-      final isRegistered = MockDatasource.users.any(
+      _isRegisteredUser = MockDatasource.users.any(
             (u) => u.email.toLowerCase() == inputVal || u.phone == inputVal,
           ) ||
           inputVal.contains('test') ||
           inputVal.endsWith('@dentlink.com') ||
           inputVal == '5551234567';
 
-      if (isRegistered) {
-        // Switch to OTP step
-        setState(() {
-          _currentStep = LoginStep.otp;
-        });
-        _startResendTimer();
-        // Focus first OTP field after frame renders
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _otpFocusNodes[0].requestFocus();
-        });
-      } else {
-        // Not registered -> Redirect to RegisterScreen with pre-filled email/phone
-        context.push('/register');
-      }
+      setState(() {
+        _isLoading = false;
+        _currentStep = LoginStep.otp;
+      });
+      _startResendTimer();
+      // Focus first OTP field after frame renders
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _otpFocusNodes[0].requestFocus();
+      });
     });
   }
 
@@ -180,10 +173,14 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         _isSuccess = true;
       });
 
-      // Navigate to Feed Screen after showing success animation
+      // Navigate based on registration status
       Future.delayed(const Duration(milliseconds: 800), () {
         if (mounted) {
-          context.go('/feed');
+          if (_isRegisteredUser) {
+            context.go('/feed');
+          } else {
+            context.go('/register');
+          }
         }
       });
     });

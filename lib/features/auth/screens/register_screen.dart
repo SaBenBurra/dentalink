@@ -34,6 +34,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _expFocusNode = FocusNode();
   final _bioFocusNode = FocusNode();
 
+
+
   UserTitle? _selectedTitle;
   int _selectedAvatarIndex = 0;
   bool _isCompleting = false;
@@ -72,7 +74,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (_currentStep == 0) {
       // Validate Step 1
       setState(() {
-        _nameError = _nameController.text.trim().isEmpty ? 'Ad Soyad alanı zorunludur' : null;
+        _nameError = _nameController.text.trim().isEmpty
+            ? 'Ad Soyad alanı zorunludur'
+            : null;
       });
 
       if (_nameError != null) return;
@@ -130,9 +134,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           return const SizedBox.shrink();
         },
         transitionBuilder: (context, anim1, anim2, child) {
-          final scale = Tween<double>(begin: 0.8, end: 1.0).animate(
-            CurvedAnimation(parent: anim1, curve: Curves.elasticOut),
-          );
+          final scale = Tween<double>(
+            begin: 0.8,
+            end: 1.0,
+          ).animate(CurvedAnimation(parent: anim1, curve: Curves.elasticOut));
           return ScaleTransition(
             scale: scale,
             child: BackdropFilter(
@@ -142,7 +147,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ? const Color(0xFF162E2A)
                     : Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
+                  borderRadius: BorderRadius.circular(
+                    AppDimensions.radiusLarge,
+                  ),
                 ),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -298,16 +305,23 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 color: Colors.black.withValues(alpha: 0.5),
                 child: Center(
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.radiusMedium,
+                    ),
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 24,
+                        ),
                         decoration: BoxDecoration(
                           color: isDark
                               ? Colors.black.withValues(alpha: 0.6)
                               : Colors.white.withValues(alpha: 0.8),
-                          borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+                          borderRadius: BorderRadius.circular(
+                            AppDimensions.radiusMedium,
+                          ),
                           border: Border.all(
                             color: isDark ? Colors.white12 : Colors.black12,
                           ),
@@ -316,7 +330,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             const CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF13B9A5)),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Color(0xFF13B9A5),
+                              ),
                             ),
                             const SizedBox(height: AppDimensions.spacing16),
                             Text(
@@ -390,7 +406,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 height: 6,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
+                  color: isDark
+                      ? Colors.white10
+                      : Colors.black.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
@@ -421,7 +439,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               Text(
                 _getStepTitle(),
                 style: AppTextStyles.bodySmall.copyWith(
-                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.lightTextSecondary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -480,9 +500,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           const SizedBox(height: AppDimensions.spacing8),
           Text(
             'Lütfen adınızı girin ve uzmanlık alanınızı seçin.',
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: textSecondaryColor,
-            ),
+            style: AppTextStyles.bodyMedium.copyWith(color: textSecondaryColor),
           ),
           const SizedBox(height: AppDimensions.spacing24),
 
@@ -523,7 +541,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               crossAxisCount: 2,
               mainAxisSpacing: 12,
               crossAxisSpacing: 12,
-              childAspectRatio: 2.2,
+              childAspectRatio: 3,
             ),
             itemCount: UserTitle.values.length,
             itemBuilder: (context, index) {
@@ -539,14 +557,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? (isDark
-                            ? const Color(0xFF13B9A5).withValues(alpha: 0.15)
-                            : const Color(0xFF13B9A5).withValues(alpha: 0.08))
+                              ? const Color(0xFF13B9A5).withValues(alpha: 0.15)
+                              : const Color(0xFF13B9A5).withValues(alpha: 0.08))
                         : glassBgColor,
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.radiusMedium,
+                    ),
                     border: Border.all(
                       color: isSelected
                           ? const Color(0xFF13B9A5)
@@ -556,7 +579,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: const Color(0xFF13B9A5).withValues(alpha: 0.15),
+                              color: const Color(
+                                0xFF13B9A5,
+                              ).withValues(alpha: 0.15),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -568,7 +593,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          _getTitleIcon(title),
+                          title.titleIcon,
                           size: 16,
                           color: isSelected
                               ? const Color(0xFF13B9A5)
@@ -579,7 +604,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           child: Text(
                             title.displayName,
                             style: AppTextStyles.bodySmall.copyWith(
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                               color: isSelected
                                   ? const Color(0xFF13B9A5)
                                   : textPrimaryColor,
@@ -600,33 +627,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         ],
       ),
     );
-  }
-
-  IconData _getTitleIcon(UserTitle title) {
-    switch (title) {
-      case UserTitle.ogrenci:
-        return Icons.school_outlined;
-      case UserTitle.disHekimiGenelPratisyen:
-        return Icons.medical_services_outlined;
-      case UserTitle.endodontist:
-        return Icons.biotech_outlined;
-      case UserTitle.ortodontist:
-        return Icons.align_horizontal_center_outlined;
-      case UserTitle.periodontolog:
-        return Icons.layers_outlined;
-      case UserTitle.protezUzmani:
-        return Icons.grid_view_outlined;
-      case UserTitle.pedodontist:
-        return Icons.child_care_outlined;
-      case UserTitle.agizDisCeneCerrahisi:
-        return Icons.healing_outlined;
-      case UserTitle.agizDisCeneRadyoloji:
-        return Icons.settings_system_daydream_outlined;
-      case UserTitle.oralDiagnoz:
-        return Icons.search_outlined;
-      case UserTitle.restoratifDisTedavisi:
-        return Icons.auto_awesome_outlined;
-    }
   }
 
   // STEP 2: Professional Details (Optional)
@@ -657,9 +657,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           const SizedBox(height: AppDimensions.spacing8),
           Text(
             'Profesyonel geçmişinizi doldurarak diş hekimleri ağı ile daha iyi etkileşim kurun (İsteğe bağlı).',
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: textSecondaryColor,
-            ),
+            style: AppTextStyles.bodyMedium.copyWith(color: textSecondaryColor),
           ),
           const SizedBox(height: AppDimensions.spacing24),
 
@@ -744,9 +742,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           const SizedBox(height: AppDimensions.spacing8),
           Text(
             'Profil fotoğrafınızı seçin ve kısa bir biyografi ekleyin (İsteğe bağlı).',
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: textSecondaryColor,
-            ),
+            style: AppTextStyles.bodyMedium.copyWith(color: textSecondaryColor),
           ),
           const SizedBox(height: AppDimensions.spacing24),
 
@@ -756,8 +752,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               children: [
                 CircleAvatar(
                   radius: 54,
-                  backgroundImage: NetworkImage(_mockAvatars[_selectedAvatarIndex]),
-                  backgroundColor: const Color(0xFF13B9A5).withValues(alpha: 0.2),
+                  backgroundImage: NetworkImage(
+                    _mockAvatars[_selectedAvatarIndex],
+                  ),
+                  backgroundColor: const Color(
+                    0xFF13B9A5,
+                  ).withValues(alpha: 0.2),
                 ),
                 const SizedBox(height: AppDimensions.spacing16),
                 Text(
@@ -785,7 +785,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: isSelected ? const Color(0xFF13B9A5) : Colors.transparent,
+                            color: isSelected
+                                ? const Color(0xFF13B9A5)
+                                : Colors.transparent,
                             width: 2,
                           ),
                         ),
@@ -844,7 +846,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       bgOpacityColor = AppColors.error.withValues(alpha: isDark ? 0.08 : 0.03);
     } else if (hasFocus) {
       borderColor = const Color(0xFF13B9A5);
-      bgOpacityColor = const Color(0xFF13B9A5).withValues(alpha: isDark ? 0.15 : 0.08);
+      bgOpacityColor = const Color(
+        0xFF13B9A5,
+      ).withValues(alpha: isDark ? 0.15 : 0.08);
     }
 
     return AnimatedContainer(
@@ -874,7 +878,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             maxLines: maxLines,
             onChanged: onChanged,
             style: AppTextStyles.bodyLarge.copyWith(
-              color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+              color: isDark
+                  ? AppColors.darkTextPrimary
+                  : AppColors.lightTextPrimary,
               fontWeight: FontWeight.w600,
             ),
             decoration: InputDecoration(
@@ -918,9 +924,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             ? Colors.black.withValues(alpha: 0.2)
             : Colors.white.withValues(alpha: 0.2),
         border: Border(
-          top: BorderSide(
-            color: isDark ? Colors.white12 : Colors.black12,
-          ),
+          top: BorderSide(color: isDark ? Colors.white12 : Colors.black12),
         ),
       ),
       child: Row(
@@ -931,7 +935,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+                  borderRadius: BorderRadius.circular(
+                    AppDimensions.radiusMedium,
+                  ),
                 ),
               ),
               child: Text(
@@ -955,7 +961,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(
                     color: const Color(0xFF13B9A5),
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.radiusMedium,
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: const Color(0xFF13B9A5).withValues(alpha: 0.25),
