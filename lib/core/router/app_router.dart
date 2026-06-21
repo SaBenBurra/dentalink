@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/screens/login_screen.dart';
+import '../../features/auth/screens/register_screen.dart';
 import '../../features/feed/screens/feed_screen.dart';
 import '../../features/messaging/screens/conversations_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
@@ -11,6 +12,7 @@ import '../../features/shell/main_shell.dart';
 ///
 /// Navigasyon yapısı:
 ///   /login            → LoginScreen
+///   /register         → RegisterScreen
 ///   /                 → redirect → /login
 ///   ShellRoute        → MainShell (bottom nav)
 ///     /feed           → FeedScreen
@@ -28,6 +30,11 @@ final GoRouter appRouter = GoRouter(
       path: '/login',
       name: 'login',
       builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/register',
+      name: 'register',
+      builder: (context, state) => const RegisterScreen(),
     ),
 
     // ── Ana Kabuk (Bottom Nav Shell) ───────────────────────
