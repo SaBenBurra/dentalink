@@ -10,7 +10,7 @@
 - [x] Lokalizasyon altyapısı (TR + EN, ARB tabanlı, flutter gen-l10n)
 - [x] Navigasyon yapısı (go_router + bottom nav shell)
 - [x] Mock data katmanı (provider'lar mock veri döndürecek şekilde)
-- [ ] Paylaşılan temel widget'lar (avatar, loading, empty state, hata widget'ı)
+- [x] Paylaşılan temel widget'lar (avatar, loading, empty state, hata widget'ı + 5 ek ortak bileşen)
 
 ---
 
