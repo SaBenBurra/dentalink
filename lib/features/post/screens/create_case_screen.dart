@@ -15,7 +15,6 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
   final _formKey = GlobalKey<FormState>();
   String? _selectedBranch;
   List<String> _images = [];
-  List<String> _tags = [];
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
@@ -133,9 +132,7 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
             // Etiketler
             TagInput(
               onTagsChanged: (tags) {
-                setState(() {
-                  _tags = tags;
-                });
+                setState(() {});
               },
             ),
             const SizedBox(height: 32),

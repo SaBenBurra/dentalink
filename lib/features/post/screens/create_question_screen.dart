@@ -12,8 +12,6 @@ class CreateQuestionScreen extends StatefulWidget {
 
 class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
   final _formKey = GlobalKey<FormState>();
-  List<String> _images = [];
-  List<String> _tags = [];
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
@@ -75,7 +73,8 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
               maxLines: 8,
               decoration: const InputDecoration(
                 labelText: 'Sorunun Detayları',
-                hintText: 'Karşılaştığınız problemi veya merak ettiğiniz konuyu detaylıca açıklayın...',
+                hintText:
+                    'Karşılaştığınız problemi veya merak ettiğiniz konuyu detaylıca açıklayın...',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
@@ -93,9 +92,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
             // Etiketler
             TagInput(
               onTagsChanged: (tags) {
-                setState(() {
-                  _tags = tags;
-                });
+                setState(() {});
               },
             ),
             const SizedBox(height: 24),
@@ -104,9 +101,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
             ImagePickerGrid(
               maxImages: 4, // Soru için daha az görsel yeterli olabilir
               onImagesChanged: (images) {
-                setState(() {
-                  _images = images;
-                });
+                setState(() {});
               },
             ),
             const SizedBox(height: 32),

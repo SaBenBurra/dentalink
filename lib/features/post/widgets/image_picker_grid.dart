@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart'; // Eğer svg ihtiyacı olursa diye
-import 'package:shimmer/shimmer.dart';
 
 /// Vaka veya Soru oluştururken kullanılacak (Mock) Görsel Seçici Izgara
 /// Faz 2'de olduğumuz için galeriye bağlanmaz, sadece mock veri ekler.
@@ -108,9 +106,8 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
                           const SizedBox(height: 8),
                           Text(
                             'Fotoğraf Ekle',
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                  color: colorScheme.primary,
-                                ),
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(color: colorScheme.primary),
                           ),
                         ],
                       ),
@@ -155,8 +152,11 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
                               color: colorScheme.error,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: Theme.of(context).scaffoldBackgroundColor,
-                                width: 2, // Butonun etrafında beyaz/arka plan renginde bir boşluk güzel görünür
+                                color: Theme.of(
+                                  context,
+                                ).scaffoldBackgroundColor,
+                                width:
+                                    2, // Butonun etrafında beyaz/arka plan renginde bir boşluk güzel görünür
                               ),
                             ),
                             child: Icon(
