@@ -25,7 +25,7 @@ enum UserTitle {
       case UserTitle.ogrenci:
         return 'Öğrenci';
       case UserTitle.disHekimiGenelPratisyen:
-        return 'Diş Hekimi (Genel Pratisyen)';
+        return 'Genel Diş Hekimi';
       case UserTitle.endodontist:
         return 'Endodontist';
       case UserTitle.ortodontist:
