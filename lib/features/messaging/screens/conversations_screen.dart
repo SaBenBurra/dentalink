@@ -1,8 +1,60 @@
 import 'package:flutter/material.dart';
+import '../widgets/conversation_tile.dart';
 
-/// Mesajlar (konuşmalar) listesi ekranı — Faz 2'de doldurulacak.
-class ConversationsScreen extends StatelessWidget {
+class ConversationsScreen extends StatefulWidget {
   const ConversationsScreen({super.key});
+
+  @override
+  State<ConversationsScreen> createState() => _ConversationsScreenState();
+}
+
+class _ConversationsScreenState extends State<ConversationsScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
+  // Mock veri
+  final List<Map<String, dynamic>> _mockConversations = [
+    {
+      'name': 'Dr. Aras Bulut',
+      'lastMessage': 'Vaka hakkındaki görüşleriniz nelerdir?',
+      'time': '14:30',
+      'unreadCount': 2,
+      'avatarUrl': 'https://i.pravatar.cc/150?u=1',
+    },
+    {
+      'name': 'Dr. Selin Demir',
+      'lastMessage': 'Tamam, teşekkür ederim. Sonra görüşürüz.',
+      'time': '11:15',
+      'unreadCount': 0,
+      'avatarUrl': 'https://i.pravatar.cc/150?u=2',
+    },
+    {
+      'name': 'Dt. Mehmet Yılmaz',
+      'lastMessage': 'Panoramik röntgeni incelediniz mi?',
+      'time': 'Dün',
+      'unreadCount': 5,
+      'avatarUrl': 'https://i.pravatar.cc/150?u=3',
+    },
+    {
+      'name': 'Dr. Ayşe Kaya',
+      'lastMessage': 'Yarın sabahki ameliyat için hazır mıyız?',
+      'time': 'Pazartesi',
+      'unreadCount': 0,
+      'avatarUrl': 'https://i.pravatar.cc/150?u=4',
+    },
+    {
+      'name': 'Prof. Dr. Ahmet Yılmaz',
+      'lastMessage': 'Sunum dosyasını mail attım.',
+      'time': 'Pazar',
+      'unreadCount': 0,
+      'avatarUrl': 'https://i.pravatar.cc/150?u=5',
+    },
+  ];
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,38 +66,55 @@ class ConversationsScreen extends StatelessWidget {
         title: Text('Mesajlar', style: textTheme.titleLarge),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit_outlined),
+            icon: const Icon(Icons.more_vert),
             onPressed: () {},
-            tooltip: 'Yeni Mesaj',
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.chat_bubble_outline_rounded,
-              size: 72,
-              color: colorScheme.primary.withValues(alpha: 0.3),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: SearchBar(
+              controller: _searchController,
+              hintText: 'Mesajlarda ara...',
+              leading: const Icon(Icons.search),
+              elevation: WidgetStateProperty.all(0),
+              backgroundColor: WidgetStateProperty.all(colorScheme.surfaceContainerHighest),
+              padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 16.0)),
+              onChanged: (value) {
+                setState(() {});
+              },
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Mesajlar',
-              style: textTheme.titleMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
+          ),
+          Expanded(
+            child: ListView.separated(
+              itemCount: _mockConversations.length,
+              separatorBuilder: (context, index) => const Divider(height: 1, indent: 88),
+              itemBuilder: (context, index) {
+                final conversation = _mockConversations[index];
+                
+                // Basit arama filtresi
+                if (_searchController.text.isNotEmpty &&
+                    !conversation['name'].toString().toLowerCase().contains(_searchController.text.toLowerCase())) {
+                  return const SizedBox.shrink();
+                }
+
+                return ConversationTile(
+                  name: conversation['name'],
+                  lastMessage: conversation['lastMessage'],
+                  time: conversation['time'],
+                  unreadCount: conversation['unreadCount'],
+                  avatarUrl: conversation['avatarUrl'],
+                  onTap: () {
+                    // Chat ekranına yönlendirme
+                    // context.pushNamed('chat', pathParameters: {'id': conversation['id'].toString()});
+                  },
+                );
+              },
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Faz 2\'de sohbet listesi burada görünecek.',
-              style: textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
