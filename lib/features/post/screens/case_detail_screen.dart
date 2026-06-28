@@ -125,7 +125,7 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                         .withValues(alpha: isDark ? 0.08 : 0.12),
                   ),
                   child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
+                    filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
                     child: const SizedBox.shrink(),
                   ),
                 ),
@@ -158,6 +158,37 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                 return Image.network(
                                   imageUrls[index],
                                   fit: BoxFit.cover,
+                                  cacheWidth: 800,
+                                  loadingBuilder: (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Container(
+                                      color: isDark ? Colors.black26 : Colors.white24,
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          value: loadingProgress.expectedTotalBytes != null
+                                              ? loadingProgress.cumulativeBytesLoaded /
+                                                  loadingProgress.expectedTotalBytes!
+                                              : null,
+                                          valueColor: const AlwaysStoppedAnimation<Color>(
+                                            AppColors.primary,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: isDark ? Colors.black26 : Colors.white24,
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.broken_image_outlined,
+                                          size: 48,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 );
                               },
                             ),
@@ -540,61 +571,56 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                 top: 0,
                 left: 0,
                 right: 0,
-                child: ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                    child: Container(
-                      padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).padding.top + 8,
-                        bottom: 8,
-                        left: AppDimensions.spacing16,
-                        right: AppDimensions.spacing16,
-                      ),
-                      color: isDark ? Colors.black.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.1),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          GestureDetector(
-                            onTap: () => context.pop(),
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: glassBgColor,
-                                border: Border.all(color: glassBorderColor),
-                              ),
-                              child: Icon(
-                                Icons.arrow_back_ios_new_rounded,
-                                size: 18,
-                                color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                              ),
-                            ),
+                child: Container(
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).padding.top + 8,
+                    bottom: 8,
+                    left: AppDimensions.spacing16,
+                    right: AppDimensions.spacing16,
+                  ),
+                  color: isDark ? Colors.black.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.2),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () => context.pop(),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: glassBgColor,
+                            border: Border.all(color: glassBorderColor),
                           ),
-                          GestureDetector(
-                            onTap: () => ref.read(postDetailProvider(widget.postId).notifier).toggleBookmark(),
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: glassBgColor,
-                                border: Border.all(color: glassBorderColor),
-                              ),
-                              child: Icon(
-                                post.isBookmarked
-                                    ? Icons.bookmark_rounded
-                                    : Icons.bookmark_border_rounded,
-                                size: 20,
-                                color: post.isBookmarked
-                                    ? AppColors.bookmark
-                                    : (isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary),
-                              ),
-                            ),
+                          child: Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            size: 18,
+                            color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
                           ),
-                        ],
+                        ),
                       ),
-                    ),
+                      GestureDetector(
+                        onTap: () => ref.read(postDetailProvider(widget.postId).notifier).toggleBookmark(),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: glassBgColor,
+                            border: Border.all(color: glassBorderColor),
+                          ),
+                          child: Icon(
+                            post.isBookmarked
+                                ? Icons.bookmark_rounded
+                                : Icons.bookmark_border_rounded,
+                            size: 20,
+                            color: post.isBookmarked
+                                ? AppColors.bookmark
+                                : (isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -604,86 +630,88 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                child: ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                    child: Container(
-                      padding: EdgeInsets.only(
-                        left: AppDimensions.spacing16,
-                        right: AppDimensions.spacing16,
-                        top: 12,
-                        bottom: MediaQuery.of(context).padding.bottom + 12,
+                child: Container(
+                  padding: EdgeInsets.only(
+                    left: AppDimensions.spacing16,
+                    right: AppDimensions.spacing16,
+                    top: 12,
+                    bottom: MediaQuery.of(context).padding.bottom + 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.black.withValues(alpha: 0.85) : Colors.white.withValues(alpha: 0.92),
+                    border: Border(
+                      top: BorderSide(color: glassBorderColor, width: 1),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      UserAvatar(
+                        name: currentUser?.fullName ?? 'Hekim',
+                        imageUrl: currentUser?.avatarUrl,
+                        size: AvatarSize.small,
                       ),
-                      decoration: BoxDecoration(
-                        color: isDark ? Colors.black.withValues(alpha: 0.7) : Colors.white.withValues(alpha: 0.8),
-                        border: Border(
-                          top: BorderSide(color: glassBorderColor, width: 1),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          UserAvatar(
-                            name: currentUser?.fullName ?? 'Hekim',
-                            imageUrl: currentUser?.avatarUrl,
-                            size: AvatarSize.small,
-                          ),
-                          const SizedBox(width: AppDimensions.spacing12),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
-                                borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
-                                border: Border.all(
-                                  color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08),
-                                ),
-                              ),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: TextField(
-                                      controller: _commentController,
-                                      style: textTheme.bodyMedium?.copyWith(
-                                        color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                                      ),
-                                      decoration: const InputDecoration(
-                                        hintText: 'Mesleki tartışmaya katılın...',
-                                        border: InputBorder.none,
-                                        isDense: true,
-                                        hintStyle: TextStyle(color: Colors.grey, fontSize: 13),
-                                      ),
-                                      textInputAction: TextInputAction.send,
-                                      onSubmitted: (_) => _submitComment(),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.send_rounded),
-                                    color: colorScheme.primary,
-                                    iconSize: 20,
-                                    onPressed: _submitComment,
-                                  ),
-                                ],
-                              ),
+                      const SizedBox(width: AppDimensions.spacing12),
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+                            borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
+                            border: Border.all(
+                              color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08),
                             ),
                           ),
-                        ],
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _commentController,
+                                  style: textTheme.bodyMedium?.copyWith(
+                                    color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                  ),
+                                  decoration: const InputDecoration(
+                                    hintText: 'Mesleki tartışmaya katılın...',
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                    hintStyle: TextStyle(color: Colors.grey, fontSize: 13),
+                                  ),
+                                  textInputAction: TextInputAction.send,
+                                  onSubmitted: (_) => _submitComment(),
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.send_rounded),
+                                color: colorScheme.primary,
+                                iconSize: 20,
+                                onPressed: _submitComment,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),
             ],
           );
         },
-        loading: () => const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
+        loading: () => const Center(
+          child: CircularProgressIndicator(),
         ),
-        error: (err, stack) => Scaffold(
-          appBar: AppBar(title: const Text('Hata')),
-          body: Center(
-            child: Text('Vaka yüklenirken hata oluştu: $err'),
+        error: (err, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: Colors.grey),
+              const SizedBox(height: 16),
+              Text('Vaka yüklenirken hata oluştu: $err'),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () => context.pop(),
+                child: const Text('Geri Dön'),
+              ),
+            ],
           ),
         ),
       ),
