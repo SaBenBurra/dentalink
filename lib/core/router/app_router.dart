@@ -9,6 +9,8 @@ import '../../features/search/screens/search_screen.dart';
 import '../../features/shell/main_shell.dart';
 import '../../features/post/screens/case_detail_screen.dart';
 import '../../features/post/screens/question_detail_screen.dart';
+import '../../features/post/screens/create_case_screen.dart';
+import '../../features/post/screens/create_question_screen.dart';
 
 /// DentLink uygulama router'ı.
 ///
@@ -57,6 +59,16 @@ final GoRouter appRouter = GoRouter(
         final id = state.pathParameters['id']!;
         return QuestionDetailScreen(postId: id);
       },
+    ),
+    GoRoute(
+      path: '/create-case',
+      name: 'createCase',
+      builder: (context, state) => const CreateCaseScreen(),
+    ),
+    GoRoute(
+      path: '/create-question',
+      name: 'createQuestion',
+      builder: (context, state) => const CreateQuestionScreen(),
     ),
 
     // ── Ana Kabuk (Bottom Nav Shell) ───────────────────────

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 /// DentLink ana bottom navigation bar.
 ///
@@ -152,7 +153,7 @@ class _CreatePostSheet extends StatelessWidget {
             subtitle: 'Klinik vakalarını görsellerle paylaş, meslektaşlarından görüş al.',
             onTap: () {
               Navigator.pop(context);
-              // TODO Faz 2: go to /feed/create-case
+              context.push('/create-case');
             },
           ),
           const SizedBox(height: 12),
@@ -166,7 +167,7 @@ class _CreatePostSheet extends StatelessWidget {
             subtitle: 'Mesleki sorularını toplulukla paylaş, en iyi cevabı bul.',
             onTap: () {
               Navigator.pop(context);
-              // TODO Faz 2: go to /feed/create-question
+              context.push('/create-question');
             },
           ),
           const SizedBox(height: 8),
