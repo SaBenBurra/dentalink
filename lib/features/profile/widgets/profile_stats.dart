@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../data/models/user_model.dart';
 import '../../../shared/widgets/stat_count.dart';
 
@@ -22,15 +23,29 @@ class ProfileStats extends StatelessWidget {
             label: 'Gönderi',
             count: user.postsCount,
           ),
-          StatCount(
-            icon: Icons.people_outline,
-            label: 'Takipçi',
-            count: user.followersCount,
+          InkWell(
+            onTap: () => context.push('/network/${user.id}?tab=0'),
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: StatCount(
+                icon: Icons.people_outline,
+                label: 'Takipçi',
+                count: user.followersCount,
+              ),
+            ),
           ),
-          StatCount(
-            icon: Icons.person_add_outlined,
-            label: 'Takip Edilen',
-            count: user.followingCount,
+          InkWell(
+            onTap: () => context.push('/network/${user.id}?tab=1'),
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: StatCount(
+                icon: Icons.person_add_outlined,
+                label: 'Takip Edilen',
+                count: user.followingCount,
+              ),
+            ),
           ),
         ],
       ),

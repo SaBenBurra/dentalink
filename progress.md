@@ -24,7 +24,7 @@ Tüm ekranlar placeholder/mock verilerle görsel olarak tamamlanır. Hiçbir bac
 - [x] **Post oluşturma ekranları:** Vaka oluştur, soru oluştur (form arayüzleri)
 - [x] **Profil ekranı:** Profil başlığı, istatistikler, sekmeli post listesi, rozet vitrin
 - [x] **Profil düzenleme ekranı**
-- [ ] **Takipçiler/Takip edilenler ekranı**
+- [x] **Takipçiler/Takip edilenler ekranı**
 - [ ] **Keşfet/Arama ekranı:** Arama çubuğu, filtre chip'leri, sonuç listesi
 - [ ] **Mesajlar ekranı:** Sohbet listesi
 - [ ] **Chat ekranı:** Mesaj baloncukları, input alanı

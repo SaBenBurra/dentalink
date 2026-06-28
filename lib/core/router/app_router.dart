@@ -12,6 +12,7 @@ import '../../features/post/screens/question_detail_screen.dart';
 import '../../features/post/screens/create_case_screen.dart';
 import '../../features/post/screens/create_question_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
+import '../../features/profile/screens/followers_screen.dart';
 
 /// DentLink uygulama router'ı.
 ///
@@ -75,6 +76,15 @@ final GoRouter appRouter = GoRouter(
       path: '/edit-profile',
       name: 'editProfile',
       builder: (context, state) => const EditProfileScreen(),
+    ),
+    GoRoute(
+      path: '/network/:id',
+      name: 'network',
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        final initialIndex = int.tryParse(state.uri.queryParameters['tab'] ?? '0') ?? 0;
+        return FollowersScreen(userId: id, initialIndex: initialIndex);
+      },
     ),
 
     // ── Ana Kabuk (Bottom Nav Shell) ───────────────────────
