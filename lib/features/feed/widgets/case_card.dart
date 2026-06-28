@@ -149,6 +149,7 @@ class _CaseCardState extends State<CaseCard> with TickerProviderStateMixin {
                   Padding(
                     padding: const EdgeInsets.all(AppDimensions.spacing16),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         UserAvatar(
                           name: widget.post.author.fullName,

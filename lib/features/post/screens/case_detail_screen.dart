@@ -70,7 +70,7 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    
+
     final postAsync = ref.watch(postDetailProvider(widget.postId));
     final commentsAsync = ref.watch(commentsProvider(widget.postId));
     final currentUser = ref.watch(currentUserProvider);
@@ -159,27 +159,39 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                   imageUrls[index],
                                   fit: BoxFit.cover,
                                   cacheWidth: 800,
-                                  loadingBuilder: (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return Container(
-                                      color: isDark ? Colors.black26 : Colors.white24,
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          value: loadingProgress.expectedTotalBytes != null
-                                              ? loadingProgress.cumulativeBytesLoaded /
-                                                  loadingProgress.expectedTotalBytes!
-                                              : null,
-                                          valueColor: const AlwaysStoppedAnimation<Color>(
-                                            AppColors.primary,
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                        if (loadingProgress == null)
+                                          return child;
+                                        return Container(
+                                          color: isDark
+                                              ? Colors.black26
+                                              : Colors.white24,
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              value:
+                                                  loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                  : null,
+                                              valueColor:
+                                                  const AlwaysStoppedAnimation<
+                                                    Color
+                                                  >(AppColors.primary),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                        );
+                                      },
                                   errorBuilder: (context, error, stackTrace) {
                                     return Container(
-                                      color: isDark ? Colors.black26 : Colors.white24,
+                                      color: isDark
+                                          ? Colors.black26
+                                          : Colors.white24,
                                       child: const Center(
                                         child: Icon(
                                           Icons.broken_image_outlined,
@@ -198,11 +210,15 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                             Positioned(
                               bottom: 36,
                               child: Row(
-                                children: List.generate(imageUrls.length, (idx) {
+                                children: List.generate(imageUrls.length, (
+                                  idx,
+                                ) {
                                   final isActive = _currentPage == idx;
                                   return AnimatedContainer(
                                     duration: const Duration(milliseconds: 200),
-                                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 3,
+                                    ),
                                     width: 6,
                                     height: 6,
                                     decoration: BoxDecoration(
@@ -223,11 +239,16 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                         offset: const Offset(0, -24),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.black.withValues(alpha: 0.6) : Colors.white.withValues(alpha: 0.85),
+                            color: isDark
+                                ? Colors.black.withValues(alpha: 0.6)
+                                : Colors.white.withValues(alpha: 0.85),
                             borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(AppDimensions.radiusLarge),
                             ),
-                            border: Border.all(color: glassBorderColor, width: 1),
+                            border: Border.all(
+                              color: glassBorderColor,
+                              width: 1,
+                            ),
                             boxShadow: const [
                               BoxShadow(
                                 color: AppColors.glassShadow,
@@ -236,7 +257,9 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                               ),
                             ],
                           ),
-                          padding: const EdgeInsets.all(AppDimensions.spacing16),
+                          padding: const EdgeInsets.all(
+                            AppDimensions.spacing16,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -248,31 +271,50 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                     imageUrl: post.author.avatarUrl,
                                     size: AvatarSize.medium,
                                   ),
-                                  const SizedBox(width: AppDimensions.spacing12),
+                                  const SizedBox(
+                                    width: AppDimensions.spacing12,
+                                  ),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           post.author.fullName,
-                                          style: textTheme.titleMedium?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                                          ),
+                                          style: textTheme.titleMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: isDark
+                                                    ? AppColors.darkTextPrimary
+                                                    : AppColors
+                                                          .lightTextPrimary,
+                                              ),
                                         ),
                                         const SizedBox(height: 2),
                                         Row(
                                           children: [
-                                            Text(
-                                              post.branch?.displayName ?? post.author.title.displayName,
-                                              style: textTheme.bodySmall?.copyWith(
-                                                color: colorScheme.onSurfaceVariant,
+                                            Flexible(
+                                              child: Text(
+                                                post.branch?.displayName ??
+                                                    post
+                                                        .author
+                                                        .title
+                                                        .displayName,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: textTheme.bodySmall
+                                                    ?.copyWith(
+                                                      color: colorScheme
+                                                          .onSurfaceVariant,
+                                                    ),
                                               ),
                                             ),
                                             const SizedBox(width: 6),
                                             const Text('•'),
                                             const SizedBox(width: 6),
-                                            RelativeTimeText(dateTime: post.createdAt),
+                                            RelativeTimeText(
+                                              dateTime: post.createdAt,
+                                            ),
                                           ],
                                         ),
                                       ],
@@ -285,25 +327,42 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                         setState(() {
                                           _isFollowing = !_isFollowing;
                                         });
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
-                                            content: Text(_isFollowing
-                                                ? 'Dr. ${post.author.fullName.split(' ').last} takip ediliyor.'
-                                                : 'Takip bırakıldı.'),
-                                            duration: const Duration(seconds: 1),
+                                            content: Text(
+                                              _isFollowing
+                                                  ? 'Dr. ${post.author.fullName.split(' ').last} takip ediliyor.'
+                                                  : 'Takip bırakıldı.',
+                                            ),
+                                            duration: const Duration(
+                                              seconds: 1,
+                                            ),
                                           ),
                                         );
                                       },
                                       style: OutlinedButton.styleFrom(
                                         foregroundColor: colorScheme.primary,
-                                        side: BorderSide(color: colorScheme.primary.withValues(alpha: 0.5)),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
+                                        side: BorderSide(
+                                          color: colorScheme.primary.withValues(
+                                            alpha: 0.5,
+                                          ),
                                         ),
-                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            AppDimensions.radiusRound,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 0,
+                                        ),
                                       ),
                                       child: Text(
-                                        _isFollowing ? 'Takip Ediliyor' : 'Takip Et',
+                                        _isFollowing
+                                            ? 'Takip Ediliyor'
+                                            : 'Takip Et',
                                         style: textTheme.labelMedium?.copyWith(
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -318,7 +377,9 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                 post.title,
                                 style: textTheme.headlineSmall?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                  color: isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.lightTextPrimary,
                                 ),
                               ),
                               const SizedBox(height: AppDimensions.spacing12),
@@ -330,11 +391,21 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                 children: [
                                   if (post.branch != null)
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 4,
+                                      ),
                                       decoration: BoxDecoration(
-                                        color: colorScheme.primaryContainer.withValues(alpha: 0.15),
-                                        borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
-                                        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.3)),
+                                        color: colorScheme.primaryContainer
+                                            .withValues(alpha: 0.15),
+                                        borderRadius: BorderRadius.circular(
+                                          AppDimensions.radiusRound,
+                                        ),
+                                        border: Border.all(
+                                          color: colorScheme.primary.withValues(
+                                            alpha: 0.3,
+                                          ),
+                                        ),
                                       ),
                                       child: Text(
                                         post.branch!.displayName,
@@ -344,9 +415,9 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                         ),
                                       ),
                                     ),
-                                  ...post.tags.map((tag) => TagChip(
-                                        label: '#${tag.name}',
-                                      )),
+                                  ...post.tags.map(
+                                    (tag) => TagChip(label: '#${tag.name}'),
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: AppDimensions.spacing20),
@@ -356,8 +427,12 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                 post.content,
                                 style: textTheme.bodyLarge?.copyWith(
                                   color: isDark
-                                      ? AppColors.darkTextPrimary.withValues(alpha: 0.9)
-                                      : AppColors.lightTextPrimary.withValues(alpha: 0.9),
+                                      ? AppColors.darkTextPrimary.withValues(
+                                          alpha: 0.9,
+                                        )
+                                      : AppColors.lightTextPrimary.withValues(
+                                          alpha: 0.9,
+                                        ),
                                   height: 1.6,
                                 ),
                               ),
@@ -365,11 +440,17 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
 
                               // Interaction Bar
                               Container(
-                                padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing12),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: AppDimensions.spacing12,
+                                ),
                                 decoration: BoxDecoration(
                                   border: Border.symmetric(
                                     horizontal: BorderSide(
-                                      color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05),
+                                      color: isDark
+                                          ? Colors.white.withValues(alpha: 0.08)
+                                          : Colors.black.withValues(
+                                              alpha: 0.05,
+                                            ),
                                     ),
                                   ),
                                 ),
@@ -378,9 +459,17 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                     LikeButton(
                                       isLiked: post.isLiked,
                                       likeCount: post.likeCount,
-                                      onToggle: () => ref.read(postDetailProvider(widget.postId).notifier).toggleLike(),
+                                      onToggle: () => ref
+                                          .read(
+                                            postDetailProvider(
+                                              widget.postId,
+                                            ).notifier,
+                                          )
+                                          .toggleLike(),
                                     ),
-                                    const SizedBox(width: AppDimensions.spacing24),
+                                    const SizedBox(
+                                      width: AppDimensions.spacing24,
+                                    ),
                                     Row(
                                       children: [
                                         Icon(
@@ -388,7 +477,9 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                           color: colorScheme.onSurfaceVariant,
                                           size: AppDimensions.iconDefault,
                                         ),
-                                        const SizedBox(width: AppDimensions.spacing6),
+                                        const SizedBox(
+                                          width: AppDimensions.spacing6,
+                                        ),
                                         Text(
                                           post.commentCount.toString(),
                                           style: textTheme.bodySmall?.copyWith(
@@ -403,8 +494,14 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                       icon: const Icon(Icons.share_outlined),
                                       color: colorScheme.onSurfaceVariant,
                                       onPressed: () {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Bağlantı kopyalandı!')),
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Bağlantı kopyalandı!',
+                                            ),
+                                          ),
                                         );
                                       },
                                     ),
@@ -418,7 +515,9 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                 'Mesleki Tartışma',
                                 style: textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                  color: isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.lightTextPrimary,
                                 ),
                               ),
                               const SizedBox(height: AppDimensions.spacing16),
@@ -427,7 +526,9 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                 data: (comments) {
                                   if (comments.isEmpty) {
                                     return Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 24),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 24,
+                                      ),
                                       alignment: Alignment.center,
                                       child: Text(
                                         'Henüz yorum yapılmamış. İlk yorumu siz ekleyin!',
@@ -440,98 +541,189 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
 
                                   return ListView.builder(
                                     shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
                                     itemCount: comments.length,
                                     itemBuilder: (context, index) {
                                       final comment = comments[index];
                                       return Padding(
-                                        padding: const EdgeInsets.only(bottom: AppDimensions.spacing16),
+                                        padding: const EdgeInsets.only(
+                                          bottom: AppDimensions.spacing16,
+                                        ),
                                         child: Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             UserAvatar(
                                               name: comment.author.fullName,
-                                              imageUrl: comment.author.avatarUrl,
+                                              imageUrl:
+                                                  comment.author.avatarUrl,
                                               size: AvatarSize.small,
                                             ),
-                                            const SizedBox(width: AppDimensions.spacing12),
+                                            const SizedBox(
+                                              width: AppDimensions.spacing12,
+                                            ),
                                             Expanded(
                                               child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Container(
                                                     decoration: BoxDecoration(
                                                       color: isDark
-                                                          ? Colors.white.withValues(alpha: 0.04)
-                                                          : Colors.black.withValues(alpha: 0.03),
+                                                          ? Colors.white
+                                                                .withValues(
+                                                                  alpha: 0.04,
+                                                                )
+                                                          : Colors.black
+                                                                .withValues(
+                                                                  alpha: 0.03,
+                                                                ),
                                                       borderRadius: const BorderRadius.only(
-                                                        topRight: Radius.circular(AppDimensions.radiusMedium),
-                                                        bottomLeft: Radius.circular(AppDimensions.radiusMedium),
-                                                        bottomRight: Radius.circular(AppDimensions.radiusMedium),
+                                                        topRight:
+                                                            Radius.circular(
+                                                              AppDimensions
+                                                                  .radiusMedium,
+                                                            ),
+                                                        bottomLeft:
+                                                            Radius.circular(
+                                                              AppDimensions
+                                                                  .radiusMedium,
+                                                            ),
+                                                        bottomRight:
+                                                            Radius.circular(
+                                                              AppDimensions
+                                                                  .radiusMedium,
+                                                            ),
                                                       ),
-                                                      border: Border.all(color: glassBorderColor.withValues(alpha: 0.3)),
+                                                      border: Border.all(
+                                                        color: glassBorderColor
+                                                            .withValues(
+                                                              alpha: 0.3,
+                                                            ),
+                                                      ),
                                                     ),
-                                                    padding: const EdgeInsets.all(AppDimensions.spacing12),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          AppDimensions
+                                                              .spacing12,
+                                                        ),
                                                     child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
                                                           children: [
                                                             Text(
-                                                              comment.author.fullName,
-                                                              style: textTheme.labelMedium?.copyWith(
-                                                                fontWeight: FontWeight.bold,
-                                                                color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                                                              ),
+                                                              comment
+                                                                  .author
+                                                                  .fullName,
+                                                              style: textTheme
+                                                                  .labelMedium
+                                                                  ?.copyWith(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        isDark
+                                                                        ? AppColors
+                                                                              .darkTextPrimary
+                                                                        : AppColors
+                                                                              .lightTextPrimary,
+                                                                  ),
                                                             ),
                                                             RelativeTimeText(
-                                                              dateTime: comment.createdAt,
-                                                              style: textTheme.bodySmall?.copyWith(fontSize: 10),
+                                                              dateTime: comment
+                                                                  .createdAt,
+                                                              style: textTheme
+                                                                  .bodySmall
+                                                                  ?.copyWith(
+                                                                    fontSize:
+                                                                        10,
+                                                                  ),
                                                             ),
                                                           ],
                                                         ),
-                                                        const SizedBox(height: 6),
+                                                        const SizedBox(
+                                                          height: 6,
+                                                        ),
                                                         Text(
                                                           comment.content,
-                                                          style: textTheme.bodyMedium?.copyWith(
-                                                            color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                                                          ),
+                                                          style: textTheme
+                                                              .bodyMedium
+                                                              ?.copyWith(
+                                                                color: isDark
+                                                                    ? AppColors
+                                                                          .darkTextPrimary
+                                                                    : AppColors
+                                                                          .lightTextPrimary,
+                                                              ),
                                                         ),
                                                       ],
                                                     ),
                                                   ),
                                                   // Comment actions (like comment)
                                                   Padding(
-                                                    padding: const EdgeInsets.only(left: 4, top: 4),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                          left: 4,
+                                                          top: 4,
+                                                        ),
                                                     child: Row(
                                                       children: [
                                                         GestureDetector(
                                                           onTap: () => ref
-                                                              .read(commentsProvider(widget.postId).notifier)
-                                                              .toggleLike(comment.id),
+                                                              .read(
+                                                                commentsProvider(
+                                                                  widget.postId,
+                                                                ).notifier,
+                                                              )
+                                                              .toggleLike(
+                                                                comment.id,
+                                                              ),
                                                           child: Padding(
-                                                            padding: const EdgeInsets.all(4),
+                                                            padding:
+                                                                const EdgeInsets.all(
+                                                                  4,
+                                                                ),
                                                             child: Row(
                                                               children: [
                                                                 Icon(
                                                                   comment.isLiked
-                                                                      ? Icons.favorite_rounded
-                                                                      : Icons.favorite_border_rounded,
+                                                                      ? Icons
+                                                                            .favorite_rounded
+                                                                      : Icons
+                                                                            .favorite_border_rounded,
                                                                   size: 14,
-                                                                  color: comment.isLiked
-                                                                      ? AppColors.like
-                                                                      : colorScheme.onSurfaceVariant,
+                                                                  color:
+                                                                      comment
+                                                                          .isLiked
+                                                                      ? AppColors
+                                                                            .like
+                                                                      : colorScheme
+                                                                            .onSurfaceVariant,
                                                                 ),
-                                                                const SizedBox(width: 4),
+                                                                const SizedBox(
+                                                                  width: 4,
+                                                                ),
                                                                 Text(
-                                                                  comment.likeCount.toString(),
-                                                                  style: textTheme.bodySmall?.copyWith(
-                                                                    fontSize: 11,
-                                                                    color: comment.isLiked
-                                                                        ? AppColors.like
-                                                                        : colorScheme.onSurfaceVariant,
-                                                                  ),
+                                                                  comment
+                                                                      .likeCount
+                                                                      .toString(),
+                                                                  style: textTheme
+                                                                      .bodySmall
+                                                                      ?.copyWith(
+                                                                        fontSize:
+                                                                            11,
+                                                                        color:
+                                                                            comment.isLiked
+                                                                            ? AppColors.like
+                                                                            : colorScheme.onSurfaceVariant,
+                                                                      ),
                                                                 ),
                                                               ],
                                                             ),
@@ -552,10 +744,13 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                 loading: () => const Center(
                                   child: Padding(
                                     padding: EdgeInsets.all(24),
-                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
                                   ),
                                 ),
-                                error: (err, stack) => Text('Yorumlar yüklenemedi: $err'),
+                                error: (err, stack) =>
+                                    Text('Yorumlar yüklenemedi: $err'),
                               ),
                             ],
                           ),
@@ -578,7 +773,9 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                     left: AppDimensions.spacing16,
                     right: AppDimensions.spacing16,
                   ),
-                  color: isDark ? Colors.black.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.2),
+                  color: isDark
+                      ? Colors.black.withValues(alpha: 0.3)
+                      : Colors.white.withValues(alpha: 0.2),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -595,12 +792,16 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                           child: Icon(
                             Icons.arrow_back_ios_new_rounded,
                             size: 18,
-                            color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                            color: isDark
+                                ? AppColors.darkTextPrimary
+                                : AppColors.lightTextPrimary,
                           ),
                         ),
                       ),
                       GestureDetector(
-                        onTap: () => ref.read(postDetailProvider(widget.postId).notifier).toggleBookmark(),
+                        onTap: () => ref
+                            .read(postDetailProvider(widget.postId).notifier)
+                            .toggleBookmark(),
                         child: Container(
                           width: 40,
                           height: 40,
@@ -616,7 +817,9 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                             size: 20,
                             color: post.isBookmarked
                                 ? AppColors.bookmark
-                                : (isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary),
+                                : (isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.lightTextPrimary),
                           ),
                         ),
                       ),
@@ -638,7 +841,9 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                     bottom: MediaQuery.of(context).padding.bottom + 12,
                   ),
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.black.withValues(alpha: 0.85) : Colors.white.withValues(alpha: 0.92),
+                    color: isDark
+                        ? Colors.black.withValues(alpha: 0.85)
+                        : Colors.white.withValues(alpha: 0.92),
                     border: Border(
                       top: BorderSide(color: glassBorderColor, width: 1),
                     ),
@@ -654,26 +859,40 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                       Expanded(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
-                            borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.05)
+                                : Colors.black.withValues(alpha: 0.03),
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.radiusRound,
+                            ),
                             border: Border.all(
-                              color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08),
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.08)
+                                  : Colors.black.withValues(alpha: 0.08),
                             ),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 2,
+                          ),
                           child: Row(
                             children: [
                               Expanded(
                                 child: TextField(
                                   controller: _commentController,
                                   style: textTheme.bodyMedium?.copyWith(
-                                    color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                    color: isDark
+                                        ? AppColors.darkTextPrimary
+                                        : AppColors.lightTextPrimary,
                                   ),
                                   decoration: const InputDecoration(
                                     hintText: 'Mesleki tartışmaya katılın...',
                                     border: InputBorder.none,
                                     isDense: true,
-                                    hintStyle: TextStyle(color: Colors.grey, fontSize: 13),
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 13,
+                                    ),
                                   ),
                                   textInputAction: TextInputAction.send,
                                   onSubmitted: (_) => _submitComment(),
@@ -696,9 +915,7 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
             ],
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

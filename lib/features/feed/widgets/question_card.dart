@@ -69,6 +69,7 @@ class QuestionCard extends StatelessWidget {
                   children: [
                     // 1. Header (Avatar, Name, Subtitle, Question Badge)
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         UserAvatar(
                           name: post.author.fullName,

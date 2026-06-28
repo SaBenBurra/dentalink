@@ -19,7 +19,8 @@ class QuestionDetailScreen extends ConsumerStatefulWidget {
   final String postId;
 
   @override
-  ConsumerState<QuestionDetailScreen> createState() => _QuestionDetailScreenState();
+  ConsumerState<QuestionDetailScreen> createState() =>
+      _QuestionDetailScreenState();
 }
 
 class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
@@ -91,7 +92,7 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    
+
     final postAsync = ref.watch(postDetailProvider(widget.postId));
     final commentsAsync = ref.watch(commentsProvider(widget.postId));
     final currentUser = ref.watch(currentUserProvider);
@@ -166,7 +167,9 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                       Container(
                         decoration: BoxDecoration(
                           color: glassBgColor,
-                          borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+                          borderRadius: BorderRadius.circular(
+                            AppDimensions.radiusMedium,
+                          ),
                           border: Border.all(color: glassBorderColor, width: 1),
                           boxShadow: const [
                             BoxShadow(
@@ -182,6 +185,7 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                           children: [
                             // Author Header
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 UserAvatar(
                                   name: post.author.fullName,
@@ -191,28 +195,39 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                 const SizedBox(width: AppDimensions.spacing12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         post.author.fullName,
                                         style: textTheme.titleMedium?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                          color: isDark
+                                              ? AppColors.darkTextPrimary
+                                              : AppColors.lightTextPrimary,
                                         ),
                                       ),
                                       const SizedBox(height: 2),
                                       Row(
                                         children: [
-                                          Text(
-                                            post.author.title.displayName,
-                                            style: textTheme.bodySmall?.copyWith(
-                                              color: colorScheme.onSurfaceVariant,
+                                          Flexible(
+                                            child: Text(
+                                              post.author.title.displayName,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: textTheme.bodySmall
+                                                  ?.copyWith(
+                                                    color: colorScheme
+                                                        .onSurfaceVariant,
+                                                  ),
                                             ),
                                           ),
                                           const SizedBox(width: 6),
                                           const Text('•'),
                                           const SizedBox(width: 6),
-                                          RelativeTimeText(dateTime: post.createdAt),
+                                          RelativeTimeText(
+                                            dateTime: post.createdAt,
+                                          ),
                                         ],
                                       ),
                                     ],
@@ -220,11 +235,21 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                 ),
                                 // Question Badge
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
                                   decoration: BoxDecoration(
-                                    color: colorScheme.secondaryContainer.withValues(alpha: 0.15),
-                                    borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
-                                    border: Border.all(color: colorScheme.secondary.withValues(alpha: 0.3)),
+                                    color: colorScheme.secondaryContainer
+                                        .withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(
+                                      AppDimensions.radiusRound,
+                                    ),
+                                    border: Border.all(
+                                      color: colorScheme.secondary.withValues(
+                                        alpha: 0.3,
+                                      ),
+                                    ),
                                   ),
                                   child: Text(
                                     'Soru ❓',
@@ -243,7 +268,9 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                               post.title,
                               style: textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                color: isDark
+                                    ? AppColors.darkTextPrimary
+                                    : AppColors.lightTextPrimary,
                               ),
                             ),
                             const SizedBox(height: AppDimensions.spacing12),
@@ -254,9 +281,7 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                 spacing: AppDimensions.spacing6,
                                 runSpacing: AppDimensions.spacing6,
                                 children: post.tags.map((tag) {
-                                  return TagChip(
-                                    label: '#${tag.name}',
-                                  );
+                                  return TagChip(label: '#${tag.name}');
                                 }).toList(),
                               ),
                               const SizedBox(height: AppDimensions.spacing16),
@@ -267,8 +292,12 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                               post.content,
                               style: textTheme.bodyMedium?.copyWith(
                                 color: isDark
-                                    ? AppColors.darkTextPrimary.withValues(alpha: 0.9)
-                                    : AppColors.lightTextPrimary.withValues(alpha: 0.9),
+                                    ? AppColors.darkTextPrimary.withValues(
+                                        alpha: 0.9,
+                                      )
+                                    : AppColors.lightTextPrimary.withValues(
+                                        alpha: 0.9,
+                                      ),
                                 height: 1.6,
                               ),
                             ),
@@ -276,11 +305,15 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
 
                             // Interaction Bar
                             Container(
-                              padding: const EdgeInsets.only(top: AppDimensions.spacing12),
+                              padding: const EdgeInsets.only(
+                                top: AppDimensions.spacing12,
+                              ),
                               decoration: BoxDecoration(
                                 border: Border(
                                   top: BorderSide(
-                                    color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05),
+                                    color: isDark
+                                        ? Colors.white.withValues(alpha: 0.08)
+                                        : Colors.black.withValues(alpha: 0.05),
                                   ),
                                 ),
                               ),
@@ -289,9 +322,17 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                   LikeButton(
                                     isLiked: post.isLiked,
                                     likeCount: post.likeCount,
-                                    onToggle: () => ref.read(postDetailProvider(widget.postId).notifier).toggleLike(),
+                                    onToggle: () => ref
+                                        .read(
+                                          postDetailProvider(
+                                            widget.postId,
+                                          ).notifier,
+                                        )
+                                        .toggleLike(),
                                   ),
-                                  const SizedBox(width: AppDimensions.spacing24),
+                                  const SizedBox(
+                                    width: AppDimensions.spacing24,
+                                  ),
                                   Row(
                                     children: [
                                       Icon(
@@ -299,7 +340,9 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                         color: colorScheme.onSurfaceVariant,
                                         size: AppDimensions.iconDefault,
                                       ),
-                                      const SizedBox(width: AppDimensions.spacing6),
+                                      const SizedBox(
+                                        width: AppDimensions.spacing6,
+                                      ),
                                       Text(
                                         post.commentCount.toString(),
                                         style: textTheme.bodySmall?.copyWith(
@@ -312,7 +355,13 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                   const Spacer(),
                                   BookmarkButton(
                                     isBookmarked: post.isBookmarked,
-                                    onToggle: () => ref.read(postDetailProvider(widget.postId).notifier).toggleBookmark(),
+                                    onToggle: () => ref
+                                        .read(
+                                          postDetailProvider(
+                                            widget.postId,
+                                          ).notifier,
+                                        )
+                                        .toggleBookmark(),
                                     bookmarkCount: post.bookmarkCount,
                                     showCount: false,
                                   ),
@@ -333,14 +382,18 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                               'Cevaplar (${comments.length})',
                               style: textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                color: isDark
+                                    ? AppColors.darkTextPrimary
+                                    : AppColors.lightTextPrimary,
                               ),
                             ),
                             loading: () => Text(
                               'Cevaplar',
                               style: textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                color: isDark
+                                    ? AppColors.darkTextPrimary
+                                    : AppColors.lightTextPrimary,
                               ),
                             ),
                             error: (err, stack) => const SizedBox.shrink(),
@@ -354,7 +407,11 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const Icon(Icons.expand_more_rounded, size: 16, color: AppColors.primary),
+                              const Icon(
+                                Icons.expand_more_rounded,
+                                size: 16,
+                                color: AppColors.primary,
+                              ),
                             ],
                           ),
                         ],
@@ -386,17 +443,31 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                               final isBest = comment.isBestAnswer;
 
                               return Container(
-                                margin: const EdgeInsets.only(bottom: AppDimensions.spacing16),
+                                margin: const EdgeInsets.only(
+                                  bottom: AppDimensions.spacing16,
+                                ),
                                 decoration: BoxDecoration(
                                   color: isBest
                                       ? (isDark
-                                          ? AppColors.primary.withValues(alpha: 0.1)
-                                          : AppColors.successLight.withValues(alpha: 0.3))
+                                            ? AppColors.primary.withValues(
+                                                alpha: 0.1,
+                                              )
+                                            : AppColors.successLight.withValues(
+                                                alpha: 0.3,
+                                              ))
                                       : glassBgColor,
-                                  borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+                                  borderRadius: BorderRadius.circular(
+                                    AppDimensions.radiusMedium,
+                                  ),
                                   border: isBest
-                                      ? Border.all(color: AppColors.success, width: 1.5)
-                                      : Border.all(color: glassBorderColor, width: 1),
+                                      ? Border.all(
+                                          color: AppColors.success,
+                                          width: 1.5,
+                                        )
+                                      : Border.all(
+                                          color: glassBorderColor,
+                                          width: 1,
+                                        ),
                                   boxShadow: const [
                                     BoxShadow(
                                       color: AppColors.glassShadow,
@@ -405,7 +476,9 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                     ),
                                   ],
                                 ),
-                                padding: const EdgeInsets.all(AppDimensions.spacing16),
+                                padding: const EdgeInsets.all(
+                                  AppDimensions.spacing16,
+                                ),
                                 child: Stack(
                                   children: [
                                     // Best Answer Tag at top-right
@@ -414,24 +487,40 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                         top: 0,
                                         right: 0,
                                         child: Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 2,
+                                          ),
                                           decoration: BoxDecoration(
-                                            color: AppColors.success.withValues(alpha: 0.15),
-                                            borderRadius: BorderRadius.circular(4),
-                                            border: Border.all(color: AppColors.success.withValues(alpha: 0.4)),
+                                            color: AppColors.success.withValues(
+                                              alpha: 0.15,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                            border: Border.all(
+                                              color: AppColors.success
+                                                  .withValues(alpha: 0.4),
+                                            ),
                                           ),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              const Icon(Icons.verified_rounded, size: 12, color: AppColors.success),
+                                              const Icon(
+                                                Icons.verified_rounded,
+                                                size: 12,
+                                                color: AppColors.success,
+                                              ),
                                               const SizedBox(width: 4),
                                               Text(
                                                 'En İyi Cevap',
-                                                style: textTheme.labelSmall?.copyWith(
-                                                  color: AppColors.success,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 10,
-                                                ),
+                                                style: textTheme.labelSmall
+                                                    ?.copyWith(
+                                                      color: AppColors.success,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 10,
+                                                    ),
                                               ),
                                             ],
                                           ),
@@ -439,43 +528,70 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                       ),
 
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         // Answerer Header
                                         Row(
                                           children: [
                                             UserAvatar(
                                               name: comment.author.fullName,
-                                              imageUrl: comment.author.avatarUrl,
+                                              imageUrl:
+                                                  comment.author.avatarUrl,
                                               size: AvatarSize.small,
                                             ),
-                                            const SizedBox(width: AppDimensions.spacing12),
+                                            const SizedBox(
+                                              width: AppDimensions.spacing12,
+                                            ),
                                             Expanded(
                                               child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
                                                     comment.author.fullName,
-                                                    style: textTheme.titleSmall?.copyWith(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-                                                    ),
+                                                    style: textTheme.titleSmall
+                                                        ?.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: isDark
+                                                              ? AppColors
+                                                                    .darkTextPrimary
+                                                              : AppColors
+                                                                    .lightTextPrimary,
+                                                        ),
                                                   ),
                                                   Row(
                                                     children: [
                                                       Text(
-                                                        comment.author.title.displayName,
-                                                        style: textTheme.bodySmall?.copyWith(
-                                                          color: colorScheme.onSurfaceVariant,
+                                                        comment
+                                                            .author
+                                                            .title
+                                                            .displayName,
+                                                        style: textTheme
+                                                            .bodySmall
+                                                            ?.copyWith(
+                                                              color: colorScheme
+                                                                  .onSurfaceVariant,
+                                                              fontSize: 11,
+                                                            ),
+                                                      ),
+                                                      const SizedBox(width: 6),
+                                                      const Text(
+                                                        '•',
+                                                        style: TextStyle(
                                                           fontSize: 11,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 6),
-                                                      const Text('•', style: TextStyle(fontSize: 11)),
-                                                      const SizedBox(width: 6),
                                                       RelativeTimeText(
-                                                        dateTime: comment.createdAt,
-                                                        style: textTheme.bodySmall?.copyWith(fontSize: 11),
+                                                        dateTime:
+                                                            comment.createdAt,
+                                                        style: textTheme
+                                                            .bodySmall
+                                                            ?.copyWith(
+                                                              fontSize: 11,
+                                                            ),
                                                       ),
                                                     ],
                                                   ),
@@ -484,62 +600,103 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: AppDimensions.spacing12),
+                                        const SizedBox(
+                                          height: AppDimensions.spacing12,
+                                        ),
 
                                         // Content
                                         Text(
                                           comment.content,
                                           style: textTheme.bodyMedium?.copyWith(
-                                            color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                            color: isDark
+                                                ? AppColors.darkTextPrimary
+                                                : AppColors.lightTextPrimary,
                                             height: 1.5,
                                           ),
                                         ),
-                                        const SizedBox(height: AppDimensions.spacing16),
+                                        const SizedBox(
+                                          height: AppDimensions.spacing16,
+                                        ),
 
                                         // Actions
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             Row(
                                               children: [
                                                 GestureDetector(
                                                   onTap: () => ref
-                                                      .read(commentsProvider(widget.postId).notifier)
+                                                      .read(
+                                                        commentsProvider(
+                                                          widget.postId,
+                                                        ).notifier,
+                                                      )
                                                       .toggleLike(comment.id),
                                                   child: Container(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 6,
+                                                        ),
                                                     decoration: BoxDecoration(
                                                       color: comment.isLiked
-                                                          ? colorScheme.primary.withValues(alpha: 0.1)
+                                                          ? colorScheme.primary
+                                                                .withValues(
+                                                                  alpha: 0.1,
+                                                                )
                                                           : Colors.transparent,
-                                                      borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            AppDimensions
+                                                                .radiusRound,
+                                                          ),
                                                       border: Border.all(
                                                         color: comment.isLiked
-                                                            ? colorScheme.primary.withValues(alpha: 0.3)
-                                                            : Colors.transparent,
+                                                            ? colorScheme
+                                                                  .primary
+                                                                  .withValues(
+                                                                    alpha: 0.3,
+                                                                  )
+                                                            : Colors
+                                                                  .transparent,
                                                       ),
                                                     ),
                                                     child: Row(
                                                       children: [
                                                         Icon(
                                                           comment.isLiked
-                                                              ? Icons.favorite_rounded
-                                                              : Icons.favorite_border_rounded,
+                                                              ? Icons
+                                                                    .favorite_rounded
+                                                              : Icons
+                                                                    .favorite_border_rounded,
                                                           size: 14,
                                                           color: comment.isLiked
                                                               ? AppColors.like
-                                                              : colorScheme.onSurfaceVariant,
+                                                              : colorScheme
+                                                                    .onSurfaceVariant,
                                                         ),
-                                                        const SizedBox(width: 4),
+                                                        const SizedBox(
+                                                          width: 4,
+                                                        ),
                                                         Text(
-                                                          comment.likeCount.toString(),
-                                                          style: textTheme.bodySmall?.copyWith(
-                                                            fontSize: 11,
-                                                            color: comment.isLiked
-                                                                ? AppColors.like
-                                                                : colorScheme.onSurfaceVariant,
-                                                            fontWeight: FontWeight.bold,
-                                                          ),
+                                                          comment.likeCount
+                                                              .toString(),
+                                                          style: textTheme
+                                                              .bodySmall
+                                                              ?.copyWith(
+                                                                fontSize: 11,
+                                                                color:
+                                                                    comment
+                                                                        .isLiked
+                                                                    ? AppColors
+                                                                          .like
+                                                                    : colorScheme
+                                                                          .onSurfaceVariant,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
                                                         ),
                                                       ],
                                                     ),
@@ -551,12 +708,27 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                             // "Mark as Best Answer" button for the question owner
                                             if (isPostOwner && !isBest)
                                               TextButton.icon(
-                                                onPressed: () => _handleMarkBestAnswer(comment.id),
-                                                icon: const Icon(Icons.verified_rounded, size: 14),
-                                                label: const Text('En İyi Cevap Seç', style: TextStyle(fontSize: 11)),
+                                                onPressed: () =>
+                                                    _handleMarkBestAnswer(
+                                                      comment.id,
+                                                    ),
+                                                icon: const Icon(
+                                                  Icons.verified_rounded,
+                                                  size: 14,
+                                                ),
+                                                label: const Text(
+                                                  'En İyi Cevap Seç',
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                  ),
+                                                ),
                                                 style: TextButton.styleFrom(
-                                                  foregroundColor: AppColors.success,
-                                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                                  foregroundColor:
+                                                      AppColors.success,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 12,
+                                                      ),
                                                 ),
                                               ),
                                           ],
@@ -575,7 +747,8 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           ),
                         ),
-                        error: (err, stack) => Text('Cevaplar yüklenemedi: $err'),
+                        error: (err, stack) =>
+                            Text('Cevaplar yüklenemedi: $err'),
                       ),
                     ],
                   ),
@@ -594,7 +767,9 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                     left: AppDimensions.spacing16,
                     right: AppDimensions.spacing16,
                   ),
-                  color: isDark ? Colors.black.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.2),
+                  color: isDark
+                      ? Colors.black.withValues(alpha: 0.3)
+                      : Colors.white.withValues(alpha: 0.2),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -611,7 +786,9 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                           child: Icon(
                             Icons.arrow_back_ios_new_rounded,
                             size: 18,
-                            color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                            color: isDark
+                                ? AppColors.darkTextPrimary
+                                : AppColors.lightTextPrimary,
                           ),
                         ),
                       ),
@@ -619,11 +796,15 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                         'Soru Detayı',
                         style: textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                          color: isDark
+                              ? AppColors.darkTextPrimary
+                              : AppColors.lightTextPrimary,
                         ),
                       ),
                       GestureDetector(
-                        onTap: () => ref.read(postDetailProvider(widget.postId).notifier).toggleBookmark(),
+                        onTap: () => ref
+                            .read(postDetailProvider(widget.postId).notifier)
+                            .toggleBookmark(),
                         child: Container(
                           width: 40,
                           height: 40,
@@ -639,7 +820,9 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                             size: 20,
                             color: post.isBookmarked
                                 ? AppColors.bookmark
-                                : (isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary),
+                                : (isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.lightTextPrimary),
                           ),
                         ),
                       ),
@@ -661,7 +844,9 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                     bottom: MediaQuery.of(context).padding.bottom + 12,
                   ),
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.black.withValues(alpha: 0.85) : Colors.white.withValues(alpha: 0.92),
+                    color: isDark
+                        ? Colors.black.withValues(alpha: 0.85)
+                        : Colors.white.withValues(alpha: 0.92),
                     border: Border(
                       top: BorderSide(color: glassBorderColor, width: 1),
                     ),
@@ -677,26 +862,40 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                       Expanded(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
-                            borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.05)
+                                : Colors.black.withValues(alpha: 0.03),
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.radiusRound,
+                            ),
                             border: Border.all(
-                              color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08),
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.08)
+                                  : Colors.black.withValues(alpha: 0.08),
                             ),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 2,
+                          ),
                           child: Row(
                             children: [
                               Expanded(
                                 child: TextField(
                                   controller: _answerController,
                                   style: textTheme.bodyMedium?.copyWith(
-                                    color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                    color: isDark
+                                        ? AppColors.darkTextPrimary
+                                        : AppColors.lightTextPrimary,
                                   ),
                                   decoration: const InputDecoration(
                                     hintText: 'Cevabınızı buraya yazın...',
                                     border: InputBorder.none,
                                     isDense: true,
-                                    hintStyle: TextStyle(color: Colors.grey, fontSize: 13),
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 13,
+                                    ),
                                   ),
                                   textInputAction: TextInputAction.send,
                                   onSubmitted: (_) => _submitAnswer(),
@@ -719,9 +918,7 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
             ],
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
