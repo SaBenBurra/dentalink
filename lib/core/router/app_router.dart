@@ -14,6 +14,7 @@ import '../../features/post/screens/create_question_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/followers_screen.dart';
 import '../../features/messaging/screens/chat_screen.dart';
+import '../../features/notifications/screens/notifications_screen.dart';
 
 /// DentLink uygulama router'ı.
 ///
@@ -96,6 +97,12 @@ final GoRouter appRouter = GoRouter(
         final avatar = state.uri.queryParameters['avatar'] ?? '';
         return ChatScreen(userId: userId, userName: name, avatarUrl: avatar);
       },
+    ),
+
+    GoRoute(
+      path: '/notifications',
+      name: 'notifications',
+      builder: (context, state) => const NotificationsScreen(),
     ),
 
     // ── Ana Kabuk (Bottom Nav Shell) ───────────────────────

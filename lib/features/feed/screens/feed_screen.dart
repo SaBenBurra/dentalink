@@ -160,7 +160,9 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
                   actions: [
                     IconButton(
                       icon: const Icon(Icons.notifications_none_rounded),
-                      onPressed: () {},
+                      onPressed: () {
+                        context.push('/notifications');
+                      },
                       color: colorScheme.primary,
                       tooltip: 'Notifications',
                     ),
