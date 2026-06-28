@@ -31,6 +31,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        actionsPadding: EdgeInsets.symmetric(horizontal: 10),
         title: const Text('Soru Sor'),
         actions: [
           TextButton(
