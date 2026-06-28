@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../data/models/user_model.dart';
 import '../../../shared/widgets/user_avatar.dart';
+import 'mutual_followers_widget.dart';
 
 class ProfileHeader extends StatelessWidget {
   final UserModel user;
@@ -82,6 +83,7 @@ class ProfileHeader extends StatelessWidget {
               ],
             ),
           ],
+          MutualFollowersWidget(userId: user.id),
         ],
       ),
     );

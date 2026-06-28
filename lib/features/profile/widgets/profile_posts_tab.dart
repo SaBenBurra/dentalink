@@ -7,10 +7,12 @@ import '../../feed/widgets/question_card.dart';
 
 class ProfilePostsTab extends ConsumerWidget {
   final String userId;
+  final PostType type;
 
   const ProfilePostsTab({
     super.key,
     required this.userId,
+    required this.type,
   });
 
   @override
@@ -18,9 +20,11 @@ class ProfilePostsTab extends ConsumerWidget {
     final postsAsyncValue = ref.watch(userPostsProvider(userId));
 
     return postsAsyncValue.when(
-      data: (posts) {
+      data: (allPosts) {
+        final posts = allPosts.where((p) => p.type == type).toList();
+
         if (posts.isEmpty) {
-          return const Center(child: Text('Henüz gönderi yok.'));
+          return Center(child: Text(type == PostType.casePost ? 'Henüz vaka yok.' : 'Henüz soru yok.'));
         }
 
         return ListView.separated(

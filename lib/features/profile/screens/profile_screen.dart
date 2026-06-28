@@ -5,6 +5,7 @@ import '../widgets/profile_header.dart';
 import '../widgets/profile_stats.dart';
 import '../widgets/badge_showcase.dart';
 import '../widgets/profile_posts_tab.dart';
+import '../../../data/models/enums.dart';
 import '../../../shared/widgets/error_widget.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -33,7 +34,7 @@ class ProfileScreen extends ConsumerWidget {
           }
 
           return DefaultTabController(
-            length: 1,
+            length: 2,
             child: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) {
                 return [
@@ -60,7 +61,8 @@ class ProfileScreen extends ConsumerWidget {
                         unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
                         indicatorColor: theme.colorScheme.primary,
                         tabs: const [
-                          Tab(text: 'Gönderiler'),
+                          Tab(text: 'Vakalar'),
+                          Tab(text: 'Sorular'),
                         ],
                       ),
                       theme.scaffoldBackgroundColor,
@@ -70,7 +72,8 @@ class ProfileScreen extends ConsumerWidget {
               },
               body: TabBarView(
                 children: [
-                  ProfilePostsTab(userId: user.id),
+                  ProfilePostsTab(userId: user.id, type: PostType.casePost),
+                  ProfilePostsTab(userId: user.id, type: PostType.question),
                 ],
               ),
             ),
