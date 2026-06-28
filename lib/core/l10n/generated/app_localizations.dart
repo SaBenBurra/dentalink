@@ -407,7 +407,7 @@ abstract class AppLocalizations {
   /// Genel pratisyen unvanı
   ///
   /// In tr, this message translates to:
-  /// **'Diş Hekimi (Genel Pratisyen)'**
+  /// **'Genel Diş Hekimi'**
   String get titleGeneralDentist;
 
   /// Endodontist unvanı

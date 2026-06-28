@@ -154,7 +154,7 @@
   "titleStudent": "Öğrenci",
   "@titleStudent": { "description": "Öğrenci unvanı" },
 
-  "titleGeneralDentist": "Diş Hekimi (Genel Pratisyen)",
+  "titleGeneralDentist": "Genel Diş Hekimi",
   "@titleGeneralDentist": { "description": "Genel pratisyen unvanı" },
 
   "titleEndodontist": "Endodontist",

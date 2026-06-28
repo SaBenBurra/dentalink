@@ -163,7 +163,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get titleStudent => 'Öğrenci';
 
   @override
-  String get titleGeneralDentist => 'Diş Hekimi (Genel Pratisyen)';
+  String get titleGeneralDentist => 'Genel Diş Hekimi';
 
   @override
   String get titleEndodontist => 'Endodontist';
