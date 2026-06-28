@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -30,6 +31,7 @@ class QuestionCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context);
 
     final glassBgColor = isDark
         ? Colors.black.withValues(alpha: 0.4)
@@ -82,7 +84,9 @@ class QuestionCard extends StatelessWidget {
                                 post.author.fullName,
                                 style: textTheme.titleSmall?.copyWith(
                                   fontWeight: FontWeight.w700,
-                                  color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                                  color: isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.lightTextPrimary,
                                 ),
                               ),
                               const SizedBox(height: AppDimensions.spacing2),
@@ -104,7 +108,8 @@ class QuestionCard extends StatelessWidget {
                                     width: 4,
                                     height: 4,
                                     decoration: BoxDecoration(
-                                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                                      color: colorScheme.onSurfaceVariant
+                                          .withValues(alpha: 0.4),
                                       shape: BoxShape.circle,
                                     ),
                                   ),
@@ -124,9 +129,15 @@ class QuestionCard extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: isDark
-                                ? colorScheme.secondaryContainer.withValues(alpha: 0.2)
-                                : AppColors.secondaryContainer.withValues(alpha: 0.4),
-                            borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
+                                ? colorScheme.secondaryContainer.withValues(
+                                    alpha: 0.2,
+                                  )
+                                : AppColors.secondaryContainer.withValues(
+                                    alpha: 0.4,
+                                  ),
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.radiusRound,
+                            ),
                             border: Border.all(
                               color: isDark
                                   ? colorScheme.secondary.withValues(alpha: 0.3)
@@ -135,7 +146,7 @@ class QuestionCard extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            'Soru ❓',
+                            '${l10n.questionPost} ❓',
                             style: textTheme.labelSmall?.copyWith(
                               color: isDark
                                   ? colorScheme.secondaryContainer
@@ -153,7 +164,9 @@ class QuestionCard extends StatelessWidget {
                       post.title,
                       style: textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.lightTextPrimary,
                       ),
                     ),
                     const SizedBox(height: AppDimensions.spacing8),
@@ -162,7 +175,9 @@ class QuestionCard extends StatelessWidget {
                       style: textTheme.bodyMedium?.copyWith(
                         color: isDark
                             ? AppColors.darkTextPrimary.withValues(alpha: 0.85)
-                            : AppColors.lightTextPrimary.withValues(alpha: 0.85),
+                            : AppColors.lightTextPrimary.withValues(
+                                alpha: 0.85,
+                              ),
                         height: 1.5,
                       ),
                       maxLines: 5,
@@ -192,7 +207,9 @@ class QuestionCard extends StatelessWidget {
                             const SizedBox(width: AppDimensions.spacing16),
                             InkWell(
                               onTap: onCommentTap,
-                              borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
+                              borderRadius: BorderRadius.circular(
+                                AppDimensions.radiusRound,
+                              ),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: AppDimensions.spacing8,
@@ -205,7 +222,9 @@ class QuestionCard extends StatelessWidget {
                                       color: colorScheme.onSurfaceVariant,
                                       size: AppDimensions.iconDefault,
                                     ),
-                                    const SizedBox(width: AppDimensions.spacing4),
+                                    const SizedBox(
+                                      width: AppDimensions.spacing4,
+                                    ),
                                     Text(
                                       post.commentCount.toString(),
                                       style: textTheme.bodySmall?.copyWith(

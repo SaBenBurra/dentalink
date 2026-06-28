@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -106,6 +107,7 @@ class _CaseCardState extends State<CaseCard> with TickerProviderStateMixin {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context);
 
     final glassBgColor = isDark
         ? Colors.black.withValues(alpha: 0.4)
@@ -193,7 +195,9 @@ class _CaseCardState extends State<CaseCard> with TickerProviderStateMixin {
                                     ),
                                   ),
                                   const SizedBox(width: AppDimensions.spacing6),
-                                  RelativeTimeText(dateTime: widget.post.createdAt),
+                                  RelativeTimeText(
+                                    dateTime: widget.post.createdAt,
+                                  ),
                                 ],
                               ),
                             ],
@@ -210,7 +214,9 @@ class _CaseCardState extends State<CaseCard> with TickerProviderStateMixin {
                                 ? colorScheme.primaryContainer.withValues(
                                     alpha: 0.2,
                                   )
-                                : AppColors.primaryContainer.withValues(alpha: 0.4),
+                                : AppColors.primaryContainer.withValues(
+                                    alpha: 0.4,
+                                  ),
                             borderRadius: BorderRadius.circular(
                               AppDimensions.radiusRound,
                             ),
@@ -222,7 +228,7 @@ class _CaseCardState extends State<CaseCard> with TickerProviderStateMixin {
                             ),
                           ),
                           child: Text(
-                            'Vaka 📸',
+                            '${l10n.casePost} 📸',
                             style: textTheme.labelSmall?.copyWith(
                               color: isDark
                                   ? colorScheme.primaryContainer
@@ -257,7 +263,9 @@ class _CaseCardState extends State<CaseCard> with TickerProviderStateMixin {
                           widget.post.content,
                           style: textTheme.bodyMedium?.copyWith(
                             color: isDark
-                                ? AppColors.darkTextPrimary.withValues(alpha: 0.85)
+                                ? AppColors.darkTextPrimary.withValues(
+                                    alpha: 0.85,
+                                  )
                                 : AppColors.lightTextPrimary.withValues(
                                     alpha: 0.85,
                                   ),
@@ -309,23 +317,29 @@ class _CaseCardState extends State<CaseCard> with TickerProviderStateMixin {
                               child: Image.network(
                                 imageUrls[index],
                                 fit: BoxFit.cover,
-                                loadingBuilder: (context, child, loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return Container(
-                                    color: isDark ? Colors.black26 : Colors.white24,
-                                    child: const Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                          AppColors.primary,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Container(
+                                        color: isDark
+                                            ? Colors.black26
+                                            : Colors.white24,
+                                        child: const Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  AppColors.primary,
+                                                ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  );
-                                },
+                                      );
+                                    },
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
-                                    color: isDark ? Colors.black26 : Colors.white24,
+                                    color: isDark
+                                        ? Colors.black26
+                                        : Colors.white24,
                                     child: const Icon(
                                       Icons.broken_image_outlined,
                                       size: 48,
@@ -435,7 +449,9 @@ class _CaseCardState extends State<CaseCard> with TickerProviderStateMixin {
                                       color: colorScheme.onSurfaceVariant,
                                       size: AppDimensions.iconDefault,
                                     ),
-                                    const SizedBox(width: AppDimensions.spacing4),
+                                    const SizedBox(
+                                      width: AppDimensions.spacing4,
+                                    ),
                                     Text(
                                       widget.post.commentCount.toString(),
                                       style: textTheme.bodySmall?.copyWith(
