@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../widgets/conversation_tile.dart';
 
 class ConversationsScreen extends StatefulWidget {
@@ -107,8 +108,14 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                   unreadCount: conversation['unreadCount'],
                   avatarUrl: conversation['avatarUrl'],
                   onTap: () {
-                    // Chat ekranına yönlendirme
-                    // context.pushNamed('chat', pathParameters: {'id': conversation['id'].toString()});
+                    context.pushNamed(
+                      'chat',
+                      pathParameters: {'userId': 'user_$index'},
+                      queryParameters: {
+                        'name': conversation['name'].toString(),
+                        'avatar': conversation['avatarUrl'].toString(),
+                      },
+                    );
                   },
                 );
               },

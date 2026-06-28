@@ -13,6 +13,7 @@ import '../../features/post/screens/create_case_screen.dart';
 import '../../features/post/screens/create_question_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/followers_screen.dart';
+import '../../features/messaging/screens/chat_screen.dart';
 
 /// DentLink uygulama router'ı.
 ///
@@ -84,6 +85,16 @@ final GoRouter appRouter = GoRouter(
         final id = state.pathParameters['id']!;
         final initialIndex = int.tryParse(state.uri.queryParameters['tab'] ?? '0') ?? 0;
         return FollowersScreen(userId: id, initialIndex: initialIndex);
+      },
+    ),
+    GoRoute(
+      path: '/chat/:userId',
+      name: 'chat',
+      builder: (context, state) {
+        final userId = state.pathParameters['userId']!;
+        final name = state.uri.queryParameters['name'] ?? 'Kullanıcı';
+        final avatar = state.uri.queryParameters['avatar'] ?? '';
+        return ChatScreen(userId: userId, userName: name, avatarUrl: avatar);
       },
     ),
 
