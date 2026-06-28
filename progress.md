@@ -22,7 +22,7 @@ Tüm ekranlar placeholder/mock verilerle görsel olarak tamamlanır. Hiçbir bac
 - [x] **Vaka detay ekranı:** Görsel galerisi, yorum bölümü, beğeni/kaydetme butonları
 - [x] **Soru detay ekranı:** Cevaplar, "En İyi Cevap" rozeti
 - [x] **Post oluşturma ekranları:** Vaka oluştur, soru oluştur (form arayüzleri)
-- [ ] **Profil ekranı:** Profil başlığı, istatistikler, sekmeli post listesi, rozet vitrin
+- [x] **Profil ekranı:** Profil başlığı, istatistikler, sekmeli post listesi, rozet vitrin
 - [ ] **Profil düzenleme ekranı**
 - [ ] **Takipçiler/Takip edilenler ekranı**
 - [ ] **Keşfet/Arama ekranı:** Arama çubuğu, filtre chip'leri, sonuç listesi

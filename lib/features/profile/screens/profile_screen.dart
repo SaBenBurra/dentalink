@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../providers/auth_provider.dart';
+import '../widgets/profile_header.dart';
+import '../widgets/profile_stats.dart';
+import '../widgets/badge_showcase.dart';
+import '../widgets/profile_posts_tab.dart';
+import '../../../shared/widgets/error_widget.dart';
 
-/// Kullanıcı profil ekranı — Faz 2'de doldurulacak.
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentUserState = ref.watch(authProvider);
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profil', style: textTheme.titleLarge),
+        title: const Text('Profil'),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings_outlined),
@@ -20,37 +26,88 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 40,
-              backgroundColor: colorScheme.primaryContainer,
-              child: Icon(
-                Icons.person_outline_rounded,
-                size: 40,
-                color: colorScheme.primary,
+      body: currentUserState.when(
+        data: (user) {
+          if (user == null) {
+            return const Center(child: Text('Kullanıcı bulunamadı.'));
+          }
+
+          return DefaultTabController(
+            length: 1,
+            child: NestedScrollView(
+              headerSliverBuilder: (context, innerBoxIsScrolled) {
+                return [
+                  SliverToBoxAdapter(
+                    child: ProfileHeader(user: user),
+                  ),
+                  SliverToBoxAdapter(
+                    child: ProfileStats(user: user),
+                  ),
+                  const SliverToBoxAdapter(
+                    child: Divider(height: 32),
+                  ),
+                  SliverToBoxAdapter(
+                    child: BadgeShowcase(userId: user.id),
+                  ),
+                  const SliverToBoxAdapter(
+                    child: Divider(height: 32),
+                  ),
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _SliverAppBarDelegate(
+                      TabBar(
+                        labelColor: theme.colorScheme.primary,
+                        unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
+                        indicatorColor: theme.colorScheme.primary,
+                        tabs: const [
+                          Tab(text: 'Gönderiler'),
+                        ],
+                      ),
+                      theme.scaffoldBackgroundColor,
+                    ),
+                  ),
+                ];
+              },
+              body: TabBarView(
+                children: [
+                  ProfilePostsTab(userId: user.id),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Profil',
-              style: textTheme.titleMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Faz 2\'de profil bilgileri, istatistikler ve\npaylaşımlar burada görünecek.',
-              style: textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => DentLinkErrorWidget(
+          message: error.toString(),
+          onRetry: () => ref.refresh(authProvider),
         ),
       ),
     );
+  }
+}
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar, this._backgroundColor);
+
+  final TabBar _tabBar;
+  final Color _backgroundColor;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: _backgroundColor,
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return false;
   }
 }
