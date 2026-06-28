@@ -39,7 +39,7 @@ class ProfileScreen extends ConsumerWidget {
               headerSliverBuilder: (context, innerBoxIsScrolled) {
                 return [
                   SliverToBoxAdapter(
-                    child: ProfileHeader(user: user),
+                    child: ProfileHeader(user: user, isCurrentUser: true),
                   ),
                   SliverToBoxAdapter(
                     child: ProfileStats(user: user),

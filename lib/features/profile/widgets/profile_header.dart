@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import '../../../data/models/user_model.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import 'mutual_followers_widget.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileHeader extends StatelessWidget {
   final UserModel user;
+  final bool isCurrentUser;
 
   const ProfileHeader({
     super.key,
     required this.user,
+    this.isCurrentUser = false,
   });
 
   @override
@@ -54,6 +57,16 @@ class ProfileHeader extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
+          if (isCurrentUser) ...[
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () => context.push('/edit-profile'),
+                child: const Text('Profili Düzenle'),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
           if (user.bio != null && user.bio!.isNotEmpty) ...[
             Text(
               user.bio!,

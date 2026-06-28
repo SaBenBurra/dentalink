@@ -11,6 +11,7 @@ import '../../features/post/screens/case_detail_screen.dart';
 import '../../features/post/screens/question_detail_screen.dart';
 import '../../features/post/screens/create_case_screen.dart';
 import '../../features/post/screens/create_question_screen.dart';
+import '../../features/profile/screens/edit_profile_screen.dart';
 
 /// DentLink uygulama router'ı.
 ///
@@ -69,6 +70,11 @@ final GoRouter appRouter = GoRouter(
       path: '/create-question',
       name: 'createQuestion',
       builder: (context, state) => const CreateQuestionScreen(),
+    ),
+    GoRoute(
+      path: '/edit-profile',
+      name: 'editProfile',
+      builder: (context, state) => const EditProfileScreen(),
     ),
 
     // ── Ana Kabuk (Bottom Nav Shell) ───────────────────────

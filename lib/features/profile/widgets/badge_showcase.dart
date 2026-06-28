@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/user_provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class BadgeShowcase extends ConsumerWidget {
   final String userId;
 
-  const BadgeShowcase({
-    super.key,
-    required this.userId,
-  });
+  const BadgeShowcase({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,7 +39,8 @@ class BadgeShowcase extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   scrollDirection: Axis.horizontal,
                   itemCount: badges.length,
-                  separatorBuilder: (context, index) => const SizedBox(width: 12),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 12),
                   itemBuilder: (context, index) {
                     final badge = badges[index];
                     return Tooltip(
@@ -58,7 +55,11 @@ class BadgeShowcase extends ConsumerWidget {
                               shape: BoxShape.circle,
                               color: theme.colorScheme.surfaceContainerHighest,
                             ),
-                            child: Icon(Icons.emoji_events, size: 28, color: theme.colorScheme.primary),
+                            child: Icon(
+                              Icons.emoji_events,
+                              size: 28,
+                              color: theme.colorScheme.primary,
+                            ),
                           ),
                         ],
                       ),
@@ -70,7 +71,10 @@ class BadgeShowcase extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const SizedBox(height: 80, child: Center(child: CircularProgressIndicator())),
+      loading: () => const SizedBox(
+        height: 80,
+        child: Center(child: CircularProgressIndicator()),
+      ),
       error: (error, stackTrace) => const SizedBox.shrink(),
     );
   }
