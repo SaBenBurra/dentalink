@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -58,9 +57,6 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
         ? const Color(0xFF11211F)
         : AppColors.bgGradientStart;
 
-    final glassBgColor = isDark
-        ? Colors.black.withValues(alpha: 0.4)
-        : Colors.white.withValues(alpha: 0.6);
     final glassBorderColor = isDark
         ? Colors.white.withValues(alpha: 0.12)
         : Colors.white.withValues(alpha: 0.8);
@@ -91,15 +87,18 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
             top: -100,
             width: 300,
             height: 300,
-            child: Container(
+            child: DecoratedBox(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: (isDark ? AppColors.primaryLight : AppColors.primary)
-                    .withValues(alpha: isDark ? 0.08 : 0.12),
-              ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
-                child: const SizedBox.shrink(),
+                gradient: RadialGradient(
+                  colors: [
+                    (isDark ? AppColors.primaryLight : AppColors.primary)
+                        .withValues(alpha: isDark ? 0.10 : 0.15),
+                    (isDark ? AppColors.primaryLight : AppColors.primary)
+                        .withValues(alpha: 0.0),
+                  ],
+                  stops: const [0.0, 1.0],
+                ),
               ),
             ),
           ),
@@ -109,15 +108,18 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
             bottom: 100,
             width: 350,
             height: 350,
-            child: Container(
+            child: DecoratedBox(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: (isDark ? AppColors.secondaryLight : AppColors.secondary)
-                    .withValues(alpha: isDark ? 0.06 : 0.10),
-              ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 90, sigmaY: 90),
-                child: const SizedBox.shrink(),
+                gradient: RadialGradient(
+                  colors: [
+                    (isDark ? AppColors.secondaryLight : AppColors.secondary)
+                        .withValues(alpha: isDark ? 0.08 : 0.12),
+                    (isDark ? AppColors.secondaryLight : AppColors.secondary)
+                        .withValues(alpha: 0.0),
+                  ],
+                  stops: const [0.0, 1.0],
+                ),
               ),
             ),
           ),
@@ -134,18 +136,15 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
                   backgroundColor: Colors.transparent,
                   elevation: 0,
                   surfaceTintColor: Colors.transparent,
-                  flexibleSpace: ClipRRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: glassBgColor,
-                          border: Border(
-                            bottom: BorderSide(
-                              color: glassBorderColor,
-                              width: 1,
-                            ),
-                          ),
+                  flexibleSpace: Container(
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.black.withValues(alpha: 0.85)
+                          : Colors.white.withValues(alpha: 0.92),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: glassBorderColor,
+                          width: 1,
                         ),
                       ),
                     ),
@@ -191,33 +190,41 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
 
                 // Feed List
                 Expanded(
-                  child: feedState.when(
-                    data: (posts) {
-                      final filteredPosts = posts.where((post) {
-                        if (_selectedFilterIndex == 1) {
-                          return post.type == PostType.casePost;
-                        } else if (_selectedFilterIndex == 2) {
-                          return post.type == PostType.question;
+                  child: RefreshIndicator(
+                    onRefresh: () => ref.read(feedProvider.notifier).refresh(),
+                    color: colorScheme.primary,
+                    child: feedState.when(
+                      data: (posts) {
+                        final filteredPosts = posts.where((post) {
+                          if (_selectedFilterIndex == 1) {
+                            return post.type == PostType.casePost;
+                          } else if (_selectedFilterIndex == 2) {
+                            return post.type == PostType.question;
+                          }
+                          return true;
+                        }).toList();
+
+                        if (filteredPosts.isEmpty) {
+                          return CustomScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            slivers: [
+                              SliverFillRemaining(
+                                child: Center(
+                                  child: DentLinkEmptyState(
+                                    icon: Icons.dynamic_feed_outlined,
+                                    title: l10n.emptyFeed,
+                                    subtitle: _selectedFilterIndex != 0
+                                        ? 'Seçili filtreye uygun gönderi bulunamadı.'
+                                        : 'Akışta henüz hiç paylaşım yapılmamış.',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
                         }
-                        return true;
-                      }).toList();
 
-                      if (filteredPosts.isEmpty) {
-                        return Center(
-                          child: DentLinkEmptyState(
-                            icon: Icons.dynamic_feed_outlined,
-                            title: l10n.emptyFeed,
-                            subtitle: _selectedFilterIndex != 0
-                                ? 'Seçili filtreye uygun gönderi bulunamadı.'
-                                : 'Akışta henüz hiç paylaşım yapılmamış.',
-                          ),
-                        );
-                      }
-
-                      return RefreshIndicator(
-                        onRefresh: () => ref.read(feedProvider.notifier).refresh(),
-                        color: colorScheme.primary,
-                        child: ListView.builder(
+                        return ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
                           padding: const EdgeInsets.symmetric(
                             horizontal: AppDimensions.spacing16,
                             vertical: AppDimensions.spacing12,
@@ -265,13 +272,23 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
                               );
                             }
                           },
-                        ),
-                      );
-                    },
-                    loading: () => const FeedSkeleton(),
-                    error: (err, stack) => DentLinkErrorWidget(
-                      message: 'Akış yüklenirken bir hata oluştu.',
-                      onRetry: () => ref.read(feedProvider.notifier).refresh(),
+                        );
+                      },
+                      loading: () => ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: const [FeedSkeleton()],
+                      ),
+                      error: (err, stack) => CustomScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        slivers: [
+                          SliverFillRemaining(
+                            child: DentLinkErrorWidget(
+                              message: 'Akış yüklenirken bir hata oluştu.',
+                              onRetry: () => ref.read(feedProvider.notifier).refresh(),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

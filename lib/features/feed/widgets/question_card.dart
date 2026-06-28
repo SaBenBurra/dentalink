@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
@@ -40,25 +39,21 @@ class QuestionCard extends StatelessWidget {
         ? Colors.white.withValues(alpha: 0.12)
         : Colors.white.withValues(alpha: 0.8);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-        child: Container(
-          decoration: BoxDecoration(
-            color: glassBgColor,
-            borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-            border: Border.all(color: glassBorderColor, width: 1),
-            boxShadow: const [
-              BoxShadow(
-                color: AppColors.glassShadow,
-                blurRadius: 40,
-                offset: Offset(0, 10),
-              ),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        color: glassBgColor,
+        borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+        border: Border.all(color: glassBorderColor, width: 1),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.glassShadow,
+            blurRadius: 40,
+            offset: Offset(0, 10),
           ),
-          child: Material(
-            color: Colors.transparent,
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
             child: InkWell(
               onTap: onTap,
               borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
@@ -252,8 +247,6 @@ class QuestionCard extends StatelessWidget {
               ),
             ),
           ),
-        ),
-      ),
-    );
+        );
   }
 }

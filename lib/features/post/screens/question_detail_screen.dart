@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -138,15 +137,18 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                 top: -100,
                 width: 300,
                 height: 300,
-                child: Container(
+                child: DecoratedBox(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: (isDark ? AppColors.primaryLight : AppColors.primary)
-                        .withValues(alpha: isDark ? 0.08 : 0.12),
-                  ),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-                    child: const SizedBox.shrink(),
+                    gradient: RadialGradient(
+                      colors: [
+                        (isDark ? AppColors.primaryLight : AppColors.primary)
+                            .withValues(alpha: isDark ? 0.10 : 0.15),
+                        (isDark ? AppColors.primaryLight : AppColors.primary)
+                            .withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
+                    ),
                   ),
                 ),
               ),

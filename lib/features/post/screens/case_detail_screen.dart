@@ -1,7 +1,7 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../providers/post_provider.dart';
@@ -118,15 +118,18 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                 top: -100,
                 width: 300,
                 height: 300,
-                child: Container(
+                child: DecoratedBox(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: (isDark ? AppColors.primaryLight : AppColors.primary)
-                        .withValues(alpha: isDark ? 0.08 : 0.12),
-                  ),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-                    child: const SizedBox.shrink(),
+                    gradient: RadialGradient(
+                      colors: [
+                        (isDark ? AppColors.primaryLight : AppColors.primary)
+                            .withValues(alpha: isDark ? 0.10 : 0.15),
+                        (isDark ? AppColors.primaryLight : AppColors.primary)
+                            .withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
+                    ),
                   ),
                 ),
               ),
@@ -155,52 +158,30 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                               },
                               itemCount: imageUrls.length,
                               itemBuilder: (context, index) {
-                                return Image.network(
-                                  imageUrls[index],
+                                return CachedNetworkImage(
+                                  imageUrl: imageUrls[index],
                                   fit: BoxFit.cover,
-                                  cacheWidth: 800,
-                                  loadingBuilder:
-                                      (context, child, loadingProgress) {
-                                        if (loadingProgress == null)
-                                          return child;
-                                        return Container(
-                                          color: isDark
-                                              ? Colors.black26
-                                              : Colors.white24,
-                                          child: Center(
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              value:
-                                                  loadingProgress
-                                                          .expectedTotalBytes !=
-                                                      null
-                                                  ? loadingProgress
-                                                            .cumulativeBytesLoaded /
-                                                        loadingProgress
-                                                            .expectedTotalBytes!
-                                                  : null,
-                                              valueColor:
-                                                  const AlwaysStoppedAnimation<
-                                                    Color
-                                                  >(AppColors.primary),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      color: isDark
-                                          ? Colors.black26
-                                          : Colors.white24,
-                                      child: const Center(
-                                        child: Icon(
-                                          Icons.broken_image_outlined,
-                                          size: 48,
-                                          color: Colors.grey,
+                                  placeholder: (context, url) => Container(
+                                    color: isDark ? Colors.black26 : Colors.white24,
+                                    child: const Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(
+                                          AppColors.primary,
                                         ),
                                       ),
-                                    );
-                                  },
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) => Container(
+                                    color: isDark ? Colors.black26 : Colors.white24,
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.broken_image_outlined,
+                                        size: 48,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
                                 );
                               },
                             ),

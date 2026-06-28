@@ -99,7 +99,7 @@ ThemeData buildDarkTheme() {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primaryLight,
         foregroundColor: AppColors.darkBackground,
-        minimumSize: const Size.fromHeight(AppDimensions.buttonHeight),
+        minimumSize: const Size(64, AppDimensions.buttonHeight),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
         ),
@@ -112,7 +112,7 @@ ThemeData buildDarkTheme() {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.primaryLight,
-        minimumSize: const Size.fromHeight(AppDimensions.buttonHeight),
+        minimumSize: const Size(64, AppDimensions.buttonHeight),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
         ),

@@ -1,6 +1,6 @@
-import 'dart:ui';
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../data/models/post_model.dart';
@@ -120,25 +120,21 @@ class _CaseCardState extends State<CaseCard> with TickerProviderStateMixin {
         ? widget.post.imageUrls
         : [_placeholderXrayUrl];
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-        child: Container(
-          decoration: BoxDecoration(
-            color: glassBgColor,
-            borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-            border: Border.all(color: glassBorderColor, width: 1),
-            boxShadow: const [
-              BoxShadow(
-                color: AppColors.glassShadow,
-                blurRadius: 40,
-                offset: Offset(0, 10),
-              ),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        color: glassBgColor,
+        borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+        border: Border.all(color: glassBorderColor, width: 1),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.glassShadow,
+            blurRadius: 40,
+            offset: Offset(0, 10),
           ),
-          child: Material(
-            color: Colors.transparent,
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
             child: InkWell(
               onTap: widget.onTap,
               borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
@@ -315,39 +311,30 @@ class _CaseCardState extends State<CaseCard> with TickerProviderStateMixin {
                             return GestureDetector(
                               onTap: widget.onTap,
                               onDoubleTap: _handleDoubleTap,
-                              child: Image.network(
-                                imageUrls[index],
+                              child: CachedNetworkImage(
+                                imageUrl: imageUrls[index],
                                 fit: BoxFit.cover,
-                                loadingBuilder:
-                                    (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Container(
-                                        color: isDark
-                                            ? Colors.black26
-                                            : Colors.white24,
-                                        child: const Center(
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                                  AppColors.primary,
-                                                ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    color: isDark
-                                        ? Colors.black26
-                                        : Colors.white24,
-                                    child: const Icon(
+                                placeholder: (context, url) => Container(
+                                  color: isDark ? Colors.black26 : Colors.white24,
+                                  child: const Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  color: isDark ? Colors.black26 : Colors.white24,
+                                  child: const Center(
+                                    child: Icon(
                                       Icons.broken_image_outlined,
                                       size: 48,
                                       color: Colors.grey,
                                     ),
-                                  );
-                                },
+                                  ),
+                                ),
                               ),
                             );
                           },
@@ -479,8 +466,6 @@ class _CaseCardState extends State<CaseCard> with TickerProviderStateMixin {
               ),
             ),
           ),
-        ),
-      ),
-    );
+        );
   }
 }

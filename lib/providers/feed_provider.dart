@@ -41,7 +41,6 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
   }
 
   Future<void> refresh() async {
-    state = const AsyncLoading();
     state = await AsyncValue.guard(_fetchFeed);
   }
 

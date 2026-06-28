@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../core/constants/app_colors.dart';
@@ -34,24 +33,20 @@ class FeedSkeleton extends StatelessWidget {
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.only(bottom: AppDimensions.spacing16),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-              child: Container(
-                padding: const EdgeInsets.all(AppDimensions.spacing16),
-                decoration: BoxDecoration(
-                  color: glassBgColor,
-                  borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-                  border: Border.all(color: glassBorderColor, width: 1),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: AppColors.glassShadow,
-                      blurRadius: 40,
-                      offset: Offset(0, 10),
-                    ),
-                  ],
+          child: Container(
+            padding: const EdgeInsets.all(AppDimensions.spacing16),
+            decoration: BoxDecoration(
+              color: glassBgColor,
+              borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+              border: Border.all(color: glassBorderColor, width: 1),
+              boxShadow: const [
+                BoxShadow(
+                  color: AppColors.glassShadow,
+                  blurRadius: 40,
+                  offset: Offset(0, 10),
                 ),
+              ],
+            ),
                 child: Shimmer.fromColors(
                   baseColor: baseColor,
                   highlightColor: highlightColor,
@@ -140,8 +135,6 @@ class FeedSkeleton extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
-              ),
             ),
           ),
         );
