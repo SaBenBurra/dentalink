@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:dentlink/features/auth/widgets/glass_field.dart';
+import 'package:dentlink/shared/widgets/glass_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
