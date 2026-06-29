@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:dentlink/features/auth/widgets/register_dialog.dart';
 import 'package:dentlink/features/auth/widgets/register_step_one.dart';
+import 'package:dentlink/features/auth/widgets/register_step_two.dart';
 import 'package:dentlink/shared/widgets/glass_background_effect.dart';
 import 'package:dentlink/shared/widgets/glass_field.dart';
 import 'package:flutter/material.dart';
@@ -230,7 +231,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           });
                         },
                       ),
-                      _buildStep2(isDark, textPrimaryColor),
+                      RegisterStepTwo(
+                        uniController: _uniController,
+                        uniFocusNode: _uniFocusNode,
+                        cityController: _cityController,
+                        cityFocusNode: _cityFocusNode,
+                        clinicController: _clinicController,
+                        clinicFocusNode: _clinicFocusNode,
+                        expController: _expController,
+                        expFocusNode: _expFocusNode,
+                        isDark: isDark,
+                        textPrimaryColor: textPrimaryColor,
+                      ),
                       _buildStep3(isDark, textPrimaryColor),
                     ],
                   ),
@@ -419,71 +431,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   // STEP 1: Basic Info & Title selection
 
   // STEP 2: Professional Details (Optional)
-  Widget _buildStep2(bool isDark, Color textPrimaryColor) {
-    final textSecondaryColor = isDark
-        ? AppColors.darkTextSecondary
-        : AppColors.lightTextSecondary;
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: AppDimensions.spacing12),
-          Text(
-            'Mesleki Bilgiler',
-            style: AppTextStyles.headlineSmall.copyWith(
-              color: textPrimaryColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: AppDimensions.spacing8),
-          Text(
-            'Profesyonel geçmişinizi doldurarak diş hekimleri ağı ile daha iyi etkileşim kurun (İsteğe bağlı).',
-            style: AppTextStyles.bodyMedium.copyWith(color: textSecondaryColor),
-          ),
-          const SizedBox(height: AppDimensions.spacing24),
-
-          // University
-          GlassField(
-            controller: _uniController,
-            focusNode: _uniFocusNode,
-            hintText: 'Üniversite',
-            icon: Icons.school_outlined,
-          ),
-          const SizedBox(height: AppDimensions.spacing16),
-
-          // City
-          GlassField(
-            controller: _cityController,
-            focusNode: _cityFocusNode,
-            hintText: 'Şehir',
-            icon: Icons.location_on_outlined,
-          ),
-          const SizedBox(height: AppDimensions.spacing16),
-
-          // Clinic
-          GlassField(
-            controller: _clinicController,
-            focusNode: _clinicFocusNode,
-            hintText: 'Çalıştığı Klinik/Hastane',
-            icon: Icons.business_outlined,
-          ),
-          const SizedBox(height: AppDimensions.spacing16),
-
-          // Experience Years
-          GlassField(
-            controller: _expController,
-            focusNode: _expFocusNode,
-            hintText: 'Deneyim Yılı',
-            icon: Icons.trending_up_outlined,
-            keyboardType: TextInputType.number,
-          ),
-          const SizedBox(height: AppDimensions.spacing32),
-        ],
-      ),
-    );
-  }
 
   // STEP 3: Profile customization
   Widget _buildStep3(bool isDark, Color textPrimaryColor) {
