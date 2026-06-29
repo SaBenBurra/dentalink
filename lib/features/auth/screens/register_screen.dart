@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:dentlink/features/auth/widgets/register_dialog.dart';
+import 'package:dentlink/shared/widgets/glass_background_effect.dart';
 import 'package:dentlink/shared/widgets/glass_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -185,42 +186,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               ),
             ),
 
-          Positioned(
-            left: -120,
-            top: -120,
-            width: 320,
-            height: 320,
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: (isDark ? AppColors.primaryLight : AppColors.primary)
-                    .withValues(alpha: isDark ? 0.08 : 0.12),
-              ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
-                child: const SizedBox.shrink(),
-              ),
-            ),
-          ),
-
-          Positioned(
+          GlassBackgroundEffect(left: -120, top: -120, width: 320, height: 320),
+          GlassBackgroundEffect(
             right: -120,
             bottom: -120,
             width: 380,
             height: 380,
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: (isDark ? AppColors.secondaryLight : AppColors.secondary)
-                    .withValues(alpha: isDark ? 0.06 : 0.10),
-              ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 90, sigmaY: 90),
-                child: const SizedBox.shrink(),
-              ),
-            ),
           ),
-
           // 2. Main Page Layout
           SafeArea(
             child: Column(
