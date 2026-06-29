@@ -7,21 +7,20 @@ import 'package:dentlink/features/auth/widgets/register_step_three.dart';
 import 'package:dentlink/features/auth/widgets/register_step_two.dart';
 import 'package:dentlink/shared/widgets/glass_background_effect.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../data/models/enums.dart';
 
-class RegisterScreen extends ConsumerStatefulWidget {
+class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends ConsumerState<RegisterScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final PageController _pageController = PageController();
   int _currentStep = 0;
   final int _totalSteps = 3;
@@ -117,46 +116,42 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
   }
 
-  void _completeRegistration() {
+  Future<void> _completeRegistration() async {
     setState(() {
       _isCompleting = true;
     });
 
-    // Simulate completion delay
-    Future.delayed(const Duration(milliseconds: 1500), () {
-      if (!mounted) return;
-      setState(() {
-        _isCompleting = false;
-      });
+    await Future.delayed(const Duration(milliseconds: 1500));
 
-      // Show success modal or direct redirect
-      showGeneralDialog(
-        context: context,
-        barrierDismissible: false,
-        barrierLabel: 'Success',
-        transitionDuration: const Duration(milliseconds: 450),
-        pageBuilder: (context, anim1, anim2) {
-          return const SizedBox.shrink();
-        },
-        transitionBuilder: (context, anim1, anim2, child) {
-          final scale = Tween<double>(
-            begin: 0.8,
-            end: 1.0,
-          ).animate(CurvedAnimation(parent: anim1, curve: Curves.elasticOut));
-          return RegisterDialog(scale: scale);
-        },
-      );
-
-      // Transition to Feed after success dialog
-      Future.delayed(const Duration(milliseconds: 1500), () {
-        if (mounted) {
-          // Pop dialog
-          Navigator.of(context, rootNavigator: true).pop();
-          // Go to Feed
-          context.go('/feed');
-        }
-      });
+    if (!mounted) return;
+    setState(() {
+      _isCompleting = false;
     });
+
+    // 2. Başarı dialogunu göster // <-- await kullanıldı
+    await showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: 'Success',
+      transitionDuration: const Duration(milliseconds: 450),
+      pageBuilder: (context, anim1, anim2) => const SizedBox.shrink(),
+      transitionBuilder: (context, anim1, anim2, child) {
+        final scale = Tween<double>(
+          begin: 0.8,
+          end: 1.0,
+        ).animate(CurvedAnimation(parent: anim1, curve: Curves.elasticOut));
+        return RegisterDialog(scale: scale);
+      },
+    );
+
+    // 3. Dialog sonrası yönlendirme beklemesi (Opsiyonel ise dialog içine de alınabilir)
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    if (mounted) {
+      // Önce dialogu kapat, sonra yönlendir
+      Navigator.of(context, rootNavigator: true).pop();
+      context.go('/feed');
+    }
   }
 
   @override
@@ -190,8 +185,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               ),
             ),
 
-          GlassBackgroundEffect(left: -120, top: -120, width: 320, height: 320),
-          GlassBackgroundEffect(
+          const GlassBackgroundEffect(
+            left: -120,
+            top: -120,
+            width: 320,
+            height: 320,
+          ),
+          const GlassBackgroundEffect(
             right: -120,
             bottom: -120,
             width: 380,
@@ -207,7 +207,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   totalSteps: _totalSteps,
                   prevStep: _prevStep,
                   nextStep: _nextStep,
-                  getStepTitle: _getStepTitle,
                 ),
 
                 // Multi-step Wizard PageView
@@ -248,8 +247,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         clinicFocusNode: _clinicFocusNode,
                         expController: _expController,
                         expFocusNode: _expFocusNode,
-                        isDark: isDark,
-                        textPrimaryColor: textPrimaryColor,
                       ),
                       RegisterStepThree(
                         mockAvatars: _mockAvatars,
@@ -334,18 +331,5 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         ],
       ),
     );
-  }
-
-  String _getStepTitle() {
-    switch (_currentStep) {
-      case 0:
-        return 'Temel Bilgiler';
-      case 1:
-        return 'Mesleki Bilgiler';
-      case 2:
-        return 'Profil Detayları';
-      default:
-        return '';
-    }
   }
 }

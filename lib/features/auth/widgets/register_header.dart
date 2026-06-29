@@ -10,14 +10,12 @@ class RegisterHeader extends StatelessWidget {
     required this.totalSteps,
     required this.prevStep,
     required this.nextStep,
-    required this.getStepTitle,
   });
 
   final int currentStep;
   final int totalSteps;
   final void Function() prevStep;
   final void Function() nextStep;
-  final String Function() getStepTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -125,5 +123,18 @@ class RegisterHeader extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String getStepTitle() {
+    switch (currentStep) {
+      case 0:
+        return 'Temel Bilgiler';
+      case 1:
+        return 'Mesleki Bilgiler';
+      case 2:
+        return 'Profil Detayları';
+      default:
+        return '';
+    }
   }
 }

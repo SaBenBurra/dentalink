@@ -15,8 +15,6 @@ class RegisterStepTwo extends StatelessWidget {
     required this.clinicFocusNode,
     required this.expController,
     required this.expFocusNode,
-    required this.isDark,
-    required this.textPrimaryColor,
   });
 
   final TextEditingController uniController;
@@ -27,11 +25,13 @@ class RegisterStepTwo extends StatelessWidget {
   final FocusNode clinicFocusNode;
   final TextEditingController expController;
   final FocusNode expFocusNode;
-  final bool isDark;
-  final Color textPrimaryColor;
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimaryColor = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.lightTextPrimary;
     final textSecondaryColor = isDark
         ? AppColors.darkTextSecondary
         : AppColors.lightTextSecondary;
