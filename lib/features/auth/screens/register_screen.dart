@@ -75,6 +75,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _nextStep() {
+    FocusScope.of(context).unfocus();
+
     if (_currentStep == 0) {
       // Validate Step 1
       setState(() {
@@ -106,6 +108,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _prevStep() {
+    FocusScope.of(context).unfocus();
+
     if (_currentStep > 0) {
       _pageController.previousPage(
         duration: const Duration(milliseconds: 300),
@@ -128,8 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _isCompleting = false;
     });
 
-    // 2. Başarı dialogunu göster // <-- await kullanıldı
-    await showGeneralDialog(
+    showGeneralDialog(
       context: context,
       barrierDismissible: false,
       barrierLabel: 'Success',
@@ -144,14 +147,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       },
     );
 
-    // 3. Dialog sonrası yönlendirme beklemesi (Opsiyonel ise dialog içine de alınabilir)
+    // 3. Dialog sonrası yönlendirme beklemesi
     await Future.delayed(const Duration(milliseconds: 1500));
 
-    if (mounted) {
-      // Önce dialogu kapat, sonra yönlendir
-      Navigator.of(context, rootNavigator: true).pop();
-      context.go('/feed');
+    if (!mounted) {
+      return;
     }
+
+    // Önce dialogu kapat, sonra yönlendir
+    Navigator.of(context, rootNavigator: true).pop();
+    context.go('/feed');
   }
 
   @override
