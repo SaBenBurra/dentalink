@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:dentlink/features/auth/widgets/glass_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -503,15 +504,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           const SizedBox(height: AppDimensions.spacing24),
 
           // Name field
-          _buildGlassField(
+          GlassField(
             controller: _nameController,
             focusNode: _nameFocusNode,
             hintText: 'Ad Soyad',
             icon: Icons.person_outline_rounded,
             errorText: _nameError,
-            isDark: isDark,
-            glassBgColor: glassBgColor,
-            glassBorderColor: glassBorderColor,
             onChanged: (val) {
               if (_nameError != null && val.trim().isNotEmpty) {
                 setState(() {
@@ -632,12 +630,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final textSecondaryColor = isDark
         ? AppColors.darkTextSecondary
         : AppColors.lightTextSecondary;
-    final glassBgColor = isDark
-        ? Colors.black.withValues(alpha: 0.3)
-        : Colors.white.withValues(alpha: 0.5);
-    final glassBorderColor = isDark
-        ? Colors.white.withValues(alpha: 0.1)
-        : Colors.white.withValues(alpha: 0.6);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing24),
@@ -660,51 +652,39 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           const SizedBox(height: AppDimensions.spacing24),
 
           // University
-          _buildGlassField(
+          GlassField(
             controller: _uniController,
             focusNode: _uniFocusNode,
             hintText: 'Üniversite',
             icon: Icons.school_outlined,
-            isDark: isDark,
-            glassBgColor: glassBgColor,
-            glassBorderColor: glassBorderColor,
           ),
           const SizedBox(height: AppDimensions.spacing16),
 
           // City
-          _buildGlassField(
+          GlassField(
             controller: _cityController,
             focusNode: _cityFocusNode,
             hintText: 'Şehir',
             icon: Icons.location_on_outlined,
-            isDark: isDark,
-            glassBgColor: glassBgColor,
-            glassBorderColor: glassBorderColor,
           ),
           const SizedBox(height: AppDimensions.spacing16),
 
           // Clinic
-          _buildGlassField(
+          GlassField(
             controller: _clinicController,
             focusNode: _clinicFocusNode,
             hintText: 'Çalıştığı Klinik/Hastane',
             icon: Icons.business_outlined,
-            isDark: isDark,
-            glassBgColor: glassBgColor,
-            glassBorderColor: glassBorderColor,
           ),
           const SizedBox(height: AppDimensions.spacing16),
 
           // Experience Years
-          _buildGlassField(
+          GlassField(
             controller: _expController,
             focusNode: _expFocusNode,
             hintText: 'Deneyim Yılı',
             icon: Icons.trending_up_outlined,
             keyboardType: TextInputType.number,
-            isDark: isDark,
-            glassBgColor: glassBgColor,
-            glassBorderColor: glassBorderColor,
           ),
           const SizedBox(height: AppDimensions.spacing32),
         ],
@@ -717,12 +697,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final textSecondaryColor = isDark
         ? AppColors.darkTextSecondary
         : AppColors.lightTextSecondary;
-    final glassBgColor = isDark
-        ? Colors.black.withValues(alpha: 0.3)
-        : Colors.white.withValues(alpha: 0.5);
-    final glassBorderColor = isDark
-        ? Colors.white.withValues(alpha: 0.1)
-        : Colors.white.withValues(alpha: 0.6);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing24),
@@ -806,107 +780,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           const SizedBox(height: AppDimensions.spacing32),
 
           // Bio Multi-line input
-          _buildGlassField(
+          GlassField(
             controller: _bioController,
             focusNode: _bioFocusNode,
             hintText: 'Biyografi (Kendinizden kısaca bahsedin)',
             icon: Icons.description_outlined,
-            isDark: isDark,
-            glassBgColor: glassBgColor,
-            glassBorderColor: glassBorderColor,
             maxLines: 4,
           ),
           const SizedBox(height: AppDimensions.spacing32),
         ],
-      ),
-    );
-  }
-
-  Widget _buildGlassField({
-    required TextEditingController controller,
-    required FocusNode focusNode,
-    required String hintText,
-    required IconData icon,
-    String? errorText,
-    TextInputType? keyboardType,
-    int maxLines = 1,
-    required bool isDark,
-    required Color glassBgColor,
-    required Color glassBorderColor,
-    ValueChanged<String>? onChanged,
-  }) {
-    final hasFocus = focusNode.hasFocus;
-    final hasError = errorText != null;
-
-    Color borderColor = glassBorderColor;
-    Color bgOpacityColor = glassBgColor;
-
-    if (hasError) {
-      borderColor = AppColors.error.withValues(alpha: 0.8);
-      bgOpacityColor = AppColors.error.withValues(alpha: isDark ? 0.08 : 0.03);
-    } else if (hasFocus) {
-      borderColor = const Color(0xFF13B9A5);
-      bgOpacityColor = const Color(
-        0xFF13B9A5,
-      ).withValues(alpha: isDark ? 0.15 : 0.08);
-    }
-
-    return AnimatedContainer(
-      duration: AppDimensions.animFast,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-        color: bgOpacityColor,
-        border: Border.all(color: borderColor, width: hasFocus ? 1.5 : 1.0),
-        boxShadow: hasFocus
-            ? [
-                BoxShadow(
-                  color: const Color(0xFF13B9A5).withValues(alpha: 0.1),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : null,
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-          child: TextField(
-            controller: controller,
-            focusNode: focusNode,
-            keyboardType: keyboardType,
-            maxLines: maxLines,
-            onChanged: onChanged,
-            style: AppTextStyles.bodyLarge.copyWith(
-              color: isDark
-                  ? AppColors.darkTextPrimary
-                  : AppColors.lightTextPrimary,
-              fontWeight: FontWeight.w600,
-            ),
-            decoration: InputDecoration(
-              hintText: hintText,
-              hintStyle: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.lightIcon.withValues(alpha: 0.7),
-                fontWeight: FontWeight.w500,
-              ),
-              prefixIcon: Padding(
-                padding: EdgeInsets.only(bottom: maxLines > 1 ? 72.0 : 0.0),
-                child: Icon(
-                  icon,
-                  color: hasFocus && !hasError
-                      ? const Color(0xFF13B9A5)
-                      : (hasError ? AppColors.error : AppColors.lightIcon),
-                  size: AppDimensions.iconMedium,
-                ),
-              ),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 14,
-                horizontal: AppDimensions.spacing16,
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }
