@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 /// Vaka oluştururken Diş Hekimliği Branşını seçmek için kullanılan bileşen.
 class BranchSelector extends StatelessWidget {
@@ -49,7 +50,7 @@ class BranchSelector extends StatelessWidget {
             final colorScheme = Theme.of(context).colorScheme;
             return Column(
               children: [
-                const SizedBox(height: 12),
+                const SizedBox(height: AppDimensions.spacing12),
                 Container(
                   width: 40,
                   height: 4,
@@ -58,12 +59,12 @@ class BranchSelector extends StatelessWidget {
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppDimensions.spacing16),
                 Text(
                   'Branş Seç',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppDimensions.spacing8),
                 const Divider(),
                 Expanded(
                   child: ListView.builder(
@@ -76,17 +77,24 @@ class BranchSelector extends StatelessWidget {
                       return ListTile(
                         leading: Icon(
                           Icons.category_outlined,
-                          color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                          color: isSelected
+                              ? colorScheme.primary
+                              : colorScheme.onSurfaceVariant,
                         ),
                         title: Text(
                           branch['name']!,
                           style: TextStyle(
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                             color: isSelected ? colorScheme.primary : null,
                           ),
                         ),
                         trailing: isSelected
-                            ? Icon(Icons.check_circle, color: colorScheme.primary)
+                            ? Icon(
+                                Icons.check_circle,
+                                color: colorScheme.primary,
+                              )
                             : null,
                         onTap: () {
                           onBranchSelected(branch['id']!);
@@ -118,12 +126,15 @@ class BranchSelector extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppDimensions.spacing8),
         InkWell(
           onTap: () => _showBranchBottomSheet(context),
           borderRadius: BorderRadius.circular(12),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.spacing16,
+              vertical: AppDimensions.spacing16,
+            ),
             decoration: BoxDecoration(
               border: Border.all(color: colorScheme.outline),
               borderRadius: BorderRadius.circular(12),

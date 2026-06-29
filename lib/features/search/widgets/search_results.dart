@@ -7,6 +7,7 @@ import '../../feed/widgets/question_card.dart';
 import '../../../shared/widgets/user_tile.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/empty_state.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class PostSearchResults extends ConsumerWidget {
   const PostSearchResults({super.key});
@@ -20,7 +21,7 @@ class PostSearchResults extends ConsumerWidget {
         if (posts.isEmpty) {
           return const SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.only(top: 64),
+              padding: EdgeInsets.only(top: AppDimensions.spacing64),
               child: DentLinkEmptyState(
                 icon: Icons.article_outlined,
                 title: 'Sonuç Bulunamadı',
@@ -30,9 +31,10 @@ class PostSearchResults extends ConsumerWidget {
           );
         }
         return ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing8),
           itemCount: posts.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 8),
+          separatorBuilder: (_, __) =>
+              const SizedBox(height: AppDimensions.spacing8),
           itemBuilder: (context, index) {
             final post = posts[index];
             if (post.type == PostType.casePost) {
@@ -69,7 +71,7 @@ class UserSearchResults extends ConsumerWidget {
         if (users.isEmpty) {
           return const SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.only(top: 64),
+              padding: EdgeInsets.only(top: AppDimensions.spacing64),
               child: DentLinkEmptyState(
                 icon: Icons.people_outline,
                 title: 'Sonuç Bulunamadı',
@@ -79,7 +81,7 @@ class UserSearchResults extends ConsumerWidget {
           );
         }
         return ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing8),
           itemCount: users.length,
           separatorBuilder: (_, __) => const Divider(height: 1),
           itemBuilder: (context, index) {

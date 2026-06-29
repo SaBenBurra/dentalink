@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/conversation_tile.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class ConversationsScreen extends StatefulWidget {
   const ConversationsScreen({super.key});
@@ -66,23 +67,27 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
       appBar: AppBar(
         title: Text('Mesajlar', style: textTheme.titleLarge),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
         ],
       ),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.spacing16,
+              vertical: AppDimensions.spacing8,
+            ),
             child: SearchBar(
               controller: _searchController,
               hintText: 'Mesajlarda ara...',
               leading: const Icon(Icons.search),
               elevation: WidgetStateProperty.all(0),
-              backgroundColor: WidgetStateProperty.all(colorScheme.surfaceContainerHighest),
-              padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 16.0)),
+              backgroundColor: WidgetStateProperty.all(
+                colorScheme.surfaceContainerHighest,
+              ),
+              padding: WidgetStateProperty.all(
+                const EdgeInsets.symmetric(horizontal: AppDimensions.spacing16),
+              ),
               onChanged: (value) {
                 setState(() {});
               },
@@ -91,13 +96,16 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
           Expanded(
             child: ListView.separated(
               itemCount: _mockConversations.length,
-              separatorBuilder: (context, index) => const Divider(height: 1, indent: 88),
+              separatorBuilder: (context, index) =>
+                  const Divider(height: 1, indent: 88),
               itemBuilder: (context, index) {
                 final conversation = _mockConversations[index];
-                
+
                 // Basit arama filtresi
                 if (_searchController.text.isNotEmpty &&
-                    !conversation['name'].toString().toLowerCase().contains(_searchController.text.toLowerCase())) {
+                    !conversation['name'].toString().toLowerCase().contains(
+                      _searchController.text.toLowerCase(),
+                    )) {
                   return const SizedBox.shrink();
                 }
 

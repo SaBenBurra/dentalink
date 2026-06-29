@@ -10,8 +10,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// - [ThemeMode.system]  → Cihaz ayarını takip eder
 /// - [ThemeMode.light]   → Her zaman aydınlık
 /// - [ThemeMode.dark]    → Her zaman karanlık
-final themeModeProvider =
-    NotifierProvider<ThemeModeNotifier, ThemeMode>(ThemeModeNotifier.new);
+final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(
+  ThemeModeNotifier.new,
+);
 
 class ThemeModeNotifier extends Notifier<ThemeMode> {
   @override

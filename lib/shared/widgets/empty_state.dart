@@ -69,11 +69,7 @@ class DentLinkEmptyState extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               // ── İkon ──
-              Icon(
-                icon,
-                size: iconSize,
-                color: effectiveIconColor,
-              ),
+              Icon(icon, size: iconSize, color: effectiveIconColor),
               const SizedBox(height: AppDimensions.spacing16),
 
               // ── Başlık ──

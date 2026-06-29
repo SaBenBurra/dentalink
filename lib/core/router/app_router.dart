@@ -15,6 +15,7 @@ import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/followers_screen.dart';
 import '../../features/messaging/screens/chat_screen.dart';
 import '../../features/notifications/screens/notifications_screen.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 /// DentLink uygulama router'ı.
 ///
@@ -84,7 +85,8 @@ final GoRouter appRouter = GoRouter(
       name: 'network',
       builder: (context, state) {
         final id = state.pathParameters['id']!;
-        final initialIndex = int.tryParse(state.uri.queryParameters['tab'] ?? '0') ?? 0;
+        final initialIndex =
+            int.tryParse(state.uri.queryParameters['tab'] ?? '0') ?? 0;
         return FollowersScreen(userId: id, initialIndex: initialIndex);
       },
     ),
@@ -112,30 +114,26 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/feed',
           name: 'feed',
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: FeedScreen(),
-          ),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: FeedScreen()),
         ),
         GoRoute(
           path: '/search',
           name: 'search',
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: SearchScreen(),
-          ),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: SearchScreen()),
         ),
         GoRoute(
           path: '/messages',
           name: 'messages',
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: ConversationsScreen(),
-          ),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: ConversationsScreen()),
         ),
         GoRoute(
           path: '/profile',
           name: 'profile',
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: ProfileScreen(),
-          ),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: ProfileScreen()),
         ),
       ],
     ),
@@ -148,9 +146,9 @@ final GoRouter appRouter = GoRouter(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.error_outline, size: 48),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppDimensions.spacing16),
           Text('Sayfa bulunamadı: ${state.uri}'),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppDimensions.spacing16),
           TextButton(
             onPressed: () => context.go('/login'),
             child: const Text('Giriş sayfasına dön'),

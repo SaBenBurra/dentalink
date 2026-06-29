@@ -41,10 +41,13 @@ class NotificationsNotifier
   }
 }
 
-final notificationsProvider = AsyncNotifierProvider.autoDispose<
-    NotificationsNotifier, List<NotificationModel>>(() {
-  return NotificationsNotifier();
-});
+final notificationsProvider =
+    AsyncNotifierProvider.autoDispose<
+      NotificationsNotifier,
+      List<NotificationModel>
+    >(() {
+      return NotificationsNotifier();
+    });
 
 /// Okunmamış bildirim sayısı — bottom nav badge için.
 final unreadNotificationCountProvider = Provider.autoDispose<int>((ref) {

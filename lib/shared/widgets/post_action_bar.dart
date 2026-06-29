@@ -68,11 +68,10 @@ class PostActionBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iconSize = compact
-        ? AppDimensions.iconMedium   // 20
+        ? AppDimensions
+              .iconMedium // 20
         : AppDimensions.iconDefault; // 24
-    final gap = compact
-        ? AppDimensions.spacing12
-        : AppDimensions.spacing16;
+    final gap = compact ? AppDimensions.spacing12 : AppDimensions.spacing16;
     final height = compact ? 32.0 : 40.0;
 
     return SizedBox(

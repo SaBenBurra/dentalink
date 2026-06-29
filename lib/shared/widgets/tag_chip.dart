@@ -75,8 +75,8 @@ class TagChip extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 6,
+              horizontal: AppDimensions.spacing12,
+              vertical: AppDimensions.spacing6,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -88,7 +88,7 @@ class TagChip extends StatelessWidget {
                   ),
                 ),
                 if (onDelete != null) ...[
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AppDimensions.spacing4),
                   GestureDetector(
                     onTap: onDelete,
                     child: Icon(

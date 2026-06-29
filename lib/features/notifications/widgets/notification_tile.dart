@@ -11,11 +11,7 @@ class NotificationTile extends StatelessWidget {
   final NotificationModel notification;
   final VoidCallback? onTap;
 
-  const NotificationTile({
-    super.key,
-    required this.notification,
-    this.onTap,
-  });
+  const NotificationTile({super.key, required this.notification, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +46,17 @@ class NotificationTile extends StatelessWidget {
                   right: 0,
                   bottom: 0,
                   child: Container(
-                    padding: const EdgeInsets.all(4),
+                    padding: const EdgeInsets.all(AppDimensions.spacing4),
                     decoration: BoxDecoration(
-                      color: _getIconBackgroundColor(notification.type, colorScheme),
+                      color: _getIconBackgroundColor(
+                        notification.type,
+                        colorScheme,
+                      ),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isDark ? const Color(0xFF11211F) : AppColors.lightBackground,
+                        color: isDark
+                            ? const Color(0xFF11211F)
+                            : AppColors.lightBackground,
                         width: 2,
                       ),
                     ),
@@ -77,7 +78,9 @@ class NotificationTile extends StatelessWidget {
                   RichText(
                     text: TextSpan(
                       style: textTheme.bodyMedium?.copyWith(
-                        color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.lightTextPrimary,
                         height: 1.4,
                       ),
                       children: [
@@ -85,18 +88,21 @@ class NotificationTile extends StatelessWidget {
                           text: notification.actor.fullName,
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        TextSpan(
-                          text: _getActionText(notification.type),
-                        ),
+                        TextSpan(text: _getActionText(notification.type)),
                       ],
                     ),
                   ),
                   const SizedBox(height: AppDimensions.spacing4),
                   Text(
-                    RelativeTimeText.format(notification.createdAt, AppLocalizations.of(context)),
+                    RelativeTimeText.format(
+                      notification.createdAt,
+                      AppLocalizations.of(context),
+                    ),
                     style: textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
-                      fontWeight: notification.isRead ? FontWeight.normal : FontWeight.w600,
+                      fontWeight: notification.isRead
+                          ? FontWeight.normal
+                          : FontWeight.w600,
                     ),
                   ),
                 ],
@@ -105,7 +111,10 @@ class NotificationTile extends StatelessWidget {
             // Unread Dot Indicator
             if (!notification.isRead)
               Padding(
-                padding: const EdgeInsets.only(left: AppDimensions.spacing8, top: AppDimensions.spacing8),
+                padding: const EdgeInsets.only(
+                  left: AppDimensions.spacing8,
+                  top: AppDimensions.spacing8,
+                ),
                 child: Container(
                   width: 8,
                   height: 8,
@@ -155,7 +164,10 @@ class NotificationTile extends StatelessWidget {
     }
   }
 
-  Color _getIconBackgroundColor(NotificationType type, ColorScheme colorScheme) {
+  Color _getIconBackgroundColor(
+    NotificationType type,
+    ColorScheme colorScheme,
+  ) {
     switch (type) {
       case NotificationType.like:
         return Colors.red;

@@ -39,8 +39,9 @@ Locale _resolveDeviceLocale() {
 /// ref.read(localeModeProvider.notifier).setLocale(const Locale('en'));
 /// ref.read(localeModeProvider.notifier).toggle();
 /// ```
-final localeModeProvider =
-    NotifierProvider<LocaleModeNotifier, Locale>(LocaleModeNotifier.new);
+final localeModeProvider = NotifierProvider<LocaleModeNotifier, Locale>(
+  LocaleModeNotifier.new,
+);
 
 class LocaleModeNotifier extends Notifier<Locale> {
   @override
@@ -58,7 +59,9 @@ class LocaleModeNotifier extends Notifier<Locale> {
 
   /// Türkçe ve İngilizce arasında geçiş yapar.
   void toggle() {
-    state = state.languageCode == 'tr' ? const Locale('en') : const Locale('tr');
+    state = state.languageCode == 'tr'
+        ? const Locale('en')
+        : const Locale('tr');
   }
 
   /// Mevcut dilin Türkçe olup olmadığını döner.

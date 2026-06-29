@@ -91,8 +91,8 @@ class BranchChip extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 6,
+              horizontal: AppDimensions.spacing12,
+              vertical: AppDimensions.spacing6,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -106,7 +106,7 @@ class BranchChip extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: AppDimensions.spacing6),
                 ],
                 Text(
                   branch.displayName,

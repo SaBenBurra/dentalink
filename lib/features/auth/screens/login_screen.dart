@@ -16,12 +16,16 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen>
+    with TickerProviderStateMixin {
   final _inputController = TextEditingController();
   final _inputFocusNode = FocusNode();
 
   // OTP Controllers & FocusNodes
-  final List<TextEditingController> _otpControllers = List.generate(4, (_) => TextEditingController());
+  final List<TextEditingController> _otpControllers = List.generate(
+    4,
+    (_) => TextEditingController(),
+  );
   final List<FocusNode> _otpFocusNodes = List.generate(4, (_) => FocusNode());
 
   LoginStep _currentStep = LoginStep.emailOrPhone;
@@ -119,7 +123,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       if (!mounted) return;
 
       // Check if user is registered in MockDatasource
-      _isRegisteredUser = MockDatasource.users.any(
+      _isRegisteredUser =
+          MockDatasource.users.any(
             (u) => u.email.toLowerCase() == inputVal || u.phone == inputVal,
           ) ||
           inputVal.contains('test') ||
@@ -287,7 +292,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return SingleChildScrollView(
-                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppDimensions.spacing24,
                   ),
@@ -317,7 +323,11 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             children: [
                               const SizedBox(height: AppDimensions.spacing32),
                               // Tooth Logo Circle Panel
-                              _buildLogoHeader(isDark, glassBgColor, glassBorderColor),
+                              _buildLogoHeader(
+                                isDark,
+                                glassBgColor,
+                                glassBorderColor,
+                              ),
                               const SizedBox(height: AppDimensions.spacing24),
 
                               // Dynamic Header (Giriş Yap vs Doğrulama Kodu)
@@ -325,22 +335,28 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                 duration: const Duration(milliseconds: 300),
                                 child: _currentStep == LoginStep.emailOrPhone
                                     ? Column(
-                                        key: const ValueKey('email_phone_header'),
+                                        key: const ValueKey(
+                                          'email_phone_header',
+                                        ),
                                         children: [
                                           Text(
                                             'DentLink',
-                                            style: AppTextStyles.headlineMedium.copyWith(
-                                              color: textPrimaryColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                            style: AppTextStyles.headlineMedium
+                                                .copyWith(
+                                                  color: textPrimaryColor,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                           ),
-                                          const SizedBox(height: AppDimensions.spacing8),
+                                          const SizedBox(
+                                            height: AppDimensions.spacing8,
+                                          ),
                                           Text(
                                             'E-posta veya telefon numaranızla giriş yapın',
-                                            style: AppTextStyles.bodyMedium.copyWith(
-                                              color: textSecondaryColor,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                            style: AppTextStyles.bodyMedium
+                                                .copyWith(
+                                                  color: textSecondaryColor,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                             textAlign: TextAlign.center,
                                           ),
                                         ],
@@ -350,18 +366,22 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                         children: [
                                           Text(
                                             'Doğrulama Kodu',
-                                            style: AppTextStyles.headlineMedium.copyWith(
-                                              color: textPrimaryColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                            style: AppTextStyles.headlineMedium
+                                                .copyWith(
+                                                  color: textPrimaryColor,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                           ),
-                                          const SizedBox(height: AppDimensions.spacing8),
+                                          const SizedBox(
+                                            height: AppDimensions.spacing8,
+                                          ),
                                           Text(
                                             '${_inputController.text.trim()} adresine gönderilen kodu girin',
-                                            style: AppTextStyles.bodyMedium.copyWith(
-                                              color: textSecondaryColor,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                            style: AppTextStyles.bodyMedium
+                                                .copyWith(
+                                                  color: textSecondaryColor,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                             textAlign: TextAlign.center,
                                           ),
                                         ],
@@ -386,8 +406,16 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                   );
                                 },
                                 child: _currentStep == LoginStep.emailOrPhone
-                                    ? _buildEmailPhoneInput(isDark, glassBgColor, glassBorderColor)
-                                    : _buildOtpInput(isDark, glassBgColor, glassBorderColor),
+                                    ? _buildEmailPhoneInput(
+                                        isDark,
+                                        glassBgColor,
+                                        glassBorderColor,
+                                      )
+                                    : _buildOtpInput(
+                                        isDark,
+                                        glassBgColor,
+                                        glassBorderColor,
+                                      ),
                               ),
 
                               const SizedBox(height: AppDimensions.spacing32),
@@ -446,7 +474,11 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     );
   }
 
-  Widget _buildEmailPhoneInput(bool isDark, Color glassBgColor, Color glassBorderColor) {
+  Widget _buildEmailPhoneInput(
+    bool isDark,
+    Color glassBgColor,
+    Color glassBorderColor,
+  ) {
     final hasFocus = _inputFocusNode.hasFocus;
     final hasError = _errorText != null;
 
@@ -458,7 +490,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       bgOpacityColor = AppColors.error.withValues(alpha: isDark ? 0.08 : 0.03);
     } else if (hasFocus) {
       borderColor = const Color(0xFF13B9A5);
-      bgOpacityColor = const Color(0xFF13B9A5).withValues(alpha: isDark ? 0.15 : 0.08);
+      bgOpacityColor = const Color(
+        0xFF13B9A5,
+      ).withValues(alpha: isDark ? 0.15 : 0.08);
     }
 
     return Column(
@@ -492,7 +526,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                   focusNode: _inputFocusNode,
                   keyboardType: TextInputType.emailAddress,
                   style: AppTextStyles.bodyLarge.copyWith(
-                    color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                    color: isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.lightTextPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                   decoration: InputDecoration(
@@ -510,13 +546,15 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                     ),
                     suffixIcon: _isLoading
                         ? const Padding(
-                            padding: EdgeInsets.all(12.0),
+                            padding: EdgeInsets.all(AppDimensions.spacing12),
                             child: SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF13B9A5)),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Color(0xFF13B9A5),
+                                ),
                               ),
                             ),
                           )
@@ -528,15 +566,26 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                               opacity: _showContinueButton ? 1.0 : 0.0,
                               duration: const Duration(milliseconds: 200),
                               child: Padding(
-                                padding: const EdgeInsets.all(6.0),
+                                padding: const EdgeInsets.all(
+                                  AppDimensions.spacing6,
+                                ),
                                 child: Material(
                                   color: const Color(0xFF13B9A5),
                                   shape: const CircleBorder(),
                                   child: IconButton(
-                                    icon: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
-                                    onPressed: _showContinueButton ? _handleContinue : null,
+                                    icon: const Icon(
+                                      Icons.arrow_forward_rounded,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
+                                    onPressed: _showContinueButton
+                                        ? _handleContinue
+                                        : null,
                                     padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                                    constraints: const BoxConstraints(
+                                      minWidth: 36,
+                                      minHeight: 36,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -545,7 +594,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(
                       vertical: 14,
-                      horizontal: 16,
+                      horizontal: AppDimensions.spacing16,
                     ),
                   ),
                   onSubmitted: (_) {
@@ -573,7 +622,11 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     );
   }
 
-  Widget _buildOtpInput(bool isDark, Color glassBgColor, Color glassBorderColor) {
+  Widget _buildOtpInput(
+    bool isDark,
+    Color glassBgColor,
+    Color glassBorderColor,
+  ) {
     final textPrimaryColor = isDark
         ? AppColors.darkTextPrimary
         : AppColors.lightTextPrimary;
@@ -584,11 +637,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         if (_isSuccess)
           const Column(
             children: [
-              Icon(
-                Icons.check_circle_rounded,
-                color: Colors.green,
-                size: 64,
-              ),
+              Icon(Icons.check_circle_rounded, color: Colors.green, size: 64),
               SizedBox(height: AppDimensions.spacing16),
               Text(
                 'Giriş Yapıldı!',
@@ -609,9 +658,13 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                 height: 56,
                 decoration: BoxDecoration(
                   color: glassBgColor,
-                  borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+                  borderRadius: BorderRadius.circular(
+                    AppDimensions.radiusMedium,
+                  ),
                   border: Border.all(
-                    color: _otpFocusNodes[index].hasFocus ? const Color(0xFF13B9A5) : glassBorderColor,
+                    color: _otpFocusNodes[index].hasFocus
+                        ? const Color(0xFF13B9A5)
+                        : glassBorderColor,
                     width: _otpFocusNodes[index].hasFocus ? 2.0 : 1.0,
                   ),
                 ),
@@ -651,7 +704,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
             TextButton(
               onPressed: _canResend ? _startResendTimer : null,
               child: Text(
-                _canResend ? 'Kodu Tekrar Gönder' : 'Kodu Tekrar Gönder (${_resendCountdown}s)',
+                _canResend
+                    ? 'Kodu Tekrar Gönder'
+                    : 'Kodu Tekrar Gönder (${_resendCountdown}s)',
                 style: TextStyle(
                   color: _canResend ? const Color(0xFF13B9A5) : Colors.grey,
                   fontWeight: FontWeight.bold,

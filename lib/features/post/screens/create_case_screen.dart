@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../widgets/branch_selector.dart';
 import '../widgets/image_picker_grid.dart';
 import '../widgets/tag_input.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class CreateCaseScreen extends StatefulWidget {
   const CreateCaseScreen({super.key});
@@ -48,7 +49,9 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        actionsPadding: EdgeInsets.symmetric(horizontal: 10),
+        actionsPadding: EdgeInsets.symmetric(
+          horizontal: AppDimensions.spacing10,
+        ),
         title: const Text('Vaka Paylaş'),
         actions: [
           TextButton(
@@ -66,7 +69,7 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(AppDimensions.spacing16),
           children: [
             // Başlık
             TextFormField(
@@ -84,7 +87,7 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
                 return null;
               },
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppDimensions.spacing20),
 
             // Açıklama
             TextFormField(
@@ -105,7 +108,7 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
                 return null;
               },
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppDimensions.spacing24),
 
             // Branş Seçimi
             BranchSelector(
@@ -116,7 +119,7 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
                 });
               },
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppDimensions.spacing24),
 
             // Görseller
             ImagePickerGrid(
@@ -127,7 +130,7 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
                 });
               },
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppDimensions.spacing24),
 
             // Etiketler
             TagInput(
@@ -135,7 +138,7 @@ class _CreateCaseScreenState extends State<CreateCaseScreen> {
                 setState(() {});
               },
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppDimensions.spacing32),
           ],
         ),
       ),

@@ -104,20 +104,14 @@ class StatCount extends StatelessWidget {
     final content = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          size: iconSize,
-          color: effectiveColor,
-        ),
-        const SizedBox(width: 4),
+        Icon(icon, size: iconSize, color: effectiveColor),
+        const SizedBox(width: AppDimensions.spacing4),
         Text(
           formatCount(count),
-          style: textTheme.labelMedium?.copyWith(
-            color: effectiveColor,
-          ),
+          style: textTheme.labelMedium?.copyWith(color: effectiveColor),
         ),
         if (label != null) ...[
-          const SizedBox(width: 2),
+          const SizedBox(width: AppDimensions.spacing2),
           Text(
             label!,
             style: textTheme.labelSmall?.copyWith(

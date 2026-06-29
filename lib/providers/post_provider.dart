@@ -6,7 +6,8 @@ import 'feed_provider.dart';
 // Tek Post Detay Provider
 // ─────────────────────────────────────────────────────────────────────────────
 
-class PostDetailNotifier extends AutoDisposeFamilyAsyncNotifier<PostModel, String> {
+class PostDetailNotifier
+    extends AutoDisposeFamilyAsyncNotifier<PostModel, String> {
   @override
   Future<PostModel> build(String arg) async {
     return ref.read(postRepositoryProvider).getPostById(arg);
@@ -37,19 +38,20 @@ class PostDetailNotifier extends AutoDisposeFamilyAsyncNotifier<PostModel, Strin
 
 final postDetailProvider = AsyncNotifierProvider.autoDispose
     .family<PostDetailNotifier, PostModel, String>(() {
-  return PostDetailNotifier();
-});
+      return PostDetailNotifier();
+    });
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Kullanıcı Postları Provider
 // ─────────────────────────────────────────────────────────────────────────────
 
 final userPostsProvider =
-    AutoDisposeFutureProvider.family<List<PostModel>, String>(
-  (ref, userId) async {
-    return ref.read(postRepositoryProvider).getPostsByUser(userId);
-  },
-);
+    AutoDisposeFutureProvider.family<List<PostModel>, String>((
+      ref,
+      userId,
+    ) async {
+      return ref.read(postRepositoryProvider).getPostsByUser(userId);
+    });
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Kaydedilenler Provider
@@ -78,5 +80,5 @@ class BookmarksNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
 
 final bookmarksProvider =
     AsyncNotifierProvider.autoDispose<BookmarksNotifier, List<PostModel>>(() {
-  return BookmarksNotifier();
-});
+      return BookmarksNotifier();
+    });

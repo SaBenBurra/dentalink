@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/models/enums.dart';
 import '../../../providers/search_provider.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class SearchFilterChips extends ConsumerWidget {
   const SearchFilterChips({super.key});
@@ -13,21 +14,24 @@ class SearchFilterChips extends ConsumerWidget {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.spacing16,
+        vertical: AppDimensions.spacing8,
+      ),
       child: Row(
         children: [
           if (state.branchFilter != null || state.typeFilter != null)
             Padding(
-              padding: const EdgeInsets.only(right: 8),
+              padding: const EdgeInsets.only(right: AppDimensions.spacing8),
               child: ActionChip(
                 label: const Text('Temizle'),
                 avatar: const Icon(Icons.clear_rounded, size: 16),
                 onPressed: () => notifier.clearFilters(),
               ),
             ),
-          
+
           Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: AppDimensions.spacing8),
             child: PopupMenuButton<PostType?>(
               initialValue: state.typeFilter,
               onSelected: (val) => notifier.setTypeFilter(val),
@@ -36,7 +40,9 @@ class SearchFilterChips extends ConsumerWidget {
                 ...PostType.values.map(
                   (type) => PopupMenuItem(
                     value: type,
-                    child: Text(type == PostType.casePost ? 'Vakalar' : 'Sorular'),
+                    child: Text(
+                      type == PostType.casePost ? 'Vakalar' : 'Sorular',
+                    ),
                   ),
                 ),
               ],
@@ -44,16 +50,22 @@ class SearchFilterChips extends ConsumerWidget {
                 label: Text(
                   state.typeFilter == null
                       ? 'İçerik Türü'
-                      : (state.typeFilter == PostType.casePost ? 'Vaka' : 'Soru'),
+                      : (state.typeFilter == PostType.casePost
+                            ? 'Vaka'
+                            : 'Soru'),
                 ),
-                deleteIcon: state.typeFilter != null ? const Icon(Icons.clear_rounded, size: 16) : null,
-                onDeleted: state.typeFilter != null ? () => notifier.setTypeFilter(null) : null,
+                deleteIcon: state.typeFilter != null
+                    ? const Icon(Icons.clear_rounded, size: 16)
+                    : null,
+                onDeleted: state.typeFilter != null
+                    ? () => notifier.setTypeFilter(null)
+                    : null,
               ),
             ),
           ),
 
           Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: AppDimensions.spacing8),
             child: PopupMenuButton<DentalBranch?>(
               initialValue: state.branchFilter,
               onSelected: (val) => notifier.setBranchFilter(val),
@@ -67,11 +79,13 @@ class SearchFilterChips extends ConsumerWidget {
                 ),
               ],
               child: Chip(
-                label: Text(
-                  state.branchFilter?.displayName ?? 'Branş',
-                ),
-                deleteIcon: state.branchFilter != null ? const Icon(Icons.clear_rounded, size: 16) : null,
-                onDeleted: state.branchFilter != null ? () => notifier.setBranchFilter(null) : null,
+                label: Text(state.branchFilter?.displayName ?? 'Branş'),
+                deleteIcon: state.branchFilter != null
+                    ? const Icon(Icons.clear_rounded, size: 16)
+                    : null,
+                onDeleted: state.branchFilter != null
+                    ? () => notifier.setBranchFilter(null)
+                    : null,
               ),
             ),
           ),

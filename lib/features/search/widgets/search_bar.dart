@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class CustomSearchBar extends StatefulWidget {
   const CustomSearchBar({
@@ -38,7 +39,10 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.spacing16,
+        vertical: AppDimensions.spacing8,
+      ),
       child: TextField(
         controller: widget.controller,
         onChanged: widget.onChanged,
@@ -60,7 +64,10 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.spacing16,
+            vertical: AppDimensions.spacing12,
+          ),
         ),
       ),
     );

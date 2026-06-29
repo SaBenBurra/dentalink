@@ -22,7 +22,9 @@ class NotificationsScreen extends ConsumerWidget {
           ? const Color(0xFF11211F)
           : AppColors.lightBackground,
       appBar: AppBar(
-        actionsPadding: EdgeInsets.symmetric(horizontal: 10),
+        actionsPadding: EdgeInsets.symmetric(
+          horizontal: AppDimensions.spacing10,
+        ),
         backgroundColor: isDark
             ? const Color(0xFF11211F)
             : AppColors.lightBackground,

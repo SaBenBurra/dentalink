@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/image_picker_grid.dart';
 import '../widgets/tag_input.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class CreateQuestionScreen extends StatefulWidget {
   const CreateQuestionScreen({super.key});
@@ -31,7 +32,9 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        actionsPadding: EdgeInsets.symmetric(horizontal: 10),
+        actionsPadding: EdgeInsets.symmetric(
+          horizontal: AppDimensions.spacing10,
+        ),
         title: const Text('Soru Sor'),
         actions: [
           TextButton(
@@ -49,7 +52,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(AppDimensions.spacing16),
           children: [
             // Başlık
             TextFormField(
@@ -67,7 +70,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
                 return null;
               },
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppDimensions.spacing20),
 
             // İçerik
             TextFormField(
@@ -88,7 +91,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
                 return null;
               },
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppDimensions.spacing24),
 
             // Etiketler
             TagInput(
@@ -96,7 +99,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
                 setState(() {});
               },
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppDimensions.spacing24),
 
             // Görseller (Opsiyonel)
             ImagePickerGrid(
@@ -105,7 +108,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
                 setState(() {});
               },
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppDimensions.spacing32),
           ],
         ),
       ),

@@ -241,30 +241,58 @@ ThemeData buildLightTheme() {
 
     // ── ListTile ──
     listTileTheme: const ListTileThemeData(
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: AppDimensions.spacing16,
-      ),
+      contentPadding: EdgeInsets.symmetric(horizontal: AppDimensions.spacing16),
       minVerticalPadding: AppDimensions.spacing12,
       iconColor: AppColors.lightIcon,
     ),
 
     // ── Text Tema ──
     textTheme: TextTheme(
-      displayLarge: AppTextStyles.displayLarge.copyWith(color: AppColors.lightTextPrimary),
-      displayMedium: AppTextStyles.displayMedium.copyWith(color: AppColors.lightTextPrimary),
-      displaySmall: AppTextStyles.displaySmall.copyWith(color: AppColors.lightTextPrimary),
-      headlineLarge: AppTextStyles.headlineLarge.copyWith(color: AppColors.lightTextPrimary),
-      headlineMedium: AppTextStyles.headlineMedium.copyWith(color: AppColors.lightTextPrimary),
-      headlineSmall: AppTextStyles.headlineSmall.copyWith(color: AppColors.lightTextPrimary),
-      titleLarge: AppTextStyles.titleLarge.copyWith(color: AppColors.lightTextPrimary),
-      titleMedium: AppTextStyles.titleMedium.copyWith(color: AppColors.lightTextPrimary),
-      titleSmall: AppTextStyles.titleSmall.copyWith(color: AppColors.lightTextSecondary),
-      bodyLarge: AppTextStyles.bodyLarge.copyWith(color: AppColors.lightTextPrimary),
-      bodyMedium: AppTextStyles.bodyMedium.copyWith(color: AppColors.lightTextPrimary),
-      bodySmall: AppTextStyles.bodySmall.copyWith(color: AppColors.lightTextSecondary),
-      labelLarge: AppTextStyles.labelLarge.copyWith(color: AppColors.lightTextPrimary),
-      labelMedium: AppTextStyles.labelMedium.copyWith(color: AppColors.lightTextSecondary),
-      labelSmall: AppTextStyles.labelSmall.copyWith(color: AppColors.lightTextTertiary),
+      displayLarge: AppTextStyles.displayLarge.copyWith(
+        color: AppColors.lightTextPrimary,
+      ),
+      displayMedium: AppTextStyles.displayMedium.copyWith(
+        color: AppColors.lightTextPrimary,
+      ),
+      displaySmall: AppTextStyles.displaySmall.copyWith(
+        color: AppColors.lightTextPrimary,
+      ),
+      headlineLarge: AppTextStyles.headlineLarge.copyWith(
+        color: AppColors.lightTextPrimary,
+      ),
+      headlineMedium: AppTextStyles.headlineMedium.copyWith(
+        color: AppColors.lightTextPrimary,
+      ),
+      headlineSmall: AppTextStyles.headlineSmall.copyWith(
+        color: AppColors.lightTextPrimary,
+      ),
+      titleLarge: AppTextStyles.titleLarge.copyWith(
+        color: AppColors.lightTextPrimary,
+      ),
+      titleMedium: AppTextStyles.titleMedium.copyWith(
+        color: AppColors.lightTextPrimary,
+      ),
+      titleSmall: AppTextStyles.titleSmall.copyWith(
+        color: AppColors.lightTextSecondary,
+      ),
+      bodyLarge: AppTextStyles.bodyLarge.copyWith(
+        color: AppColors.lightTextPrimary,
+      ),
+      bodyMedium: AppTextStyles.bodyMedium.copyWith(
+        color: AppColors.lightTextPrimary,
+      ),
+      bodySmall: AppTextStyles.bodySmall.copyWith(
+        color: AppColors.lightTextSecondary,
+      ),
+      labelLarge: AppTextStyles.labelLarge.copyWith(
+        color: AppColors.lightTextPrimary,
+      ),
+      labelMedium: AppTextStyles.labelMedium.copyWith(
+        color: AppColors.lightTextSecondary,
+      ),
+      labelSmall: AppTextStyles.labelSmall.copyWith(
+        color: AppColors.lightTextTertiary,
+      ),
     ),
 
     // ── Icon ──

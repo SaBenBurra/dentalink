@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 /// Vaka veya Soru oluştururken kullanılacak (Mock) Görsel Seçici Izgara
 /// Faz 2'de olduğumuz için galeriye bağlanmaz, sadece mock veri ekler.
@@ -69,7 +70,7 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppDimensions.spacing12),
         SizedBox(
           height: 120, // Yüksekliği biraz daha artırdık
           child: ListView.builder(
@@ -80,7 +81,10 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
               if (index == 0) {
                 // Add Image Button
                 return Padding(
-                  padding: const EdgeInsets.only(top: 12, right: 12.0),
+                  padding: const EdgeInsets.only(
+                    top: AppDimensions.spacing12,
+                    right: AppDimensions.spacing12,
+                  ),
                   child: InkWell(
                     onTap: _pickMockImage,
                     borderRadius: BorderRadius.circular(12),
@@ -103,7 +107,7 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
                             color: colorScheme.primary,
                             size: 32,
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AppDimensions.spacing8),
                           Text(
                             'Fotoğraf Ekle',
                             style: Theme.of(context).textTheme.labelSmall
@@ -119,7 +123,10 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
               // Display mock image
               final imageIndex = index - 1;
               return Padding(
-                padding: const EdgeInsets.only(top: 12, right: 12.0),
+                padding: const EdgeInsets.only(
+                  top: AppDimensions.spacing12,
+                  right: AppDimensions.spacing12,
+                ),
                 child: SizedBox(
                   width: 100,
                   height: 100,
@@ -147,7 +154,9 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
                         child: InkWell(
                           onTap: () => _removeImage(imageIndex),
                           child: Container(
-                            padding: const EdgeInsets.all(4),
+                            padding: const EdgeInsets.all(
+                              AppDimensions.spacing4,
+                            ),
                             decoration: BoxDecoration(
                               color: colorScheme.error,
                               shape: BoxShape.circle,

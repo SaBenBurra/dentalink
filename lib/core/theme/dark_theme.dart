@@ -243,30 +243,58 @@ ThemeData buildDarkTheme() {
 
     // ── ListTile ──
     listTileTheme: const ListTileThemeData(
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: AppDimensions.spacing16,
-      ),
+      contentPadding: EdgeInsets.symmetric(horizontal: AppDimensions.spacing16),
       minVerticalPadding: AppDimensions.spacing12,
       iconColor: AppColors.darkIcon,
     ),
 
     // ── Text Tema ──
     textTheme: TextTheme(
-      displayLarge: AppTextStyles.displayLarge.copyWith(color: AppColors.darkTextPrimary),
-      displayMedium: AppTextStyles.displayMedium.copyWith(color: AppColors.darkTextPrimary),
-      displaySmall: AppTextStyles.displaySmall.copyWith(color: AppColors.darkTextPrimary),
-      headlineLarge: AppTextStyles.headlineLarge.copyWith(color: AppColors.darkTextPrimary),
-      headlineMedium: AppTextStyles.headlineMedium.copyWith(color: AppColors.darkTextPrimary),
-      headlineSmall: AppTextStyles.headlineSmall.copyWith(color: AppColors.darkTextPrimary),
-      titleLarge: AppTextStyles.titleLarge.copyWith(color: AppColors.darkTextPrimary),
-      titleMedium: AppTextStyles.titleMedium.copyWith(color: AppColors.darkTextPrimary),
-      titleSmall: AppTextStyles.titleSmall.copyWith(color: AppColors.darkTextSecondary),
-      bodyLarge: AppTextStyles.bodyLarge.copyWith(color: AppColors.darkTextPrimary),
-      bodyMedium: AppTextStyles.bodyMedium.copyWith(color: AppColors.darkTextPrimary),
-      bodySmall: AppTextStyles.bodySmall.copyWith(color: AppColors.darkTextSecondary),
-      labelLarge: AppTextStyles.labelLarge.copyWith(color: AppColors.darkTextPrimary),
-      labelMedium: AppTextStyles.labelMedium.copyWith(color: AppColors.darkTextSecondary),
-      labelSmall: AppTextStyles.labelSmall.copyWith(color: AppColors.darkTextTertiary),
+      displayLarge: AppTextStyles.displayLarge.copyWith(
+        color: AppColors.darkTextPrimary,
+      ),
+      displayMedium: AppTextStyles.displayMedium.copyWith(
+        color: AppColors.darkTextPrimary,
+      ),
+      displaySmall: AppTextStyles.displaySmall.copyWith(
+        color: AppColors.darkTextPrimary,
+      ),
+      headlineLarge: AppTextStyles.headlineLarge.copyWith(
+        color: AppColors.darkTextPrimary,
+      ),
+      headlineMedium: AppTextStyles.headlineMedium.copyWith(
+        color: AppColors.darkTextPrimary,
+      ),
+      headlineSmall: AppTextStyles.headlineSmall.copyWith(
+        color: AppColors.darkTextPrimary,
+      ),
+      titleLarge: AppTextStyles.titleLarge.copyWith(
+        color: AppColors.darkTextPrimary,
+      ),
+      titleMedium: AppTextStyles.titleMedium.copyWith(
+        color: AppColors.darkTextPrimary,
+      ),
+      titleSmall: AppTextStyles.titleSmall.copyWith(
+        color: AppColors.darkTextSecondary,
+      ),
+      bodyLarge: AppTextStyles.bodyLarge.copyWith(
+        color: AppColors.darkTextPrimary,
+      ),
+      bodyMedium: AppTextStyles.bodyMedium.copyWith(
+        color: AppColors.darkTextPrimary,
+      ),
+      bodySmall: AppTextStyles.bodySmall.copyWith(
+        color: AppColors.darkTextSecondary,
+      ),
+      labelLarge: AppTextStyles.labelLarge.copyWith(
+        color: AppColors.darkTextPrimary,
+      ),
+      labelMedium: AppTextStyles.labelMedium.copyWith(
+        color: AppColors.darkTextSecondary,
+      ),
+      labelSmall: AppTextStyles.labelSmall.copyWith(
+        color: AppColors.darkTextTertiary,
+      ),
     ),
 
     // ── Icon ──

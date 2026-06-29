@@ -162,26 +162,32 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                   imageUrl: imageUrls[index],
                                   fit: BoxFit.cover,
                                   placeholder: (context, url) => Container(
-                                    color: isDark ? Colors.black26 : Colors.white24,
+                                    color: isDark
+                                        ? Colors.black26
+                                        : Colors.white24,
                                     child: const Center(
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                          AppColors.primary,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              AppColors.primary,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      Container(
+                                        color: isDark
+                                            ? Colors.black26
+                                            : Colors.white24,
+                                        child: const Center(
+                                          child: Icon(
+                                            Icons.broken_image_outlined,
+                                            size: 48,
+                                            color: Colors.grey,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                  errorWidget: (context, url, error) => Container(
-                                    color: isDark ? Colors.black26 : Colors.white24,
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.broken_image_outlined,
-                                        size: 48,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ),
                                 );
                               },
                             ),
@@ -271,7 +277,9 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                                           .lightTextPrimary,
                                               ),
                                         ),
-                                        const SizedBox(height: 2),
+                                        const SizedBox(
+                                          height: AppDimensions.spacing2,
+                                        ),
                                         Row(
                                           children: [
                                             Flexible(
@@ -290,9 +298,13 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                                     ),
                                               ),
                                             ),
-                                            const SizedBox(width: 6),
+                                            const SizedBox(
+                                              width: AppDimensions.spacing6,
+                                            ),
                                             const Text('•'),
-                                            const SizedBox(width: 6),
+                                            const SizedBox(
+                                              width: AppDimensions.spacing6,
+                                            ),
                                             RelativeTimeText(
                                               dateTime: post.createdAt,
                                             ),
@@ -336,7 +348,7 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                           ),
                                         ),
                                         padding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
+                                          horizontal: AppDimensions.spacing16,
                                           vertical: 0,
                                         ),
                                       ),
@@ -373,8 +385,8 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                   if (post.branch != null)
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 4,
+                                        horizontal: AppDimensions.spacing12,
+                                        vertical: AppDimensions.spacing4,
                                       ),
                                       decoration: BoxDecoration(
                                         color: colorScheme.primaryContainer
@@ -508,7 +520,7 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                   if (comments.isEmpty) {
                                     return Container(
                                       padding: const EdgeInsets.symmetric(
-                                        vertical: 24,
+                                        vertical: AppDimensions.spacing24,
                                       ),
                                       alignment: Alignment.center,
                                       child: Text(
@@ -651,8 +663,10 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.only(
-                                                          left: 4,
-                                                          top: 4,
+                                                          left: AppDimensions
+                                                              .spacing4,
+                                                          top: AppDimensions
+                                                              .spacing4,
                                                         ),
                                                     child: Row(
                                                       children: [
@@ -724,7 +738,9 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                 },
                                 loading: () => const Center(
                                   child: Padding(
-                                    padding: EdgeInsets.all(24),
+                                    padding: EdgeInsets.all(
+                                      AppDimensions.spacing24,
+                                    ),
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
                                     ),
@@ -818,7 +834,7 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                   padding: EdgeInsets.only(
                     left: AppDimensions.spacing16,
                     right: AppDimensions.spacing16,
-                    top: 12,
+                    top: AppDimensions.spacing12,
                     bottom: MediaQuery.of(context).padding.bottom + 12,
                   ),
                   decoration: BoxDecoration(
@@ -853,8 +869,8 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                             ),
                           ),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 2,
+                            horizontal: AppDimensions.spacing16,
+                            vertical: AppDimensions.spacing2,
                           ),
                           child: Row(
                             children: [
@@ -902,9 +918,9 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.error_outline, size: 48, color: Colors.grey),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppDimensions.spacing16),
               Text('Vaka yüklenirken hata oluştu: $err'),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppDimensions.spacing16),
               TextButton(
                 onPressed: () => context.pop(),
                 child: const Text('Geri Dön'),

@@ -8,11 +8,11 @@ class MockMessageRepository implements MessageRepository {
   static const _delay = Duration(milliseconds: 350);
 
   // In-memory konuşma ve mesaj listeleri.
-  final List<ConversationModel> _conversations =
-      List.from(MockDatasource.conversations);
+  final List<ConversationModel> _conversations = List.from(
+    MockDatasource.conversations,
+  );
   final Map<String, List<MessageModel>> _messages = {
-    for (final e in MockDatasource.messages.entries)
-      e.key: List.from(e.value),
+    for (final e in MockDatasource.messages.entries) e.key: List.from(e.value),
   };
 
   @override
@@ -63,13 +63,15 @@ class MockMessageRepository implements MessageRepository {
     } else {
       // Yeni konuşma oluştur.
       convId = 'conv_new_${DateTime.now().millisecondsSinceEpoch}';
-      _conversations.add(ConversationModel(
-        id: convId,
-        otherUser: MockDatasource.userById(receiverId),
-        lastMessageAt: DateTime.now(),
-        lastMessagePreview: content,
-        unreadCount: 0,
-      ));
+      _conversations.add(
+        ConversationModel(
+          id: convId,
+          otherUser: MockDatasource.userById(receiverId),
+          lastMessageAt: DateTime.now(),
+          lastMessagePreview: content,
+          unreadCount: 0,
+        ),
+      );
     }
 
     _messages[convId] = [...(_messages[convId] ?? []), newMessage];
@@ -85,7 +87,9 @@ class MockMessageRepository implements MessageRepository {
     }
     final msgs = _messages[conversationId];
     if (msgs != null) {
-      _messages[conversationId] = msgs.map((m) => m.copyWith(isRead: true)).toList();
+      _messages[conversationId] = msgs
+          .map((m) => m.copyWith(isRead: true))
+          .toList();
     }
   }
 }

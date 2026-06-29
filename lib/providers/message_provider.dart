@@ -31,10 +31,13 @@ class ConversationsNotifier
   }
 }
 
-final conversationsProvider = AsyncNotifierProvider.autoDispose<
-    ConversationsNotifier, List<ConversationModel>>(() {
-  return ConversationsNotifier();
-});
+final conversationsProvider =
+    AsyncNotifierProvider.autoDispose<
+      ConversationsNotifier,
+      List<ConversationModel>
+    >(() {
+      return ConversationsNotifier();
+    });
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Chat Notifier (konuşma başına)
@@ -60,8 +63,8 @@ class ChatNotifier
 
 final chatProvider = AsyncNotifierProvider.autoDispose
     .family<ChatNotifier, List<MessageModel>, String>(() {
-  return ChatNotifier();
-});
+      return ChatNotifier();
+    });
 
 /// Toplam okunmamış mesaj sayısı — bottom nav badge için.
 final totalUnreadMessagesProvider = Provider.autoDispose<int>((ref) {

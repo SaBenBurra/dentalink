@@ -75,10 +75,7 @@ class _UserListTab extends ConsumerWidget {
   final AutoDisposeFutureProvider<List<dynamic>> provider;
   final String emptyMessage;
 
-  const _UserListTab({
-    required this.provider,
-    required this.emptyMessage,
-  });
+  const _UserListTab({required this.provider, required this.emptyMessage});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -97,9 +94,8 @@ class _UserListTab extends ConsumerWidget {
         return ListView.separated(
           padding: const EdgeInsets.all(AppDimensions.spacing16),
           itemCount: users.length,
-          separatorBuilder: (context, index) => const SizedBox(
-            height: AppDimensions.spacing8,
-          ),
+          separatorBuilder: (context, index) =>
+              const SizedBox(height: AppDimensions.spacing8),
           itemBuilder: (context, index) {
             final user = users[index];
             return UserTile(
@@ -107,7 +103,9 @@ class _UserListTab extends ConsumerWidget {
               trailing: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppDimensions.spacing16,
+                  ),
                   minimumSize: const Size(0, 36),
                 ),
                 child: Text(user.isFollowing ? 'Takibi Bırak' : 'Takip Et'),

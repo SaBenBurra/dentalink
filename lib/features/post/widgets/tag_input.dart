@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 /// Gönderiye (Vaka/Soru) etiket eklemek için kullanılan bileşen.
 class TagInput extends StatefulWidget {
@@ -60,13 +61,13 @@ class _TagInputState extends State<TagInput> {
       children: [
         Text(
           'Etiketler',
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppDimensions.spacing8),
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(AppDimensions.spacing12),
           decoration: BoxDecoration(
             border: Border.all(color: colorScheme.outline),
             borderRadius: BorderRadius.circular(12),
@@ -83,14 +84,16 @@ class _TagInputState extends State<TagInput> {
                     return InputChip(
                       label: Text('#$tag'),
                       labelStyle: TextStyle(color: colorScheme.primary),
-                      backgroundColor: colorScheme.primaryContainer.withValues(alpha: 0.3),
+                      backgroundColor: colorScheme.primaryContainer.withValues(
+                        alpha: 0.3,
+                      ),
                       deleteIconColor: colorScheme.primary,
                       onDeleted: () => _removeTag(tag),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     );
                   }).toList(),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppDimensions.spacing8),
               ],
               TextField(
                 controller: _controller,

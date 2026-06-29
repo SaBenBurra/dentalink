@@ -41,24 +41,17 @@ class ProfileScreen extends ConsumerWidget {
                   SliverToBoxAdapter(
                     child: ProfileHeader(user: user, isCurrentUser: true),
                   ),
-                  SliverToBoxAdapter(
-                    child: ProfileStats(user: user),
-                  ),
-                  const SliverToBoxAdapter(
-                    child: Divider(height: 32),
-                  ),
-                  SliverToBoxAdapter(
-                    child: BadgeShowcase(userId: user.id),
-                  ),
-                  const SliverToBoxAdapter(
-                    child: Divider(height: 32),
-                  ),
+                  SliverToBoxAdapter(child: ProfileStats(user: user)),
+                  const SliverToBoxAdapter(child: Divider(height: 32)),
+                  SliverToBoxAdapter(child: BadgeShowcase(userId: user.id)),
+                  const SliverToBoxAdapter(child: Divider(height: 32)),
                   SliverPersistentHeader(
                     pinned: true,
                     delegate: _SliverAppBarDelegate(
                       TabBar(
                         labelColor: theme.colorScheme.primary,
-                        unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
+                        unselectedLabelColor:
+                            theme.colorScheme.onSurfaceVariant,
                         indicatorColor: theme.colorScheme.primary,
                         tabs: const [
                           Tab(text: 'Vakalar'),
@@ -102,11 +95,11 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: _backgroundColor,
-      child: _tabBar,
-    );
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return Container(color: _backgroundColor, child: _tabBar);
   }
 
   @override

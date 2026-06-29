@@ -12,11 +12,7 @@ import '../../core/constants/app_dimensions.dart';
 /// DentLinkLoadingSpinner(size: 32, strokeWidth: 3)
 /// ```
 class DentLinkLoadingSpinner extends StatelessWidget {
-  const DentLinkLoadingSpinner({
-    super.key,
-    this.size,
-    this.strokeWidth,
-  });
+  const DentLinkLoadingSpinner({super.key, this.size, this.strokeWidth});
 
   /// Gösterge çapı (piksel). Null ise Flutter varsayılanı kullanılır.
   final double? size;
@@ -34,11 +30,7 @@ class DentLinkLoadingSpinner extends StatelessWidget {
     );
 
     if (size != null) {
-      indicator = SizedBox(
-        width: size,
-        height: size,
-        child: indicator,
-      );
+      indicator = SizedBox(width: size, height: size, child: indicator);
     }
 
     return Center(child: indicator);
@@ -103,8 +95,9 @@ class DentLinkShimmerCard extends StatelessWidget {
                         height: 12,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius:
-                              BorderRadius.circular(AppDimensions.radiusSmall),
+                          borderRadius: BorderRadius.circular(
+                            AppDimensions.radiusSmall,
+                          ),
                         ),
                       ),
                       const SizedBox(height: AppDimensions.spacing8),
@@ -113,8 +106,9 @@ class DentLinkShimmerCard extends StatelessWidget {
                         height: 10,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius:
-                              BorderRadius.circular(AppDimensions.radiusSmall),
+                          borderRadius: BorderRadius.circular(
+                            AppDimensions.radiusSmall,
+                          ),
                         ),
                       ),
                     ],
@@ -130,8 +124,7 @@ class DentLinkShimmerCard extends StatelessWidget {
               height: 200,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius:
-                    BorderRadius.circular(AppDimensions.radiusMedium),
+                borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
               ),
             ),
             const SizedBox(height: AppDimensions.spacing12),
@@ -144,8 +137,9 @@ class DentLinkShimmerCard extends StatelessWidget {
                   height: 12,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius:
-                        BorderRadius.circular(AppDimensions.radiusSmall),
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.radiusSmall,
+                    ),
                   ),
                 ),
                 const SizedBox(width: AppDimensions.spacing16),
@@ -154,8 +148,9 @@ class DentLinkShimmerCard extends StatelessWidget {
                   height: 12,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius:
-                        BorderRadius.circular(AppDimensions.radiusSmall),
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.radiusSmall,
+                    ),
                   ),
                 ),
                 const SizedBox(width: AppDimensions.spacing16),
@@ -164,8 +159,9 @@ class DentLinkShimmerCard extends StatelessWidget {
                   height: 12,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius:
-                        BorderRadius.circular(AppDimensions.radiusSmall),
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.radiusSmall,
+                    ),
                   ),
                 ),
               ],

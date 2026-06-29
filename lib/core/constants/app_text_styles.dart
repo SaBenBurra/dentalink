@@ -44,14 +44,14 @@ abstract final class AppTextStyles {
     fontFamily: fontHeadline,
     fontSize: 30,
     fontWeight: FontWeight.w700,
-    height: 1.2,     // 36px / 30px
+    height: 1.2, // 36px / 30px
   );
 
   static const TextStyle headlineMedium = TextStyle(
     fontFamily: fontHeadline,
     fontSize: 24,
     fontWeight: FontWeight.w700,
-    height: 1.33,    // 32px / 24px
+    height: 1.33, // 32px / 24px
   );
 
   static const TextStyle headlineSmall = TextStyle(
@@ -75,7 +75,7 @@ abstract final class AppTextStyles {
     fontFamily: fontHeadline,
     fontSize: 18,
     fontWeight: FontWeight.w600,
-    height: 1.33,    // 24px / 18px
+    height: 1.33, // 24px / 18px
   );
 
   static const TextStyle titleSmall = TextStyle(
@@ -92,14 +92,14 @@ abstract final class AppTextStyles {
     fontFamily: fontBody,
     fontSize: 16,
     fontWeight: FontWeight.w400,
-    height: 1.5,     // 24px / 16px
+    height: 1.5, // 24px / 16px
   );
 
   static const TextStyle bodyMedium = TextStyle(
     fontFamily: fontBody,
     fontSize: 14,
     fontWeight: FontWeight.w400,
-    height: 1.43,    // 20px / 14px
+    height: 1.43, // 20px / 14px
   );
 
   static const TextStyle bodySmall = TextStyle(
@@ -125,7 +125,7 @@ abstract final class AppTextStyles {
     fontFamily: fontBody,
     fontSize: 12,
     fontWeight: FontWeight.w600,
-    height: 1.33,    // 16px / 12px
+    height: 1.33, // 16px / 12px
     letterSpacing: 0.5,
   );
 

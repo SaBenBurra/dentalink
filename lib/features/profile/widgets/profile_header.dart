@@ -3,6 +3,7 @@ import '../../../data/models/user_model.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import 'mutual_followers_widget.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class ProfileHeader extends StatelessWidget {
   final UserModel user;
@@ -21,7 +22,7 @@ class ProfileHeader extends StatelessWidget {
     final textTheme = theme.textTheme;
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(AppDimensions.spacing16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -32,7 +33,7 @@ class ProfileHeader extends StatelessWidget {
                 imageUrl: user.avatarUrl,
                 size: AvatarSize.profile,
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: AppDimensions.spacing16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,7 +44,7 @@ class ProfileHeader extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppDimensions.spacing4),
                     Text(
                       user.title.displayName,
                       style: textTheme.bodyLarge?.copyWith(
@@ -56,7 +57,7 @@ class ProfileHeader extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppDimensions.spacing16),
           if (isCurrentUser) ...[
             SizedBox(
               width: double.infinity,
@@ -65,14 +66,11 @@ class ProfileHeader extends StatelessWidget {
                 child: const Text('Profili Düzenle'),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppDimensions.spacing16),
           ],
           if (user.bio != null && user.bio!.isNotEmpty) ...[
-            Text(
-              user.bio!,
-              style: textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 12),
+            Text(user.bio!, style: textTheme.bodyMedium),
+            const SizedBox(height: AppDimensions.spacing12),
           ],
           if (user.workplace != null || user.city != null) ...[
             Row(
@@ -82,12 +80,13 @@ class ProfileHeader extends StatelessWidget {
                   size: 16,
                   color: colorScheme.onSurfaceVariant,
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: AppDimensions.spacing4),
                 Expanded(
                   child: Text(
-                    [user.workplace, user.city]
-                        .where((e) => e != null && e.isNotEmpty)
-                        .join(', '),
+                    [
+                      user.workplace,
+                      user.city,
+                    ].where((e) => e != null && e.isNotEmpty).join(', '),
                     style: textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),

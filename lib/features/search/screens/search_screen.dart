@@ -14,7 +14,8 @@ class SearchScreen extends ConsumerStatefulWidget {
   ConsumerState<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends ConsumerState<SearchScreen> with SingleTickerProviderStateMixin {
+class _SearchScreenState extends ConsumerState<SearchScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   Timer? _debounce;
   final TextEditingController _searchController = TextEditingController();
@@ -74,16 +75,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> with SingleTickerPr
                 child: DentLinkEmptyState(
                   icon: Icons.travel_explore_rounded,
                   title: 'Arama Yapın',
-                  subtitle: 'Diş hekimliği dünyasında vaka, soru veya meslektaş arayın.',
+                  subtitle:
+                      'Diş hekimliği dünyasında vaka, soru veya meslektaş arayın.',
                 ),
               ),
             )
           : TabBarView(
               controller: _tabController,
-              children: const [
-                PostSearchResults(),
-                UserSearchResults(),
-              ],
+              children: const [PostSearchResults(), UserSearchResults()],
             ),
     );
   }

@@ -2,7 +2,6 @@ import '../datasources/mock_datasource.dart';
 import '../models/comment_model.dart';
 import 'comment_repository.dart';
 
-
 /// Sahte yorum repository. Faz 3'te SupabaseCommentRepository ile swap edilir.
 class MockCommentRepository implements CommentRepository {
   static const _delay = Duration(milliseconds: 350);
@@ -11,8 +10,7 @@ class MockCommentRepository implements CommentRepository {
   final Map<String, List<CommentModel>> _commentOverrides = {};
 
   List<CommentModel> _commentsFor(String postId) {
-    return _commentOverrides[postId] ??
-        (MockDatasource.comments[postId] ?? []);
+    return _commentOverrides[postId] ?? (MockDatasource.comments[postId] ?? []);
   }
 
   @override
@@ -72,19 +70,22 @@ class MockCommentRepository implements CommentRepository {
   @override
   Future<CommentModel> likeComment(String commentId) async {
     await Future.delayed(_delay);
-    return _updateComment(commentId, (c) => c.copyWith(
-      isLiked: true,
-      likeCount: c.likeCount + 1,
-    ));
+    return _updateComment(
+      commentId,
+      (c) => c.copyWith(isLiked: true, likeCount: c.likeCount + 1),
+    );
   }
 
   @override
   Future<CommentModel> unlikeComment(String commentId) async {
     await Future.delayed(_delay);
-    return _updateComment(commentId, (c) => c.copyWith(
-      isLiked: false,
-      likeCount: (c.likeCount - 1).clamp(0, 9999),
-    ));
+    return _updateComment(
+      commentId,
+      (c) => c.copyWith(
+        isLiked: false,
+        likeCount: (c.likeCount - 1).clamp(0, 9999),
+      ),
+    );
   }
 
   CommentModel _updateComment(

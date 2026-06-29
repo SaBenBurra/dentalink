@@ -34,9 +34,7 @@ class CommentsNotifier
     await repo.markBestAnswer(commentId);
     // Listeyi yenile — sıralama değişebilir.
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => repo.getComments(arg),
-    );
+    state = await AsyncValue.guard(() => repo.getComments(arg));
   }
 
   Future<void> toggleLike(String commentId) async {
@@ -61,5 +59,5 @@ class CommentsNotifier
 
 final commentsProvider = AsyncNotifierProvider.autoDispose
     .family<CommentsNotifier, List<CommentModel>, String>(() {
-  return CommentsNotifier();
-});
+      return CommentsNotifier();
+    });

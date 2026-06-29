@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class MessageBubble extends StatelessWidget {
   final String text;
@@ -20,12 +21,17 @@ class MessageBubble extends StatelessWidget {
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+        margin: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.spacing16,
+          vertical: AppDimensions.spacing4,
+        ),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
         decoration: BoxDecoration(
-          color: isMe ? colorScheme.primary : colorScheme.surfaceContainerHighest,
+          color: isMe
+              ? colorScheme.primary
+              : colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),
@@ -33,10 +39,14 @@ class MessageBubble extends StatelessWidget {
             bottomRight: Radius.circular(isMe ? 4 : 16),
           ),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.spacing16,
+          vertical: AppDimensions.spacing10,
+        ),
         child: Column(
-          crossAxisAlignment:
-              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: isMe
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
           children: [
             Text(
               text,
@@ -44,7 +54,7 @@ class MessageBubble extends StatelessWidget {
                 color: isMe ? colorScheme.onPrimary : colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AppDimensions.spacing4),
             Text(
               time,
               style: textTheme.labelSmall?.copyWith(

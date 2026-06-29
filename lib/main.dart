@@ -10,9 +10,7 @@ import 'providers/theme_provider.dart';
 void main() {
   runApp(
     // Riverpod'un tüm uygulamayı sarması gerekiyor
-    const ProviderScope(
-      child: MainApp(),
-    ),
+    const ProviderScope(child: MainApp()),
   );
 }
 
@@ -48,4 +46,3 @@ class MainApp extends ConsumerWidget {
     );
   }
 }
-

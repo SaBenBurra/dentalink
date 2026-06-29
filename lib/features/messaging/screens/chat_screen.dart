@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/chat_input.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class ChatScreen extends StatefulWidget {
   final String userId;
@@ -79,7 +80,7 @@ class _ChatScreenState extends State<ChatScreen> {
               imageUrl: widget.avatarUrl,
               size: AvatarSize.medium,
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppDimensions.spacing12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -101,7 +102,9 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              padding: const EdgeInsets.symmetric(
+                vertical: AppDimensions.spacing16,
+              ),
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 final message = _messages[index];

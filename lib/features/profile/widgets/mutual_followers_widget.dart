@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/user_provider.dart';
 import '../../../shared/widgets/user_avatar.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class MutualFollowersWidget extends ConsumerWidget {
   final String userId;
 
-  const MutualFollowersWidget({
-    super.key,
-    required this.userId,
-  });
+  const MutualFollowersWidget({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,9 +20,9 @@ class MutualFollowersWidget extends ConsumerWidget {
         if (followers.isEmpty) return const SizedBox.shrink();
 
         final displayUsers = followers.take(3).toList();
-        
+
         return Padding(
-          padding: const EdgeInsets.only(top: 12.0),
+          padding: const EdgeInsets.only(top: AppDimensions.spacing12),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -54,7 +52,7 @@ class MutualFollowersWidget extends ConsumerWidget {
                   }).reversed.toList(),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppDimensions.spacing12),
               Expanded(
                 child: Text.rich(
                   TextSpan(

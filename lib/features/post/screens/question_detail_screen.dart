@@ -209,7 +209,9 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                               : AppColors.lightTextPrimary,
                                         ),
                                       ),
-                                      const SizedBox(height: 2),
+                                      const SizedBox(
+                                        height: AppDimensions.spacing2,
+                                      ),
                                       Row(
                                         children: [
                                           Flexible(
@@ -224,9 +226,13 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                                   ),
                                             ),
                                           ),
-                                          const SizedBox(width: 6),
+                                          const SizedBox(
+                                            width: AppDimensions.spacing6,
+                                          ),
                                           const Text('•'),
-                                          const SizedBox(width: 6),
+                                          const SizedBox(
+                                            width: AppDimensions.spacing6,
+                                          ),
                                           RelativeTimeText(
                                             dateTime: post.createdAt,
                                           ),
@@ -238,8 +244,8 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                 // Question Badge
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 4,
+                                    horizontal: AppDimensions.spacing10,
+                                    vertical: AppDimensions.spacing4,
                                   ),
                                   decoration: BoxDecoration(
                                     color: colorScheme.secondaryContainer
@@ -490,8 +496,8 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                         right: 0,
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                            vertical: 2,
+                                            horizontal: AppDimensions.spacing8,
+                                            vertical: AppDimensions.spacing2,
                                           ),
                                           decoration: BoxDecoration(
                                             color: AppColors.success.withValues(
@@ -513,7 +519,9 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                                 size: 12,
                                                 color: AppColors.success,
                                               ),
-                                              const SizedBox(width: 4),
+                                              const SizedBox(
+                                                width: AppDimensions.spacing4,
+                                              ),
                                               Text(
                                                 'En İyi Cevap',
                                                 style: textTheme.labelSmall
@@ -578,14 +586,20 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                                               fontSize: 11,
                                                             ),
                                                       ),
-                                                      const SizedBox(width: 6),
+                                                      const SizedBox(
+                                                        width: AppDimensions
+                                                            .spacing6,
+                                                      ),
                                                       const Text(
                                                         '•',
                                                         style: TextStyle(
                                                           fontSize: 11,
                                                         ),
                                                       ),
-                                                      const SizedBox(width: 6),
+                                                      const SizedBox(
+                                                        width: AppDimensions
+                                                            .spacing6,
+                                                      ),
                                                       RelativeTimeText(
                                                         dateTime:
                                                             comment.createdAt,
@@ -638,8 +652,12 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                                   child: Container(
                                                     padding:
                                                         const EdgeInsets.symmetric(
-                                                          horizontal: 10,
-                                                          vertical: 6,
+                                                          horizontal:
+                                                              AppDimensions
+                                                                  .spacing10,
+                                                          vertical:
+                                                              AppDimensions
+                                                                  .spacing6,
                                                         ),
                                                     decoration: BoxDecoration(
                                                       color: comment.isLiked
@@ -729,7 +747,9 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                                       AppColors.success,
                                                   padding:
                                                       const EdgeInsets.symmetric(
-                                                        horizontal: 12,
+                                                        horizontal:
+                                                            AppDimensions
+                                                                .spacing12,
                                                       ),
                                                 ),
                                               ),
@@ -842,7 +862,7 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                   padding: EdgeInsets.only(
                     left: AppDimensions.spacing16,
                     right: AppDimensions.spacing16,
-                    top: 12,
+                    top: AppDimensions.spacing12,
                     bottom: MediaQuery.of(context).padding.bottom + 12,
                   ),
                   decoration: BoxDecoration(
@@ -877,8 +897,8 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                             ),
                           ),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 2,
+                            horizontal: AppDimensions.spacing16,
+                            vertical: AppDimensions.spacing2,
                           ),
                           child: Row(
                             children: [
@@ -926,9 +946,9 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.error_outline, size: 48, color: Colors.grey),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppDimensions.spacing16),
               Text('Soru yüklenirken hata oluştu: $err'),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppDimensions.spacing16),
               TextButton(
                 onPressed: () => context.pop(),
                 child: const Text('Geri Dön'),

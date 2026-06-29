@@ -29,9 +29,9 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
   }
 
   Future<List<PostModel>> _fetchFeed() {
-    return ref.read(postRepositoryProvider).getFeed(
-          chronological: _mode == FeedMode.chronological,
-        );
+    return ref
+        .read(postRepositoryProvider)
+        .getFeed(chronological: _mode == FeedMode.chronological);
   }
 
   Future<void> switchMode(FeedMode mode) async {
@@ -87,5 +87,5 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
 
 final feedProvider =
     AsyncNotifierProvider.autoDispose<FeedNotifier, List<PostModel>>(() {
-  return FeedNotifier();
-});
+      return FeedNotifier();
+    });

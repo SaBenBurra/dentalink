@@ -19,7 +19,8 @@ class FeedScreen extends ConsumerStatefulWidget {
   ConsumerState<FeedScreen> createState() => _FeedScreenState();
 }
 
-class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProviderStateMixin {
+class _FeedScreenState extends ConsumerState<FeedScreen>
+    with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   int _selectedFilterIndex = 0; // 0: All, 1: Cases, 2: Questions
 
@@ -27,7 +28,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    
+
     // TabController listener to update feed mode in provider
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
@@ -142,17 +143,16 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
                           ? Colors.black.withValues(alpha: 0.85)
                           : Colors.white.withValues(alpha: 0.92),
                       border: Border(
-                        bottom: BorderSide(
-                          color: glassBorderColor,
-                          width: 1,
-                        ),
+                        bottom: BorderSide(color: glassBorderColor, width: 1),
                       ),
                     ),
                   ),
                   title: Text(
                     'Feed',
                     style: textTheme.titleLarge?.copyWith(
-                      color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.lightTextPrimary,
                       fontWeight: FontWeight.bold,
                       fontSize: 24,
                     ),
@@ -236,7 +236,9 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
                             final post = filteredPosts[index];
                             if (post.type == PostType.casePost) {
                               return Padding(
-                                padding: const EdgeInsets.only(bottom: AppDimensions.spacing16),
+                                padding: const EdgeInsets.only(
+                                  bottom: AppDimensions.spacing16,
+                                ),
                                 child: CaseCard(
                                   post: post,
                                   onLikeToggle: () => ref
@@ -255,7 +257,9 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
                               );
                             } else {
                               return Padding(
-                                padding: const EdgeInsets.only(bottom: AppDimensions.spacing16),
+                                padding: const EdgeInsets.only(
+                                  bottom: AppDimensions.spacing16,
+                                ),
                                 child: QuestionCard(
                                   post: post,
                                   onLikeToggle: () => ref
@@ -286,7 +290,8 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
                           SliverFillRemaining(
                             child: DentLinkErrorWidget(
                               message: 'Akış yüklenirken bir hata oluştu.',
-                              onRetry: () => ref.read(feedProvider.notifier).refresh(),
+                              onRetry: () =>
+                                  ref.read(feedProvider.notifier).refresh(),
                             ),
                           ),
                         ],
@@ -334,7 +339,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
           borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
           border: Border.all(color: controlBorderColor, width: 1),
         ),
-        padding: const EdgeInsets.all(4),
+        padding: const EdgeInsets.all(AppDimensions.spacing4),
         child: Row(
           children: List.generate(filterOptions.length, (index) {
             final isSelected = _selectedFilterIndex == index;
@@ -348,14 +353,18 @@ class _FeedScreenState extends ConsumerState<FeedScreen> with SingleTickerProvid
                 child: AnimatedContainer(
                   duration: AppDimensions.animFast,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
+                    borderRadius: BorderRadius.circular(
+                      AppDimensions.radiusRound,
+                    ),
                     color: isSelected
                         ? colorScheme.primary
                         : Colors.transparent,
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: colorScheme.primary.withValues(alpha: 0.25),
+                              color: colorScheme.primary.withValues(
+                                alpha: 0.25,
+                              ),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),

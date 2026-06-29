@@ -4,16 +4,13 @@ import '../../../providers/post_provider.dart';
 import '../../../data/models/enums.dart';
 import '../../feed/widgets/case_card.dart';
 import '../../feed/widgets/question_card.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class ProfilePostsTab extends ConsumerWidget {
   final String userId;
   final PostType type;
 
-  const ProfilePostsTab({
-    super.key,
-    required this.userId,
-    required this.type,
-  });
+  const ProfilePostsTab({super.key, required this.userId, required this.type});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,11 +21,15 @@ class ProfilePostsTab extends ConsumerWidget {
         final posts = allPosts.where((p) => p.type == type).toList();
 
         if (posts.isEmpty) {
-          return Center(child: Text(type == PostType.casePost ? 'Henüz vaka yok.' : 'Henüz soru yok.'));
+          return Center(
+            child: Text(
+              type == PostType.casePost ? 'Henüz vaka yok.' : 'Henüz soru yok.',
+            ),
+          );
         }
 
         return ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing8),
           itemCount: posts.length,
           separatorBuilder: (context, index) => const Divider(),
           itemBuilder: (context, index) {

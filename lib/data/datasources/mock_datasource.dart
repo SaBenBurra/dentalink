@@ -274,7 +274,8 @@ class MockDatasource {
       fullName: 'Dr. Mert Kaya',
       username: 'mert_kaya',
       title: UserTitle.disHekimiGenelPratisyen,
-      bio: 'Genel Diş Hekimi. Oral diagnoz ve tedavi planlaması üzerine yoğunlaşıyorum.',
+      bio:
+          'Genel Diş Hekimi. Oral diagnoz ve tedavi planlaması üzerine yoğunlaşıyorum.',
       university: 'İstanbul Üniversitesi',
       city: 'İstanbul',
       experienceYears: 6,

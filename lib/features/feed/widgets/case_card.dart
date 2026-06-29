@@ -135,337 +135,327 @@ class _CaseCardState extends State<CaseCard> with TickerProviderStateMixin {
       ),
       child: Material(
         color: Colors.transparent,
-            child: InkWell(
-              onTap: widget.onTap,
-              borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // 1. Header (Avatar, Name, Subtitle, Menu button)
-                  Padding(
-                    padding: const EdgeInsets.all(AppDimensions.spacing16),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        UserAvatar(
-                          name: widget.post.author.fullName,
-                          imageUrl: widget.post.author.avatarUrl,
-                          size: AvatarSize.medium,
-                        ),
-                        const SizedBox(width: AppDimensions.spacing12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+        child: InkWell(
+          onTap: widget.onTap,
+          borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 1. Header (Avatar, Name, Subtitle, Menu button)
+              Padding(
+                padding: const EdgeInsets.all(AppDimensions.spacing16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    UserAvatar(
+                      name: widget.post.author.fullName,
+                      imageUrl: widget.post.author.avatarUrl,
+                      size: AvatarSize.medium,
+                    ),
+                    const SizedBox(width: AppDimensions.spacing12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.post.author.fullName,
+                            style: textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: isDark
+                                  ? AppColors.darkTextPrimary
+                                  : AppColors.lightTextPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: AppDimensions.spacing2),
+                          Row(
                             children: [
-                              Text(
-                                widget.post.author.fullName,
-                                style: textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  color: isDark
-                                      ? AppColors.darkTextPrimary
-                                      : AppColors.lightTextPrimary,
+                              Flexible(
+                                child: Text(
+                                  widget.post.branch?.displayName ??
+                                      widget.post.author.title.displayName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
-                              const SizedBox(height: AppDimensions.spacing2),
-                              Row(
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      widget.post.branch?.displayName ??
-                                          widget.post.author.title.displayName,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: textTheme.bodySmall?.copyWith(
-                                        color: colorScheme.onSurfaceVariant,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: AppDimensions.spacing6),
-                                  Container(
-                                    width: 4,
-                                    height: 4,
-                                    decoration: BoxDecoration(
-                                      color: colorScheme.onSurfaceVariant
-                                          .withValues(alpha: 0.4),
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                  const SizedBox(width: AppDimensions.spacing6),
-                                  RelativeTimeText(
-                                    dateTime: widget.post.createdAt,
-                                  ),
-                                ],
+                              const SizedBox(width: AppDimensions.spacing6),
+                              Container(
+                                width: 4,
+                                height: 4,
+                                decoration: BoxDecoration(
+                                  color: colorScheme.onSurfaceVariant
+                                      .withValues(alpha: 0.4),
+                                  shape: BoxShape.circle,
+                                ),
                               ),
+                              const SizedBox(width: AppDimensions.spacing6),
+                              RelativeTimeText(dateTime: widget.post.createdAt),
                             ],
                           ),
-                        ),
-                        // Vaka Badge
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? colorScheme.primaryContainer.withValues(
-                                    alpha: 0.2,
-                                  )
-                                : AppColors.primaryContainer.withValues(
-                                    alpha: 0.4,
-                                  ),
-                            borderRadius: BorderRadius.circular(
-                              AppDimensions.radiusRound,
-                            ),
-                            border: Border.all(
-                              color: isDark
-                                  ? colorScheme.primary.withValues(alpha: 0.3)
-                                  : AppColors.primaryContainer,
-                              width: 1,
-                            ),
-                          ),
-                          child: Text(
-                            '${l10n.casePost} 📸',
-                            style: textTheme.labelSmall?.copyWith(
-                              color: isDark
-                                  ? colorScheme.primaryContainer
-                                  : AppColors.primaryDark,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // 2. Content text
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDimensions.spacing16,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.post.title,
-                          style: textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: isDark
-                                ? AppColors.darkTextPrimary
-                                : AppColors.lightTextPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: AppDimensions.spacing8),
-                        Text(
-                          widget.post.content,
-                          style: textTheme.bodyMedium?.copyWith(
-                            color: isDark
-                                ? AppColors.darkTextPrimary.withValues(
-                                    alpha: 0.85,
-                                  )
-                                : AppColors.lightTextPrimary.withValues(
-                                    alpha: 0.85,
-                                  ),
-                            height: 1.5,
-                          ),
-                          maxLines: 4,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: AppDimensions.spacing12),
-
-                        // Tags list
-                        if (widget.post.tags.isNotEmpty) ...[
-                          Wrap(
-                            spacing: AppDimensions.spacing6,
-                            runSpacing: AppDimensions.spacing6,
-                            children: widget.post.tags.map((tag) {
-                              return TagChip(
-                                label: '#${tag.name}',
-                                onTap: () {
-                                  // Filter by tag
-                                },
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: AppDimensions.spacing16),
                         ],
-                      ],
+                      ),
                     ),
-                  ),
-
-                  // 3. Image Slider with double tap to like
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      AspectRatio(
-                        aspectRatio: 1.0, // Square image as in design
-                        child: PageView.builder(
-                          controller: _pageController,
-                          onPageChanged: (idx) {
-                            setState(() {
-                              _currentPage = idx;
-                            });
-                          },
-                          itemCount: imageUrls.length,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: widget.onTap,
-                              onDoubleTap: _handleDoubleTap,
-                              child: CachedNetworkImage(
-                                imageUrl: imageUrls[index],
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => Container(
-                                  color: isDark ? Colors.black26 : Colors.white24,
-                                  child: const Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        AppColors.primary,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) => Container(
-                                  color: isDark ? Colors.black26 : Colors.white24,
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.broken_image_outlined,
-                                      size: 48,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
+                    // Vaka Badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppDimensions.spacing10,
+                        vertical: AppDimensions.spacing4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? colorScheme.primaryContainer.withValues(
+                                alpha: 0.2,
+                              )
+                            : AppColors.primaryContainer.withValues(alpha: 0.4),
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusRound,
+                        ),
+                        border: Border.all(
+                          color: isDark
+                              ? colorScheme.primary.withValues(alpha: 0.3)
+                              : AppColors.primaryContainer,
+                          width: 1,
                         ),
                       ),
-
-                      // Swiper Indicator dots (only show if multiple images)
-                      if (imageUrls.length > 1)
-                        Positioned(
-                          bottom: AppDimensions.spacing12,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(imageUrls.length, (idx) {
-                              final isActive = _currentPage == idx;
-                              return AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 3.0,
-                                ),
-                                width: 6,
-                                height: 6,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: isActive
-                                      ? Colors.white
-                                      : Colors.white.withValues(alpha: 0.5),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 2,
-                                      offset: Offset(0, 1),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                          ),
+                      child: Text(
+                        '${l10n.casePost} 📸',
+                        style: textTheme.labelSmall?.copyWith(
+                          color: isDark
+                              ? colorScheme.primaryContainer
+                              : AppColors.primaryDark,
+                          fontWeight: FontWeight.bold,
                         ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
-                      // Heart Pop overlay
-                      if (_showHeartPop)
-                        AnimatedBuilder(
-                          animation: _heartAnimController,
-                          builder: (context, child) {
-                            return Transform.scale(
-                              scale: _heartScaleAnimation.value,
-                              child: Opacity(
-                                opacity: _heartOpacityAnimation.value,
-                                child: child,
+              // 2. Content text
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.spacing16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.post.title,
+                      style: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.lightTextPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: AppDimensions.spacing8),
+                    Text(
+                      widget.post.content,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: isDark
+                            ? AppColors.darkTextPrimary.withValues(alpha: 0.85)
+                            : AppColors.lightTextPrimary.withValues(
+                                alpha: 0.85,
                               ),
-                            );
-                          },
-                          child: const Icon(
-                            Icons.favorite_rounded,
-                            color: Colors.white,
-                            size: 100,
-                            shadows: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 16,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                        ),
+                        height: 1.5,
+                      ),
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: AppDimensions.spacing12),
+
+                    // Tags list
+                    if (widget.post.tags.isNotEmpty) ...[
+                      Wrap(
+                        spacing: AppDimensions.spacing6,
+                        runSpacing: AppDimensions.spacing6,
+                        children: widget.post.tags.map((tag) {
+                          return TagChip(
+                            label: '#${tag.name}',
+                            onTap: () {
+                              // Filter by tag
+                            },
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: AppDimensions.spacing16),
                     ],
+                  ],
+                ),
+              ),
+
+              // 3. Image Slider with double tap to like
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  AspectRatio(
+                    aspectRatio: 1.0, // Square image as in design
+                    child: PageView.builder(
+                      controller: _pageController,
+                      onPageChanged: (idx) {
+                        setState(() {
+                          _currentPage = idx;
+                        });
+                      },
+                      itemCount: imageUrls.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: widget.onTap,
+                          onDoubleTap: _handleDoubleTap,
+                          child: CachedNetworkImage(
+                            imageUrl: imageUrls[index],
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              color: isDark ? Colors.black26 : Colors.white24,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              color: isDark ? Colors.black26 : Colors.white24,
+                              child: const Center(
+                                child: Icon(
+                                  Icons.broken_image_outlined,
+                                  size: 48,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
 
-                  // 4. Action Row (Likes, Comments, Bookmark)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDimensions.spacing16,
-                      vertical: AppDimensions.spacing8,
+                  // Swiper Indicator dots (only show if multiple images)
+                  if (imageUrls.length > 1)
+                    Positioned(
+                      bottom: AppDimensions.spacing12,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(imageUrls.length, (idx) {
+                          final isActive = _currentPage == idx;
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            margin: const EdgeInsets.symmetric(horizontal: 3.0),
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isActive
+                                  ? Colors.white
+                                  : Colors.white.withValues(alpha: 0.5),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 2,
+                                  offset: Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                      ),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                  // Heart Pop overlay
+                  if (_showHeartPop)
+                    AnimatedBuilder(
+                      animation: _heartAnimController,
+                      builder: (context, child) {
+                        return Transform.scale(
+                          scale: _heartScaleAnimation.value,
+                          child: Opacity(
+                            opacity: _heartOpacityAnimation.value,
+                            child: child,
+                          ),
+                        );
+                      },
+                      child: const Icon(
+                        Icons.favorite_rounded,
+                        color: Colors.white,
+                        size: 100,
+                        shadows: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 16,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+
+              // 4. Action Row (Likes, Comments, Bookmark)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.spacing16,
+                  vertical: AppDimensions.spacing8,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            LikeButton(
-                              isLiked: widget.post.isLiked,
-                              likeCount: widget.post.likeCount,
-                              onToggle: widget.onLikeToggle,
-                            ),
-                            const SizedBox(width: AppDimensions.spacing16),
-                            InkWell(
-                              onTap: widget.onCommentTap,
-                              borderRadius: BorderRadius.circular(
-                                AppDimensions.radiusRound,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: AppDimensions.spacing8,
-                                  horizontal: AppDimensions.spacing4,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.chat_bubble_outline_rounded,
-                                      color: colorScheme.onSurfaceVariant,
-                                      size: AppDimensions.iconDefault,
-                                    ),
-                                    const SizedBox(
-                                      width: AppDimensions.spacing4,
-                                    ),
-                                    Text(
-                                      widget.post.commentCount.toString(),
-                                      style: textTheme.bodySmall?.copyWith(
-                                        color: colorScheme.onSurfaceVariant,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                        LikeButton(
+                          isLiked: widget.post.isLiked,
+                          likeCount: widget.post.likeCount,
+                          onToggle: widget.onLikeToggle,
                         ),
-                        BookmarkButton(
-                          isBookmarked: widget.post.isBookmarked,
-                          onToggle: widget.onBookmarkToggle,
-                          bookmarkCount: widget.post.bookmarkCount,
-                          showCount: false,
+                        const SizedBox(width: AppDimensions.spacing16),
+                        InkWell(
+                          onTap: widget.onCommentTap,
+                          borderRadius: BorderRadius.circular(
+                            AppDimensions.radiusRound,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppDimensions.spacing8,
+                              horizontal: AppDimensions.spacing4,
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.chat_bubble_outline_rounded,
+                                  color: colorScheme.onSurfaceVariant,
+                                  size: AppDimensions.iconDefault,
+                                ),
+                                const SizedBox(width: AppDimensions.spacing4),
+                                Text(
+                                  widget.post.commentCount.toString(),
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ],
+                    BookmarkButton(
+                      isBookmarked: widget.post.isBookmarked,
+                      onToggle: widget.onBookmarkToggle,
+                      bookmarkCount: widget.post.bookmarkCount,
+                      showCount: false,
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
-        );
+        ),
+      ),
+    );
   }
 }

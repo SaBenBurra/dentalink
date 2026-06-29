@@ -22,11 +22,13 @@ class MockUserRepository implements UserRepository {
     await Future.delayed(_delay);
     final q = query.toLowerCase();
     return MockDatasource.users
-        .where((u) =>
-            u.fullName.toLowerCase().contains(q) ||
-            u.username.toLowerCase().contains(q) ||
-            (u.university?.toLowerCase().contains(q) ?? false) ||
-            u.title.displayName.toLowerCase().contains(q))
+        .where(
+          (u) =>
+              u.fullName.toLowerCase().contains(q) ||
+              u.username.toLowerCase().contains(q) ||
+              (u.university?.toLowerCase().contains(q) ?? false) ||
+              u.title.displayName.toLowerCase().contains(q),
+        )
         .map((u) => u.copyWith(isFollowing: _followedIds.contains(u.id)))
         .toList();
   }

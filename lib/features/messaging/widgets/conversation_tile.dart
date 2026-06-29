@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class ConversationTile extends StatelessWidget {
   final String name;
@@ -27,14 +28,14 @@ class ConversationTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.spacing16,
+          vertical: AppDimensions.spacing12,
+        ),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 28,
-              backgroundImage: NetworkImage(avatarUrl),
-            ),
-            const SizedBox(width: 16),
+            CircleAvatar(radius: 28, backgroundImage: NetworkImage(avatarUrl)),
+            const SizedBox(width: AppDimensions.spacing16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,7 +68,7 @@ class ConversationTile extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppDimensions.spacing4),
                   Row(
                     children: [
                       Expanded(
@@ -86,9 +87,9 @@ class ConversationTile extends StatelessWidget {
                         ),
                       ),
                       if (unreadCount > 0) ...[
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AppDimensions.spacing8),
                         Container(
-                          padding: const EdgeInsets.all(6),
+                          padding: const EdgeInsets.all(AppDimensions.spacing6),
                           decoration: BoxDecoration(
                             color: colorScheme.primary,
                             shape: BoxShape.circle,
@@ -101,7 +102,7 @@ class ConversationTile extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ]
+                      ],
                     ],
                   ),
                 ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 /// DentLink ana bottom navigation bar.
 ///
@@ -55,10 +56,10 @@ class AppBottomNavBar extends StatelessWidget {
         ),
         NavigationDestination(
           icon: Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(AppDimensions.spacing8),
             decoration: BoxDecoration(
               color: colorScheme.primary,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
             ),
             child: Icon(
               Icons.add_rounded,
@@ -67,10 +68,10 @@ class AppBottomNavBar extends StatelessWidget {
             ),
           ),
           selectedIcon: Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(AppDimensions.spacing8),
             decoration: BoxDecoration(
               color: colorScheme.primary,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
             ),
             child: Icon(
               Icons.add_rounded,
@@ -130,19 +131,16 @@ class _CreatePostSheet extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 20),
-          Text(
-            'Ne paylaşmak istersin?',
-            style: textTheme.titleLarge,
-          ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppDimensions.spacing20),
+          Text('Ne paylaşmak istersin?', style: textTheme.titleLarge),
+          const SizedBox(height: AppDimensions.spacing8),
           Text(
             'Klinik vakalarını ve sorularını paylaşarak topluluğa katkı sağla.',
             style: textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurfaceVariant,
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppDimensions.spacing24),
 
           // Vaka Oluştur
           _CreateOptionTile(
@@ -150,13 +148,14 @@ class _CreatePostSheet extends StatelessWidget {
             iconColor: colorScheme.primary,
             iconBg: colorScheme.primaryContainer.withValues(alpha: 0.3),
             title: 'Vaka Paylaş',
-            subtitle: 'Klinik vakalarını görsellerle paylaş, meslektaşlarından görüş al.',
+            subtitle:
+                'Klinik vakalarını görsellerle paylaş, meslektaşlarından görüş al.',
             onTap: () {
               Navigator.pop(context);
               context.push('/create-case');
             },
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppDimensions.spacing12),
 
           // Soru Sor
           _CreateOptionTile(
@@ -164,13 +163,14 @@ class _CreatePostSheet extends StatelessWidget {
             iconColor: colorScheme.secondary,
             iconBg: colorScheme.secondaryContainer.withValues(alpha: 0.3),
             title: 'Soru Sor',
-            subtitle: 'Mesleki sorularını toplulukla paylaş, en iyi cevabı bul.',
+            subtitle:
+                'Mesleki sorularını toplulukla paylaş, en iyi cevabı bul.',
             onTap: () {
               Navigator.pop(context);
               context.push('/create-question');
             },
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppDimensions.spacing8),
         ],
       ),
     );
@@ -206,7 +206,7 @@ class _CreateOptionTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppDimensions.spacing16),
           child: Row(
             children: [
               Container(
@@ -214,17 +214,19 @@ class _CreateOptionTile extends StatelessWidget {
                 height: 52,
                 decoration: BoxDecoration(
                   color: iconBg,
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(
+                    AppDimensions.radiusLarge,
+                  ),
                 ),
                 child: Icon(icon, color: iconColor, size: 26),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: AppDimensions.spacing16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(title, style: textTheme.titleSmall),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppDimensions.spacing2),
                     Text(
                       subtitle,
                       style: textTheme.bodySmall?.copyWith(
@@ -234,7 +236,7 @@ class _CreateOptionTile extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppDimensions.spacing8),
               Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 16,

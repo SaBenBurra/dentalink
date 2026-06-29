@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../data/models/enums.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../shared/widgets/user_avatar.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -21,19 +22,21 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   late TextEditingController _cityController;
   late TextEditingController _experienceController;
   late TextEditingController _workplaceController;
-  
+
   UserTitle? _selectedTitle;
 
   @override
   void initState() {
     super.initState();
     final user = ref.read(authProvider).value;
-    
+
     _nameController = TextEditingController(text: user?.fullName);
     _bioController = TextEditingController(text: user?.bio);
     _universityController = TextEditingController(text: user?.university);
     _cityController = TextEditingController(text: user?.city);
-    _experienceController = TextEditingController(text: user?.experienceYears?.toString() ?? '');
+    _experienceController = TextEditingController(
+      text: user?.experienceYears?.toString() ?? '',
+    );
     _workplaceController = TextEditingController(text: user?.workplace);
     _selectedTitle = user?.title;
   }
@@ -52,9 +55,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   void _saveProfile() {
     if (_formKey.currentState!.validate()) {
       // Mock save action
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profil güncellendi')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Profil güncellendi')));
       context.pop();
     }
   }
@@ -76,16 +79,13 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       appBar: AppBar(
         title: const Text('Profili Düzenle'),
         actions: [
-          TextButton(
-            onPressed: _saveProfile,
-            child: const Text('Kaydet'),
-          ),
+          TextButton(onPressed: _saveProfile, child: const Text('Kaydet')),
         ],
       ),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(AppDimensions.spacing16),
           children: [
             Center(
               child: Stack(
@@ -102,10 +102,17 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       decoration: BoxDecoration(
                         color: colorScheme.primary,
                         shape: BoxShape.circle,
-                        border: Border.all(color: theme.scaffoldBackgroundColor, width: 2),
+                        border: Border.all(
+                          color: theme.scaffoldBackgroundColor,
+                          width: 2,
+                        ),
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.camera_alt, size: 20, color: Colors.white),
+                        icon: const Icon(
+                          Icons.camera_alt,
+                          size: 20,
+                          color: Colors.white,
+                        ),
                         onPressed: () {
                           // Mock image picker
                         },
@@ -115,16 +122,17 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppDimensions.spacing24),
             TextFormField(
               controller: _nameController,
               decoration: const InputDecoration(
                 labelText: 'Ad - Soyad *',
                 border: OutlineInputBorder(),
               ),
-              validator: (value) => value == null || value.isEmpty ? 'Ad Soyad zorunludur' : null,
+              validator: (value) =>
+                  value == null || value.isEmpty ? 'Ad Soyad zorunludur' : null,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppDimensions.spacing16),
             DropdownButtonFormField<UserTitle>(
               value: _selectedTitle,
               decoration: const InputDecoration(
@@ -142,7 +150,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               },
               validator: (value) => value == null ? 'Unvan zorunludur' : null,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppDimensions.spacing16),
             TextFormField(
               controller: _bioController,
               decoration: const InputDecoration(
@@ -151,7 +159,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               ),
               maxLines: 3,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppDimensions.spacing16),
             TextFormField(
               controller: _universityController,
               decoration: const InputDecoration(
@@ -159,7 +167,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppDimensions.spacing16),
             TextFormField(
               controller: _cityController,
               decoration: const InputDecoration(
@@ -167,7 +175,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppDimensions.spacing16),
             TextFormField(
               controller: _experienceController,
               decoration: const InputDecoration(
@@ -176,7 +184,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               ),
               keyboardType: TextInputType.number,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppDimensions.spacing16),
             TextFormField(
               controller: _workplaceController,
               decoration: const InputDecoration(
@@ -184,7 +192,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppDimensions.spacing32),
           ],
         ),
       ),

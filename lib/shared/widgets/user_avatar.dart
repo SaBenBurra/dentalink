@@ -139,7 +139,9 @@ class UserAvatar extends StatelessWidget {
             : null,
       ),
       child: ClipOval(
-        child: hasImage ? _buildNetworkImage(colorScheme) : _buildInitials(colorScheme),
+        child: hasImage
+            ? _buildNetworkImage(colorScheme)
+            : _buildInitials(colorScheme),
       ),
     );
 
@@ -159,10 +161,7 @@ class UserAvatar extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isOnline ? AppColors.success : colorScheme.outline,
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: colorScheme.surface,
-                  width: 2,
-                ),
+                border: Border.all(color: colorScheme.surface, width: 2),
               ),
             ),
           ),
@@ -198,8 +197,8 @@ class UserAvatar extends StatelessWidget {
     // Arka plan rengine göre kontrast metin rengi seç
     final textColor =
         ThemeData.estimateBrightnessForColor(bgColor) == Brightness.dark
-            ? Colors.white
-            : Colors.black87;
+        ? Colors.white
+        : Colors.black87;
 
     return Container(
       color: bgColor,

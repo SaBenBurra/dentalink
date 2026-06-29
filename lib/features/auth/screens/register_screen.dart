@@ -310,8 +310,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 24,
+                          horizontal: AppDimensions.spacing32,
+                          vertical: AppDimensions.spacing24,
                         ),
                         decoration: BoxDecoration(
                           color: isDark
@@ -556,8 +556,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
+                    horizontal: AppDimensions.spacing12,
+                    vertical: AppDimensions.spacing8,
                   ),
                   decoration: BoxDecoration(
                     color: isSelected
@@ -597,7 +597,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               ? const Color(0xFF13B9A5)
                               : (isDark ? Colors.white60 : Colors.black54),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AppDimensions.spacing8),
                         Expanded(
                           child: Text(
                             title.displayName,
@@ -778,7 +778,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       },
                       borderRadius: BorderRadius.circular(24),
                       child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: AppDimensions.spacing6,
+                        ),
                         padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -900,7 +902,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 vertical: 14,
-                horizontal: 16,
+                horizontal: AppDimensions.spacing16,
               ),
             ),
           ),

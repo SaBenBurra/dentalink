@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/user_provider.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class BadgeShowcase extends ConsumerWidget {
   final String userId;
@@ -19,12 +20,14 @@ class BadgeShowcase extends ConsumerWidget {
         }
 
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.spacing16,
+                ),
                 child: Text(
                   'Rozetler',
                   style: theme.textTheme.titleMedium?.copyWith(
@@ -32,15 +35,17 @@ class BadgeShowcase extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppDimensions.spacing8),
               SizedBox(
                 height: 80,
                 child: ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppDimensions.spacing16,
+                  ),
                   scrollDirection: Axis.horizontal,
                   itemCount: badges.length,
                   separatorBuilder: (context, index) =>
-                      const SizedBox(width: 12),
+                      const SizedBox(width: AppDimensions.spacing12),
                   itemBuilder: (context, index) {
                     final badge = badges[index];
                     return Tooltip(

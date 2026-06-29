@@ -40,14 +40,34 @@ class RelativeTimeText extends StatelessWidget {
 
   /// Türkçe ay isimleri.
   static const List<String> _monthNamesTr = [
-    'Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz',
-    'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara',
+    'Oca',
+    'Şub',
+    'Mar',
+    'Nis',
+    'May',
+    'Haz',
+    'Tem',
+    'Ağu',
+    'Eyl',
+    'Eki',
+    'Kas',
+    'Ara',
   ];
 
   /// İngilizce ay isimleri.
   static const List<String> _monthNamesEn = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 
   /// Verilen [dateTime] değerini göreli zaman metnine dönüştürür.
@@ -107,14 +127,10 @@ class RelativeTimeText extends StatelessWidget {
     final formatted = format(dateTime, l10n);
     final displayText = prefix != null ? '$prefix$formatted' : formatted;
 
-    final effectiveStyle = style ??
-        textTheme.bodySmall?.copyWith(
-          color: colorScheme.onSurfaceVariant,
-        );
+    final effectiveStyle =
+        style ??
+        textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant);
 
-    return Text(
-      displayText,
-      style: effectiveStyle,
-    );
+    return Text(displayText, style: effectiveStyle);
   }
 }

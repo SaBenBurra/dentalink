@@ -105,6 +105,7 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
   }
 }
 
-final searchProvider = NotifierProvider.autoDispose<SearchNotifier, SearchState>(
-  () => SearchNotifier(),
-);
+final searchProvider =
+    NotifierProvider.autoDispose<SearchNotifier, SearchState>(
+      () => SearchNotifier(),
+    );

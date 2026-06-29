@@ -30,24 +30,28 @@ class UserProfileNotifier
     final repo = ref.read(userRepositoryProvider);
     if (user.isFollowing) {
       await repo.unfollowUser(user.id);
-      state = AsyncData(user.copyWith(
-        isFollowing: false,
-        followersCount: (user.followersCount - 1).clamp(0, 999999),
-      ));
+      state = AsyncData(
+        user.copyWith(
+          isFollowing: false,
+          followersCount: (user.followersCount - 1).clamp(0, 999999),
+        ),
+      );
     } else {
       await repo.followUser(user.id);
-      state = AsyncData(user.copyWith(
-        isFollowing: true,
-        followersCount: user.followersCount + 1,
-      ));
+      state = AsyncData(
+        user.copyWith(
+          isFollowing: true,
+          followersCount: user.followersCount + 1,
+        ),
+      );
     }
   }
 }
 
-final userProfileProvider =
-    AsyncNotifierProvider.autoDispose.family<UserProfileNotifier, UserModel, String>(() {
-  return UserProfileNotifier();
-});
+final userProfileProvider = AsyncNotifierProvider.autoDispose
+    .family<UserProfileNotifier, UserModel, String>(() {
+      return UserProfileNotifier();
+    });
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Followers / Following Providers
@@ -55,13 +59,13 @@ final userProfileProvider =
 
 final followersProvider =
     AutoDisposeFutureProvider.family<List<UserModel>, String>(
-  (ref, userId) => ref.read(userRepositoryProvider).getFollowers(userId),
-);
+      (ref, userId) => ref.read(userRepositoryProvider).getFollowers(userId),
+    );
 
 final followingProvider =
     AutoDisposeFutureProvider.family<List<UserModel>, String>(
-  (ref, userId) => ref.read(userRepositoryProvider).getFollowing(userId),
-);
+      (ref, userId) => ref.read(userRepositoryProvider).getFollowing(userId),
+    );
 
 // ─────────────────────────────────────────────────────────────────────────────
 // User Badges Provider
@@ -69,5 +73,5 @@ final followingProvider =
 
 final userBadgesProvider =
     AutoDisposeFutureProvider.family<List<BadgeModel>, String>(
-  (ref, userId) => ref.read(userRepositoryProvider).getUserBadges(userId),
-);
+      (ref, userId) => ref.read(userRepositoryProvider).getUserBadges(userId),
+    );

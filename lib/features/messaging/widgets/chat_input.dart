@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class ChatInput extends StatelessWidget {
   final TextEditingController controller;
@@ -17,7 +18,10 @@ class ChatInput extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.spacing8,
+        vertical: AppDimensions.spacing8,
+      ),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         boxShadow: [
@@ -36,7 +40,7 @@ class ChatInput extends StatelessWidget {
               onPressed: onAttachment,
               color: colorScheme.primary,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppDimensions.spacing8),
             Expanded(
               child: TextField(
                 controller: controller,
@@ -49,8 +53,8 @@ class ChatInput extends StatelessWidget {
                   filled: true,
                   fillColor: colorScheme.surfaceContainerHighest,
                   contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 10.0,
+                    horizontal: AppDimensions.spacing16,
+                    vertical: AppDimensions.spacing10,
                   ),
                 ),
                 maxLines: null,
@@ -58,7 +62,7 @@ class ChatInput extends StatelessWidget {
                 onSubmitted: (_) => onSend(),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppDimensions.spacing8),
             IconButton(
               icon: const Icon(Icons.send),
               onPressed: onSend,

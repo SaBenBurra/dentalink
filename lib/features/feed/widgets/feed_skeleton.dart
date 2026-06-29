@@ -47,94 +47,94 @@ class FeedSkeleton extends StatelessWidget {
                 ),
               ],
             ),
-                child: Shimmer.fromColors(
-                  baseColor: baseColor,
-                  highlightColor: highlightColor,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            child: Shimmer.fromColors(
+              baseColor: baseColor,
+              highlightColor: highlightColor,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header Row
+                  Row(
                     children: [
-                      // Header Row
-                      Row(
-                        children: [
-                          Container(
-                            width: AppDimensions.avatarMedium,
-                            height: AppDimensions.avatarMedium,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
+                      Container(
+                        width: AppDimensions.avatarMedium,
+                        height: AppDimensions.avatarMedium,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: AppDimensions.spacing12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 120,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: AppDimensions.spacing12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: 120,
-                                  height: 12,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Container(
-                                  width: 80,
-                                  height: 8,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
-                              ],
+                            const SizedBox(height: AppDimensions.spacing6),
+                            Container(
+                              width: 80,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppDimensions.spacing20),
-
-                      // Text Content lines
-                      Container(
-                        width: double.infinity,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        width: double.infinity,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        width: 180,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                      const SizedBox(height: AppDimensions.spacing20),
-
-                      // Large Media Content Block (Skeleton image area)
-                      Container(
-                        width: double.infinity,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(
-                            AppDimensions.radiusMedium,
-                          ),
+                          ],
                         ),
                       ),
                     ],
                   ),
+                  const SizedBox(height: AppDimensions.spacing20),
+
+                  // Text Content lines
+                  Container(
+                    width: double.infinity,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(height: AppDimensions.spacing8),
+                  Container(
+                    width: double.infinity,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(height: AppDimensions.spacing8),
+                  Container(
+                    width: 180,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(height: AppDimensions.spacing20),
+
+                  // Large Media Content Block (Skeleton image area)
+                  Container(
+                    width: double.infinity,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(
+                        AppDimensions.radiusMedium,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );

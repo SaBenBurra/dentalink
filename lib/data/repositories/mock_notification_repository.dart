@@ -6,8 +6,9 @@ import 'notification_repository.dart';
 class MockNotificationRepository implements NotificationRepository {
   static const _delay = Duration(milliseconds: 300);
 
-  final List<NotificationModel> _notifications =
-      List.from(MockDatasource.notifications);
+  final List<NotificationModel> _notifications = List.from(
+    MockDatasource.notifications,
+  );
 
   @override
   Future<List<NotificationModel>> getNotifications() async {

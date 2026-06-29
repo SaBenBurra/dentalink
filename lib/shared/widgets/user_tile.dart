@@ -68,8 +68,8 @@ class UserTile extends StatelessWidget {
         : AppDimensions.spacing8;
 
     // Alt başlık metnini belirle
-    final subtitleText = subtitle ??
-        (showTitle ? user.title.displayName : null);
+    final subtitleText =
+        subtitle ?? (showTitle ? user.title.displayName : null);
 
     final content = Padding(
       padding: EdgeInsets.symmetric(vertical: verticalPadding),
