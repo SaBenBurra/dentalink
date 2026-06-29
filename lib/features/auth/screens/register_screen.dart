@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:dentlink/features/auth/widgets/register_dialog.dart';
 import 'package:dentlink/features/auth/widgets/register_step_one.dart';
+import 'package:dentlink/features/auth/widgets/register_step_three.dart';
 import 'package:dentlink/features/auth/widgets/register_step_two.dart';
 import 'package:dentlink/shared/widgets/glass_background_effect.dart';
 import 'package:dentlink/shared/widgets/glass_field.dart';
@@ -243,7 +244,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         isDark: isDark,
                         textPrimaryColor: textPrimaryColor,
                       ),
-                      _buildStep3(isDark, textPrimaryColor),
+                      RegisterStepThree(
+                        mockAvatars: _mockAvatars,
+                        selectedAvatarIndex: _selectedAvatarIndex,
+                        bioController: _bioController,
+                        bioFocusNode: _bioFocusNode,
+                        onAvatarSelected: (int index) {
+                          // <-- Callback yakalanıyor
+                          setState(() {
+                            _selectedAvatarIndex =
+                                index; // <-- Değer ana state'te güncelleniyor
+                          });
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -433,105 +446,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   // STEP 2: Professional Details (Optional)
 
   // STEP 3: Profile customization
-  Widget _buildStep3(bool isDark, Color textPrimaryColor) {
-    final textSecondaryColor = isDark
-        ? AppColors.darkTextSecondary
-        : AppColors.lightTextSecondary;
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: AppDimensions.spacing12),
-          Text(
-            'Profil Detayları',
-            style: AppTextStyles.headlineSmall.copyWith(
-              color: textPrimaryColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: AppDimensions.spacing8),
-          Text(
-            'Profil fotoğrafınızı seçin ve kısa bir biyografi ekleyin (İsteğe bağlı).',
-            style: AppTextStyles.bodyMedium.copyWith(color: textSecondaryColor),
-          ),
-          const SizedBox(height: AppDimensions.spacing24),
-
-          // Avatar picker
-          Center(
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 54,
-                  backgroundImage: NetworkImage(
-                    _mockAvatars[_selectedAvatarIndex],
-                  ),
-                  backgroundColor: const Color(
-                    0xFF13B9A5,
-                  ).withValues(alpha: 0.2),
-                ),
-                const SizedBox(height: AppDimensions.spacing16),
-                Text(
-                  'Bir Avatar Seçin',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: textPrimaryColor,
-                  ),
-                ),
-                const SizedBox(height: AppDimensions.spacing12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(_mockAvatars.length, (index) {
-                    final isSelected = _selectedAvatarIndex == index;
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          _selectedAvatarIndex = index;
-                        });
-                      },
-                      borderRadius: BorderRadius.circular(24),
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: AppDimensions.spacing6,
-                        ),
-                        padding: const EdgeInsets.all(3),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: isSelected
-                                ? const Color(0xFF13B9A5)
-                                : Colors.transparent,
-                            width: 2,
-                          ),
-                        ),
-                        child: CircleAvatar(
-                          radius: 20,
-                          backgroundImage: NetworkImage(_mockAvatars[index]),
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: AppDimensions.spacing32),
-
-          // Bio Multi-line input
-          GlassField(
-            controller: _bioController,
-            focusNode: _bioFocusNode,
-            hintText: 'Biyografi (Kendinizden kısaca bahsedin)',
-            icon: Icons.description_outlined,
-            maxLines: 4,
-          ),
-          const SizedBox(height: AppDimensions.spacing32),
-        ],
-      ),
-    );
-  }
 
   Widget _buildBottomActions(bool isDark) {
     final isLastStep = _currentStep == _totalSteps - 1;
