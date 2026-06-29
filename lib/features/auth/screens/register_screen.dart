@@ -1,10 +1,10 @@
 import 'dart:ui';
 import 'package:dentlink/features/auth/widgets/register_dialog.dart';
+import 'package:dentlink/features/auth/widgets/register_header.dart';
 import 'package:dentlink/features/auth/widgets/register_step_one.dart';
 import 'package:dentlink/features/auth/widgets/register_step_three.dart';
 import 'package:dentlink/features/auth/widgets/register_step_two.dart';
 import 'package:dentlink/shared/widgets/glass_background_effect.dart';
-import 'package:dentlink/shared/widgets/glass_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -201,7 +201,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             child: Column(
               children: [
                 // Top Custom Header with Progress Bar
-                _buildHeader(isDark, textPrimaryColor),
+                RegisterHeader(
+                  currentStep: _currentStep,
+                  totalSteps: _totalSteps,
+                  prevStep: _prevStep,
+                  nextStep: _nextStep,
+                  getStepTitle: _getStepTitle,
+                ),
 
                 // Multi-step Wizard PageView
                 Expanded(
@@ -324,110 +330,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 
-  Widget _buildHeader(bool isDark, Color textPrimaryColor) {
-    final progress = (_currentStep + 1) / _totalSteps;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.spacing24,
-        vertical: AppDimensions.spacing16,
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: textPrimaryColor,
-                  size: 20,
-                ),
-                onPressed: _prevStep,
-              ),
-              Text(
-                'Kayıt Ol',
-                style: AppTextStyles.titleMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: textPrimaryColor,
-                ),
-              ),
-              Opacity(
-                opacity: _currentStep > 0 ? 1.0 : 0.0,
-                child: TextButton(
-                  onPressed: _currentStep > 0 ? _nextStep : null,
-                  child: const Text(
-                    'Geç',
-                    style: TextStyle(
-                      color: Color(0xFF13B9A5),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppDimensions.spacing16),
-          // Progress bar
-          Stack(
-            children: [
-              Container(
-                height: 6,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white10
-                      : Colors.black.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                height: 6,
-                width: MediaQuery.of(context).size.width * progress - 48,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF13B9A5), Color(0xFF3B82F6)],
-                  ),
-                  borderRadius: BorderRadius.circular(3),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF13B9A5).withValues(alpha: 0.3),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppDimensions.spacing8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _getStepTitle(),
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: isDark
-                      ? AppColors.darkTextSecondary
-                      : AppColors.lightTextSecondary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                'Adım ${_currentStep + 1} / $_totalSteps',
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: const Color(0xFF13B9A5),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   String _getStepTitle() {
     switch (_currentStep) {
       case 0:
@@ -440,12 +342,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         return '';
     }
   }
-
-  // STEP 1: Basic Info & Title selection
-
-  // STEP 2: Professional Details (Optional)
-
-  // STEP 3: Profile customization
 
   Widget _buildBottomActions(bool isDark) {
     final isLastStep = _currentStep == _totalSteps - 1;
