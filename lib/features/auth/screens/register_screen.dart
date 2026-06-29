@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:dentlink/features/auth/widgets/register_dialog.dart';
 import 'package:dentlink/shared/widgets/glass_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -137,53 +138,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             begin: 0.8,
             end: 1.0,
           ).animate(CurvedAnimation(parent: anim1, curve: Curves.elasticOut));
-          return ScaleTransition(
-            scale: scale,
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: AlertDialog(
-                backgroundColor: Theme.of(context).brightness == Brightness.dark
-                    ? const Color(0xFF162E2A)
-                    : Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    AppDimensions.radiusLarge,
-                  ),
-                ),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.check_circle_outline_rounded,
-                      color: Color(0xFF13B9A5),
-                      size: 72,
-                    ),
-                    const SizedBox(height: AppDimensions.spacing20),
-                    Text(
-                      'Kaydınız Tamamlandı!',
-                      style: AppTextStyles.headlineSmall.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? AppColors.darkTextPrimary
-                            : AppColors.lightTextPrimary,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppDimensions.spacing8),
-                    Text(
-                      'DentLink dünyasına hoş geldiniz. Profiliniz oluşturuldu.',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? AppColors.darkTextSecondary
-                            : AppColors.lightTextSecondary,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
+          return RegisterDialog(scale: scale);
         },
       );
 
