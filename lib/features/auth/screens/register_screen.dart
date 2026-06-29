@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:dentlink/features/auth/widgets/register_bottom_actions.dart';
 import 'package:dentlink/features/auth/widgets/register_dialog.dart';
 import 'package:dentlink/features/auth/widgets/register_header.dart';
 import 'package:dentlink/features/auth/widgets/register_step_one.dart';
@@ -268,7 +269,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ),
 
                 // Bottom Action Buttons
-                _buildBottomActions(isDark),
+                RegisterBottomActions(
+                  currentStep: _currentStep,
+                  totalSteps: _totalSteps,
+                  nextStep: _nextStep,
+                  prevStep: _prevStep,
+                ),
               ],
             ),
           ),
@@ -341,84 +347,5 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       default:
         return '';
     }
-  }
-
-  Widget _buildBottomActions(bool isDark) {
-    final isLastStep = _currentStep == _totalSteps - 1;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.spacing24,
-        vertical: AppDimensions.spacing20,
-      ),
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.black.withValues(alpha: 0.2)
-            : Colors.white.withValues(alpha: 0.2),
-        border: Border(
-          top: BorderSide(color: isDark ? Colors.white12 : Colors.black12),
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextButton(
-              onPressed: _prevStep,
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    AppDimensions.radiusMedium,
-                  ),
-                ),
-              ),
-              child: Text(
-                _currentStep == 0 ? 'Girişe Dön' : 'Geri',
-                style: TextStyle(
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: AppDimensions.spacing16),
-          Expanded(
-            flex: 2,
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: _nextStep,
-                borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-                child: Ink(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF13B9A5),
-                    borderRadius: BorderRadius.circular(
-                      AppDimensions.radiusMedium,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF13B9A5).withValues(alpha: 0.25),
-                        blurRadius: 16,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Text(
-                      isLastStep ? 'Profilimi Tamamla' : 'Devam Et',
-                      style: AppTextStyles.button.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
