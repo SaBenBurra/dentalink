@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 
-/// DentLink ana bottom navigation bar.
+/// DentLink ana floating bottom navigation bar.
 ///
 /// 5 sekme:
 ///   0 — Ana Sayfa (Feed)
@@ -33,65 +34,114 @@ class AppBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return NavigationBar(
-      selectedIndex: currentIndex,
-      onDestinationSelected: (index) {
-        if (index == 2) {
-          onCreateTap();
-        } else {
-          onTap(index);
-        }
-      },
-      destinations: [
-        const NavigationDestination(
-          icon: Icon(Icons.home_outlined),
-          selectedIcon: Icon(Icons.home_rounded),
-          label: 'Ana Sayfa',
-        ),
-        const NavigationDestination(
-          icon: Icon(Icons.explore_outlined),
-          selectedIcon: Icon(Icons.explore_rounded),
-          label: 'Keşfet',
-        ),
-        NavigationDestination(
-          icon: Container(
-            padding: const EdgeInsets.all(AppDimensions.spacing8),
-            decoration: BoxDecoration(
-              color: colorScheme.primary,
-              borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      child: BottomBarItems(
+        children: [
+          // 0 — Ana Sayfa
+          BottomBarItem(
+            icon: const Icon(Icons.home_outlined, size: 24),
+            selectedIcon: const Icon(Icons.home_rounded, size: 24),
+            label: const Text(
+              'Ana Sayfa',
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
             ),
-            child: Icon(
-              Icons.add_rounded,
-              color: colorScheme.onPrimary,
-              size: 22,
-            ),
+            selected: currentIndex == 0,
+            color: isDark ? Colors.white60 : Colors.black54,
+            selectedColor: colorScheme.primary,
+            onTap: () => onTap(0),
           ),
-          selectedIcon: Container(
-            padding: const EdgeInsets.all(AppDimensions.spacing8),
-            decoration: BoxDecoration(
-              color: colorScheme.primary,
-              borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
+
+          // 1 — Keşfet
+          BottomBarItem(
+            icon: const Icon(Icons.explore_outlined, size: 24),
+            selectedIcon: const Icon(Icons.explore_rounded, size: 24),
+            label: const Text(
+              'Keşfet',
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
             ),
-            child: Icon(
-              Icons.add_rounded,
-              color: colorScheme.onPrimary,
-              size: 22,
-            ),
+            selected: currentIndex == 1,
+            color: isDark ? Colors.white60 : Colors.black54,
+            selectedColor: colorScheme.primary,
+            onTap: () => onTap(1),
           ),
-          label: 'Oluştur',
+
+          // 2 — Oluştur (+) — Özel buton
+          BottomBarItem(
+            icon: _CreateButton(colorScheme: colorScheme),
+            selectedIcon: _CreateButton(colorScheme: colorScheme),
+            selected: false,
+            onTap: onCreateTap,
+          ),
+
+          // 3 — Mesajlar
+          BottomBarItem(
+            icon: const Icon(Icons.chat_bubble_outline_rounded, size: 24),
+            selectedIcon: const Icon(Icons.chat_bubble_rounded, size: 24),
+            label: const Text(
+              'Mesajlar',
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+            ),
+            selected: currentIndex == 3,
+            color: isDark ? Colors.white60 : Colors.black54,
+            selectedColor: colorScheme.primary,
+            onTap: () => onTap(3),
+          ),
+
+          // 4 — Profil
+          BottomBarItem(
+            icon: const Icon(Icons.person_outline_rounded, size: 24),
+            selectedIcon: const Icon(Icons.person_rounded, size: 24),
+            label: const Text(
+              'Profil',
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+            ),
+            selected: currentIndex == 4,
+            color: isDark ? Colors.white60 : Colors.black54,
+            selectedColor: colorScheme.primary,
+            onTap: () => onTap(4),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Ortadaki "+" oluştur butonu.
+class _CreateButton extends StatelessWidget {
+  const _CreateButton({required this.colorScheme});
+
+  final ColorScheme colorScheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppDimensions.spacing8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            colorScheme.primary,
+            colorScheme.primary.withValues(alpha: 0.8),
+          ],
         ),
-        const NavigationDestination(
-          icon: Icon(Icons.chat_bubble_outline_rounded),
-          selectedIcon: Icon(Icons.chat_bubble_rounded),
-          label: 'Mesajlar',
-        ),
-        const NavigationDestination(
-          icon: Icon(Icons.person_outline_rounded),
-          selectedIcon: Icon(Icons.person_rounded),
-          label: 'Profil',
-        ),
-      ],
+        borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.primary.withValues(alpha: 0.35),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Icon(
+        Icons.add_rounded,
+        color: colorScheme.onPrimary,
+        size: 22,
+      ),
     );
   }
 }

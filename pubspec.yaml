@@ -32,6 +32,7 @@ dependencies:
   # UI Utilities
   shimmer: ^3.0.0
   flutter_svg: ^2.0.17
+  flutter_floating_bottom_bar: ^2.0.2
 
 dev_dependencies:
   flutter_test:

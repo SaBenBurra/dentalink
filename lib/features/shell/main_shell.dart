@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 import 'package:go_router/go_router.dart';
 import '../../shared/widgets/app_bottom_nav_bar.dart';
 
@@ -18,12 +19,60 @@ class MainShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      body: child,
-      bottomNavigationBar: AppBottomNavBar(
-        currentIndex: _currentIndex(context),
-        onTap: (index) => _onNavTap(context, index),
-        onCreateTap: () => showCreatePostSheet(context),
+      body: BottomBar(
+        layout: BottomBarLayout(
+          width: MediaQuery.of(context).size.width - 32,
+          borderRadius: BorderRadius.circular(28),
+          offset: 12,
+          fit: StackFit.expand,
+          clip: Clip.none,
+        ),
+        motion: const BottomBarMotion.cupertino(
+          preset: BottomBarCupertinoMotion.snappy,
+          duration: Duration(milliseconds: 400),
+        ),
+        scrollBehavior: const BottomBarScrollBehavior(
+          hideOnScroll: true,
+          deltaThreshold: 12,
+        ),
+        theme: BottomBarThemeData(
+          barDecoration: BoxDecoration(
+            color: isDark
+                ? colorScheme.surface.withValues(alpha: 0.92)
+                : colorScheme.surface.withValues(alpha: 0.95),
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : Colors.black.withValues(alpha: 0.06),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.12),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+                spreadRadius: -2,
+              ),
+              BoxShadow(
+                color: colorScheme.primary.withValues(alpha: isDark ? 0.08 : 0.04),
+                blurRadius: 40,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+        ),
+        showIcon: false,
+        body: child,
+        child: AppBottomNavBar(
+          currentIndex: _currentIndex(context),
+          onTap: (index) => _onNavTap(context, index),
+          onCreateTap: () => showCreatePostSheet(context),
+        ),
       ),
     );
   }
