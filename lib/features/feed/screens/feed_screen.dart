@@ -1,3 +1,4 @@
+import 'package:dentlink/features/feed/widgets/feed_screen_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -28,16 +29,6 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-
-    // TabController listener to update feed mode in provider
-    _tabController.addListener(() {
-      if (!_tabController.indexIsChanging) {
-        final newMode = _tabController.index == 0
-            ? FeedMode.chronological
-            : FeedMode.algorithmic;
-        ref.read(feedProvider.notifier).switchMode(newMode);
-      }
-    });
   }
 
   @override
@@ -64,245 +55,129 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: Stack(
-        children: [
-          // 1. Background Gradients and Decorative Blurred Circles (Matching login style)
-          if (!isDark)
-            Positioned.fill(
-              child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.bgGradientStart,
-                      AppColors.bgGradientEnd,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-              ),
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return [
+            FeedScreenAppBar(
+              isDark: isDark,
+              glassBorderColor: glassBorderColor,
+              textTheme: textTheme,
+              colorScheme: colorScheme,
+              tabController: _tabController,
+              l10n: l10n,
             ),
+          ];
+        },
+        body: Column(
+          children: [
+            _buildSegmentedFilter(context),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () => ref.read(feedProvider.notifier).refresh(),
+                color: colorScheme.primary,
+                child: feedState.when(
+                  data: (posts) {
+                    final filteredPosts = posts.where((post) {
+                      if (_selectedFilterIndex == 1) {
+                        return post.type == PostType.casePost;
+                      } else if (_selectedFilterIndex == 2) {
+                        return post.type == PostType.question;
+                      }
+                      return true;
+                    }).toList();
 
-          Positioned(
-            left: -100,
-            top: -100,
-            width: 300,
-            height: 300,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    (isDark ? AppColors.primaryLight : AppColors.primary)
-                        .withValues(alpha: isDark ? 0.10 : 0.15),
-                    (isDark ? AppColors.primaryLight : AppColors.primary)
-                        .withValues(alpha: 0.0),
-                  ],
-                  stops: const [0.0, 1.0],
-                ),
-              ),
-            ),
-          ),
-
-          Positioned(
-            right: -100,
-            bottom: 100,
-            width: 350,
-            height: 350,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    (isDark ? AppColors.secondaryLight : AppColors.secondary)
-                        .withValues(alpha: isDark ? 0.08 : 0.12),
-                    (isDark ? AppColors.secondaryLight : AppColors.secondary)
-                        .withValues(alpha: 0.0),
-                  ],
-                  stops: const [0.0, 1.0],
-                ),
-              ),
-            ),
-          ),
-
-          // 2. Main Content
-          NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) {
-              return [
-                SliverAppBar(
-                  floating: true,
-                  pinned: true,
-                  snap: true,
-                  expandedHeight: 120.0,
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  surfaceTintColor: Colors.transparent,
-                  flexibleSpace: Container(
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.black.withValues(alpha: 0.85)
-                          : Colors.white.withValues(alpha: 0.92),
-                      border: Border(
-                        bottom: BorderSide(color: glassBorderColor, width: 1),
-                      ),
-                    ),
-                  ),
-                  title: Text(
-                    'Feed',
-                    style: textTheme.titleLarge?.copyWith(
-                      color: isDark
-                          ? AppColors.darkTextPrimary
-                          : AppColors.lightTextPrimary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                    ),
-                  ),
-                  actions: [
-                    IconButton(
-                      icon: const Icon(Icons.notifications_none_rounded),
-                      onPressed: () {
-                        context.push('/notifications');
-                      },
-                      color: colorScheme.primary,
-                      tooltip: 'Notifications',
-                    ),
-                    const SizedBox(width: AppDimensions.spacing8),
-                  ],
-                  bottom: TabBar(
-                    controller: _tabController,
-                    indicatorColor: colorScheme.primary,
-                    labelColor: colorScheme.primary,
-                    unselectedLabelColor: colorScheme.onSurfaceVariant,
-                    labelStyle: textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                    unselectedLabelStyle: textTheme.labelLarge,
-                    tabs: [
-                      Tab(text: l10n.feedChronological),
-                      Tab(text: l10n.feedAlgorithmic),
-                    ],
-                  ),
-                ),
-              ];
-            },
-            body: Column(
-              children: [
-                // Horizontal Segmented Control Filter below AppBar
-                _buildSegmentedFilter(context),
-
-                // Feed List
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () => ref.read(feedProvider.notifier).refresh(),
-                    color: colorScheme.primary,
-                    child: feedState.when(
-                      data: (posts) {
-                        final filteredPosts = posts.where((post) {
-                          if (_selectedFilterIndex == 1) {
-                            return post.type == PostType.casePost;
-                          } else if (_selectedFilterIndex == 2) {
-                            return post.type == PostType.question;
-                          }
-                          return true;
-                        }).toList();
-
-                        if (filteredPosts.isEmpty) {
-                          return CustomScrollView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            slivers: [
-                              SliverFillRemaining(
-                                child: Center(
-                                  child: DentLinkEmptyState(
-                                    icon: Icons.dynamic_feed_outlined,
-                                    title: l10n.emptyFeed,
-                                    subtitle: _selectedFilterIndex != 0
-                                        ? 'Seçili filtreye uygun gönderi bulunamadı.'
-                                        : 'Akışta henüz hiç paylaşım yapılmamış.',
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        }
-
-                        return ListView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppDimensions.spacing16,
-                            vertical: AppDimensions.spacing12,
-                          ),
-                          itemCount: filteredPosts.length,
-                          itemBuilder: (context, index) {
-                            final post = filteredPosts[index];
-                            if (post.type == PostType.casePost) {
-                              return Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: AppDimensions.spacing16,
-                                ),
-                                child: CaseCard(
-                                  post: post,
-                                  onLikeToggle: () => ref
-                                      .read(feedProvider.notifier)
-                                      .toggleLike(post.id),
-                                  onBookmarkToggle: () => ref
-                                      .read(feedProvider.notifier)
-                                      .toggleBookmark(post.id),
-                                  onCommentTap: () {
-                                    context.push('/feed/case/${post.id}');
-                                  },
-                                  onTap: () {
-                                    context.push('/feed/case/${post.id}');
-                                  },
-                                ),
-                              );
-                            } else {
-                              return Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: AppDimensions.spacing16,
-                                ),
-                                child: QuestionCard(
-                                  post: post,
-                                  onLikeToggle: () => ref
-                                      .read(feedProvider.notifier)
-                                      .toggleLike(post.id),
-                                  onBookmarkToggle: () => ref
-                                      .read(feedProvider.notifier)
-                                      .toggleBookmark(post.id),
-                                  onCommentTap: () {
-                                    context.push('/feed/question/${post.id}');
-                                  },
-                                  onTap: () {
-                                    context.push('/feed/question/${post.id}');
-                                  },
-                                ),
-                              );
-                            }
-                          },
-                        );
-                      },
-                      loading: () => ListView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        children: const [FeedSkeleton()],
-                      ),
-                      error: (err, stack) => CustomScrollView(
+                    if (filteredPosts.isEmpty) {
+                      return CustomScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
                         slivers: [
                           SliverFillRemaining(
-                            child: DentLinkErrorWidget(
-                              message: 'Akış yüklenirken bir hata oluştu.',
-                              onRetry: () =>
-                                  ref.read(feedProvider.notifier).refresh(),
+                            child: Center(
+                              child: DentLinkEmptyState(
+                                icon: Icons.dynamic_feed_outlined,
+                                title: l10n.emptyFeed,
+                                subtitle: _selectedFilterIndex != 0
+                                    // <-- Aşağıdaki sabit metinler l10n'e taşınmalıdır
+                                    ? 'Seçili filtreye uygun gönderi bulunamadı.'
+                                    : 'Akışta henüz hiç paylaşım yapılmamış.',
+                              ),
                             ),
                           ),
                         ],
+                      );
+                    }
+
+                    // <-- ListView.builder yerine ListView.separated kullanıldı
+                    return ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppDimensions.spacing16,
+                        vertical: AppDimensions.spacing12,
                       ),
-                    ),
+                      itemCount: filteredPosts.length,
+                      separatorBuilder: (context, index) => const SizedBox(
+                        height: AppDimensions.spacing16,
+                      ), // <-- Liste öğeleri arası boşluk
+                      itemBuilder: (context, index) {
+                        final post = filteredPosts[index];
+                        if (post.type == PostType.casePost) {
+                          return CaseCard(
+                            post: post,
+                            onLikeToggle: () => ref
+                                .read(feedProvider.notifier)
+                                .toggleLike(post.id),
+                            onBookmarkToggle: () => ref
+                                .read(feedProvider.notifier)
+                                .toggleBookmark(post.id),
+                            onCommentTap: () {
+                              context.push('/feed/case/${post.id}');
+                            },
+                            onTap: () {
+                              context.push('/feed/case/${post.id}');
+                            },
+                          );
+                        } else {
+                          // <-- Padding sarmalayıcısı kaldırıldı
+                          return QuestionCard(
+                            post: post,
+                            onLikeToggle: () => ref
+                                .read(feedProvider.notifier)
+                                .toggleLike(post.id),
+                            onBookmarkToggle: () => ref
+                                .read(feedProvider.notifier)
+                                .toggleBookmark(post.id),
+                            onCommentTap: () {
+                              context.push('/feed/question/${post.id}');
+                            },
+                            onTap: () {
+                              context.push('/feed/question/${post.id}');
+                            },
+                          );
+                        }
+                      },
+                    );
+                  },
+                  loading: () => ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: const [FeedSkeleton()],
+                  ),
+                  error: (err, stack) => CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      SliverFillRemaining(
+                        child: DentLinkErrorWidget(
+                          // <-- Aşağıdaki sabit metin l10n'e taşınmalıdır
+                          message: 'Akış yüklenirken bir hata oluştu.',
+                          onRetry: () =>
+                              ref.read(feedProvider.notifier).refresh(),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
