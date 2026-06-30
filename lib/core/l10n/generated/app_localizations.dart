@@ -719,13 +719,13 @@ abstract class AppLocalizations {
   /// Akış filtre - Vakalar
   ///
   /// In tr, this message translates to:
-  /// **'Vakalar 📸'**
+  /// **'Vakalar'**
   String get feedFilterCases;
 
   /// Akış filtre - Sorular
   ///
   /// In tr, this message translates to:
-  /// **'Sorular ❓'**
+  /// **'Sorular'**
   String get feedFilterQuestions;
 
   /// Beğeni sayısı

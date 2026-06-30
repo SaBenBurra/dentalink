@@ -319,10 +319,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get feedFilterAll => 'Tümü';
 
   @override
-  String get feedFilterCases => 'Vakalar 📸';
+  String get feedFilterCases => 'Vakalar';
 
   @override
-  String get feedFilterQuestions => 'Sorular ❓';
+  String get feedFilterQuestions => 'Sorular';
 
   @override
   String likesCount(int count) {

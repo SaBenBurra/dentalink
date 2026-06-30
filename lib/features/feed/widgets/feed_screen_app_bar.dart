@@ -11,7 +11,7 @@ class FeedScreenAppBar extends StatelessWidget {
     required this.glassBorderColor,
     required this.textTheme,
     required this.colorScheme,
-    required this._tabController,
+    required this.tabController,
     required this.l10n,
   });
 
@@ -19,7 +19,7 @@ class FeedScreenAppBar extends StatelessWidget {
   final Color glassBorderColor;
   final TextTheme textTheme;
   final ColorScheme colorScheme;
-  final TabController _tabController;
+  final TabController tabController;
   final AppLocalizations l10n;
 
   @override
@@ -40,7 +40,7 @@ class FeedScreenAppBar extends StatelessWidget {
         ),
       ),
       title: Text(
-        'Feed',
+        'Dentlink',
         style: textTheme.titleLarge?.copyWith(
           color: isDark
               ? AppColors.darkTextPrimary
@@ -60,6 +60,40 @@ class FeedScreenAppBar extends StatelessWidget {
         ),
         const SizedBox(width: AppDimensions.spacing8),
       ],
+      bottom: TabBar(
+        controller: tabController,
+        labelColor: isDark
+            ? AppColors.darkTextPrimary
+            : AppColors.lightTextPrimary,
+        unselectedLabelColor: isDark
+            ? AppColors.darkTextTertiary
+            : AppColors.lightTextTertiary,
+        labelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+        indicatorColor: colorScheme.primary,
+        indicatorWeight: 2.5,
+        indicatorSize: TabBarIndicatorSize.label,
+        dividerColor: Colors.transparent,
+        splashFactory: NoSplash.splashFactory,
+        overlayColor: WidgetStateProperty.all(Colors.transparent),
+        tabAlignment: TabAlignment.start,
+        isScrollable: true,
+        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing8),
+        labelPadding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.spacing12,
+        ),
+        tabs: [
+          Tab(text: l10n.feedFilterAll),
+          Tab(text: l10n.feedFilterCases),
+          Tab(text: l10n.feedFilterQuestions),
+        ],
+      ),
     );
   }
 }

@@ -319,10 +319,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedFilterAll => 'All';
 
   @override
-  String get feedFilterCases => 'Cases 📸';
+  String get feedFilterCases => 'Cases';
 
   @override
-  String get feedFilterQuestions => 'Questions ❓';
+  String get feedFilterQuestions => 'Questions';
 
   @override
   String likesCount(int count) {
