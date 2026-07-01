@@ -1,7 +1,8 @@
-import 'package:dentlink/shared/widgets/case_card.dart';
-import 'package:dentlink/shared/widgets/question_card.dart';
+import 'package:dentlink/providers/feed_provider.dart';
+import 'package:dentlink/shared/widgets/post_card_factory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../providers/post_provider.dart';
 import '../../../data/models/enums.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
@@ -20,33 +21,29 @@ class ProfilePostsTab extends ConsumerWidget {
       data: (allPosts) {
         final posts = allPosts.where((p) => p.type == type).toList();
 
-        if (posts.isEmpty) {
-          return Center(
-            child: Text(
-              type == PostType.casePost ? 'Henüz vaka yok.' : 'Henüz soru yok.',
-            ),
-          );
-        }
-
         return ListView.separated(
           padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing8),
           itemCount: posts.length,
           separatorBuilder: (context, index) => const Divider(),
           itemBuilder: (context, index) {
             final post = posts[index];
-            if (post.type == PostType.casePost) {
-              return CaseCard(
-                post: post,
-                onLikeToggle: () {},
-                onBookmarkToggle: () {},
-              );
-            } else {
-              return QuestionCard(
-                post: post,
-                onLikeToggle: () {},
-                onBookmarkToggle: () {},
-              );
-            }
+
+            // Profil sayfasına özel rota hesaplaması // <-- Eklendi
+            // Not: Projenizdeki GoRouter tanımlamalarına göre prefix (örn: /profile) değiştirilebilir.
+            final routePath = post.type == PostType.casePost
+                ? '/profile/case/${post.id}'
+                : '/profile/question/${post.id}';
+
+            return PostCardFactory.build(
+              post,
+              // userPostsProvider yerine global etkileşim metodunu barındıran provider çağrılır // <--
+              onLikeToggle: () =>
+                  ref.read(feedProvider.notifier).toggleLike(post.id),
+              onBookmarkToggle: () =>
+                  ref.read(feedProvider.notifier).toggleBookmark(post.id),
+              onCommentTap: () => context.push(routePath),
+              onTap: () => context.push(routePath),
+            );
           },
         );
       },
