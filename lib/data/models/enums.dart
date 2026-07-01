@@ -146,10 +146,25 @@ enum PostType {
   casePost,
   question;
 
-  String get dbValue => this == PostType.casePost ? 'case' : 'question';
+  String get dbValue {
+    return switch (this) {
+      PostType.casePost => "case",
+      PostType.question => "question",
+    };
+  }
 
-  static PostType fromDbValue(String value) =>
-      value == 'case' ? PostType.casePost : PostType.question;
+  static PostType fromDbValue(String value) {
+    return switch (value) {
+      'case' => PostType.casePost,
+      'question' => PostType.question,
+      String() => throw UnimplementedError(),
+    };
+  }
+
+  static const List<PostType> profileTabs = [
+    PostType.casePost,
+    PostType.question,
+  ];
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

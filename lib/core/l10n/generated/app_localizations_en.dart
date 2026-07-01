@@ -325,6 +325,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedFilterQuestions => 'Questions';
 
   @override
+  String get casesTabLabelInProfile => 'Cases';
+
+  @override
+  String get questionsTabLabelInProfile => 'Questions';
+
+  @override
   String likesCount(int count) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);

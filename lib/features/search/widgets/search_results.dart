@@ -1,9 +1,9 @@
+import 'package:dentlink/shared/widgets/case_card.dart';
+import 'package:dentlink/shared/widgets/question_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/models/enums.dart';
 import '../../../providers/search_provider.dart';
-import '../../feed/widgets/case_card.dart';
-import '../../feed/widgets/question_card.dart';
 import '../../../shared/widgets/user_tile.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/empty_state.dart';

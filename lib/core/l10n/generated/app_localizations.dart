@@ -728,6 +728,18 @@ abstract class AppLocalizations {
   /// **'Sorular'**
   String get feedFilterQuestions;
 
+  /// Profildeki vakalar sekmesi başlığı
+  ///
+  /// In tr, this message translates to:
+  /// **'Vakalar'**
+  String get casesTabLabelInProfile;
+
+  /// Profildeki sorular sekmesi başlığı
+  ///
+  /// In tr, this message translates to:
+  /// **'Sorular'**
+  String get questionsTabLabelInProfile;
+
   /// Beğeni sayısı
   ///
   /// In tr, this message translates to:

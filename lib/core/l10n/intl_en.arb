@@ -115,6 +115,9 @@
   "feedFilterCases": "Cases",
   "feedFilterQuestions": "Questions",
 
+  "casesTabLabelInProfile": "Cases",
+  "questionsTabLabelInProfile": "Questions",
+
   "likesCount": "{count} likes",
   "@likesCount": {
     "placeholders": {

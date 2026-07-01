@@ -1,3 +1,5 @@
+import 'package:dentlink/shared/widgets/case_card.dart';
+import 'package:dentlink/shared/widgets/question_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,8 +10,6 @@ import '../../../data/models/enums.dart';
 import '../../../providers/feed_provider.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_widget.dart';
-import '../widgets/case_card.dart';
-import '../widgets/question_card.dart';
 import '../widgets/feed_skeleton.dart';
 
 class FeedScreen extends ConsumerStatefulWidget {
@@ -43,8 +43,9 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
     final l10n = AppLocalizations.of(context);
     final feedState = ref.watch(feedProvider);
 
-    final backgroundColor =
-        isDark ? const Color(0xFF11211F) : AppColors.bgGradientStart;
+    final backgroundColor = isDark
+        ? const Color(0xFF11211F)
+        : AppColors.bgGradientStart;
 
     final glassBorderColor = isDark
         ? Colors.white.withValues(alpha: 0.12)
@@ -135,10 +136,18 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
           children: [
             _buildFeedList(context, feedState, null, l10n, colorScheme),
             _buildFeedList(
-              context, feedState, PostType.casePost, l10n, colorScheme,
+              context,
+              feedState,
+              PostType.casePost,
+              l10n,
+              colorScheme,
             ),
             _buildFeedList(
-              context, feedState, PostType.question, l10n, colorScheme,
+              context,
+              feedState,
+              PostType.question,
+              l10n,
+              colorScheme,
             ),
           ],
         ),
@@ -188,9 +197,8 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
               vertical: AppDimensions.spacing12,
             ),
             itemCount: filteredPosts.length,
-            separatorBuilder: (context, index) => const SizedBox(
-              height: AppDimensions.spacing16,
-            ),
+            separatorBuilder: (context, index) =>
+                const SizedBox(height: AppDimensions.spacing16),
             itemBuilder: (context, index) {
               final post = filteredPosts[index];
               if (post.type == PostType.casePost) {
@@ -210,8 +218,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
                       ref.read(feedProvider.notifier).toggleLike(post.id),
                   onBookmarkToggle: () =>
                       ref.read(feedProvider.notifier).toggleBookmark(post.id),
-                  onCommentTap: () =>
-                      context.push('/feed/question/${post.id}'),
+                  onCommentTap: () => context.push('/feed/question/${post.id}'),
                   onTap: () => context.push('/feed/question/${post.id}'),
                 );
               }

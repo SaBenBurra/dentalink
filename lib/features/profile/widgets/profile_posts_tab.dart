@@ -1,9 +1,9 @@
+import 'package:dentlink/shared/widgets/case_card.dart';
+import 'package:dentlink/shared/widgets/question_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/post_provider.dart';
 import '../../../data/models/enums.dart';
-import '../../feed/widgets/case_card.dart';
-import '../../feed/widgets/question_card.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class ProfilePostsTab extends ConsumerWidget {

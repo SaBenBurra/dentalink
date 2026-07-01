@@ -314,6 +314,11 @@
   "feedFilterQuestions": "Sorular",
   "@feedFilterQuestions": { "description": "Akış filtre - Sorular" },
 
+  "casesTabLabelInProfile": "Vakalar",
+  "@casesTabLabelInProfile": {"description": "Profildeki vakalar sekmesi başlığı"},
+  "questionsTabLabelInProfile": "Sorular",
+  "@questionsTabLabelInProfile": {"description": "Profildeki sorular sekmesi başlığı"},
+
   "likesCount": "{count} beğeni",
   "@likesCount": {
     "description": "Beğeni sayısı",

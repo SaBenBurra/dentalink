@@ -1,3 +1,4 @@
+import 'package:dentlink/shared/extensions/post_type_l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/auth_provider.dart';
@@ -34,7 +35,7 @@ class ProfileScreen extends ConsumerWidget {
           }
 
           return DefaultTabController(
-            length: 2,
+            length: PostType.profileTabs.length,
             child: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) {
                 return [
@@ -53,9 +54,10 @@ class ProfileScreen extends ConsumerWidget {
                         unselectedLabelColor:
                             theme.colorScheme.onSurfaceVariant,
                         indicatorColor: theme.colorScheme.primary,
-                        tabs: const [
-                          Tab(text: 'Vakalar'),
-                          Tab(text: 'Sorular'),
+                        tabs: [
+                          // <-- Artık metinleri bağlam (context) ile alıyoruz
+                          for (final type in PostType.profileTabs)
+                            Tab(text: type.getLabelInProfile(context)),
                         ],
                       ),
                       theme.scaffoldBackgroundColor,
@@ -65,8 +67,8 @@ class ProfileScreen extends ConsumerWidget {
               },
               body: TabBarView(
                 children: [
-                  ProfilePostsTab(userId: user.id, type: PostType.casePost),
-                  ProfilePostsTab(userId: user.id, type: PostType.question),
+                  for (final type in PostType.profileTabs)
+                    ProfilePostsTab(userId: user.id, type: type),
                 ],
               ),
             ),
