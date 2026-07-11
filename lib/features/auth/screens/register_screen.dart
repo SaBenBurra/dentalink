@@ -1,4 +1,4 @@
-import 'dart:ui';
+
 import 'package:dentlink/features/auth/widgets/register_bottom_actions.dart';
 import 'package:dentlink/features/auth/widgets/register_dialog.dart';
 import 'package:dentlink/features/auth/widgets/register_header.dart';
@@ -287,47 +287,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Container(
                 color: Colors.black.withValues(alpha: 0.5),
                 child: Center(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                      AppDimensions.radiusMedium,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppDimensions.spacing32,
+                      vertical: AppDimensions.spacing24,
                     ),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppDimensions.spacing32,
-                          vertical: AppDimensions.spacing24,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.black.withValues(alpha: 0.6)
-                              : Colors.white.withValues(alpha: 0.8),
-                          borderRadius: BorderRadius.circular(
-                            AppDimensions.radiusMedium,
-                          ),
-                          border: Border.all(
-                            color: isDark ? Colors.white12 : Colors.black12,
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Color(0xFF13B9A5),
-                              ),
-                            ),
-                            const SizedBox(height: AppDimensions.spacing16),
-                            Text(
-                              'Profil oluşturuluyor...',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: textPrimaryColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.black.withValues(alpha: 0.85)
+                          : Colors.white.withValues(alpha: 0.92),
+                      borderRadius: BorderRadius.circular(
+                        AppDimensions.radiusMedium,
                       ),
+                      border: Border.all(
+                        color: isDark ? Colors.white12 : Colors.black12,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Color(0xFF13B9A5),
+                          ),
+                        ),
+                        const SizedBox(height: AppDimensions.spacing16),
+                        Text(
+                          'Profil oluşturuluyor...',
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: textPrimaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

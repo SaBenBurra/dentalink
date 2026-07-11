@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:dentlink/core/constants/app_colors.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/constants/app_text_styles.dart';
@@ -68,44 +66,38 @@ class GlassField extends StatelessWidget {
               ]
             : null,
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-          child: TextField(
-            controller: controller,
-            focusNode: focusNode,
-            keyboardType: keyboardType,
-            maxLines: maxLines,
-            onChanged: onChanged,
-            style: AppTextStyles.bodyLarge.copyWith(
-              color: isDark
-                  ? AppColors.darkTextPrimary
-                  : AppColors.lightTextPrimary,
-              fontWeight: FontWeight.w600,
+      child: TextField(
+        controller: controller,
+        focusNode: focusNode,
+        keyboardType: keyboardType,
+        maxLines: maxLines,
+        onChanged: onChanged,
+        style: AppTextStyles.bodyLarge.copyWith(
+          color: isDark
+              ? AppColors.darkTextPrimary
+              : AppColors.lightTextPrimary,
+          fontWeight: FontWeight.w600,
+        ),
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.lightIcon.withValues(alpha: 0.7),
+            fontWeight: FontWeight.w500,
+          ),
+          prefixIcon: Padding(
+            padding: EdgeInsets.only(bottom: maxLines > 1 ? 72.0 : 0.0),
+            child: Icon(
+              icon,
+              color: hasFocus && !hasError
+                  ? const Color(0xFF13B9A5)
+                  : (hasError ? AppColors.error : AppColors.lightIcon),
+              size: AppDimensions.iconMedium,
             ),
-            decoration: InputDecoration(
-              hintText: hintText,
-              hintStyle: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.lightIcon.withValues(alpha: 0.7),
-                fontWeight: FontWeight.w500,
-              ),
-              prefixIcon: Padding(
-                padding: EdgeInsets.only(bottom: maxLines > 1 ? 72.0 : 0.0),
-                child: Icon(
-                  icon,
-                  color: hasFocus && !hasError
-                      ? const Color(0xFF13B9A5)
-                      : (hasError ? AppColors.error : AppColors.lightIcon),
-                  size: AppDimensions.iconMedium,
-                ),
-              ),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 14,
-                horizontal: AppDimensions.spacing16,
-              ),
-            ),
+          ),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 14,
+            horizontal: AppDimensions.spacing16,
           ),
         ),
       ),

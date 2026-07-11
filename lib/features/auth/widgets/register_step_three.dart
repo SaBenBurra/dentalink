@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dentlink/core/constants/app_colors.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/constants/app_text_styles.dart';
@@ -58,7 +59,7 @@ class RegisterStepThree extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 54,
-                  backgroundImage: NetworkImage(
+                  backgroundImage: CachedNetworkImageProvider(
                     mockAvatars[selectedAvatarIndex],
                   ),
                   backgroundColor: const Color(
@@ -97,7 +98,7 @@ class RegisterStepThree extends StatelessWidget {
                         ),
                         child: CircleAvatar(
                           radius: 20,
-                          backgroundImage: NetworkImage(mockAvatars[index]),
+                          backgroundImage: CachedNetworkImageProvider(mockAvatars[index]),
                         ),
                       ),
                     );

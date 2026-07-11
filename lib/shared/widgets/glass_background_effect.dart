@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:dentlink/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -31,6 +29,7 @@ class GlassBackgroundEffect extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isdark = Theme.of(context).brightness == Brightness.dark;
+    final color = isdark ? AppColors.secondaryLight : AppColors.secondary;
     return Positioned(
       left: left,
       right: right,
@@ -38,16 +37,18 @@ class GlassBackgroundEffect extends StatelessWidget {
       bottom: bottom,
       width: width,
       height: height,
-      child: Container(
+      child: DecoratedBox(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: (isdark ? AppColors.secondaryLight : AppColors.secondary)
-              .withValues(alpha: isdark ? 0.06 : 0.10),
+          gradient: RadialGradient(
+            colors: [
+              color.withValues(alpha: isdark ? 0.06 : 0.10),
+              color.withValues(alpha: 0.0),
+            ],
+            stops: const [0.0, 1.0],
+          ),
         ),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 90, sigmaY: 90),
-          child: const SizedBox.shrink(),
-        ),
+        child: const SizedBox.shrink(),
       ),
     );
   }
