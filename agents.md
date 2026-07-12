@@ -141,8 +141,28 @@ Forum mantığında çalışan soru-cevap sistemi.
 ---
 
 ### 3. İş İlanları (Job Posts)
-> **Durum:** Planlandı, detayları netleşecek.
-> **Açık Karar:** Ana sayfa akışında mı yoksa ayrı bir sayfada mı gösterilecek henüz kararlaştırılmadı.
+Kliniklerin veya hastanelerin personel ve hekim arayışları için paylaştığı ilan türü.
+
+| Alan | Açıklama |
+| --- | --- |
+| Başlık | İlanın kısa başlığı |
+| Açıklama | İşin detayları ve beklentiler |
+| Şehir / Konum | Çalışma yeri |
+| Kurum | İlanı veren klinik veya hastane |
+
+---
+
+### 4. Malzeme Alış/Satışı (Marketplace Posts)
+Diş hekimlerinin dental cihaz, ekipman ve malzemelerini alıp sattığı pazar yeri gönderileri.
+
+| Alan | Açıklama |
+| --- | --- |
+| Başlık | Ürünün adı ve modeli |
+| Açıklama | Ürünün durumu ve detayları |
+| Fiyat | Talep edilen ücret |
+| Görseller | Ürün fotoğrafları |
+
+> **Not:** İçerik yapısı genişletilebilir (Extensibility-First) olarak tasarlanmıştır. İlerleyen süreçte sisteme kolayca **yeni post türleri de eklenebilir**.
 
 ---
 
@@ -264,7 +284,7 @@ users
 posts
 ├── id (UUID, PK)
 ├── user_id (FK → users)
-├── type (enum: 'case', 'question')
+├── type (enum: 'case', 'question', 'job', 'marketplace') -- Yeni post türleri eklenebilir
 ├── title
 ├── content
 ├── branch dental_branch (nullable, vaka için zorunlu) -- #13 ENUM tipine alındı
@@ -390,18 +410,6 @@ push_tokens
 ├── token    TEXT UNIQUE
 ├── platform TEXT  -- 'android' | 'ios'
 └── created_at
-
--- #15 Faz 6: İş İlanları (iskelet, detaylar netleşecek)
-job_posts
-├── id          (UUID, PK)
-├── user_id     (FK → users)  -- ilan veren
-├── title       TEXT
-├── description TEXT
-├── city        TEXT
-├── workplace   TEXT
-├── is_active   BOOL DEFAULT true
-├── created_at
-└── updated_at
 
 -- #16 Faz 6: Kullanıcı Engelleme
 blocks
@@ -707,7 +715,7 @@ Splash Screen
 | Konu | Durum |
 | --- | --- |
 | Uygulama ismi (DentLink placeholder) | Karar verilecek |
-| İş ilanları: akışta mı, ayrı sayfada mı? | Karar verilecek |
+| İş ilanları ve Malzeme alış/satış: akışta mı, ayrı sayfalarda mı? | Karar verilecek |
 | Rozet kuralları ve kriterleri | Detaylandırılacak |
 | Algoritmik feed detayları | Tasarlanacak |
 | Görsel sıkıştırma / boyut limiti | Belirlenecek |
