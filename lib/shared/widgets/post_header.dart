@@ -78,8 +78,27 @@ class PostHeader extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: AppDimensions.spacing8),
-          badge, // <-- Rozet burada çizilir
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              badge,
+              const SizedBox(width: AppDimensions.spacing16),
+              IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                style: IconButton.styleFrom(
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                onPressed: () {
+                  // TODO: Seçenekler menüsü eklenecek
+                },
+                icon: const Icon(Icons.more_horiz),
+                color: colorScheme.onSurfaceVariant,
+                tooltip: 'Seçenekler',
+              ),
+            ],
+          ),
         ],
       ),
     );

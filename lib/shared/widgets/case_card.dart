@@ -1,5 +1,7 @@
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+import 'package:dentlink/data/models/enums.dart';
 import 'package:dentlink/shared/widgets/post_action_row.dart';
+import 'package:dentlink/shared/widgets/post_badge.dart';
 import 'package:dentlink/shared/widgets/post_glass_container.dart';
 import 'package:dentlink/shared/widgets/post_header.dart';
 import 'package:dentlink/shared/widgets/post_media.dart';
@@ -32,40 +34,16 @@ class CaseCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final l10n = AppLocalizations.of(context);
 
-    // Vaka tipine özel rozet
-    final caseBadge = Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.spacing10,
-        vertical: AppDimensions.spacing4,
-      ),
-      decoration: BoxDecoration(
-        color: isDark
-            ? colorScheme.primaryContainer.withValues(alpha: 0.2)
-            : AppColors.primaryContainer.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
-        border: Border.all(
-          color: isDark
-              ? colorScheme.primary.withValues(alpha: 0.3)
-              : AppColors.primaryContainer,
-          width: 1,
-        ),
-      ),
-      child: Text(
-        '${l10n.casePost} 📸',
-        style: textTheme.labelSmall?.copyWith(
-          color: isDark ? colorScheme.primaryContainer : AppColors.primaryDark,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-
     return PostGlassContainer(
       onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // <-- 1. Header yerleşimi
-          PostHeader(post: post, badge: caseBadge),
+          PostHeader(
+            post: post,
+            badge: PostBadge(postType: PostType.casePost),
+          ),
 
           // <-- 2. İçerik yerleşimi (Vaka özel iş kuralı: Max Lines 4)
           Padding(

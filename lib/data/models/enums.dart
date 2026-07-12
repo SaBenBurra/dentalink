@@ -153,6 +153,13 @@ enum PostType {
     };
   }
 
+  String get emoji {
+    return switch (this) {
+      PostType.casePost => '📸',
+      PostType.question => '❓',
+    };
+  }
+
   static PostType fromDbValue(String value) {
     return switch (value) {
       'case' => PostType.casePost,
