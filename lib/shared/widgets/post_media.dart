@@ -83,8 +83,9 @@ class _PostMediaState extends State<PostMedia> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.imageUrls.isEmpty)
+    if (widget.imageUrls.isEmpty) {
       return const SizedBox.shrink(); // <-- Güvenlik kontrolü
+    }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
 

@@ -33,7 +33,7 @@ class PostSearchResults extends ConsumerWidget {
         return ListView.separated(
           padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing8),
           itemCount: posts.length,
-          separatorBuilder: (_, __) =>
+          separatorBuilder: (_, _) =>
               const SizedBox(height: AppDimensions.spacing8),
           itemBuilder: (context, index) {
             final post = posts[index];
@@ -83,7 +83,7 @@ class UserSearchResults extends ConsumerWidget {
         return ListView.separated(
           padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing8),
           itemCount: users.length,
-          separatorBuilder: (_, __) => const Divider(height: 1),
+          separatorBuilder: (_, _) => const Divider(height: 1),
           itemBuilder: (context, index) {
             final user = users[index];
             return UserTile(user: user);

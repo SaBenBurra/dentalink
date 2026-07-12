@@ -134,7 +134,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             ),
             const SizedBox(height: AppDimensions.spacing16),
             DropdownButtonFormField<UserTitle>(
-              value: _selectedTitle,
+              initialValue: _selectedTitle,
               decoration: const InputDecoration(
                 labelText: 'Unvan *',
                 border: OutlineInputBorder(),
