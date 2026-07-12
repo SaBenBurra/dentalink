@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
@@ -46,8 +45,13 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void initState() {
     super.initState();
-    _inputFocusNode.addListener(() => setState(() {}));
+    _inputFocusNode.addListener(_onFocusChanged);
     _inputController.addListener(_onInputChanged);
+
+    // Add listeners for OTP focus nodes to update border colors
+    for (final node in _otpFocusNodes) {
+      node.addListener(_onFocusChanged);
+    }
 
     _shakeController = AnimationController(
       duration: const Duration(milliseconds: 400),
@@ -55,9 +59,15 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
+  void _onFocusChanged() {
+    setState(() {});
+  }
+
   @override
   void dispose() {
+    _inputController.removeListener(_onInputChanged);
     _inputController.dispose();
+    _inputFocusNode.removeListener(_onFocusChanged);
     _inputFocusNode.dispose();
     _shakeController.dispose();
     _resendTimer?.cancel();
@@ -65,20 +75,26 @@ class _LoginScreenState extends State<LoginScreen>
       controller.dispose();
     }
     for (var node in _otpFocusNodes) {
+      node.removeListener(_onFocusChanged);
       node.dispose();
     }
     super.dispose();
   }
 
+  // Pre-compiled regex patterns to avoid re-creating on every keystroke
+  static final _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  static final _phoneRegex = RegExp(r'^\+?[0-9]{8,15}$');
+
   void _onInputChanged() {
     final text = _inputController.text.trim();
-    // Validate if email format or phone format (digits only, minimum length 8)
-    final isEmail = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(text);
-    final isPhone = RegExp(r'^\+?[0-9]{8,15}$').hasMatch(text);
+    final isValid = _emailRegex.hasMatch(text) || _phoneRegex.hasMatch(text);
 
-    setState(() {
-      _showContinueButton = isEmail || isPhone;
-    });
+    // Only call setState if the value actually changed
+    if (_showContinueButton != isValid) {
+      setState(() {
+        _showContinueButton = isValid;
+      });
+    }
   }
 
   double _getShakeOffset(double progress) {
@@ -251,20 +267,26 @@ class _LoginScreenState extends State<LoginScreen>
               ),
             ),
 
+          // Decorative blurred circles — using radial gradient instead of
+          // BackdropFilter to avoid expensive GPU re-rasterization every frame.
           Positioned(
             left: -100,
             top: -100,
             width: 300,
             height: 300,
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: (isDark ? AppColors.primaryLight : AppColors.primary)
-                    .withValues(alpha: isDark ? 0.08 : 0.12),
-              ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
-                child: const SizedBox.shrink(),
+            child: IgnorePointer(
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      (isDark ? AppColors.primaryLight : AppColors.primary)
+                          .withValues(alpha: isDark ? 0.08 : 0.12),
+                      (isDark ? AppColors.primaryLight : AppColors.primary)
+                          .withValues(alpha: 0.0),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -274,15 +296,19 @@ class _LoginScreenState extends State<LoginScreen>
             bottom: -100,
             width: 350,
             height: 350,
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: (isDark ? AppColors.secondaryLight : AppColors.secondary)
-                    .withValues(alpha: isDark ? 0.06 : 0.10),
-              ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 90, sigmaY: 90),
-                child: const SizedBox.shrink(),
+            child: IgnorePointer(
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      (isDark ? AppColors.secondaryLight : AppColors.secondary)
+                          .withValues(alpha: isDark ? 0.06 : 0.10),
+                      (isDark ? AppColors.secondaryLight : AppColors.secondary)
+                          .withValues(alpha: 0.0),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -439,35 +465,31 @@ class _LoginScreenState extends State<LoginScreen>
     Color glassBgColor,
     Color glassBorderColor,
   ) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-        child: Container(
-          width: 96,
-          height: 96,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: glassBgColor,
-            border: Border.all(color: glassBorderColor, width: 1),
-            boxShadow: const [
-              BoxShadow(
-                color: AppColors.glassShadow,
-                blurRadius: 40,
-                offset: Offset(0, 10),
-              ),
-            ],
+    // Using a simple container instead of BackdropFilter for the logo circle
+    // to avoid expensive blur re-computation on every rebuild.
+    return Container(
+      width: 96,
+      height: 96,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: glassBgColor,
+        border: Border.all(color: glassBorderColor, width: 1),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.glassShadow,
+            blurRadius: 40,
+            offset: Offset(0, 10),
           ),
-          child: Center(
-            child: CustomPaint(
-              size: const Size(48, 48),
-              painter: ToothPainter(
-                colors: [
-                  isDark ? AppColors.primaryLight : const Color(0xFF13B9A5),
-                  isDark ? AppColors.secondaryLight : const Color(0xFF3B82F6),
-                ],
-              ),
-            ),
+        ],
+      ),
+      child: Center(
+        child: CustomPaint(
+          size: const Size(48, 48),
+          painter: ToothPainter(
+            colors: [
+              isDark ? AppColors.primaryLight : const Color(0xFF13B9A5),
+              isDark ? AppColors.secondaryLight : const Color(0xFF3B82F6),
+            ],
           ),
         ),
       ),
@@ -516,92 +538,88 @@ class _LoginScreenState extends State<LoginScreen>
                   ]
                 : null,
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-              child: Center(
-                child: TextField(
-                  controller: _inputController,
-                  focusNode: _inputFocusNode,
-                  keyboardType: TextInputType.emailAddress,
-                  style: AppTextStyles.bodyLarge.copyWith(
-                    color: isDark
-                        ? AppColors.darkTextPrimary
-                        : AppColors.lightTextPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: 'E-posta veya telefon numarası',
-                    hintStyle: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.lightIcon.withValues(alpha: 0.7),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    prefixIcon: Icon(
-                      Icons.alternate_email_rounded,
-                      color: hasFocus && !hasError
-                          ? const Color(0xFF13B9A5)
-                          : (hasError ? AppColors.error : AppColors.lightIcon),
-                      size: AppDimensions.iconMedium,
-                    ),
-                    suffixIcon: _isLoading
-                        ? const Padding(
-                            padding: EdgeInsets.all(AppDimensions.spacing12),
-                            child: SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Color(0xFF13B9A5),
-                                ),
-                              ),
+          // Removed BackdropFilter from input field — the blur was being
+          // re-computed on every keystroke/focus change, causing visible jank.
+          child: Center(
+            child: TextField(
+              controller: _inputController,
+              focusNode: _inputFocusNode,
+              keyboardType: TextInputType.emailAddress,
+              style: AppTextStyles.bodyLarge.copyWith(
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.lightTextPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+              decoration: InputDecoration(
+                hintText: 'E-posta veya telefon numarası',
+                hintStyle: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.lightIcon.withValues(alpha: 0.7),
+                  fontWeight: FontWeight.w500,
+                ),
+                prefixIcon: Icon(
+                  Icons.alternate_email_rounded,
+                  color: hasFocus && !hasError
+                      ? const Color(0xFF13B9A5)
+                      : (hasError ? AppColors.error : AppColors.lightIcon),
+                  size: AppDimensions.iconMedium,
+                ),
+                suffixIcon: _isLoading
+                    ? const Padding(
+                        padding: EdgeInsets.all(AppDimensions.spacing12),
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Color(0xFF13B9A5),
                             ),
-                          )
-                        : AnimatedScale(
-                            scale: _showContinueButton ? 1.0 : 0.0,
-                            duration: const Duration(milliseconds: 250),
-                            curve: Curves.easeOutBack,
-                            child: AnimatedOpacity(
-                              opacity: _showContinueButton ? 1.0 : 0.0,
-                              duration: const Duration(milliseconds: 200),
-                              child: Padding(
-                                padding: const EdgeInsets.all(
-                                  AppDimensions.spacing6,
+                          ),
+                        ),
+                      )
+                    : AnimatedScale(
+                        scale: _showContinueButton ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 250),
+                        curve: Curves.easeOutBack,
+                        child: AnimatedOpacity(
+                          opacity: _showContinueButton ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 200),
+                          child: Padding(
+                            padding: const EdgeInsets.all(
+                              AppDimensions.spacing6,
+                            ),
+                            child: Material(
+                              color: const Color(0xFF13B9A5),
+                              shape: const CircleBorder(),
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.arrow_forward_rounded,
+                                  color: Colors.white,
+                                  size: 18,
                                 ),
-                                child: Material(
-                                  color: const Color(0xFF13B9A5),
-                                  shape: const CircleBorder(),
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.arrow_forward_rounded,
-                                      color: Colors.white,
-                                      size: 18,
-                                    ),
-                                    onPressed: _showContinueButton
-                                        ? _handleContinue
-                                        : null,
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(
-                                      minWidth: 36,
-                                      minHeight: 36,
-                                    ),
-                                  ),
+                                onPressed: _showContinueButton
+                                    ? _handleContinue
+                                    : null,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(
+                                  minWidth: 36,
+                                  minHeight: 36,
                                 ),
                               ),
                             ),
                           ),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 14,
-                      horizontal: AppDimensions.spacing16,
-                    ),
-                  ),
-                  onSubmitted: (_) {
-                    if (_showContinueButton) _handleContinue();
-                  },
+                        ),
+                      ),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 14,
+                  horizontal: AppDimensions.spacing16,
                 ),
               ),
+              onSubmitted: (_) {
+                if (_showContinueButton) _handleContinue();
+              },
             ),
           ),
         ),
