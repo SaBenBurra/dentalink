@@ -137,11 +137,7 @@ class _CreateButton extends StatelessWidget {
           ),
         ],
       ),
-      child: Icon(
-        Icons.add_rounded,
-        color: colorScheme.onPrimary,
-        size: 22,
-      ),
+      child: Icon(Icons.add_rounded, color: colorScheme.onPrimary, size: 22),
     );
   }
 }

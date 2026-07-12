@@ -98,7 +98,9 @@ class RegisterStepThree extends StatelessWidget {
                         ),
                         child: CircleAvatar(
                           radius: 20,
-                          backgroundImage: CachedNetworkImageProvider(mockAvatars[index]),
+                          backgroundImage: CachedNetworkImageProvider(
+                            mockAvatars[index],
+                          ),
                         ),
                       ),
                     );

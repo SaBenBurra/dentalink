@@ -1,4 +1,3 @@
-
 import 'package:dentlink/features/auth/widgets/register_bottom_actions.dart';
 import 'package:dentlink/features/auth/widgets/register_dialog.dart';
 import 'package:dentlink/features/auth/widgets/register_header.dart';
