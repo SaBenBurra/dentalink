@@ -1,6 +1,7 @@
 import 'package:dentlink/shared/extensions/post_type_l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../providers/auth_provider.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_stats.dart';
@@ -22,8 +23,13 @@ class ProfileScreen extends ConsumerWidget {
         title: const Text('Profil'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.bookmark_border_rounded),
+            onPressed: () => context.push('/bookmarks'),
+            tooltip: 'Kaydedilenler',
+          ),
+          IconButton(
             icon: const Icon(Icons.settings_outlined),
-            onPressed: () {},
+            onPressed: () => context.push('/settings'),
             tooltip: 'Ayarlar',
           ),
         ],

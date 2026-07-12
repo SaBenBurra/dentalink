@@ -68,10 +68,7 @@ class FeedScreenAppBar extends StatelessWidget {
         unselectedLabelColor: isDark
             ? AppColors.darkTextTertiary
             : AppColors.lightTextTertiary,
-        labelStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
+        labelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
         unselectedLabelStyle: const TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w500,

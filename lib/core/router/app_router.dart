@@ -15,6 +15,8 @@ import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/followers_screen.dart';
 import '../../features/messaging/screens/chat_screen.dart';
 import '../../features/notifications/screens/notifications_screen.dart';
+import '../../features/settings/screens/settings_screen.dart';
+import '../../features/bookmarks/screens/bookmarks_screen.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 
 /// DentLink uygulama router'ı.
@@ -105,6 +107,16 @@ final GoRouter appRouter = GoRouter(
       path: '/notifications',
       name: 'notifications',
       builder: (context, state) => const NotificationsScreen(),
+    ),
+    GoRoute(
+      path: '/settings',
+      name: 'settings',
+      builder: (context, state) => const SettingsScreen(),
+    ),
+    GoRoute(
+      path: '/bookmarks',
+      name: 'bookmarks',
+      builder: (context, state) => const BookmarksScreen(),
     ),
 
     // ── Ana Kabuk (Bottom Nav Shell) ───────────────────────
