@@ -13,7 +13,7 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Auth State Notifier
+// Auth State Notifier — OTP tabanlı şifresiz kimlik doğrulama
 // ─────────────────────────────────────────────────────────────────────────────
 
 class AuthNotifier extends AsyncNotifier<UserModel?> {
@@ -22,10 +22,19 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
     return ref.read(authRepositoryProvider).getCurrentUser();
   }
 
-  Future<void> signIn(String email, String password) async {
+  /// OTP kodu gönderir.
+  /// Dönen değer: kullanıcının daha önce kayıtlı olup olmadığını belirtir.
+  Future<bool> sendOtp(String emailOrPhone) async {
+    return ref.read(authRepositoryProvider).sendOtp(emailOrPhone);
+  }
+
+  /// OTP kodunu doğrular ve oturum açar.
+  /// [emailOrPhone] — OTP gönderilen adres/numara.
+  /// [otpCode] — kullanıcının girdiği doğrulama kodu.
+  Future<void> verifyOtp(String emailOrPhone, String otpCode) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(authRepositoryProvider).signInWithEmail(email, password),
+      () => ref.read(authRepositoryProvider).verifyOtp(emailOrPhone, otpCode),
     );
   }
 
