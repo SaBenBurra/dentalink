@@ -80,6 +80,9 @@ class LoginEmailPhoneInput extends StatelessWidget {
               controller: controller,
               focusNode: focusNode,
               keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.done,
+              autocorrect: false,
+              enableSuggestions: false,
               style: AppTextStyles.bodyLarge.copyWith(
                 color: isDark
                     ? AppColors.darkTextPrimary
@@ -100,12 +103,22 @@ class LoginEmailPhoneInput extends StatelessWidget {
                   size: AppDimensions.iconMedium,
                 ),
                 suffixIcon: _buildSuffixIcon(),
+                filled: true,
+                fillColor: Colors.transparent,
                 border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 14,
                   horizontal: AppDimensions.spacing16,
                 ),
               ),
+              // resizeToAvoidBottomInset kapalı; klavye scroll'u ekran
+              // seviyesinde yönetiliyor. Küçük bir tampon yeterli.
+              scrollPadding: const EdgeInsets.only(bottom: 24),
               onSubmitted: onSubmitted,
             ),
           ),

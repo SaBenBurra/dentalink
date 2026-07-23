@@ -2,6 +2,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/enums.dart';
 import '../models/user_model.dart';
 import 'auth_repository.dart';
+import 'otp_cooldown_exception.dart';
+import 'otp_send_limiter.dart';
 
 /// Supabase Auth ile gerçek OTP kimlik doğrulama.
 ///
@@ -9,8 +11,21 @@ import 'auth_repository.dart';
 ///   1. sendOtp → Supabase signInWithOtp (SMS/E-posta)
 ///   2. verifyOtp → Supabase verifyOTP + public.users profil kontrolü
 ///   3. getCurrentUser → Session + public.users profil
+///
+/// İstemci tarafı cooldown ([OtpSendLimiter]):
+///   - Aynı hedefe 60 sn içinde tekrar SMS atılmaz.
+///   - 60 sn içinde en fazla 2 farklı hedefe gönderim yapılabilir.
 class SupabaseAuthRepository implements AuthRepository {
+  SupabaseAuthRepository({
+    Duration otpCooldown = const Duration(seconds: 60),
+    int maxDistinctDestinations = 2,
+  }) : _limiter = OtpSendLimiter(
+          cooldown: otpCooldown,
+          maxDistinctDestinations: maxDistinctDestinations,
+        );
+
   final _client = Supabase.instance.client;
+  final OtpSendLimiter _limiter;
 
   // ── Telefon numarası normalleştirme ────────────────────────────────────
   /// Türkiye telefon numarası formatı: +90XXXXXXXXXX
@@ -28,20 +43,56 @@ class SupabaseAuthRepository implements AuthRepository {
     return '+90$phone';
   }
 
+  String _normalizeDestination(String input) {
+    final trimmed = input.trim();
+    if (_isEmail(trimmed)) return trimmed.toLowerCase();
+    if (_isPhone(trimmed)) return _normalizePhone(trimmed);
+    throw Exception('Geçersiz e-posta veya telefon numarası');
+  }
+
   // ── sendOtp ────────────────────────────────────────────────────────────
 
   @override
   Future<void> sendOtp(String emailOrPhone) async {
-    final input = emailOrPhone.trim();
+    final destination = _normalizeDestination(emailOrPhone);
 
-    if (_isEmail(input)) {
-      await _client.auth.signInWithOtp(email: input);
-    } else if (_isPhone(input)) {
-      final normalizedPhone = _normalizePhone(input);
-      await _client.auth.signInWithOtp(phone: normalizedPhone);
-    } else {
-      throw Exception('Geçersiz e-posta veya telefon numarası');
+    await _limiter.ensureLoaded();
+    final blocked = _limiter.check(destination);
+    if (blocked != null) throw blocked;
+
+    try {
+      if (_isEmail(destination)) {
+        await _client.auth.signInWithOtp(email: destination);
+      } else {
+        await _client.auth.signInWithOtp(phone: destination);
+      }
+    } on AuthException catch (e) {
+      // Sunucu tarafı rate-limit: istemci cooldown'u senkronize et.
+      // SMS gerçekten gönderilmediyse sameDestination yalnızca daha önce
+      // başarıyla gönderilmiş aynı hedef için true olmalı.
+      if (_isAuthRateLimit(e)) {
+        final sameDestination = _limiter.hasSentTo(destination);
+        if (sameDestination) {
+          await _limiter.touchRateLimit(destination);
+        }
+        throw OtpCooldownException(
+          remainingSeconds: _limiter.cooldown.inSeconds,
+          sameDestination: sameDestination,
+        );
+      }
+      rethrow;
     }
+
+    await _limiter.recordSuccess(destination);
+  }
+
+  bool _isAuthRateLimit(AuthException e) {
+    const rateLimitCodes = {
+      'over_sms_send_rate_limit',
+      'over_email_send_rate_limit',
+      'over_request_rate_limit',
+    };
+    return rateLimitCodes.contains(e.code) || e.statusCode == '429';
   }
 
   // ── verifyOtp ──────────────────────────────────────────────────────────

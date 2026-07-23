@@ -1,10 +1,22 @@
 import '../datasources/mock_datasource.dart';
 import '../models/user_model.dart';
 import 'auth_repository.dart';
+import 'otp_send_limiter.dart';
 
 /// Sahte OTP kimlik doğrulama. Faz 3'te SupabaseAuthRepository ile swap edilir.
 class MockAuthRepository implements AuthRepository {
+  MockAuthRepository({
+    Duration otpCooldown = const Duration(seconds: 60),
+    int maxDistinctDestinations = 2,
+  }) : _limiter = OtpSendLimiter(
+          cooldown: otpCooldown,
+          maxDistinctDestinations: maxDistinctDestinations,
+          persist: false,
+        );
+
   static const _delay = Duration(milliseconds: 400);
+
+  final OtpSendLimiter _limiter;
 
   /// Son başarılı doğrulama yapan kullanıcıyı tutar (mock oturum).
   UserModel? _currentUser;
@@ -19,8 +31,13 @@ class MockAuthRepository implements AuthRepository {
 
   @override
   Future<void> sendOtp(String emailOrPhone) async {
+    final destination = emailOrPhone.trim().toLowerCase();
+    await _limiter.ensureLoaded();
+    final blocked = _limiter.check(destination);
+    if (blocked != null) throw blocked;
+
     await Future.delayed(const Duration(milliseconds: 800));
-    // Mock: OTP gönderildi kabul edilir.
+    await _limiter.recordSuccess(destination);
   }
 
   @override

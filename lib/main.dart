@@ -9,6 +9,7 @@ import 'providers/locale_provider.dart';
 import 'providers/theme_provider.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
     url: 'https://lknvufbxekceevdblgmq.supabase.co',
     publishableKey: 'sb_publishable_CGm0mMqcvUubeXazytJr-w_WK6CLfS5',

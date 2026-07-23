@@ -14,10 +14,15 @@ class LoginLogoHeader extends StatelessWidget {
     super.key,
     required this.currentStep,
     required this.inputText,
+    this.transitionDuration = const Duration(milliseconds: 420),
   });
 
   final LoginStep currentStep;
   final String inputText;
+
+  /// Başlık geçiş süresi. Login ekranındaki form geçişiyle senkron kalması
+  /// için tek merkezden verilir.
+  final Duration transitionDuration;
 
   @override
   Widget build(BuildContext context) {
@@ -70,51 +75,78 @@ class LoginLogoHeader extends StatelessWidget {
         const SizedBox(height: AppDimensions.spacing24),
 
         // Dinamik başlık
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          child: currentStep == LoginStep.emailOrPhone
-              ? Column(
-                  key: const ValueKey('email_phone_header'),
-                  children: [
-                    Text(
-                      'DentLink',
-                      style: AppTextStyles.headlineMedium.copyWith(
-                        color: textPrimaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
+        AnimatedSize(
+          duration: transitionDuration,
+          curve: Curves.easeOutCubic,
+          alignment: Alignment.topCenter,
+          child: AnimatedSwitcher(
+            duration: transitionDuration,
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            layoutBuilder: (currentChild, previousChildren) {
+              return Stack(
+                alignment: Alignment.topCenter,
+                clipBehavior: Clip.none,
+                children: [
+                  for (final child in previousChildren)
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: 0,
+                      child: IgnorePointer(child: child),
                     ),
-                    const SizedBox(height: AppDimensions.spacing8),
-                    Text(
-                      'E-posta veya telefon numaranızla giriş yapın',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: textSecondaryColor,
-                        fontWeight: FontWeight.w500,
+                  ?currentChild,
+                ],
+              );
+            },
+            transitionBuilder: (child, animation) {
+              // Yalnızca fade; dikey boyut değişimini AnimatedSize yönetir.
+              return FadeTransition(opacity: animation, child: child);
+            },
+            child: currentStep == LoginStep.emailOrPhone
+                ? Column(
+                    key: const ValueKey('email_phone_header'),
+                    children: [
+                      Text(
+                        'DentLink',
+                        style: AppTextStyles.headlineMedium.copyWith(
+                          color: textPrimaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                )
-              : Column(
-                  key: const ValueKey('otp_header'),
-                  children: [
-                    Text(
-                      'Doğrulama Kodu',
-                      style: AppTextStyles.headlineMedium.copyWith(
-                        color: textPrimaryColor,
-                        fontWeight: FontWeight.bold,
+                      const SizedBox(height: AppDimensions.spacing8),
+                      Text(
+                        'E-posta veya telefon numaranızla giriş yapın',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: textSecondaryColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                    ),
-                    const SizedBox(height: AppDimensions.spacing8),
-                    Text(
-                      '$inputText adresine gönderilen kodu girin',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: textSecondaryColor,
-                        fontWeight: FontWeight.w500,
+                    ],
+                  )
+                : Column(
+                    key: const ValueKey('otp_header'),
+                    children: [
+                      Text(
+                        'Doğrulama Kodu',
+                        style: AppTextStyles.headlineMedium.copyWith(
+                          color: textPrimaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+                      const SizedBox(height: AppDimensions.spacing8),
+                      Text(
+                        '$inputText adresine gönderilen kodu girin',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: textSecondaryColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+          ),
         ),
       ],
     );

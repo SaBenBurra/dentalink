@@ -11,6 +11,7 @@ abstract class AuthRepository {
 
   /// E-posta veya telefon numarasına OTP kodu gönderir.
   /// [emailOrPhone] — geçerli bir e-posta veya telefon numarası.
+  /// Cooldown aktifse [OtpCooldownException] fırlatır.
   Future<void> sendOtp(String emailOrPhone);
 
   /// Gönderilen OTP kodunu doğrular ve oturum açar.
