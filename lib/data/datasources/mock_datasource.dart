@@ -215,7 +215,7 @@ class MockDatasource {
       email: 'berk.yucel@dentlink.com',
       fullName: 'Dr. Berk Yücel',
       username: 'berk_yucel',
-      title: UserTitle.disHekimiGenelPratisyen,
+      title: UserTitle.disHekimi,
       bio:
           'Genel pratisyen diş hekimi. Takım çalışmasına ve sürekli öğrenmeye inanıyorum.',
       university: 'Ege Üniversitesi',
@@ -273,7 +273,7 @@ class MockDatasource {
       email: 'mert.kaya@dentlink.com',
       fullName: 'Dr. Mert Kaya',
       username: 'mert_kaya',
-      title: UserTitle.disHekimiGenelPratisyen,
+      title: UserTitle.disHekimi,
       bio:
           'Genel Diş Hekimi. Oral diagnoz ve tedavi planlaması üzerine yoğunlaşıyorum.',
       university: 'İstanbul Üniversitesi',

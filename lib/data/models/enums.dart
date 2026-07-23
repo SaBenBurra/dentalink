@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 
 enum UserTitle {
   ogrenci,
-  disHekimiGenelPratisyen,
+  disHekimi,
   endodontist,
   ortodontist,
   periodontolog,
@@ -24,7 +24,7 @@ enum UserTitle {
     switch (this) {
       case UserTitle.ogrenci:
         return 'Öğrenci';
-      case UserTitle.disHekimiGenelPratisyen:
+      case UserTitle.disHekimi:
         return 'Genel Diş Hekimi';
       case UserTitle.endodontist:
         return 'Endodontist';
@@ -49,7 +49,7 @@ enum UserTitle {
     switch (this) {
       case UserTitle.ogrenci:
         return Icons.school_outlined;
-      case UserTitle.disHekimiGenelPratisyen:
+      case UserTitle.disHekimi:
         return Icons.medical_services_outlined;
       case UserTitle.endodontist:
         return Icons.biotech_outlined;
