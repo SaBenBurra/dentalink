@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dentlink/features/auth/widgets/register_bottom_actions.dart';
 import 'package:dentlink/features/auth/widgets/register_dialog.dart';
 import 'package:dentlink/features/auth/widgets/register_header.dart';
@@ -6,20 +7,22 @@ import 'package:dentlink/features/auth/widgets/register_step_three.dart';
 import 'package:dentlink/features/auth/widgets/register_step_two.dart';
 import 'package:dentlink/shared/widgets/glass_background_effect.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../data/models/enums.dart';
+import '../../../providers/auth_provider.dart';
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final PageController _pageController = PageController();
   int _currentStep = 0;
   final int _totalSteps = 3;
@@ -41,17 +44,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   UserTitle? _selectedTitle;
   int _selectedAvatarIndex = 0;
+  File? _selectedImageFile;
   bool _isCompleting = false;
 
   // Validation state
   String? _nameError;
 
-  // Mock avatars
+  // Mock avatars (varsayılan avatar seçenekleri)
   final List<String> _mockAvatars = [
-    'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face', // Dentist 1
-    'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&h=150&fit=crop&crop=face', // Dentist 2
-    'https://images.unsplash.com/photo-1594824813573-246434de83fb?w=150&h=150&fit=crop&crop=face', // Dentist 3
-    'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face', // Dentist 4
+    'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&h=150&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face',
   ];
 
   @override
@@ -124,38 +128,74 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _isCompleting = true;
     });
 
-    await Future.delayed(const Duration(milliseconds: 1500));
+    try {
+      // Deneyim yılını parse et
+      final expYears = int.tryParse(_expController.text.trim());
 
-    if (!mounted) return;
-    setState(() {
-      _isCompleting = false;
-    });
+      // Supabase'e profil bilgilerini yaz (avatar yükleme dahil)
+      await ref
+          .read(authProvider.notifier)
+          .completeRegistration(
+            fullName: _nameController.text.trim(),
+            title: _selectedTitle!,
+            bio: _bioController.text.trim().isNotEmpty
+                ? _bioController.text.trim()
+                : null,
+            university: _uniController.text.trim().isNotEmpty
+                ? _uniController.text.trim()
+                : null,
+            city: _cityController.text.trim().isNotEmpty
+                ? _cityController.text.trim()
+                : null,
+            workplace: _clinicController.text.trim().isNotEmpty
+                ? _clinicController.text.trim()
+                : null,
+            experienceYears: expYears,
+            avatarFile: _selectedImageFile,
+          );
 
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: false,
-      barrierLabel: 'Success',
-      transitionDuration: const Duration(milliseconds: 450),
-      pageBuilder: (context, anim1, anim2) => const SizedBox.shrink(),
-      transitionBuilder: (context, anim1, anim2, child) {
-        final scale = Tween<double>(
-          begin: 0.8,
-          end: 1.0,
-        ).animate(CurvedAnimation(parent: anim1, curve: Curves.elasticOut));
-        return RegisterDialog(scale: scale);
-      },
-    );
+      if (!mounted) return;
+      setState(() {
+        _isCompleting = false;
+      });
 
-    // 3. Dialog sonrası yönlendirme beklemesi
-    await Future.delayed(const Duration(milliseconds: 1500));
+      // Başarı dialogu göster
+      showGeneralDialog(
+        context: context,
+        barrierDismissible: false,
+        barrierLabel: 'Success',
+        transitionDuration: const Duration(milliseconds: 450),
+        pageBuilder: (context, anim1, anim2) => const SizedBox.shrink(),
+        transitionBuilder: (context, anim1, anim2, child) {
+          final scale = Tween<double>(
+            begin: 0.8,
+            end: 1.0,
+          ).animate(CurvedAnimation(parent: anim1, curve: Curves.elasticOut));
+          return RegisterDialog(scale: scale);
+        },
+      );
 
-    if (!mounted) {
-      return;
+      // Dialog sonrası yönlendirme
+      await Future.delayed(const Duration(milliseconds: 1500));
+
+      if (!mounted) return;
+      Navigator.of(context, rootNavigator: true).pop();
+      context.go('/feed');
+    } catch (e) {
+      print(e.toString());
+      if (!mounted) return;
+      setState(() {
+        _isCompleting = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Kayıt sırasında hata oluştu: $e'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: AppColors.error,
+        ),
+      );
     }
-
-    // Önce dialogu kapat, sonra yönlendir
-    Navigator.of(context, rootNavigator: true).pop();
-    context.go('/feed');
   }
 
   @override
@@ -255,13 +295,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       RegisterStepThree(
                         mockAvatars: _mockAvatars,
                         selectedAvatarIndex: _selectedAvatarIndex,
+                        selectedImageFile: _selectedImageFile,
                         bioController: _bioController,
                         bioFocusNode: _bioFocusNode,
                         onAvatarSelected: (int index) {
-                          // <-- Callback yakalanıyor
                           setState(() {
-                            _selectedAvatarIndex =
-                                index; // <-- Değer ana state'te güncelleniyor
+                            _selectedAvatarIndex = index;
+                            _selectedImageFile =
+                                null; // Varsayılan avatar seçilince özel fotoğrafı kaldır
+                          });
+                        },
+                        onImageFilePicked: (File? file) {
+                          setState(() {
+                            _selectedImageFile = file;
                           });
                         },
                       ),

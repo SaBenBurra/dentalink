@@ -19,6 +19,8 @@ import '../../features/settings/screens/settings_screen.dart';
 import '../../features/bookmarks/screens/bookmarks_screen.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 /// DentLink uygulama router'ı.
 ///
 /// Navigasyon yapısı:
@@ -32,11 +34,30 @@ import 'package:dentlink/core/constants/app_dimensions.dart';
 ///     /search         → SearchScreen
 ///     /messages       → ConversationsScreen
 ///     /profile        → ProfileScreen
-///
-/// Faz 3'te auth durumuna göre redirect eklenecek.
 final GoRouter appRouter = GoRouter(
   initialLocation: '/login',
   debugLogDiagnostics: false,
+
+  // ── Auth Redirect ─────────────────────────────────────────────────
+  redirect: (context, state) {
+    final session = Supabase.instance.client.auth.currentSession;
+    final isLoggedIn = session != null;
+    final isAuthRoute = state.matchedLocation == '/login' ||
+        state.matchedLocation == '/register';
+
+    // Oturum varsa ve login/register'daysa → feed'e yönlendir
+    if (isLoggedIn && state.matchedLocation == '/login') {
+      return '/feed';
+    }
+
+    // Oturum yoksa ve korumalı sayfadaysa → login'e yönlendir
+    if (!isLoggedIn && !isAuthRoute) {
+      return '/login';
+    }
+
+    return null; // yönlendirme yok
+  },
+
   routes: [
     // ── Auth ──────────────────────────────────────────────
     GoRoute(

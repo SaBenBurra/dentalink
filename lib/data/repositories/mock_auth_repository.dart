@@ -18,48 +18,31 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<bool> sendOtp(String emailOrPhone) async {
+  Future<void> sendOtp(String emailOrPhone) async {
     await Future.delayed(const Duration(milliseconds: 800));
-
-    // Mock: kullanıcının kayıtlı olup olmadığını kontrol et
-    final normalized = emailOrPhone.trim().toLowerCase();
-    final isRegistered =
-        MockDatasource.users.any(
-          (u) =>
-              u.email.toLowerCase() == normalized ||
-              u.phone == normalized,
-        ) ||
-        normalized.contains('test') ||
-        normalized.endsWith('@dentlink.com') ||
-        normalized == '5551234567';
-
-    // Gerçek uygulamada burada Supabase signInWithOtp çağrılır.
-    // Mock'ta sadece kayıt durumunu döndürüyoruz.
-    return isRegistered;
+    // Mock: OTP gönderildi kabul edilir.
   }
 
   @override
-  Future<UserModel> verifyOtp(String emailOrPhone, String otpCode) async {
+  Future<UserModel?> verifyOtp(String emailOrPhone, String otpCode) async {
     await Future.delayed(const Duration(milliseconds: 1000));
 
-    // Mock: herhangi bir 4+ haneli kod kabul edilir.
     if (otpCode.length < 4) {
       throw Exception('Geçersiz doğrulama kodu');
     }
 
-    // Kayıtlı kullanıcıyı bul, yoksa u1 döndür.
     final normalized = emailOrPhone.trim().toLowerCase();
     try {
       _currentUser = MockDatasource.users.firstWhere(
         (u) =>
-            u.email.toLowerCase() == normalized ||
+            (u.email?.toLowerCase() ?? '') == normalized ||
             u.phone == normalized,
       );
     } catch (_) {
       _currentUser = MockDatasource.userById(MockDatasource.currentUserId);
     }
 
-    return _currentUser!;
+    return _currentUser;
   }
 
   @override

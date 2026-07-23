@@ -3,7 +3,7 @@ import 'enums.dart';
 /// Kullanıcı modeli — Supabase `users` tablosuyla eşleşir.
 class UserModel {
   final String id;
-  final String email;
+  final String? email;
   final String? phone;
   final String fullName;
   final String username;
@@ -27,7 +27,7 @@ class UserModel {
 
   const UserModel({
     required this.id,
-    required this.email,
+    this.email,
     this.phone,
     required this.fullName,
     required this.username,

@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
-import '../../../data/datasources/mock_datasource.dart';
+import '../../../providers/auth_provider.dart';
 import '../widgets/login_background.dart';
 import '../widgets/login_logo_header.dart';
 import '../widgets/login_email_phone_input.dart';
@@ -11,31 +12,30 @@ import '../widgets/login_otp_input.dart';
 
 enum LoginStep { emailOrPhone, otp }
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
+class _LoginScreenState extends ConsumerState<LoginScreen>
     with TickerProviderStateMixin {
   // ── Controllers ──────────────────────────────────────────────────────────
   final _inputController = TextEditingController();
   final _inputFocusNode = FocusNode();
 
   final List<TextEditingController> _otpControllers = List.generate(
-    4,
+    6,
     (_) => TextEditingController(),
   );
-  final List<FocusNode> _otpFocusNodes = List.generate(4, (_) => FocusNode());
+  final List<FocusNode> _otpFocusNodes = List.generate(6, (_) => FocusNode());
 
   // ── State ────────────────────────────────────────────────────────────────
   LoginStep _currentStep = LoginStep.emailOrPhone;
   bool _showContinueButton = false;
   bool _isLoading = false;
   bool _isSuccess = false;
-  bool _isRegisteredUser = false;
   String? _errorText;
 
   // ── Animations ───────────────────────────────────────────────────────────
@@ -99,25 +99,14 @@ class _LoginScreenState extends State<LoginScreen>
     }
   }
 
-  void _handleContinue() {
+  void _handleContinue() async {
     if (_isLoading) return;
     _clearError();
-
-    final inputVal = _inputController.text.trim().toLowerCase();
+    final inputVal = _inputController.text.trim();
     setState(() => _isLoading = true);
-
-    // Simulate database lookup
-    Future.delayed(const Duration(milliseconds: 1000), () {
+    try {
+      await ref.read(authProvider.notifier).sendOtp(inputVal);
       if (!mounted) return;
-
-      _isRegisteredUser =
-          MockDatasource.users.any(
-            (u) => u.email.toLowerCase() == inputVal || u.phone == inputVal,
-          ) ||
-          inputVal.contains('test') ||
-          inputVal.endsWith('@dentlink.com') ||
-          inputVal == '5551234567';
-
       setState(() {
         _isLoading = false;
         _currentStep = LoginStep.otp;
@@ -126,12 +115,18 @@ class _LoginScreenState extends State<LoginScreen>
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _otpFocusNodes[0].requestFocus();
       });
-    });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _errorText = 'Bir hata oluştu. Lütfen tekrar deneyin.';
+      });
+    }
   }
 
   void _onOtpChanged(String value, int index) {
     if (value.isNotEmpty) {
-      if (index < 3) {
+      if (index < 5) {
         _otpFocusNodes[index + 1].requestFocus();
       } else {
         _otpFocusNodes[index].unfocus();
@@ -144,29 +139,41 @@ class _LoginScreenState extends State<LoginScreen>
     }
   }
 
-  void _verifyOtp() {
+  void _verifyOtp() async {
     final otp = _otpControllers.map((c) => c.text).join();
-    if (otp.length < 4) return;
-
+    if (otp.length < 6) return;
     setState(() => _isLoading = true);
-
-    Future.delayed(const Duration(milliseconds: 1200), () {
+    try {
+      // verifyOtp artık hata durumunda fırlatıyor; başarılıysa kullanıcıyı
+      // (veya yeni kullanıcı için null) döndürüyor. Böylece doğrulama
+      // başarısız olduğunda catch bloğu çalışır ve kullanıcı oturumsuz
+      // şekilde kayıt ekranına yönlendirilmez.
+      final user = await ref
+          .read(authProvider.notifier)
+          .verifyOtp(_inputController.text.trim(), otp);
       if (!mounted) return;
       setState(() {
         _isLoading = false;
         _isSuccess = true;
       });
-
       Future.delayed(const Duration(milliseconds: 800), () {
         if (mounted) {
-          if (_isRegisteredUser) {
+          if (user != null) {
             context.go('/feed');
           } else {
             context.go('/register');
           }
         }
       });
-    });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      for (var c in _otpControllers) {
+        c.clear();
+      }
+      _otpFocusNodes[0].requestFocus();
+      _shakeController.forward(from: 0);
+    }
   }
 
   void _startResendTimer() {

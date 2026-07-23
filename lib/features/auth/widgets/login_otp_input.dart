@@ -66,9 +66,9 @@ class LoginOtpInput extends StatelessWidget {
         else
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: List.generate(4, (index) {
+            children: List.generate(otpControllers.length, (index) {
               return Container(
-                width: 56,
+                width: 48,
                 height: 56,
                 decoration: BoxDecoration(
                   color: glassBgColor,
@@ -88,7 +88,7 @@ class LoginOtpInput extends StatelessWidget {
                     focusNode: otpFocusNodes[index],
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
-                    style: AppTextStyles.headlineMedium.copyWith(
+                    style: AppTextStyles.titleLarge.copyWith(
                       color: textPrimaryColor,
                       fontWeight: FontWeight.bold,
                     ),
