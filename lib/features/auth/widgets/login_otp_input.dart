@@ -501,7 +501,8 @@ class _OtpDigitBox extends StatelessWidget {
       height: 1.0,
     );
 
-    return AnimatedContainer(
+    return RepaintBoundary(
+      child: AnimatedContainer(
       duration: const Duration(milliseconds: 280),
       curve: Curves.easeOutCubic,
       width: 48,
@@ -524,63 +525,67 @@ class _OtpDigitBox extends StatelessWidget {
         clipBehavior: scattering ? Clip.none : Clip.hardEdge,
         alignment: Alignment.center,
         children: [
-          AnimatedBuilder(
-            animation: scatterAnimation,
-            builder: (context, child) {
-              if (!scattering) {
-                return AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 280),
-                  switchInCurve: Curves.easeOutCubic,
-                  switchOutCurve: Curves.easeInCubic,
-                  layoutBuilder: (currentChild, previousChildren) {
-                    return Stack(
-                      alignment: Alignment.center,
-                      clipBehavior: Clip.hardEdge,
-                      children: [
-                        ...previousChildren,
-                        if (currentChild != null) currentChild,
-                      ],
-                    );
-                  },
-                  transitionBuilder: (child, animation) {
-                    final offsetAnimation = Tween<Offset>(
-                      begin: Offset(0, fromTop ? -1.1 : 1.1),
-                      end: Offset.zero,
-                    ).animate(animation);
-                    return FadeTransition(
-                      opacity: animation,
-                      child: SlideTransition(
-                        position: offsetAnimation,
+          // Scatter yalnızca hata anında çalışır. Normal durumda (klavye
+          // açma/kapama gibi sık rebuild'ler dahil) scatterAnimation'ı
+          // dinlemeyiz; böylece klavye insets değişimi bu kutu için
+          // gereksiz repaint tetiklemez.
+          if (scattering)
+            AnimatedBuilder(
+              animation: scatterAnimation,
+              builder: (context, child) {
+                final t = Curves.easeInCubic.transform(scatterAnimation.value);
+                return Opacity(
+                  opacity: (1.0 - t).clamp(0.0, 1.0),
+                  child: Transform.translate(
+                    offset: scatterOffset * t,
+                    child: Transform.rotate(
+                      angle: scatterRotation * t * math.pi,
+                      child: Transform.scale(
+                        scale: 1.0 - (0.35 * t),
                         child: child,
                       ),
-                    );
-                  },
-                  child: digit.isEmpty
-                      ? const SizedBox.shrink(key: ValueKey('empty'))
-                      : Text(
-                          digit,
-                          key: ValueKey('digit-$index-$digit'),
-                          style: digitStyle,
-                        ),
-                );
-              }
-
-              final t = Curves.easeInCubic.transform(scatterAnimation.value);
-              return Opacity(
-                opacity: (1.0 - t).clamp(0.0, 1.0),
-                child: Transform.translate(
-                  offset: scatterOffset * t,
-                  child: Transform.rotate(
-                    angle: scatterRotation * t * math.pi,
-                    child: Transform.scale(
-                      scale: 1.0 - (0.35 * t),
-                      child: Text(digit, style: digitStyle),
                     ),
                   ),
-                ),
-              );
-            },
-          ),
+                );
+              },
+              child: Text(digit, style: digitStyle),
+            )
+          else
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 280),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              layoutBuilder: (currentChild, previousChildren) {
+                return Stack(
+                  alignment: Alignment.center,
+                  clipBehavior: Clip.hardEdge,
+                  children: [
+                    ...previousChildren,
+                    ?currentChild,
+                  ],
+                );
+              },
+              transitionBuilder: (child, animation) {
+                final offsetAnimation = Tween<Offset>(
+                  begin: Offset(0, fromTop ? -1.1 : 1.1),
+                  end: Offset.zero,
+                ).animate(animation);
+                return FadeTransition(
+                  opacity: animation,
+                  child: SlideTransition(
+                    position: offsetAnimation,
+                    child: child,
+                  ),
+                );
+              },
+              child: digit.isEmpty
+                  ? const SizedBox.shrink(key: ValueKey('empty'))
+                  : Text(
+                      digit,
+                      key: ValueKey('digit-$index-$digit'),
+                      style: digitStyle,
+                    ),
+            ),
           TextField(
             controller: controller,
             focusNode: focusNode,
@@ -615,6 +620,7 @@ class _OtpDigitBox extends StatelessWidget {
             onChanged: onChanged,
           ),
         ],
+      ),
       ),
     );
   }

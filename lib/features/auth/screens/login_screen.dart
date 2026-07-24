@@ -356,8 +356,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       backgroundColor: backgroundColor,
       body: Stack(
         children: [
-          // 1. Arka plan.
-          const LoginBackground(),
+          // 1. Arka plan. Statik olduğu için RepaintBoundary ile izole
+          //    ediyoruz; klavye insets değişiminde (layout kayması) gereksiz
+          //    yere yeniden boyanmasını engeller.
+          const RepaintBoundary(child: LoginBackground()),
 
           // 2. Ana içerik.
           SafeArea(
