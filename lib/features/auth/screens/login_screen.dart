@@ -38,6 +38,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   bool _showContinueButton = false;
   bool _isLoading = false;
   bool _isSuccess = false;
+  bool _isRegisteredUser = false;
   String? _errorText;
 
   // ── Animations ───────────────────────────────────────────────────────────
@@ -160,6 +161,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       applyState: () {
         _isLoading = false;
         _isSuccess = false;
+        _isRegisteredUser = false;
         _errorText = null;
       },
     );
@@ -241,6 +243,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       setState(() {
         _isLoading = false;
         _isSuccess = true;
+        _isRegisteredUser = user != null;
       });
       Future.delayed(const Duration(milliseconds: 1400), () {
         if (mounted) {
@@ -327,6 +330,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       applyState: () {
         _errorText = null;
         _isSuccess = false;
+        _isRegisteredUser = false;
         _isLoading = false;
       },
     );
@@ -487,6 +491,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       otpFocusNodes: _otpFocusNodes,
       isLoading: _isLoading,
       isSuccess: _isSuccess,
+      isRegisteredUser: _isRegisteredUser,
       canResend: _canResend,
       resendCountdown: _resendCountdown,
       errorText: _errorText,

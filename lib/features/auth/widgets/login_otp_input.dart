@@ -17,6 +17,7 @@ class LoginOtpInput extends StatefulWidget {
     required this.otpFocusNodes,
     required this.isLoading,
     required this.isSuccess,
+    required this.isRegisteredUser,
     required this.canResend,
     required this.resendCountdown,
     required this.onOtpChanged,
@@ -30,6 +31,8 @@ class LoginOtpInput extends StatefulWidget {
   final List<FocusNode> otpFocusNodes;
   final bool isLoading;
   final bool isSuccess;
+  /// Kayıtlı kullanıcıysa "Giriş Yapıldı!", değilse "Başarılı".
+  final bool isRegisteredUser;
   final bool canResend;
   final int resendCountdown;
   final void Function(String value, int index) onOtpChanged;
@@ -175,6 +178,7 @@ class _LoginOtpInputState extends State<LoginOtpInput>
             digits: _displayDigits,
             mergeOffsets: _mergeOffsets,
             brandColor: _brandTeal,
+            message: widget.isRegisteredUser ? 'Giriş Yapıldı!' : 'Başarılı',
           )
         else ...[
           Row(
@@ -297,12 +301,14 @@ class _OtpSuccessCelebration extends StatelessWidget {
     required this.digits,
     required this.mergeOffsets,
     required this.brandColor,
+    required this.message,
   });
 
   final Animation<double> animation;
   final List<String> digits;
   final List<Offset> mergeOffsets;
   final Color brandColor;
+  final String message;
 
   @override
   Widget build(BuildContext context) {
@@ -437,7 +443,7 @@ class _OtpSuccessCelebration extends StatelessWidget {
                   child: Transform.translate(
                     offset: Offset(0, 8 * (1.0 - textT)),
                     child: Text(
-                      'Giriş Yapıldı!',
+                      message,
                       textAlign: TextAlign.center,
                       style: AppTextStyles.titleMedium.copyWith(
                         color: brandColor,

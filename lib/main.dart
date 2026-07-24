@@ -27,13 +27,14 @@ class MainApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeModeProvider);
+    final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
       title: 'DentLink',
       debugShowCheckedModeBanner: false,
 
       // Router
-      routerConfig: appRouter,
+      routerConfig: router,
 
       // Tema
       theme: AppTheme.light,
