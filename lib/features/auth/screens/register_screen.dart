@@ -12,8 +12,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/app_dimensions.dart';
-import '../../../data/models/enums.dart';
-import '../../../providers/auth_provider.dart';
+import '../providers/register_controller.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -24,8 +23,7 @@ class RegisterScreen extends ConsumerStatefulWidget {
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final PageController _pageController = PageController();
-  int _currentStep = 0;
-  final int _totalSteps = 3;
+  final int _totalSteps = RegisterController.totalSteps;
 
   // Form Controllers
   final _nameController = TextEditingController();
@@ -42,15 +40,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _expFocusNode = FocusNode();
   final _bioFocusNode = FocusNode();
 
-  UserTitle? _selectedTitle;
-  int _selectedAvatarIndex = 0;
-  File? _selectedImageFile;
-  bool _isCompleting = false;
-
-  // Validation state
-  String? _nameError;
-
-  // Mock avatars (varsayılan avatar seçenekleri)
+  // Mock avatars
   final List<String> _mockAvatars = [
     'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face',
     'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&h=150&fit=crop&crop=face',
@@ -79,41 +69,41 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   void _nextStep() {
     FocusScope.of(context).unfocus();
-
-    if (_currentStep == 0) {
-      // Validate Step 1
-      setState(() {
-        _nameError = _nameController.text.trim().isEmpty
-            ? 'Ad Soyad alanı zorunludur'
-            : null;
-      });
-
-      if (_nameError != null) return;
-      if (_selectedTitle == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Lütfen bir unvan seçin'),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-        return;
-      }
-    }
-
-    if (_currentStep < _totalSteps - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+    final state = ref.read(registerControllerProvider);
+    
+    if (state.currentStep == 0 && state.selectedTitle == null) {
+      // Validate first step title
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Lütfen bir unvan seçin'),
+          behavior: SnackBarBehavior.floating,
+        ),
       );
-    } else {
-      _completeRegistration();
+    }
+    
+    try {
+      ref.read(registerControllerProvider.notifier).nextStep(_nameController.text);
+      final newState = ref.read(registerControllerProvider);
+      
+      if (newState.currentStep > state.currentStep) {
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      } else if (state.currentStep == _totalSteps - 1 && newState.nameError == null) {
+        _completeRegistration();
+      }
+    } catch (e) {
+      // Exception thrown for missing title or name
     }
   }
 
   void _prevStep() {
     FocusScope.of(context).unfocus();
-
-    if (_currentStep > 0) {
+    final state = ref.read(registerControllerProvider);
+    
+    if (state.currentStep > 0) {
+      ref.read(registerControllerProvider.notifier).prevStep();
       _pageController.previousPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -124,40 +114,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Future<void> _completeRegistration() async {
-    setState(() {
-      _isCompleting = true;
-    });
-
     try {
-      // Deneyim yılını parse et
-      final expYears = int.tryParse(_expController.text.trim());
-
-      // Supabase'e profil bilgilerini yaz (avatar yükleme dahil)
-      await ref
-          .read(authProvider.notifier)
-          .completeRegistration(
-            fullName: _nameController.text.trim(),
-            title: _selectedTitle!,
-            bio: _bioController.text.trim().isNotEmpty
-                ? _bioController.text.trim()
-                : null,
-            university: _uniController.text.trim().isNotEmpty
-                ? _uniController.text.trim()
-                : null,
-            city: _cityController.text.trim().isNotEmpty
-                ? _cityController.text.trim()
-                : null,
-            workplace: _clinicController.text.trim().isNotEmpty
-                ? _clinicController.text.trim()
-                : null,
-            experienceYears: expYears,
-            avatarFile: _selectedImageFile,
-          );
+      await ref.read(registerControllerProvider.notifier).completeRegistration(
+        fullName: _nameController.text.trim(),
+        bio: _bioController.text.trim(),
+        university: _uniController.text.trim(),
+        city: _cityController.text.trim(),
+        workplace: _clinicController.text.trim(),
+        experienceYearsStr: _expController.text.trim(),
+      );
 
       if (!mounted) return;
-      setState(() {
-        _isCompleting = false;
-      });
 
       // Başarı dialogu göster
       showGeneralDialog(
@@ -167,27 +134,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         transitionDuration: const Duration(milliseconds: 450),
         pageBuilder: (context, anim1, anim2) => const SizedBox.shrink(),
         transitionBuilder: (context, anim1, anim2, child) {
-          final scale = Tween<double>(
-            begin: 0.8,
-            end: 1.0,
-          ).animate(CurvedAnimation(parent: anim1, curve: Curves.elasticOut));
+          final scale = Tween<double>(begin: 0.8, end: 1.0)
+              .animate(CurvedAnimation(parent: anim1, curve: Curves.elasticOut));
           return RegisterDialog(scale: scale);
         },
       );
 
-      // Dialog sonrası yönlendirme
       await Future.delayed(const Duration(milliseconds: 1500));
 
       if (!mounted) return;
       Navigator.of(context, rootNavigator: true).pop();
       context.go('/feed');
     } catch (e) {
-      print(e.toString());
       if (!mounted) return;
-      setState(() {
-        _isCompleting = false;
-      });
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Kayıt sırasında hata oluştu: $e'),
@@ -200,6 +159,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(registerControllerProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDark
         ? const Color(0xFF11211F)
@@ -212,7 +172,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       backgroundColor: backgroundColor,
       body: Stack(
         children: [
-          // 1. Background Gradients and Decorative Blurred Circles
           if (!isDark)
             Positioned.fill(
               child: Container(
@@ -241,45 +200,35 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             width: 380,
             height: 380,
           ),
-          // 2. Main Page Layout
+          
           SafeArea(
             child: Column(
               children: [
-                // Top Custom Header with Progress Bar
                 RegisterHeader(
-                  currentStep: _currentStep,
+                  currentStep: state.currentStep,
                   totalSteps: _totalSteps,
                   prevStep: _prevStep,
                   nextStep: _nextStep,
                 ),
 
-                // Multi-step Wizard PageView
                 Expanded(
                   child: PageView(
                     controller: _pageController,
                     physics: const NeverScrollableScrollPhysics(),
                     onPageChanged: (int page) {
-                      setState(() {
-                        _currentStep = page;
-                      });
+                      ref.read(registerControllerProvider.notifier).setStep(page);
                     },
                     children: [
                       RegisterStepOne(
                         nameController: _nameController,
-                        nameError: _nameError,
+                        nameError: state.nameError,
                         nameFocusNode: _nameFocusNode,
-                        selectedTitle: _selectedTitle,
+                        selectedTitle: state.selectedTitle,
                         onNameChanged: (val) {
-                          if (_nameError != null && val.trim().isNotEmpty) {
-                            setState(() {
-                              _nameError = null;
-                            });
-                          }
+                          ref.read(registerControllerProvider.notifier).clearNameError();
                         },
                         onTitleSelected: (title) {
-                          setState(() {
-                            _selectedTitle = title;
-                          });
+                          ref.read(registerControllerProvider.notifier).setTitle(title);
                         },
                       ),
                       RegisterStepTwo(
@@ -294,30 +243,23 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ),
                       RegisterStepThree(
                         mockAvatars: _mockAvatars,
-                        selectedAvatarIndex: _selectedAvatarIndex,
-                        selectedImageFile: _selectedImageFile,
+                        selectedAvatarIndex: state.selectedAvatarIndex,
+                        selectedImageFile: state.selectedImageFile,
                         bioController: _bioController,
                         bioFocusNode: _bioFocusNode,
                         onAvatarSelected: (int index) {
-                          setState(() {
-                            _selectedAvatarIndex = index;
-                            _selectedImageFile =
-                                null; // Varsayılan avatar seçilince özel fotoğrafı kaldır
-                          });
+                          ref.read(registerControllerProvider.notifier).setAvatar(index);
                         },
                         onImageFilePicked: (File? file) {
-                          setState(() {
-                            _selectedImageFile = file;
-                          });
+                          ref.read(registerControllerProvider.notifier).setAvatar(state.selectedAvatarIndex, file: file);
                         },
                       ),
                     ],
                   ),
                 ),
 
-                // Bottom Action Buttons
                 RegisterBottomActions(
-                  currentStep: _currentStep,
+                  currentStep: state.currentStep,
                   totalSteps: _totalSteps,
                   nextStep: _nextStep,
                   prevStep: _prevStep,
@@ -326,8 +268,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             ),
           ),
 
-          // Completion Loading overlay
-          if (_isCompleting)
+          if (state.isCompleting)
             Positioned.fill(
               child: Container(
                 color: Colors.black.withValues(alpha: 0.5),

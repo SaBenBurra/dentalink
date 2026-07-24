@@ -18,7 +18,7 @@ class BookmarkNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
   }
 
   Future<List<PostModel>> _fetchBookmarks() {
-    return ref.read(postRepositoryProvider).getBookmarkedPosts();
+    return ref.read(bookmarkRepositoryProvider).getBookmarkedPosts();
   }
 
   /// Listeyi yeniden yükler.
@@ -32,7 +32,7 @@ class BookmarkNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
     final posts = state.valueOrNull;
     if (posts == null) return;
 
-    final repo = ref.read(postRepositoryProvider);
+    final repo = ref.read(bookmarkRepositoryProvider);
     await repo.unbookmarkPost(postId);
 
     // Optimistik: listeden çıkar
@@ -45,7 +45,7 @@ class BookmarkNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
     final posts = state.valueOrNull;
     if (posts == null) return;
 
-    final repo = ref.read(postRepositoryProvider);
+    final repo = ref.read(bookmarkRepositoryProvider);
     final isCurrentlyBookmarked = posts.any((p) => p.id == postId);
 
     if (isCurrentlyBookmarked) {

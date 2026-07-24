@@ -1,18 +1,19 @@
 import 'dart:async';
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
-import '../../../data/repositories/otp_cooldown_exception.dart';
 import '../../../providers/auth_provider.dart';
+import '../models/login_step.dart';
+import '../providers/login_controller.dart';
 import '../widgets/login_background.dart';
-import '../widgets/login_logo_header.dart';
 import '../widgets/login_email_phone_input.dart';
+import '../widgets/login_logo_header.dart';
 import '../widgets/login_otp_input.dart';
-
-enum LoginStep { emailOrPhone, otp }
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -23,55 +24,41 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen>
     with TickerProviderStateMixin {
-  // ── Controllers ──────────────────────────────────────────────────────────
-  final _inputController = TextEditingController();
-  final _inputFocusNode = FocusNode();
-
-  final List<TextEditingController> _otpControllers = List.generate(
-    6,
-    (_) => TextEditingController(),
-  );
-  final List<FocusNode> _otpFocusNodes = List.generate(6, (_) => FocusNode());
-
-  // ── State ────────────────────────────────────────────────────────────────
-  LoginStep _currentStep = LoginStep.emailOrPhone;
-  bool _showContinueButton = false;
-  bool _isLoading = false;
-  bool _isSuccess = false;
-  bool _isRegisteredUser = false;
-  String? _errorText;
-
-  // ── Animations ───────────────────────────────────────────────────────────
-  late final AnimationController _shakeController;
-  late final Animation<double> _shakeAnimation;
-
-  // ── Timer ────────────────────────────────────────────────────────────────
-  static const _otpCooldownSeconds = 59;
-  Timer? _resendTimer;
-  int _resendCountdown = _otpCooldownSeconds;
-  bool _canResend = false;
-
-  // ── Regex patterns (pre-compiled) ────────────────────────────────────────
-  static final _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-  static final _phoneRegex = RegExp(r'^\+?[0-9]{8,15}$');
-
-  // ── Geçiş süreleri (tek merkez) ──────────────────────────────────────────
+  static const _otpLength = 6;
+  static const _successNavDelay = Duration(milliseconds: 1400);
   static const _stepTransitionDuration = Duration(milliseconds: 420);
   static const _stepTransitionCurve = Curves.easeOutCubic;
 
-  // Klavyenin kapanma animasyonunun tamamlanması için beklenen süre. Bu süre
-  // dolmadan step değiştirilmez; böylece klavye insets değişimi (layout kayması)
-  // ile step geçiş animasyonu ASLA çakışmaz.
   static const _keyboardDismissDelay = Duration(milliseconds: 300);
 
-  // ── Lifecycle ────────────────────────────────────────────────────────────
+  static final _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  static final _phoneRegex = RegExp(r'^\+?[0-9]{8,15}$');
+
+  final _inputController = TextEditingController();
+  final _inputFocusNode = FocusNode();
+  final List<TextEditingController> _otpControllers = List.generate(
+    _otpLength,
+    (_) => TextEditingController(),
+  );
+  final List<FocusNode> _otpFocusNodes = List.generate(
+    _otpLength,
+    (_) => FocusNode(),
+  );
+
+  bool _showContinueButton = false;
+
+  late final AnimationController _shakeController;
+  late final Animation<double> _shakeAnimation;
+
+  Timer? _successNavTimer;
+  bool _holdsAuthRedirect = false;
+  ProviderContainer? _container;
 
   @override
   void initState() {
     super.initState();
     _inputFocusNode.addListener(_onFocusChanged);
     _inputController.addListener(_onInputChanged);
-
     for (final node in _otpFocusNodes) {
       node.addListener(_onFocusChanged);
     }
@@ -87,13 +74,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _container = ProviderScope.containerOf(context);
+  }
+
+  @override
   void dispose() {
+    _successNavTimer?.cancel();
+    _releaseAuthRedirectHold();
+
     _inputController.removeListener(_onInputChanged);
     _inputController.dispose();
     _inputFocusNode.removeListener(_onFocusChanged);
     _inputFocusNode.dispose();
     _shakeController.dispose();
-    _resendTimer?.cancel();
     for (final controller in _otpControllers) {
       controller.dispose();
     }
@@ -104,8 +99,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     super.dispose();
   }
 
-  // ── Event handlers ───────────────────────────────────────────────────────
-
   void _onFocusChanged() {
     if (mounted) setState(() {});
   }
@@ -113,154 +106,85 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   void _onInputChanged() {
     final text = _inputController.text.trim();
     final isValid = _emailRegex.hasMatch(text) || _phoneRegex.hasMatch(text);
-
     if (_showContinueButton != isValid) {
       setState(() => _showContinueButton = isValid);
     }
   }
 
-  void _handleContinue() async {
-    if (_isLoading) return;
-    _clearError();
+  void _setAuthRedirectHold(bool hold) {
+    if (_holdsAuthRedirect == hold) return;
+    _holdsAuthRedirect = hold;
+    final container = _container;
+    if (container != null) {
+      container.read(authRedirectHoldProvider.notifier).state = hold;
+    } else if (mounted) {
+      ref.read(authRedirectHoldProvider.notifier).state = hold;
+    }
+  }
+
+  void _releaseAuthRedirectHold() => _setAuthRedirectHold(false);
+
+  Future<void> _handleContinue() async {
+    final state = ref.read(loginControllerProvider);
+    if (state.isLoading) return;
     final inputVal = _inputController.text.trim();
-    setState(() => _isLoading = true);
-    try {
-      await ref.read(authProvider.notifier).sendOtp(inputVal);
-      if (!mounted) return;
-      _enterOtpStep(countdownSeconds: _otpCooldownSeconds);
-    } on OtpCooldownException catch (e) {
-      if (!mounted) return;
-      if (e.sameDestination) {
-        // Aynı numara/e-posta: yeni SMS atma, kalan süreyle OTP ekranına dön.
-        _enterOtpStep(countdownSeconds: e.remainingSeconds);
-      } else {
-        setState(() {
-          _isLoading = false;
-          _errorText =
-              'Çok sık deneme yaptınız. ${e.remainingSeconds} saniye sonra tekrar deneyin.';
-        });
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-      if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-        _errorText = 'Bir hata oluştu. Lütfen tekrar deneyin.';
-      });
-    }
-  }
-
-  void _enterOtpStep({required int countdownSeconds}) {
-    for (final controller in _otpControllers) {
-      controller.clear();
-    }
-    _startResendTimer(fromSeconds: countdownSeconds);
-    _switchStep(
-      LoginStep.otp,
-      targetFocusNode: _otpFocusNodes[0],
-      applyState: () {
-        _isLoading = false;
-        _isSuccess = false;
-        _isRegisteredUser = false;
-        _errorText = null;
-      },
-    );
-  }
-
-  /// İki adım arasında pürüzsüz geçiş yapar.
-  ///
-  /// Akış:
-  /// 1. Klavye açıksa kapat ve kapanma animasyonu bitene kadar bekle. Böylece
-  ///    step geçiş animasyonu, klavye insets değişiminden (layout kayması)
-  ///    tamamen bağımsız, stabil bir layout üzerinde akar.
-  /// 2. Step'i değiştir → AnimatedSize/AnimatedSwitcher geçişi çalışır.
-  /// 3. Geçiş animasyonu bitince hedef alana odaklan → klavye açılır (email
-  ///    için QWERTY, OTP için numerik). Geçiş bittiği için çakışma olmaz.
-  ///
-  /// Aynı mantık her iki yön için de (email→otp ve otp→email) kullanılır;
-  /// böylece iki geçiş de simetrik ve smooth olur.
-  void _switchStep(
-    LoginStep target, {
-    required FocusNode targetFocusNode,
-    VoidCallback? applyState,
-  }) {
-    final keyboardWasOpen = MediaQuery.of(context).viewInsets.bottom > 0;
-
-    // 1. Odağı bırak (klavye kapanmaya başlar).
+    
+    // Klavye kapansın
     FocusScope.of(context).unfocus();
-
-    // Klavye açıktıysa kapanma animasyonunu bekle; değilse hemen geç.
-    final wait = keyboardWasOpen ? _keyboardDismissDelay : Duration.zero;
-
-    Future.delayed(wait, () {
-      if (!mounted) return;
-      // 2. Step'i değiştir.
-      setState(() {
-        applyState?.call();
-        _currentStep = target;
-      });
-      // 3. Step geçişi bitince hedef alana odaklan (klavye tekrar açılır).
-      Future.delayed(_stepTransitionDuration, () {
-        if (mounted && _currentStep == target) {
-          targetFocusNode.requestFocus();
+    
+    await ref.read(loginControllerProvider.notifier).sendOtp(inputVal);
+    
+    final newState = ref.read(loginControllerProvider);
+    if (newState.step == LoginStep.otp) {
+      for (final controller in _otpControllers) {
+        controller.clear();
+      }
+      Future.delayed(_keyboardDismissDelay + _stepTransitionDuration, () {
+        if (mounted && ref.read(loginControllerProvider).step == LoginStep.otp) {
+          _otpFocusNodes[0].requestFocus();
         }
       });
-    });
+    }
   }
 
   void _onOtpChanged(String value, int index) {
     if (value.isNotEmpty) {
-      _clearError();
-      if (index < 5) {
+      ref.read(loginControllerProvider.notifier).clearError();
+      if (index < _otpLength - 1) {
         _otpFocusNodes[index + 1].requestFocus();
       } else {
         _otpFocusNodes[index].unfocus();
         _verifyOtp();
       }
-    } else {
-      if (index > 0) {
-        _otpFocusNodes[index - 1].requestFocus();
-      }
+    } else if (index > 0) {
+      _otpFocusNodes[index - 1].requestFocus();
     }
   }
 
-  void _verifyOtp() async {
+  Future<void> _verifyOtp() async {
     final otp = _otpControllers.map((c) => c.text).join();
-    if (otp.length < 6) return;
-    setState(() {
-      _isLoading = true;
-      _errorText = null;
-    });
-    try {
-      // verifyOtp artık hata durumunda fırlatıyor; başarılıysa kullanıcıyı
-      // (veya yeni kullanıcı için null) döndürüyor. Böylece doğrulama
-      // başarısız olduğunda catch bloğu çalışır ve kullanıcı oturumsuz
-      // şekilde kayıt ekranına yönlendirilmez.
-      final user = await ref
-          .read(authProvider.notifier)
-          .verifyOtp(_inputController.text.trim(), otp);
-      if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-        _isSuccess = true;
-        _isRegisteredUser = user != null;
+    final state = ref.read(loginControllerProvider);
+    if (otp.length < _otpLength || state.isLoading || state.isSuccess) return;
+
+    _setAuthRedirectHold(true);
+    
+    final isRegistered = await ref
+        .read(loginControllerProvider.notifier)
+        .verifyOtp(_inputController.text.trim(), otp);
+
+    if (!mounted) return;
+
+    final newState = ref.read(loginControllerProvider);
+    if (newState.isSuccess) {
+      _successNavTimer?.cancel();
+      _successNavTimer = Timer(_successNavDelay, () {
+        if (!mounted) return;
+        final destination = isRegistered ? '/feed' : '/register';
+        context.go(destination);
+        _releaseAuthRedirectHold();
       });
-      Future.delayed(const Duration(milliseconds: 1400), () {
-        if (mounted) {
-          if (user != null) {
-            context.go('/feed');
-          } else {
-            context.go('/register');
-          }
-        }
-      });
-    } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-        _errorText = 'Kod hatalı veya süresi dolmuş';
-      });
-      _shakeController.forward(from: 0);
+    } else if (newState.errorText != null) {
+      _releaseAuthRedirectHold();
     }
   }
 
@@ -273,80 +197,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   Future<void> _handleResend() async {
-    if (!_canResend || _isLoading) return;
-    _clearError();
-    setState(() => _isLoading = true);
-    try {
-      await ref
-          .read(authProvider.notifier)
-          .sendOtp(_inputController.text.trim());
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-      _startResendTimer(fromSeconds: _otpCooldownSeconds);
-    } on OtpCooldownException catch (e) {
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-      _startResendTimer(fromSeconds: e.remainingSeconds);
-    } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-        _errorText = 'Kod gönderilemedi. Lütfen tekrar deneyin.';
-      });
-    }
+    await ref.read(loginControllerProvider.notifier).resendOtp(_inputController.text.trim());
   }
 
-  void _startResendTimer({int fromSeconds = _otpCooldownSeconds}) {
-    final start = fromSeconds.clamp(0, _otpCooldownSeconds);
-    setState(() {
-      _resendCountdown = start;
-      _canResend = start == 0;
-    });
-    _resendTimer?.cancel();
-    if (start == 0) return;
-    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_resendCountdown <= 1) {
-        setState(() {
-          _resendCountdown = 0;
-          _canResend = true;
-          _resendTimer?.cancel();
-        });
-      } else {
-        setState(() => _resendCountdown--);
+  void _goBack() {
+    _successNavTimer?.cancel();
+    _releaseAuthRedirectHold();
+    ref.read(loginControllerProvider.notifier).goBack();
+    
+    Future.delayed(_stepTransitionDuration, () {
+      if (mounted && ref.read(loginControllerProvider).step == LoginStep.emailOrPhone) {
+        _inputFocusNode.requestFocus();
       }
     });
   }
 
-  void _clearError() {
-    if (_errorText != null) {
-      setState(() => _errorText = null);
-    }
-  }
-
-  void _goBack() {
-    _switchStep(
-      LoginStep.emailOrPhone,
-      targetFocusNode: _inputFocusNode,
-      applyState: () {
-        _errorText = null;
-        _isSuccess = false;
-        _isRegisteredUser = false;
-        _isLoading = false;
-      },
-    );
-  }
-
-  // ── Shake animation helper ──────────────────────────────────────────────
-  //
-  // 0→1 ilerleme boyunca 3 kez sağa-sola sönümlenerek salınır.
   double _shakeOffset(double t) {
-    // Sönümlenen sinüs: genlik başta yüksek, sona doğru sıfıra iner.
     const amplitude = 10.0;
     final decay = 1.0 - t;
     return math.sin(t * math.pi * 6) * amplitude * decay;
   }
-
-  // ── Build ────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -354,18 +224,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final backgroundColor = isDark
         ? const Color(0xFF11211F)
         : AppColors.bgGradientStart;
+        
+    final state = ref.watch(loginControllerProvider);
+    
+    // Shake listener
+    ref.listen<LoginState>(loginControllerProvider, (previous, next) {
+      if (next.shouldShake && previous?.shouldShake != true) {
+        _shakeController.forward(from: 0);
+      }
+    });
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: backgroundColor,
       body: Stack(
         children: [
-          // 1. Arka plan. Statik olduğu için RepaintBoundary ile izole
-          //    ediyoruz; klavye insets değişiminde (layout kayması) gereksiz
-          //    yere yeniden boyanmasını engeller.
           const RepaintBoundary(child: LoginBackground()),
-
-          // 2. Ana içerik.
           SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -385,7 +259,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           constraints: const BoxConstraints(
                             maxWidth: AppDimensions.maxContentWidth,
                           ),
-                          child: _buildContent(),
+                          child: _buildContent(state),
                         ),
                       ),
                     ),
@@ -399,7 +273,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(LoginState state) {
     return AnimatedBuilder(
       animation: _shakeAnimation,
       builder: (context, child) {
@@ -411,22 +285,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: AppDimensions.spacing32),
-
-          // Logo + başlık (kendi içinde step'e göre yumuşak geçiş yapar).
           LoginLogoHeader(
-            currentStep: _currentStep,
+            currentStep: state.step,
             inputText: _inputController.text.trim(),
             transitionDuration: _stepTransitionDuration,
           ),
-
           const SizedBox(height: AppDimensions.spacing40),
-
-          // Form adımları.
-          //
-          // AnimatedSize iki adımın farklı yükseklikleri arasında yumuşak
-          // geçiş yapar. AnimatedSwitcher içerikleri fade+slide ile
-          // değiştirir. Her iki yön (email→otp ve otp→email) için aynı
-          // süre/eğri kullanıldığından geçiş simetrik ve smooth olur.
           AnimatedSize(
             duration: _stepTransitionDuration,
             curve: _stepTransitionCurve,
@@ -435,9 +299,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               duration: _stepTransitionDuration,
               switchInCurve: _stepTransitionCurve,
               switchOutCurve: Curves.easeInCubic,
-              // Çıkan çocuk boyuta dahil edilmez; yalnızca yeni yükseklik
-              // AnimatedSize tarafından animasyonlanır (aksi halde Stack
-              // max(eski,yeni) alıp ani zıplama yapar).
               layoutBuilder: (currentChild, previousChildren) {
                 return Stack(
                   alignment: Alignment.topCenter,
@@ -455,30 +316,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 );
               },
               transitionBuilder: (child, animation) {
-                // Dikey kaydırma YOK: dikey boyut değişimini yalnızca
-                // AnimatedSize yönetir. transitionBuilder sadece fade yapar;
-                // böylece iki animasyon dikeyde çakışıp titreme oluşturmaz.
                 return FadeTransition(opacity: animation, child: child);
               },
-              child: _buildStep(),
+              child: _buildStep(state),
             ),
           ),
-
           const SizedBox(height: AppDimensions.spacing32),
         ],
       ),
     );
   }
 
-  Widget _buildStep() {
-    if (_currentStep == LoginStep.emailOrPhone) {
+  Widget _buildStep(LoginState state) {
+    if (state.step == LoginStep.emailOrPhone) {
       return LoginEmailPhoneInput(
         key: const ValueKey('email_phone_step'),
         controller: _inputController,
         focusNode: _inputFocusNode,
-        isLoading: _isLoading,
+        isLoading: state.isLoading,
         showContinueButton: _showContinueButton,
-        errorText: _errorText,
+        errorText: state.errorText,
         onContinue: _handleContinue,
         onSubmitted: (_) {
           if (_showContinueButton) _handleContinue();
@@ -489,12 +346,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       key: const ValueKey('otp_step'),
       otpControllers: _otpControllers,
       otpFocusNodes: _otpFocusNodes,
-      isLoading: _isLoading,
-      isSuccess: _isSuccess,
-      isRegisteredUser: _isRegisteredUser,
-      canResend: _canResend,
-      resendCountdown: _resendCountdown,
-      errorText: _errorText,
+      isLoading: state.isLoading,
+      isSuccess: state.isSuccess,
+      successMessage: state.successMessage ?? 'Başarılı',
+      canResend: state.canResend,
+      resendCountdown: state.resendCountdown,
+      errorText: state.errorText,
       onOtpChanged: _onOtpChanged,
       onResend: _handleResend,
       onGoBack: _goBack,

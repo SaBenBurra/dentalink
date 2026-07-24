@@ -47,6 +47,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   final refresh = _AuthRefreshNotifier();
   ref.onDispose(refresh.dispose);
   ref.listen(authProvider, (_, _) => refresh.ping());
+  ref.listen(authRedirectHoldProvider, (_, _) => refresh.ping());
 
   return GoRouter(
     initialLocation: '/login',
@@ -65,6 +66,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Oturum yoksa korumalı sayfalara girilemez.
       if (!hasSession && !isAuthRoute) {
         return '/login';
+      }
+
+      // OTP başarı animasyonu bitene kadar yönlendirmeyi beklet.
+      if (ref.read(authRedirectHoldProvider)) {
+        return null;
       }
 
       // Profil henüz yüklenirken yönlendirme yapma (yanlış /feed atlamasını

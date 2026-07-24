@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/app_dimensions.dart';
+import '../../../core/theme/glass_theme.dart';
 
 /// OTP doğrulama kodu giriş alanı.
 ///
@@ -17,7 +18,7 @@ class LoginOtpInput extends StatefulWidget {
     required this.otpFocusNodes,
     required this.isLoading,
     required this.isSuccess,
-    required this.isRegisteredUser,
+    required this.successMessage,
     required this.canResend,
     required this.resendCountdown,
     required this.onOtpChanged,
@@ -31,8 +32,7 @@ class LoginOtpInput extends StatefulWidget {
   final List<FocusNode> otpFocusNodes;
   final bool isLoading;
   final bool isSuccess;
-  /// Kayıtlı kullanıcıysa "Giriş Yapıldı!", değilse "Başarılı".
-  final bool isRegisteredUser;
+  final String successMessage;
   final bool canResend;
   final int resendCountdown;
   final void Function(String value, int index) onOtpChanged;
@@ -157,12 +157,8 @@ class _LoginOtpInputState extends State<LoginOtpInput>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final glassBgColor = isDark
-        ? Colors.black.withValues(alpha: 0.4)
-        : Colors.white.withValues(alpha: 0.6);
-    final glassBorderColor = isDark
-        ? Colors.white.withValues(alpha: 0.12)
-        : Colors.white.withValues(alpha: 0.8);
+    final glassBgColor = GlassTheme.getBgColor(context);
+    final glassBorderColor = GlassTheme.getBorderColor(context);
     final textPrimaryColor = isDark
         ? AppColors.darkTextPrimary
         : AppColors.lightTextPrimary;
@@ -178,7 +174,7 @@ class _LoginOtpInputState extends State<LoginOtpInput>
             digits: _displayDigits,
             mergeOffsets: _mergeOffsets,
             brandColor: _brandTeal,
-            message: widget.isRegisteredUser ? 'Giriş Yapıldı!' : 'Başarılı',
+            message: widget.successMessage,
           )
         else ...[
           Row(

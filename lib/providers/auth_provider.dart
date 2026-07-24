@@ -11,8 +11,14 @@ import '../data/repositories/supabase_auth_repository.dart';
 // Repository Provider — Supabase gerçek implementasyon
 // ─────────────────────────────────────────────────────────────────────────────
 
+final supabaseClientProvider = Provider<SupabaseClient>((ref) {
+  return Supabase.instance.client;
+});
+
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return SupabaseAuthRepository();
+  return SupabaseAuthRepository(
+    client: ref.watch(supabaseClientProvider),
+  );
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -204,9 +210,10 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
       UserTitle.periodontolog: 'periodontolog',
       UserTitle.protezUzmani: 'protez_uzmani',
       UserTitle.pedodontist: 'pedodontist',
-      UserTitle.agizDisCeneCerrahisi: 'agiz_dis_cene_cerrahisi',
-      UserTitle.agizDisCeneRadyoloji: 'agiz_dis_cene_radyoloji',
-      UserTitle.restoratifDisTedavisi: 'restoratif_dis_tedavisi',
+      UserTitle.agizDisCeneCerrahisi: 'agiz_dis_cene_cerrahi',
+      UserTitle.agizDisCeneRadyoloji: 'agiz_dis_cene_radyoloji_uzmani',
+      UserTitle.restoratifDisTedavisi: 'restoratif_dis_tedavisi_uzmani',
+      UserTitle.oralDiagnoz: 'oral_diagnoz_uzmani',
     };
     return map[title] ?? 'dis_hekimi_genel_pratisyen';
   }
@@ -221,3 +228,10 @@ final authProvider = AsyncNotifierProvider<AuthNotifier, UserModel?>(() {
 final currentUserProvider = Provider<UserModel?>((ref) {
   return ref.watch(authProvider).valueOrNull;
 });
+
+/// OTP başarı animasyonu sırasında router'ın erken yönlendirmesini engeller.
+///
+/// `verifyOtp` auth state'i güncellediğinde profil kontrolü tetiklenir; bu
+/// bayrak true iken redirect bekletilir, animasyon bitince login ekranı
+/// kendisi `/feed` veya `/register`'a gider.
+final authRedirectHoldProvider = StateProvider<bool>((ref) => false);

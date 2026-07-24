@@ -50,13 +50,13 @@ class PostHeader extends StatelessWidget {
                   children: [
                     Flexible(
                       child: Text(
-                        post.branch?.displayName ??
+                        (post is CasePostModel ? (post as CasePostModel).branch?.displayName : null) ??
                             post.author.title.displayName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: textTheme.bodySmall?.copyWith(
                           color: colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
                         ),
                       ),
                     ),

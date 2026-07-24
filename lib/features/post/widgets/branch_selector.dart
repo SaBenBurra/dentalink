@@ -13,15 +13,15 @@ class BranchSelector extends StatelessWidget {
   });
 
   static const List<Map<String, String>> _branches = [
-    {'id': 'pedodonti', 'name': 'Pedodonti'},
-    {'id': 'endodonti', 'name': 'Endodonti'},
-    {'id': 'ortodonti', 'name': 'Ortodonti'},
-    {'id': 'periodontoloji', 'name': 'Periodontoloji'},
-    {'id': 'protetik_dis_tedavisi', 'name': 'Protetik Diş Tedavisi'},
-    {'id': 'agiz_dis_cene_cerrahisi', 'name': 'Ağız Diş ve Çene Cerrahisi'},
-    {'id': 'agiz_dis_cene_radyolojisi', 'name': 'Ağız Diş ve Çene Radyolojisi'},
-    {'id': 'oral_diagnoz', 'name': 'Oral Diagnoz'},
-    {'id': 'restoratif_dis_tedavisi', 'name': 'Restoratif Diş Tedavisi'},
+    {'id': 'pedodontist', 'name': 'Pedodontist'},
+    {'id': 'endodontist', 'name': 'Endodontist'},
+    {'id': 'ortodontist', 'name': 'Ortodontist'},
+    {'id': 'periodontolog', 'name': 'Periodontolog'},
+    {'id': 'protez_uzmani', 'name': 'Protez Uzmanı'},
+    {'id': 'agiz_dis_cene_cerrahi', 'name': 'Ağız, Diş ve Çene Cerrahisi'},
+    {'id': 'agiz_dis_cene_radyologu', 'name': 'Ağız, Diş ve Çene Radyolojisi'},
+    {'id': 'oral_diagnoz_uzmani', 'name': 'Oral Diagnoz Uzmanı'},
+    {'id': 'restoratif_dis_tedavisi_uzmani', 'name': 'Restoratif Diş Tedavisi Uzmanı'},
   ];
 
   String? _getBranchName(String id) {

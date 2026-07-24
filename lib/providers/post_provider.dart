@@ -10,13 +10,13 @@ class PostDetailNotifier
     extends AutoDisposeFamilyAsyncNotifier<PostModel, String> {
   @override
   Future<PostModel> build(String arg) async {
-    return ref.read(postRepositoryProvider).getPostById(arg);
+    return ref.read(feedRepositoryProvider).getPostById(arg);
   }
 
   Future<void> toggleLike() async {
     final post = state.valueOrNull;
     if (post == null) return;
-    final repo = ref.read(postRepositoryProvider);
+    final repo = ref.read(postActionRepositoryProvider);
     final updated = post.isLiked
         ? await repo.unlikePost(arg)
         : await repo.likePost(arg);
@@ -27,7 +27,7 @@ class PostDetailNotifier
   Future<void> toggleBookmark() async {
     final post = state.valueOrNull;
     if (post == null) return;
-    final repo = ref.read(postRepositoryProvider);
+    final repo = ref.read(bookmarkRepositoryProvider);
     final updated = post.isBookmarked
         ? await repo.unbookmarkPost(arg)
         : await repo.bookmarkPost(arg);
@@ -50,7 +50,7 @@ final userPostsProvider =
       ref,
       userId,
     ) async {
-      return ref.read(postRepositoryProvider).getPostsByUser(userId);
+      return ref.read(feedRepositoryProvider).getPostsByUser(userId);
     });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -60,20 +60,20 @@ final userPostsProvider =
 class BookmarksNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
   @override
   Future<List<PostModel>> build() async {
-    return ref.read(postRepositoryProvider).getBookmarkedPosts();
+    return ref.read(bookmarkRepositoryProvider).getBookmarkedPosts();
   }
 
   Future<void> removeBookmark(String postId) async {
     final posts = state.valueOrNull;
     if (posts == null) return;
-    await ref.read(postRepositoryProvider).unbookmarkPost(postId);
+    await ref.read(bookmarkRepositoryProvider).unbookmarkPost(postId);
     state = AsyncData(posts.where((p) => p.id != postId).toList());
   }
 
   Future<void> refresh() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(postRepositoryProvider).getBookmarkedPosts(),
+      () => ref.read(bookmarkRepositoryProvider).getBookmarkedPosts(),
     );
   }
 }

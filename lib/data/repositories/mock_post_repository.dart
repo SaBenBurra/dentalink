@@ -69,7 +69,7 @@ class MockPostRepository implements PostRepository {
           p.title.toLowerCase().contains(q) ||
           p.content.toLowerCase().contains(q) ||
           p.tags.any((t) => t.name.toLowerCase().contains(q));
-      final matchesBranch = branch == null || p.branch == branch;
+      final matchesBranch = branch == null || (p is CasePostModel && p.branch == branch);
       final matchesType = type == null || p.type == type;
       return matchesText && matchesBranch && matchesType;
     }).toList();

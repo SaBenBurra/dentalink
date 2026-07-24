@@ -18,7 +18,8 @@ enum UserTitle {
   pedodontist,
   agizDisCeneCerrahisi,
   agizDisCeneRadyoloji,
-  restoratifDisTedavisi;
+  restoratifDisTedavisi,
+  oralDiagnoz;
 
   String get displayName {
     switch (this) {
@@ -42,6 +43,8 @@ enum UserTitle {
         return 'Ağız, Diş ve Çene Radyoloğu';
       case UserTitle.restoratifDisTedavisi:
         return 'Restoratif Diş Tedavisi Uzmanı';
+      case UserTitle.oralDiagnoz:
+        return 'Oral Diagnoz Uzmanı';
     }
   }
 
@@ -65,8 +68,46 @@ enum UserTitle {
         return Icons.healing_outlined;
       case UserTitle.agizDisCeneRadyoloji:
         return Icons.settings_system_daydream_outlined;
+      case UserTitle.oralDiagnoz:
+        return Icons.medical_information_outlined;
       case UserTitle.restoratifDisTedavisi:
         return Icons.auto_awesome_outlined;
+    }
+  }
+
+  String get dbValue {
+    switch (this) {
+      case UserTitle.ogrenci:
+        return 'ogrenci';
+      case UserTitle.disHekimi:
+        return 'dis_hekimi_genel_pratisyen';
+      case UserTitle.endodontist:
+        return 'endodontist';
+      case UserTitle.ortodontist:
+        return 'ortodontist';
+      case UserTitle.periodontolog:
+        return 'periodontolog';
+      case UserTitle.protezUzmani:
+        return 'protez_uzmani';
+      case UserTitle.pedodontist:
+        return 'pedodontist';
+      case UserTitle.agizDisCeneCerrahisi:
+        return 'agiz_dis_cene_cerrahi';
+      case UserTitle.agizDisCeneRadyoloji:
+        return 'agiz_dis_cene_radyologu';
+      case UserTitle.restoratifDisTedavisi:
+        return 'restoratif_dis_tedavisi_uzmani';
+      case UserTitle.oralDiagnoz:
+        return 'oral_diagnoz_uzmani';
+    }
+  }
+
+  static UserTitle fromDbValue(String? value) {
+    if (value == null) return UserTitle.disHekimi;
+    try {
+      return UserTitle.values.firstWhere((e) => e.dbValue == value);
+    } catch (_) {
+      return UserTitle.disHekimi;
     }
   }
 }
@@ -113,23 +154,23 @@ enum DentalBranch {
   String get dbValue {
     switch (this) {
       case DentalBranch.pedodonti:
-        return 'pedodonti';
+        return 'pedodontist';
       case DentalBranch.endodonti:
-        return 'endodonti';
+        return 'endodontist';
       case DentalBranch.ortodonti:
-        return 'ortodonti';
+        return 'ortodontist';
       case DentalBranch.periodontoloji:
-        return 'periodontoloji';
+        return 'periodontolog';
       case DentalBranch.protetikDisTedavisi:
-        return 'protetik_dis_tedavisi';
+        return 'protez_uzmani';
       case DentalBranch.agizDisCeneCerrahisi:
-        return 'agiz_dis_cene_cerrahisi';
+        return 'agiz_dis_cene_cerrahi';
       case DentalBranch.agizDisCeneRadyolojisi:
-        return 'agiz_dis_cene_radyolojisi';
+        return 'agiz_dis_cene_radyologu';
       case DentalBranch.oralDiagnoz:
-        return 'oral_diagnoz';
+        return 'oral_diagnoz_uzmani';
       case DentalBranch.restoratifDisTedavisi:
-        return 'restoratif_dis_tedavisi';
+        return 'restoratif_dis_tedavisi_uzmani';
     }
   }
 

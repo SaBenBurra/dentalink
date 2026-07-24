@@ -91,9 +91,9 @@ class CaseCard extends StatelessWidget {
           ),
 
           // <-- 3. Görsel yerleşimi
-          if (post.imageUrls.isNotEmpty)
+          if ((post as CasePostModel).imageUrls.isNotEmpty)
             PostMedia(
-              imageUrls: post.imageUrls,
+              imageUrls: (post as CasePostModel).imageUrls,
               isLiked: post.isLiked,
               onLikeToggle: onLikeToggle,
               onTap: onTap,

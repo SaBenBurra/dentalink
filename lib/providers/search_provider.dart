@@ -66,7 +66,7 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
       userResults: const AsyncLoading(),
     );
 
-    final postRepo = ref.read(postRepositoryProvider);
+    final postRepo = ref.read(searchRepositoryProvider);
     final userRepo = ref.read(userRepositoryProvider);
 
     // Post ve kullanıcı aramasını paralel çalıştır.

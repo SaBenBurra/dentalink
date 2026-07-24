@@ -298,7 +298,7 @@ class MockDatasource {
 
   static final List<PostModel> posts = [
     // ── VAKALAR (10) ─────────────────────────────────────────────────────
-    PostModel(
+    CasePostModel(
       id: 'p1',
       userId: 'u1',
       type: PostType.casePost,
@@ -326,7 +326,7 @@ class MockDatasource {
       author: userById('u1'),
     ),
 
-    PostModel(
+    CasePostModel(
       id: 'p2',
       userId: 'u3',
       type: PostType.casePost,
@@ -352,7 +352,7 @@ class MockDatasource {
       author: userById('u3'),
     ),
 
-    PostModel(
+    CasePostModel(
       id: 'p3',
       userId: 'u2',
       type: PostType.casePost,
@@ -379,7 +379,7 @@ class MockDatasource {
       author: userById('u2'),
     ),
 
-    PostModel(
+    CasePostModel(
       id: 'p4',
       userId: 'u5',
       type: PostType.casePost,
@@ -405,7 +405,7 @@ class MockDatasource {
       author: userById('u5'),
     ),
 
-    PostModel(
+    CasePostModel(
       id: 'p5',
       userId: 'u4',
       type: PostType.casePost,
@@ -431,7 +431,7 @@ class MockDatasource {
       author: userById('u4'),
     ),
 
-    PostModel(
+    CasePostModel(
       id: 'p6',
       userId: 'u6',
       type: PostType.casePost,
@@ -457,7 +457,7 @@ class MockDatasource {
       author: userById('u6'),
     ),
 
-    PostModel(
+    CasePostModel(
       id: 'p7',
       userId: 'u8',
       type: PostType.casePost,
@@ -483,7 +483,7 @@ class MockDatasource {
       author: userById('u8'),
     ),
 
-    PostModel(
+    CasePostModel(
       id: 'p8',
       userId: 'u10',
       type: PostType.casePost,
@@ -509,7 +509,7 @@ class MockDatasource {
       author: userById('u10'),
     ),
 
-    PostModel(
+    CasePostModel(
       id: 'p9',
       userId: 'u3',
       type: PostType.casePost,
@@ -535,7 +535,7 @@ class MockDatasource {
       author: userById('u3'),
     ),
 
-    PostModel(
+    CasePostModel(
       id: 'p10',
       userId: 'u1',
       type: PostType.casePost,
@@ -561,7 +561,7 @@ class MockDatasource {
     ),
 
     // ── SORULAR (10) ─────────────────────────────────────────────────────
-    PostModel(
+    QuestionPostModel(
       id: 'p11',
       userId: 'u9',
       type: PostType.question,
@@ -572,8 +572,6 @@ class MockDatasource {
           'Asistanım ProTaper Gold retreatment eğelerini önerdi ama süpervizörüm WaveOne Gold\'u tercih etti. '
           'Her ikisinin retreatment performansını karşılaştıran güncel RCT var mı? '
           'Kalsifiye kanallarda hangisi daha etkili? Perforasyon riski açısından görüşleriniz neler?',
-      branch: null,
-      imageUrls: [],
       tags: [tags[0]],
       likeCount: 43,
       commentCount: 8,
@@ -587,7 +585,7 @@ class MockDatasource {
       author: userById('u9'),
     ),
 
-    PostModel(
+    QuestionPostModel(
       id: 'p12',
       userId: 'u7',
       type: PostType.question,
@@ -596,8 +594,6 @@ class MockDatasource {
           'Miller sınıflaması yerine Cairo 2011 sınıflamasını kullananlar ne düşünüyor? '
           'Klinik kararlarınızı etkiliyor mu? '
           'RT1, RT2, RT3 gruplandırması prognoz tahmini açısından Miller\'dan üstün mü?',
-      branch: null,
-      imageUrls: [],
       tags: [tags[6]],
       likeCount: 31,
       commentCount: 6,
@@ -611,7 +607,7 @@ class MockDatasource {
       author: userById('u7'),
     ),
 
-    PostModel(
+    QuestionPostModel(
       id: 'p13',
       userId: 'u4',
       type: PostType.question,
@@ -621,8 +617,6 @@ class MockDatasource {
           '4 yaşında şiddetli dental fobisi olan bir hastam var. '
           'N2O yeterli olmadı. Midazolam oral sedasyon protokolünü uygulayan var mı? '
           'Doz, gözlem süresi ve ebeveyne ne kadar açıklama yapıyorsunuz?',
-      branch: null,
-      imageUrls: [],
       tags: [tags[8]],
       likeCount: 56,
       commentCount: 11,
@@ -636,7 +630,7 @@ class MockDatasource {
       author: userById('u4'),
     ),
 
-    PostModel(
+    QuestionPostModel(
       id: 'p14',
       userId: 'u6',
       type: PostType.question,
@@ -647,8 +641,6 @@ class MockDatasource {
           'Bütçe kısıtlı, kompozit veneer önerdim. '
           'Uzun dönem renk stabilitesi ve yüzey pürüzlülüğü açısından literatürde ne var? '
           '5-10 yıl takipli çalışmalar hakkında görüşlerinizi alabilir miyim?',
-      branch: null,
-      imageUrls: [],
       tags: [tags[1], tags[4], tags[11]],
       likeCount: 67,
       commentCount: 14,
@@ -662,7 +654,7 @@ class MockDatasource {
       author: userById('u6'),
     ),
 
-    PostModel(
+    QuestionPostModel(
       id: 'p15',
       userId: 'u9',
       type: PostType.question,
@@ -671,8 +663,6 @@ class MockDatasource {
           'Mezuniyete 1 yılım kaldı. Uzmanlık sınavına hazırlanmak ile doğrudan özel klinik açmak arasında '
           'kalan arkadaşlar var mı? Finansal açıdan, mesleki gelişim açısından hangisini önerirsiniz? '
           'Endodonti düşünüyorum ama 5 yıl daha okumak zor görünüyor.',
-      branch: null,
-      imageUrls: [],
       tags: [],
       likeCount: 89,
       commentCount: 23,
@@ -686,7 +676,7 @@ class MockDatasource {
       author: userById('u9'),
     ),
 
-    PostModel(
+    QuestionPostModel(
       id: 'p16',
       userId: 'u7',
       type: PostType.question,
@@ -696,8 +686,6 @@ class MockDatasource {
           'çalışmaya başladığımda hasta hala ağrı hissetti. '
           'Bu durumlarda intraligamentöz veya intrapulpal anestezi nasıl ve ne zaman yapmalı? '
           'Deneyimlerinizi paylaşır mısınız?',
-      branch: null,
-      imageUrls: [],
       tags: [tags[0]],
       likeCount: 52,
       commentCount: 16,
@@ -711,7 +699,7 @@ class MockDatasource {
       author: userById('u7'),
     ),
 
-    PostModel(
+    QuestionPostModel(
       id: 'p17',
       userId: 'u2',
       type: PostType.question,
@@ -721,8 +709,6 @@ class MockDatasource {
           'Bite ramp kullanıyorum fakat bazı hastalarda yetersiz kalıyor. '
           'G7 protokolünden önce ve sonrası fark ettiniz mi? '
           'Alternatif olarak overlay ekleme konusunda tecrübeniz var mı?',
-      branch: null,
-      imageUrls: [],
       tags: [tags[5]],
       likeCount: 38,
       commentCount: 7,
@@ -736,7 +722,7 @@ class MockDatasource {
       author: userById('u2'),
     ),
 
-    PostModel(
+    QuestionPostModel(
       id: 'p18',
       userId: 'u5',
       type: PostType.question,
@@ -745,8 +731,6 @@ class MockDatasource {
           'Periodontal cerrahi öncesi antibiyotik profilaksisi konusunda kafa karışıklığım var. '
           'AHA 2007 güncellemesinin ötesinde, günümüzde kılavuzlar ne söylüyor? '
           'Kalp kapak hastası, total diz/kalça protezi olan hastalarda protokolünüz nedir?',
-      branch: null,
-      imageUrls: [],
       tags: [tags[6]],
       likeCount: 61,
       commentCount: 13,
@@ -760,7 +744,7 @@ class MockDatasource {
       author: userById('u5'),
     ),
 
-    PostModel(
+    QuestionPostModel(
       id: 'p19',
       userId: 'u8',
       type: PostType.question,
@@ -769,8 +753,6 @@ class MockDatasource {
           'Bimaksiller ortognatik cerrahi geçiren hastamda 8 ay oldu, hala posterior açık kapanış var. '
           'Kondil relapsı mı, kas uyumsuzluğu mu, yoksa beklenen süreç mi? '
           'Bu aşamada ortodontist ne yapabilir? Cerrahi tekrar gerekir mi?',
-      branch: null,
-      imageUrls: [],
       tags: [tags[5]],
       likeCount: 45,
       commentCount: 9,
@@ -784,7 +766,7 @@ class MockDatasource {
       author: userById('u8'),
     ),
 
-    PostModel(
+    QuestionPostModel(
       id: 'p20',
       userId: 'u10',
       type: PostType.question,
@@ -794,8 +776,6 @@ class MockDatasource {
           'Yapay tükürük, pilokarpin, bilek uyarısı — hangisi daha etkili? '
           'Çürük profilaksisi için remineralizasyon protokolünüzü paylaşır mısınız? '
           'Flor varnisi frekansı ve ev bakımı önerileriniz neler?',
-      branch: null,
-      imageUrls: [],
       tags: [],
       likeCount: 49,
       commentCount: 10,

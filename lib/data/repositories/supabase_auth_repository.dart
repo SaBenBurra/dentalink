@@ -17,14 +17,16 @@ import 'otp_send_limiter.dart';
 ///   - 60 sn içinde en fazla 2 farklı hedefe gönderim yapılabilir.
 class SupabaseAuthRepository implements AuthRepository {
   SupabaseAuthRepository({
+    SupabaseClient? client,
     Duration otpCooldown = const Duration(seconds: 60),
     int maxDistinctDestinations = 2,
-  }) : _limiter = OtpSendLimiter(
+  })  : _client = client ?? Supabase.instance.client,
+        _limiter = OtpSendLimiter(
           cooldown: otpCooldown,
           maxDistinctDestinations: maxDistinctDestinations,
         );
 
-  final _client = Supabase.instance.client;
+  final SupabaseClient _client;
   final OtpSendLimiter _limiter;
 
   // ── Telefon numarası normalleştirme ────────────────────────────────────
@@ -164,7 +166,7 @@ class SupabaseAuthRepository implements AuthRepository {
         fullName: data['full_name'] as String,
         username: data['username'] as String,
         avatarUrl: data['avatar_url'] as String?,
-        title: _parseTitleFromDb(data['title'] as String?),
+        title: UserTitle.fromDbValue(data['title'] as String?),
         bio: data['bio'] as String?,
         university: data['university'] as String?,
         city: data['city'] as String?,
@@ -185,21 +187,4 @@ class SupabaseAuthRepository implements AuthRepository {
     }
   }
 
-  /// Veritabanındaki title string'ini UserTitle enum'una dönüştürür.
-  UserTitle _parseTitleFromDb(String? titleStr) {
-    if (titleStr == null) return UserTitle.disHekimi;
-    final map = {
-      'ogrenci': UserTitle.ogrenci,
-      'dis_hekimi_genel_pratisyen': UserTitle.disHekimi,
-      'endodontist': UserTitle.endodontist,
-      'ortodontist': UserTitle.ortodontist,
-      'periodontolog': UserTitle.periodontolog,
-      'protez_uzmani': UserTitle.protezUzmani,
-      'pedodontist': UserTitle.pedodontist,
-      'agiz_dis_cene_cerrahisi': UserTitle.agizDisCeneCerrahisi,
-      'agiz_dis_cene_radyoloji': UserTitle.agizDisCeneRadyoloji,
-      'restoratif_dis_tedavisi': UserTitle.restoratifDisTedavisi,
-    };
-    return map[titleStr] ?? UserTitle.disHekimi;
-  }
 }

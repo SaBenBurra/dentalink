@@ -7,9 +7,14 @@ import '../data/repositories/post_repository.dart';
 // Repository Provider
 // ─────────────────────────────────────────────────────────────────────────────
 
-final postRepositoryProvider = Provider<PostRepository>((ref) {
+final _basePostRepositoryProvider = Provider<PostRepository>((ref) {
   return MockPostRepository();
 });
+
+final feedRepositoryProvider = Provider<IFeedRepository>((ref) => ref.watch(_basePostRepositoryProvider));
+final bookmarkRepositoryProvider = Provider<IBookmarkRepository>((ref) => ref.watch(_basePostRepositoryProvider));
+final searchRepositoryProvider = Provider<ISearchRepository>((ref) => ref.watch(_basePostRepositoryProvider));
+final postActionRepositoryProvider = Provider<IPostActionRepository>((ref) => ref.watch(_basePostRepositoryProvider));
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Feed Notifier
@@ -30,7 +35,7 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
 
   Future<List<PostModel>> _fetchFeed() {
     return ref
-        .read(postRepositoryProvider)
+        .read(feedRepositoryProvider)
         .getFeed(chronological: _mode == FeedMode.chronological);
   }
 
@@ -53,7 +58,7 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
     if (idx == -1) return;
 
     final post = posts[idx];
-    final repo = ref.read(postRepositoryProvider);
+    final repo = ref.read(postActionRepositoryProvider);
 
     final updated = post.isLiked
         ? await repo.unlikePost(postId)
@@ -73,7 +78,7 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
     if (idx == -1) return;
 
     final post = posts[idx];
-    final repo = ref.read(postRepositoryProvider);
+    final repo = ref.read(bookmarkRepositoryProvider);
 
     final updated = post.isBookmarked
         ? await repo.unbookmarkPost(postId)

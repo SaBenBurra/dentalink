@@ -4,7 +4,6 @@ import 'package:dentlink/shared/widgets/post_action_row.dart';
 import 'package:dentlink/shared/widgets/post_badge.dart';
 import 'package:dentlink/shared/widgets/post_glass_container.dart';
 import 'package:dentlink/shared/widgets/post_header.dart';
-import 'package:dentlink/shared/widgets/post_media.dart';
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -90,25 +89,16 @@ class QuestionCard extends StatelessWidget {
             ),
           ),
 
-          // <-- 3. Görsel yerleşimi (varsa PostMedia çizilir, yoksa tasarım ayırıcı çizgi atar)
-          if (post.imageUrls.isNotEmpty)
-            PostMedia(
-              imageUrls: post.imageUrls,
-              isLiked: post.isLiked,
-              onLikeToggle: onLikeToggle,
-              onTap: onTap,
-            )
-          else
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.spacing16,
-              ),
-              child: Divider(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : Colors.white.withValues(alpha: 0.3),
-              ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.spacing16,
             ),
+            child: Divider(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.white.withValues(alpha: 0.3),
+            ),
+          ),
 
           // <-- 4. Aksiyon Butonları
           PostActionRow(

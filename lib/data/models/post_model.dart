@@ -2,40 +2,28 @@ import 'enums.dart';
 import 'tag_model.dart';
 import 'user_model.dart';
 
-/// Gönderi modeli — Supabase `posts` + `post_images` + `post_tags` tablosuyla eşleşir.
-class PostModel {
+/// Gönderi modeli (Base)
+sealed class PostModel {
   final String id;
   final String userId;
   final PostType type;
   final String title;
   final String content;
 
-  /// Sadece vaka gönderilerinde zorunlu.
-  final DentalBranch? branch;
-
-  /// post_images tablosundan çekilen URL listesi (order_index sırasına göre).
-  final List<String> imageUrls;
-
   final List<TagModel> tags;
 
-  // Denormalize sayaçlar (trigger ile güncellenen DB sütunlarından gelir)
+  // Denormalize sayaçlar
   final int likeCount;
   final int commentCount;
   final int bookmarkCount;
   final int viewCount;
 
-  // UI state — mevcut kullanıcı için
+  // UI state
   final bool isLiked;
   final bool isBookmarked;
 
-  /// Soru gönderilerinde: en iyi cevap seçildi mi?
-  final bool isSolved;
-
   final DateTime createdAt;
   final DateTime updatedAt;
-
-  /// Embed: gönderiyi oluşturan kullanıcı.
-  /// Feed listelerinde ayrı JOIN sorgusu yapmayı engeller.
   final UserModel author;
 
   const PostModel({
@@ -44,8 +32,6 @@ class PostModel {
     required this.type,
     required this.title,
     required this.content,
-    this.branch,
-    this.imageUrls = const [],
     this.tags = const [],
     this.likeCount = 0,
     this.commentCount = 0,
@@ -53,13 +39,64 @@ class PostModel {
     this.viewCount = 0,
     this.isLiked = false,
     this.isBookmarked = false,
-    this.isSolved = false,
     required this.createdAt,
     required this.updatedAt,
     required this.author,
   });
 
   PostModel copyWith({
+    String? id,
+    String? userId,
+    PostType? type,
+    String? title,
+    String? content,
+    List<TagModel>? tags,
+    int? likeCount,
+    int? commentCount,
+    int? bookmarkCount,
+    int? viewCount,
+    bool? isLiked,
+    bool? isBookmarked,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    UserModel? author,
+  });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is PostModel && other.id == id;
+
+  @override
+  int get hashCode => id.hashCode;
+}
+
+/// Vaka gönderisi
+class CasePostModel extends PostModel {
+  final DentalBranch? branch;
+  final List<String> imageUrls;
+
+  const CasePostModel({
+    required super.id,
+    required super.userId,
+    super.type = PostType.casePost,
+    required super.title,
+    required super.content,
+    this.branch,
+    this.imageUrls = const [],
+    super.tags,
+    super.likeCount,
+    super.commentCount,
+    super.bookmarkCount,
+    super.viewCount,
+    super.isLiked,
+    super.isBookmarked,
+    required super.createdAt,
+    required super.updatedAt,
+    required super.author,
+  });
+
+  @override
+  CasePostModel copyWith({
     String? id,
     String? userId,
     PostType? type,
@@ -74,12 +111,11 @@ class PostModel {
     int? viewCount,
     bool? isLiked,
     bool? isBookmarked,
-    bool? isSolved,
     DateTime? createdAt,
     DateTime? updatedAt,
     UserModel? author,
   }) {
-    return PostModel(
+    return CasePostModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
       type: type ?? this.type,
@@ -94,17 +130,72 @@ class PostModel {
       viewCount: viewCount ?? this.viewCount,
       isLiked: isLiked ?? this.isLiked,
       isBookmarked: isBookmarked ?? this.isBookmarked,
-      isSolved: isSolved ?? this.isSolved,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       author: author ?? this.author,
     );
   }
+}
+
+/// Soru gönderisi
+class QuestionPostModel extends PostModel {
+  final bool isSolved;
+
+  const QuestionPostModel({
+    required super.id,
+    required super.userId,
+    super.type = PostType.question,
+    required super.title,
+    required super.content,
+    this.isSolved = false,
+    super.tags,
+    super.likeCount,
+    super.commentCount,
+    super.bookmarkCount,
+    super.viewCount,
+    super.isLiked,
+    super.isBookmarked,
+    required super.createdAt,
+    required super.updatedAt,
+    required super.author,
+  });
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) || other is PostModel && other.id == id;
-
-  @override
-  int get hashCode => id.hashCode;
+  QuestionPostModel copyWith({
+    String? id,
+    String? userId,
+    PostType? type,
+    String? title,
+    String? content,
+    bool? isSolved,
+    List<TagModel>? tags,
+    int? likeCount,
+    int? commentCount,
+    int? bookmarkCount,
+    int? viewCount,
+    bool? isLiked,
+    bool? isBookmarked,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    UserModel? author,
+  }) {
+    return QuestionPostModel(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      type: type ?? this.type,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      isSolved: isSolved ?? this.isSolved,
+      tags: tags ?? this.tags,
+      likeCount: likeCount ?? this.likeCount,
+      commentCount: commentCount ?? this.commentCount,
+      bookmarkCount: bookmarkCount ?? this.bookmarkCount,
+      viewCount: viewCount ?? this.viewCount,
+      isLiked: isLiked ?? this.isLiked,
+      isBookmarked: isBookmarked ?? this.isBookmarked,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      author: author ?? this.author,
+    );
+  }
 }

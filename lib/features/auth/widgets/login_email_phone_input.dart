@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/app_dimensions.dart';
+import '../../../core/theme/glass_theme.dart';
 
 /// E-posta veya telefon numarası giriş alanı.
 ///
@@ -31,12 +32,8 @@ class LoginEmailPhoneInput extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final glassBgColor = isDark
-        ? Colors.black.withValues(alpha: 0.4)
-        : Colors.white.withValues(alpha: 0.6);
-    final glassBorderColor = isDark
-        ? Colors.white.withValues(alpha: 0.12)
-        : Colors.white.withValues(alpha: 0.8);
+    final glassBgColor = GlassTheme.getBgColor(context);
+    final glassBorderColor = GlassTheme.getBorderColor(context);
 
     final hasFocus = focusNode.hasFocus;
     final hasError = errorText != null;
