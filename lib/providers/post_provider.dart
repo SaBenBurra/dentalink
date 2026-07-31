@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/post_model.dart';
+import '../data/providers/repository_providers.dart';
 import 'feed_provider.dart';
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Tek Post Detay Provider
 // ─────────────────────────────────────────────────────────────────────────────
@@ -53,32 +53,3 @@ final userPostsProvider =
       return ref.read(feedRepositoryProvider).getPostsByUser(userId);
     });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Kaydedilenler Provider
-// ─────────────────────────────────────────────────────────────────────────────
-
-class BookmarksNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
-  @override
-  Future<List<PostModel>> build() async {
-    return ref.read(bookmarkRepositoryProvider).getBookmarkedPosts();
-  }
-
-  Future<void> removeBookmark(String postId) async {
-    final posts = state.valueOrNull;
-    if (posts == null) return;
-    await ref.read(bookmarkRepositoryProvider).unbookmarkPost(postId);
-    state = AsyncData(posts.where((p) => p.id != postId).toList());
-  }
-
-  Future<void> refresh() async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => ref.read(bookmarkRepositoryProvider).getBookmarkedPosts(),
-    );
-  }
-}
-
-final bookmarksProvider =
-    AsyncNotifierProvider.autoDispose<BookmarksNotifier, List<PostModel>>(() {
-      return BookmarksNotifier();
-    });

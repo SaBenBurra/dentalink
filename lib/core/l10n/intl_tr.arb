@@ -493,5 +493,17 @@
   "@validationPasswordMismatch": { "description": "Şifre uyuşmazlığı hata mesajı" },
 
   "validationPhoneInvalid": "Geçerli bir telefon numarası girin.",
-  "@validationPhoneInvalid": { "description": "Geçersiz telefon hata mesajı" }
+  "@validationPhoneInvalid": { "description": "Geçersiz telefon hata mesajı" },
+
+  "notificationLiked": "{actorName} gönderini beğendi.",
+  "@notificationLiked": { "placeholders": { "actorName": { "type": "String" } } },
+  "notificationCommented": "{actorName} gönderine yorum yaptı.",
+  "@notificationCommented": { "placeholders": { "actorName": { "type": "String" } } },
+  "notificationFollowed": "{actorName} seni takip etmeye başladı.",
+  "@notificationFollowed": { "placeholders": { "actorName": { "type": "String" } } },
+  "notificationMessaged": "{actorName} sana mesaj gönderdi.",
+  "@notificationMessaged": { "placeholders": { "actorName": { "type": "String" } } },
+  "notificationBestAnswer": "{actorName} cevabını en iyi cevap olarak seçti.",
+  "@notificationBestAnswer": { "placeholders": { "actorName": { "type": "String" } } },
+  "notificationBadge": "Yeni bir rozet kazandın!"
 }

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/enums.dart';
 import '../models/user_model.dart';
@@ -145,6 +146,9 @@ class SupabaseAuthRepository implements AuthRepository {
     await _client.auth.signOut();
   }
 
+  @override
+  bool get hasSession => _client.auth.currentSession != null;
+
   // ── Yardımcı: public.users'tan profil çek ─────────────────────────────
 
   /// Auth user ID ile public.users tablosundan profil çeker.
@@ -187,4 +191,73 @@ class SupabaseAuthRepository implements AuthRepository {
     }
   }
 
-}
+  @override
+  Future<UserModel> completeRegistration({
+    required String fullName,
+    required String username,
+    required UserTitle title,
+    String? bio,
+    String? university,
+    String? city,
+    String? workplace,
+    int? experienceYears,
+    File? avatarFile,
+  }) async {
+    final authUser = _client.auth.currentUser;
+    if (authUser == null) {
+      throw Exception('Oturum bulunamadı. Lütfen tekrar giriş yapın.');
+    }
+
+    String? avatarUrl;
+    if (avatarFile != null) {
+      avatarUrl = await _uploadAvatar(authUser.id, avatarFile);
+    }
+
+    final now = DateTime.now().toIso8601String();
+    final profileData = {
+      'id': authUser.id,
+      'email': authUser.email,
+      'phone': authUser.phone,
+      'full_name': fullName,
+      'username': username,
+      'avatar_url': avatarUrl,
+      'title': title.dbValue,
+      'bio': bio,
+      'university': university,
+      'city': city,
+      'experience_years': experienceYears,
+      'workplace': workplace,
+      'onboarding_completed': true,
+      'created_at': now,
+      'updated_at': now,
+    };
+    profileData.removeWhere((key, value) => value == null);
+    await _client.from('users').upsert(profileData);
+
+    return UserModel(
+      id: authUser.id,
+      email: authUser.email,
+      phone: authUser.phone,
+      fullName: fullName,
+      username: username,
+      avatarUrl: avatarUrl,
+      title: title,
+      bio: bio,
+      university: university,
+      city: city,
+      experienceYears: experienceYears,
+      workplace: workplace,
+      onboardingCompleted: true,
+      createdAt: DateTime.now(),
+    );
+  }
+
+  Future<String> _uploadAvatar(String userId, File file) async {
+    final fileExt = file.path.split('.').last.toLowerCase();
+    final fileName = '$userId/avatar_${DateTime.now().millisecondsSinceEpoch}.$fileExt';
+    await _client.storage.from('avatars').upload(
+      fileName, file,
+      fileOptions: const FileOptions(cacheControl: '3600', upsert: true),
+    );
+    return _client.storage.from('avatars').getPublicUrl(fileName);
+  }}

@@ -1,4 +1,6 @@
+import 'dart:io';
 import '../datasources/mock_datasource.dart';
+import '../models/enums.dart';
 import '../models/user_model.dart';
 import 'auth_repository.dart';
 import 'otp_send_limiter.dart';
@@ -66,5 +68,38 @@ class MockAuthRepository implements AuthRepository {
   Future<void> signOut() async {
     await Future.delayed(const Duration(milliseconds: 200));
     _currentUser = null;
+  }
+
+  @override
+  bool get hasSession => _currentUser != null;
+
+  @override
+  Future<UserModel> completeRegistration({
+    required String fullName,
+    required String username,
+    required UserTitle title,
+    String? bio,
+    String? university,
+    String? city,
+    String? workplace,
+    int? experienceYears,
+    File? avatarFile,
+  }) async {
+    await Future.delayed(_delay);
+    _currentUser = UserModel(
+      id: MockDatasource.currentUserId,
+      email: 'mock@example.com',
+      fullName: fullName,
+      username: username,
+      title: title,
+      bio: bio,
+      university: university,
+      city: city,
+      workplace: workplace,
+      experienceYears: experienceYears,
+      onboardingCompleted: true,
+      createdAt: DateTime.now(),
+    );
+    return _currentUser!;
   }
 }

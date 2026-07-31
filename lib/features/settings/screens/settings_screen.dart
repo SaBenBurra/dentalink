@@ -8,6 +8,7 @@ import '../../../providers/locale_provider.dart';
 import '../../../providers/theme_provider.dart';
 import '../widgets/settings_section.dart';
 import '../widgets/settings_tile.dart';
+import '../../../providers/auth_provider.dart';
 
 /// Ayarlar ekranı.
 ///
@@ -400,9 +401,9 @@ class SettingsScreen extends ConsumerWidget {
             horizontal: AppDimensions.spacing24,
           ),
           child: OutlinedButton.icon(
-            onPressed: () {
-              // Faz 3'te Supabase Auth signOut çağrılacak
-              context.go('/login');
+            onPressed: () async {
+              await ref.read(authProvider.notifier).signOut();
+              // Router will automatically redirect to /login due to auth state change.
             },
             icon: const Icon(Icons.logout_rounded, color: AppColors.error),
             label: Text(

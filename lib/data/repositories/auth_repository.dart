@@ -1,3 +1,5 @@
+import 'dart:io';
+import '../models/enums.dart';
 import '../models/user_model.dart';
 
 /// Kimlik doğrulama repository arayüzü.
@@ -23,4 +25,20 @@ abstract class AuthRepository {
 
   /// Oturumu kapatır.
   Future<void> signOut();
+
+  /// Oturumun açık olup olmadığını kontrol eder (profil olmasa bile).
+  bool get hasSession;
+
+  /// Kayıt bilgilerini veritabanına yazar ve profili oluşturur.
+  Future<UserModel> completeRegistration({
+    required String fullName,
+    required String username,
+    required UserTitle title,
+    String? bio,
+    String? university,
+    String? city,
+    String? workplace,
+    int? experienceYears,
+    File? avatarFile,
+  });
 }

@@ -496,4 +496,32 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get validationPhoneInvalid => 'Geçerli bir telefon numarası girin.';
+
+  @override
+  String notificationLiked(String actorName) {
+    return '$actorName gönderini beğendi.';
+  }
+
+  @override
+  String notificationCommented(String actorName) {
+    return '$actorName gönderine yorum yaptı.';
+  }
+
+  @override
+  String notificationFollowed(String actorName) {
+    return '$actorName seni takip etmeye başladı.';
+  }
+
+  @override
+  String notificationMessaged(String actorName) {
+    return '$actorName sana mesaj gönderdi.';
+  }
+
+  @override
+  String notificationBestAnswer(String actorName) {
+    return '$actorName cevabını en iyi cevap olarak seçti.';
+  }
+
+  @override
+  String get notificationBadge => 'Yeni bir rozet kazandın!';
 }

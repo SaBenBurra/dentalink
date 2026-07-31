@@ -19,4 +19,10 @@ extension PostTypeL10n on PostType {
       PostType.question => l10n.questionPost,
     };
   }
+
+  /// Gönderi türüne ait emoji.
+  String get emoji => switch (this) {
+    PostType.casePost => '📸',
+    PostType.question => '❓',
+  };
 }

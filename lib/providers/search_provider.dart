@@ -2,8 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/enums.dart';
 import '../data/models/post_model.dart';
 import '../data/models/user_model.dart';
-import 'feed_provider.dart';
-import 'user_provider.dart';
+import '../data/providers/repository_providers.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Search State

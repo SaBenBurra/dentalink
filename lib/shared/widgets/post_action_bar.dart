@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_dimensions.dart';
+import '../../data/models/post_model.dart';
 import 'like_button.dart';
 import 'bookmark_button.dart';
 import 'stat_count.dart';
@@ -24,6 +25,20 @@ import 'stat_count.dart';
 /// )
 /// ```
 class PostActionBar extends StatelessWidget {
+  /// [PostModel]'den kolayca oluşturmak için factory constructor.
+  PostActionBar.fromPost({
+    super.key,
+    required PostModel post,
+    this.onLikeToggle,
+    this.onBookmarkToggle,
+    this.onCommentTap,
+    this.compact = false,
+  }) : likeCount = post.likeCount,
+       commentCount = post.commentCount,
+       isLiked = post.isLiked,
+       isBookmarked = post.isBookmarked,
+       bookmarkCount = post.bookmarkCount;
+
   /// Yeni bir [PostActionBar] oluşturur.
   const PostActionBar({
     super.key,

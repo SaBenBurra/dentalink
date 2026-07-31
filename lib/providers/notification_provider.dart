@@ -1,15 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/notification_model.dart';
-import '../data/repositories/mock_notification_repository.dart';
-import '../data/repositories/notification_repository.dart';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Repository Provider
-// ─────────────────────────────────────────────────────────────────────────────
-
-final notificationRepositoryProvider = Provider<NotificationRepository>((ref) {
-  return MockNotificationRepository();
-});
+import '../data/providers/repository_providers.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Notifications Notifier

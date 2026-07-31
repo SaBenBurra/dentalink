@@ -39,7 +39,9 @@ class LoginState {
       step: step ?? this.step,
       isLoading: isLoading ?? this.isLoading,
       isSuccess: isSuccess ?? this.isSuccess,
-      successMessage: successMessage != null ? successMessage() : this.successMessage,
+      successMessage: successMessage != null
+          ? successMessage()
+          : this.successMessage,
       errorText: errorText != null ? errorText() : this.errorText,
       resendCountdown: resendCountdown ?? this.resendCountdown,
       canResend: canResend ?? this.canResend,
@@ -80,14 +82,12 @@ class LoginController extends AutoDisposeNotifier<LoginState> {
       } else {
         state = state.copyWith(
           isLoading: false,
-          errorText: () => 'Çok sık deneme yaptınız. ${e.remainingSeconds} saniye sonra tekrar deneyin.',
+          errorText: () =>
+              'Çok sık deneme yaptınız. ${e.remainingSeconds} saniye sonra tekrar deneyin.',
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        errorText: () => 'Bir hata oluştu. Lütfen tekrar deneyin.',
-      );
+      state = state.copyWith(isLoading: false, errorText: () => e.toString());
     }
   }
 
@@ -106,10 +106,16 @@ class LoginController extends AutoDisposeNotifier<LoginState> {
     if (state.isLoading || state.isSuccess) return false;
 
     // authRedirectHoldProvider is handled by the UI layer to block routing if needed
-    state = state.copyWith(isLoading: true, errorText: () => null, shouldShake: false);
+    state = state.copyWith(
+      isLoading: true,
+      errorText: () => null,
+      shouldShake: false,
+    );
 
     try {
-      final user = await ref.read(authProvider.notifier).verifyOtp(inputVal, otp);
+      final user = await ref
+          .read(authProvider.notifier)
+          .verifyOtp(inputVal, otp);
       state = state.copyWith(
         isLoading: false,
         isSuccess: true,
@@ -154,12 +160,9 @@ class LoginController extends AutoDisposeNotifier<LoginState> {
   void _startResendTimer({int fromSeconds = _otpCooldownSeconds}) {
     final start = fromSeconds.clamp(0, _otpCooldownSeconds);
     _resendTimer?.cancel();
-    
-    state = state.copyWith(
-      resendCountdown: start,
-      canResend: start == 0,
-    );
-    
+
+    state = state.copyWith(resendCountdown: start, canResend: start == 0);
+
     if (start == 0) return;
 
     _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -184,6 +187,7 @@ class LoginController extends AutoDisposeNotifier<LoginState> {
   }
 }
 
-final loginControllerProvider = AutoDisposeNotifierProvider<LoginController, LoginState>(() {
-  return LoginController();
-});
+final loginControllerProvider =
+    AutoDisposeNotifierProvider<LoginController, LoginState>(() {
+      return LoginController();
+    });

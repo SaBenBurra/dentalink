@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/app_dimensions.dart';
 import '../../data/models/enums.dart';
+import '../extensions/dental_branch_ui.dart';
 
 /// Diş hekimliği branşlarını görüntülemek için kullanılan chip widget'ı.
 ///
@@ -49,28 +50,10 @@ class BranchChip extends StatelessWidget {
   /// `true` olduğunda metin öncesinde küçük renkli bir nokta gösterir.
   final bool showIcon;
 
-  /// Her branşa özgü renk eşleştirmesi.
-  static const Map<DentalBranch, Color> branchColors = {
-    DentalBranch.pedodonti: Color(0xFFE91E63),
-    DentalBranch.endodonti: Color(0xFF2196F3),
-    DentalBranch.ortodonti: Color(0xFF9C27B0),
-    DentalBranch.periodontoloji: Color(0xFF4CAF50),
-    DentalBranch.protetikDisTedavisi: Color(0xFFFF9800),
-    DentalBranch.agizDisCeneCerrahisi: Color(0xFFF44336),
-    DentalBranch.agizDisCeneRadyolojisi: Color(0xFF00BCD4),
-    DentalBranch.oralDiagnoz: Color(0xFF795548),
-    DentalBranch.restoratifDisTedavisi: Color(0xFF607D8B),
-  };
-
-  /// Verilen [branch] için tanımlı rengi döndürür.
-  static Color colorFor(DentalBranch branch) {
-    return branchColors[branch] ?? Colors.grey;
-  }
-
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final branchColor = colorFor(branch);
+    final branchColor = branch.color;
 
     final backgroundColor = isSelected
         ? branchColor

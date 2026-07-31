@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_dimensions.dart';
+import '../../core/utils/number_formatter.dart';
 
 /// İkon ve sayaç görüntüleyen kompakt istatistik widget'ı.
 ///
@@ -70,27 +71,7 @@ class StatCount extends StatelessWidget {
   /// Aktif durumdaki renk. Sağlanmazsa tema'nın primary rengi kullanılır.
   final Color? activeColor;
 
-  /// Büyük sayıları kısaltılmış formata dönüştürür.
-  ///
-  /// - 0–999: olduğu gibi gösterilir
-  /// - 1.000–999.999: "1.2K" formatında
-  /// - 1.000.000+: "1.2M" formatında
-  static String formatCount(int count) {
-    if (count >= 1000000) {
-      final value = count / 1000000;
-      // Tam sayı ise ondalık gösterme
-      return value == value.roundToDouble()
-          ? '${value.round()}M'
-          : '${value.toStringAsFixed(1)}M';
-    }
-    if (count >= 1000) {
-      final value = count / 1000;
-      return value == value.roundToDouble()
-          ? '${value.round()}K'
-          : '${value.toStringAsFixed(1)}K';
-    }
-    return count.toString();
-  }
+
 
   @override
   Widget build(BuildContext context) {

@@ -1,13 +1,6 @@
 /// DentLink — Tüm domain enum tanımları.
 /// Faz 3'te Supabase'in PostgreSQL enum'larıyla eşleştirilir.
 library;
-
-import 'package:flutter/material.dart';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Kullanıcı Unvanları
-// ─────────────────────────────────────────────────────────────────────────────
-
 enum UserTitle {
   ogrenci,
   disHekimi,
@@ -21,94 +14,48 @@ enum UserTitle {
   restoratifDisTedavisi,
   oralDiagnoz;
 
-  String get displayName {
-    switch (this) {
-      case UserTitle.ogrenci:
-        return 'Öğrenci';
-      case UserTitle.disHekimi:
-        return 'Genel Diş Hekimi';
-      case UserTitle.endodontist:
-        return 'Endodontist';
-      case UserTitle.ortodontist:
-        return 'Ortodontist';
-      case UserTitle.periodontolog:
-        return 'Periodontolog';
-      case UserTitle.protezUzmani:
-        return 'Protez Uzmanı';
-      case UserTitle.pedodontist:
-        return 'Pedodontist';
-      case UserTitle.agizDisCeneCerrahisi:
-        return 'Ağız, Diş ve Çene Cerrahı';
-      case UserTitle.agizDisCeneRadyoloji:
-        return 'Ağız, Diş ve Çene Radyoloğu';
-      case UserTitle.restoratifDisTedavisi:
-        return 'Restoratif Diş Tedavisi Uzmanı';
-      case UserTitle.oralDiagnoz:
-        return 'Oral Diagnoz Uzmanı';
-    }
-  }
+  String get displayName => switch (this) {
+    UserTitle.ogrenci => 'Öğrenci',
+    UserTitle.disHekimi => 'Genel Diş Hekimi',
+    UserTitle.endodontist => 'Endodontist',
+    UserTitle.ortodontist => 'Ortodontist',
+    UserTitle.periodontolog => 'Periodontolog',
+    UserTitle.protezUzmani => 'Protez Uzmanı',
+    UserTitle.pedodontist => 'Pedodontist',
+    UserTitle.agizDisCeneCerrahisi => 'Ağız, Diş ve Çene Cerrahı',
+    UserTitle.agizDisCeneRadyoloji => 'Ağız, Diş ve Çene Radyoloğu',
+    UserTitle.restoratifDisTedavisi => 'Restoratif Diş Tedavisi Uzmanı',
+    UserTitle.oralDiagnoz => 'Oral Diagnoz Uzmanı',
+  };
 
-  IconData get titleIcon {
-    switch (this) {
-      case UserTitle.ogrenci:
-        return Icons.school_outlined;
-      case UserTitle.disHekimi:
-        return Icons.medical_services_outlined;
-      case UserTitle.endodontist:
-        return Icons.biotech_outlined;
-      case UserTitle.ortodontist:
-        return Icons.align_horizontal_center_outlined;
-      case UserTitle.periodontolog:
-        return Icons.layers_outlined;
-      case UserTitle.protezUzmani:
-        return Icons.grid_view_outlined;
-      case UserTitle.pedodontist:
-        return Icons.child_care_outlined;
-      case UserTitle.agizDisCeneCerrahisi:
-        return Icons.healing_outlined;
-      case UserTitle.agizDisCeneRadyoloji:
-        return Icons.settings_system_daydream_outlined;
-      case UserTitle.oralDiagnoz:
-        return Icons.medical_information_outlined;
-      case UserTitle.restoratifDisTedavisi:
-        return Icons.auto_awesome_outlined;
-    }
-  }
-
-  String get dbValue {
-    switch (this) {
-      case UserTitle.ogrenci:
-        return 'ogrenci';
-      case UserTitle.disHekimi:
-        return 'dis_hekimi_genel_pratisyen';
-      case UserTitle.endodontist:
-        return 'endodontist';
-      case UserTitle.ortodontist:
-        return 'ortodontist';
-      case UserTitle.periodontolog:
-        return 'periodontolog';
-      case UserTitle.protezUzmani:
-        return 'protez_uzmani';
-      case UserTitle.pedodontist:
-        return 'pedodontist';
-      case UserTitle.agizDisCeneCerrahisi:
-        return 'agiz_dis_cene_cerrahi';
-      case UserTitle.agizDisCeneRadyoloji:
-        return 'agiz_dis_cene_radyologu';
-      case UserTitle.restoratifDisTedavisi:
-        return 'restoratif_dis_tedavisi_uzmani';
-      case UserTitle.oralDiagnoz:
-        return 'oral_diagnoz_uzmani';
-    }
-  }
+  String get dbValue => switch (this) {
+    UserTitle.ogrenci => 'ogrenci',
+    UserTitle.disHekimi => 'dis_hekimi',
+    UserTitle.endodontist => 'endodontist',
+    UserTitle.ortodontist => 'ortodontist',
+    UserTitle.periodontolog => 'periodontolog',
+    UserTitle.protezUzmani => 'protez_uzmani',
+    UserTitle.pedodontist => 'pedodontist',
+    UserTitle.agizDisCeneCerrahisi => 'agiz_dis_cene_cerrahi',
+    UserTitle.agizDisCeneRadyoloji => 'agiz_dis_cene_radyologu',
+    UserTitle.restoratifDisTedavisi => 'restoratif_dis_tedavisi_uzmani',
+    UserTitle.oralDiagnoz => 'oral_diagnoz_uzmani',
+  };
 
   static UserTitle fromDbValue(String? value) {
     if (value == null) return UserTitle.disHekimi;
-    try {
-      return UserTitle.values.firstWhere((e) => e.dbValue == value);
-    } catch (_) {
-      return UserTitle.disHekimi;
+    for (final e in UserTitle.values) {
+      if (e.dbValue == value) return e;
     }
+    throw ArgumentError('Unknown UserTitle dbValue: $value');
+  }
+
+  static UserTitle? tryFromDbValue(String? value) {
+    if (value == null) return null;
+    for (final e in UserTitle.values) {
+      if (e.dbValue == value) return e;
+    }
+    return null;
   }
 }
 
@@ -127,55 +74,44 @@ enum DentalBranch {
   oralDiagnoz,
   restoratifDisTedavisi;
 
-  String get displayName {
-    switch (this) {
-      case DentalBranch.pedodonti:
-        return 'Pedodonti';
-      case DentalBranch.endodonti:
-        return 'Endodonti';
-      case DentalBranch.ortodonti:
-        return 'Ortodonti';
-      case DentalBranch.periodontoloji:
-        return 'Periodontoloji';
-      case DentalBranch.protetikDisTedavisi:
-        return 'Protetik Diş Tedavisi';
-      case DentalBranch.agizDisCeneCerrahisi:
-        return 'Ağız, Diş ve Çene Cerrahisi';
-      case DentalBranch.agizDisCeneRadyolojisi:
-        return 'Ağız, Diş ve Çene Radyolojisi';
-      case DentalBranch.oralDiagnoz:
-        return 'Oral Diagnoz';
-      case DentalBranch.restoratifDisTedavisi:
-        return 'Restoratif Diş Tedavisi';
-    }
-  }
+  String get displayName => switch (this) {
+    DentalBranch.pedodonti => 'Pedodonti',
+    DentalBranch.endodonti => 'Endodonti',
+    DentalBranch.ortodonti => 'Ortodonti',
+    DentalBranch.periodontoloji => 'Periodontoloji',
+    DentalBranch.protetikDisTedavisi => 'Protetik Diş Tedavisi',
+    DentalBranch.agizDisCeneCerrahisi => 'Ağız, Diş ve Çene Cerrahisi',
+    DentalBranch.agizDisCeneRadyolojisi => 'Ağız, Diş ve Çene Radyolojisi',
+    DentalBranch.oralDiagnoz => 'Oral Diagnoz',
+    DentalBranch.restoratifDisTedavisi => 'Restoratif Diş Tedavisi',
+  };
 
   /// Supabase'deki PostgreSQL ENUM değeriyle eşleşir.
-  String get dbValue {
-    switch (this) {
-      case DentalBranch.pedodonti:
-        return 'pedodontist';
-      case DentalBranch.endodonti:
-        return 'endodontist';
-      case DentalBranch.ortodonti:
-        return 'ortodontist';
-      case DentalBranch.periodontoloji:
-        return 'periodontolog';
-      case DentalBranch.protetikDisTedavisi:
-        return 'protez_uzmani';
-      case DentalBranch.agizDisCeneCerrahisi:
-        return 'agiz_dis_cene_cerrahi';
-      case DentalBranch.agizDisCeneRadyolojisi:
-        return 'agiz_dis_cene_radyologu';
-      case DentalBranch.oralDiagnoz:
-        return 'oral_diagnoz_uzmani';
-      case DentalBranch.restoratifDisTedavisi:
-        return 'restoratif_dis_tedavisi_uzmani';
-    }
-  }
+  String get dbValue => switch (this) {
+    DentalBranch.pedodonti => 'pedodontist',
+    DentalBranch.endodonti => 'endodontist',
+    DentalBranch.ortodonti => 'ortodontist',
+    DentalBranch.periodontoloji => 'periodontolog',
+    DentalBranch.protetikDisTedavisi => 'protez_uzmani',
+    DentalBranch.agizDisCeneCerrahisi => 'agiz_dis_cene_cerrahi',
+    DentalBranch.agizDisCeneRadyolojisi => 'agiz_dis_cene_radyologu',
+    DentalBranch.oralDiagnoz => 'oral_diagnoz_uzmani',
+    DentalBranch.restoratifDisTedavisi => 'restoratif_dis_tedavisi_uzmani',
+  };
 
   static DentalBranch fromDbValue(String value) {
-    return DentalBranch.values.firstWhere((e) => e.dbValue == value);
+    for (final e in DentalBranch.values) {
+      if (e.dbValue == value) return e;
+    }
+    throw ArgumentError('Unknown DentalBranch dbValue: $value');
+  }
+
+  static DentalBranch? tryFromDbValue(String? value) {
+    if (value == null) return null;
+    for (final e in DentalBranch.values) {
+      if (e.dbValue == value) return e;
+    }
+    return null;
   }
 }
 
@@ -194,19 +130,19 @@ enum PostType {
     };
   }
 
-  String get emoji {
-    return switch (this) {
-      PostType.casePost => '📸',
-      PostType.question => '❓',
-    };
+  static PostType fromDbValue(String value) {
+    for (final e in PostType.values) {
+      if (e.dbValue == value) return e;
+    }
+    throw ArgumentError('Unknown PostType dbValue: $value');
   }
 
-  static PostType fromDbValue(String value) {
-    return switch (value) {
-      'case' => PostType.casePost,
-      'question' => PostType.question,
-      String() => throw UnimplementedError(),
-    };
+  static PostType? tryFromDbValue(String? value) {
+    if (value == null) return null;
+    for (final e in PostType.values) {
+      if (e.dbValue == value) return e;
+    }
+    return null;
   }
 
   static const List<PostType> profileTabs = [
@@ -227,24 +163,27 @@ enum NotificationType {
   bestAnswer,
   badge;
 
-  String get dbValue {
-    switch (this) {
-      case NotificationType.like:
-        return 'like';
-      case NotificationType.comment:
-        return 'comment';
-      case NotificationType.follow:
-        return 'follow';
-      case NotificationType.message:
-        return 'message';
-      case NotificationType.bestAnswer:
-        return 'best_answer';
-      case NotificationType.badge:
-        return 'badge';
-    }
-  }
+  String get dbValue => switch (this) {
+    NotificationType.like => 'like',
+    NotificationType.comment => 'comment',
+    NotificationType.follow => 'follow',
+    NotificationType.message => 'message',
+    NotificationType.bestAnswer => 'best_answer',
+    NotificationType.badge => 'badge',
+  };
 
   static NotificationType fromDbValue(String value) {
-    return NotificationType.values.firstWhere((e) => e.dbValue == value);
+    for (final e in NotificationType.values) {
+      if (e.dbValue == value) return e;
+    }
+    throw ArgumentError('Unknown NotificationType dbValue: $value');
+  }
+
+  static NotificationType? tryFromDbValue(String? value) {
+    if (value == null) return null;
+    for (final e in NotificationType.values) {
+      if (e.dbValue == value) return e;
+    }
+    return null;
   }
 }

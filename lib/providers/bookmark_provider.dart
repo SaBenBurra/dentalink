@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/post_model.dart';
-import '../data/repositories/post_repository.dart';
-import 'feed_provider.dart';
+import '../data/providers/repository_providers.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Bookmark Provider

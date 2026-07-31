@@ -1,20 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/post_model.dart';
-import '../data/repositories/mock_post_repository.dart';
-import '../data/repositories/post_repository.dart';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Repository Provider
-// ─────────────────────────────────────────────────────────────────────────────
-
-final _basePostRepositoryProvider = Provider<PostRepository>((ref) {
-  return MockPostRepository();
-});
-
-final feedRepositoryProvider = Provider<IFeedRepository>((ref) => ref.watch(_basePostRepositoryProvider));
-final bookmarkRepositoryProvider = Provider<IBookmarkRepository>((ref) => ref.watch(_basePostRepositoryProvider));
-final searchRepositoryProvider = Provider<ISearchRepository>((ref) => ref.watch(_basePostRepositoryProvider));
-final postActionRepositoryProvider = Provider<IPostActionRepository>((ref) => ref.watch(_basePostRepositoryProvider));
+import '../data/providers/repository_providers.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Feed Notifier

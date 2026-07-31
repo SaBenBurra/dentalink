@@ -1,16 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/badge_model.dart';
 import '../data/models/user_model.dart';
-import '../data/repositories/mock_user_repository.dart';
-import '../data/repositories/user_repository.dart';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Repository Provider
-// ─────────────────────────────────────────────────────────────────────────────
-
-final userRepositoryProvider = Provider<UserRepository>((ref) {
-  return MockUserRepository();
-});
+import '../data/providers/repository_providers.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // User Profile Provider

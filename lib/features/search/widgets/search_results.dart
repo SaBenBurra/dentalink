@@ -3,6 +3,7 @@ import 'package:dentlink/shared/widgets/question_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/models/enums.dart';
+import '../../../data/models/post_model.dart';
 import '../../../providers/search_provider.dart';
 import '../../../shared/widgets/user_tile.dart';
 import '../../../shared/widgets/loading_indicator.dart';
@@ -39,13 +40,13 @@ class PostSearchResults extends ConsumerWidget {
             final post = posts[index];
             if (post.type == PostType.casePost) {
               return CaseCard(
-                post: post,
+                post: post as CasePostModel,
                 onLikeToggle: () {},
                 onBookmarkToggle: () {},
               );
             } else {
               return QuestionCard(
-                post: post,
+                post: post as QuestionPostModel,
                 onLikeToggle: () {},
                 onBookmarkToggle: () {},
               );

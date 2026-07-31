@@ -5,6 +5,7 @@ import '../../../data/models/enums.dart';
 import '../../../data/models/notification_model.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
+import '../../../shared/extensions/notification_type_l10n.dart';
 import '../../../shared/widgets/relative_time_text.dart';
 
 class NotificationTile extends StatelessWidget {
@@ -75,21 +76,13 @@ class NotificationTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  RichText(
-                    text: TextSpan(
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: isDark
-                            ? AppColors.darkTextPrimary
-                            : AppColors.lightTextPrimary,
-                        height: 1.4,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: notification.actor.fullName,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        TextSpan(text: _getActionText(notification.type)),
-                      ],
+                  Text(
+                    notification.type.getBodyText(context, notification.actor.fullName),
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.lightTextPrimary,
+                      height: 1.4,
                     ),
                   ),
                   const SizedBox(height: AppDimensions.spacing4),
@@ -130,22 +123,6 @@ class NotificationTile extends StatelessWidget {
     );
   }
 
-  String _getActionText(NotificationType type) {
-    switch (type) {
-      case NotificationType.like:
-        return ' vakanızı beğendi.';
-      case NotificationType.comment:
-        return ' vakanıza bir yorum bıraktı.';
-      case NotificationType.follow:
-        return ' sizi takip etmeye başladı.';
-      case NotificationType.message:
-        return ' size bir mesaj gönderdi.';
-      case NotificationType.bestAnswer:
-        return ' cevabınızı en iyi cevap olarak seçti!';
-      case NotificationType.badge:
-        return ' sayesinde yeni bir rozet kazandınız!';
-    }
-  }
 
   IconData _getIconForType(NotificationType type) {
     switch (type) {

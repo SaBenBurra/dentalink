@@ -497,4 +497,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get validationPhoneInvalid => 'Please enter a valid phone number.';
+
+  @override
+  String notificationLiked(String actorName) {
+    return '$actorName liked your post.';
+  }
+
+  @override
+  String notificationCommented(String actorName) {
+    return '$actorName commented on your post.';
+  }
+
+  @override
+  String notificationFollowed(String actorName) {
+    return '$actorName started following you.';
+  }
+
+  @override
+  String notificationMessaged(String actorName) {
+    return '$actorName sent you a message.';
+  }
+
+  @override
+  String notificationBestAnswer(String actorName) {
+    return '$actorName selected your answer as the best.';
+  }
+
+  @override
+  String get notificationBadge => 'You earned a new badge!';
 }

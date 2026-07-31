@@ -1,28 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/image_picker_grid.dart';
 import '../widgets/tag_input.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
+import '../providers/create_question_controller.dart';
 
-class CreateQuestionScreen extends StatefulWidget {
+class CreateQuestionScreen extends ConsumerStatefulWidget {
   const CreateQuestionScreen({super.key});
 
   @override
-  State<CreateQuestionScreen> createState() => _CreateQuestionScreenState();
+  ConsumerState<CreateQuestionScreen> createState() => _CreateQuestionScreenState();
 }
 
-class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
+class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
+  final _contentController = TextEditingController();
+  List<String> _images = [];
+  List<String> _tags = [];
 
-  void _submit() {
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _contentController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
-      // Soru için görsel veya branş zorunlu değil.
-
-      // TODO: Faz 3'te backend'e gönderilecek
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sorunuz başarıyla paylaşıldı (Mock)')),
+      await ref.read(createQuestionProvider.notifier).submit(
+        title: _titleController.text,
+        content: _contentController.text,
+        imageUrls: _images,
+        tags: _tags,
       );
-      context.pop();
+
+      if (!mounted) return;
+
+      final state = ref.read(createQuestionProvider);
+      if (state.hasError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Hata: ${state.error}')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sorunuz başarıyla paylaşıldı (Mock)')),
+        );
+        context.pop();
+      }
     }
   }
 
@@ -37,15 +63,26 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
         ),
         title: const Text('Soru Sor'),
         actions: [
-          TextButton(
-            onPressed: _submit,
-            child: Text(
-              'Paylaş',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: colorScheme.primary,
-              ),
-            ),
+          Consumer(
+            builder: (context, ref, child) {
+              final isLoading = ref.watch(createQuestionProvider).isLoading;
+              return TextButton(
+                onPressed: isLoading ? null : _submit,
+                child: isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(
+                        'Paylaş',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.primary,
+                        ),
+                      ),
+              );
+            },
           ),
         ],
       ),
@@ -56,6 +93,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
           children: [
             // Başlık
             TextFormField(
+              controller: _titleController,
               decoration: const InputDecoration(
                 labelText: 'Soru Başlığı',
                 hintText: 'Örn: Zirkonyum kaplama sonrası hassasiyet',
@@ -74,6 +112,7 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
 
             // İçerik
             TextFormField(
+              controller: _contentController,
               maxLines: 8,
               decoration: const InputDecoration(
                 labelText: 'Sorunun Detayları',
@@ -96,7 +135,9 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
             // Etiketler
             TagInput(
               onTagsChanged: (tags) {
-                setState(() {});
+                setState(() {
+                  _tags = tags;
+                });
               },
             ),
             const SizedBox(height: AppDimensions.spacing24),
@@ -105,7 +146,9 @@ class _CreateQuestionScreenState extends State<CreateQuestionScreen> {
             ImagePickerGrid(
               maxImages: 4, // Soru için daha az görsel yeterli olabilir
               onImagesChanged: (images) {
-                setState(() {});
+                setState(() {
+                  _images = images;
+                });
               },
             ),
             const SizedBox(height: AppDimensions.spacing32),

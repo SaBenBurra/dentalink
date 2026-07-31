@@ -48,24 +48,6 @@ class NotificationModel {
     );
   }
 
-  /// Bildirim için okunabilir metin üretir.
-  String get bodyText {
-    switch (type) {
-      case NotificationType.like:
-        return '${actor.fullName} gönderini beğendi.';
-      case NotificationType.comment:
-        return '${actor.fullName} gönderine yorum yaptı.';
-      case NotificationType.follow:
-        return '${actor.fullName} seni takip etmeye başladı.';
-      case NotificationType.message:
-        return '${actor.fullName} sana mesaj gönderdi.';
-      case NotificationType.bestAnswer:
-        return '${actor.fullName} cevabını en iyi cevap olarak seçti.';
-      case NotificationType.badge:
-        return 'Yeni bir rozet kazandın!';
-    }
-  }
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) || other is NotificationModel && other.id == id;

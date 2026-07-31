@@ -1,6 +1,6 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+
 import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/shared/widgets/post_action_row.dart';
+import 'package:dentlink/shared/widgets/post_action_bar.dart';
 import 'package:dentlink/shared/widgets/post_badge.dart';
 import 'package:dentlink/shared/widgets/post_glass_container.dart';
 import 'package:dentlink/shared/widgets/post_header.dart';
@@ -20,7 +20,7 @@ class QuestionCard extends StatelessWidget {
     this.onTap,
   });
 
-  final PostModel post;
+  final QuestionPostModel post;
   final VoidCallback onLikeToggle;
   final VoidCallback onBookmarkToggle;
   final VoidCallback? onCommentTap;
@@ -30,7 +30,7 @@ class QuestionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textTheme = Theme.of(context).textTheme;
-    AppLocalizations.of(context);
+
 
     return PostGlassContainer(
       onTap: onTap,
@@ -101,11 +101,17 @@ class QuestionCard extends StatelessWidget {
           ),
 
           // <-- 4. Aksiyon Butonları
-          PostActionRow(
-            post: post,
-            onLikeToggle: onLikeToggle,
-            onBookmarkToggle: onBookmarkToggle,
-            onCommentTap: onCommentTap,
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.spacing16,
+              vertical: AppDimensions.spacing8,
+            ),
+            child: PostActionBar.fromPost(
+              post: post,
+              onLikeToggle: onLikeToggle,
+              onBookmarkToggle: onBookmarkToggle,
+              onCommentTap: onCommentTap,
+            ),
           ),
         ],
       ),

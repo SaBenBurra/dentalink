@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../data/providers/repository_providers.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/feed/screens/feed_screen.dart';
@@ -56,8 +56,8 @@ final routerProvider = Provider<GoRouter>((ref) {
 
     // ── Auth Redirect ─────────────────────────────────────────────────
     redirect: (context, state) {
-      final session = Supabase.instance.client.auth.currentSession;
-      final hasSession = session != null;
+      final authRepo = ref.read(authRepositoryProvider);
+      final hasSession = authRepo.hasSession;
       final location = state.matchedLocation;
       final isLogin = location == '/login';
       final isRegister = location == '/register';

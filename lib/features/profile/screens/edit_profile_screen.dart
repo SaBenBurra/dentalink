@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../data/models/enums.dart';
 import '../../../providers/auth_provider.dart';
+import '../providers/edit_profile_controller.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 
@@ -52,13 +53,31 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     super.dispose();
   }
 
-  void _saveProfile() {
+  Future<void> _saveProfile() async {
     if (_formKey.currentState!.validate()) {
-      // Mock save action
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Profil güncellendi')));
-      context.pop();
+      await ref.read(editProfileProvider.notifier).saveProfile(
+            fullName: _nameController.text,
+            title: _selectedTitle!,
+            bio: _bioController.text,
+            university: _universityController.text,
+            city: _cityController.text,
+            experience: _experienceController.text,
+            workplace: _workplaceController.text,
+          );
+
+      if (!mounted) return;
+
+      final state = ref.read(editProfileProvider);
+      if (state.hasError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Hata: ${state.error}')),
+        );
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Profil güncellendi')));
+        context.pop();
+      }
     }
   }
 
@@ -79,7 +98,21 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       appBar: AppBar(
         title: const Text('Profili Düzenle'),
         actions: [
-          TextButton(onPressed: _saveProfile, child: const Text('Kaydet')),
+          Consumer(
+            builder: (context, ref, child) {
+              final isLoading = ref.watch(editProfileProvider).isLoading;
+              return TextButton(
+                onPressed: isLoading ? null : _saveProfile,
+                child: isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Kaydet'),
+              );
+            },
+          ),
         ],
       ),
       body: Form(

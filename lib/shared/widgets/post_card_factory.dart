@@ -17,14 +17,14 @@ class PostCardFactory {
   }) {
     return switch (post.type) {
       PostType.casePost => CaseCard(
-        post: post,
+        post: post as CasePostModel,
         onLikeToggle: onLikeToggle,
         onBookmarkToggle: onBookmarkToggle,
         onCommentTap: onCommentTap, // <-- Parametreden gelen değer
         onTap: onTap, // <-- Parametreden gelen değer
       ),
       PostType.question => QuestionCard(
-        post: post,
+        post: post as QuestionPostModel,
         onLikeToggle: onLikeToggle,
         onBookmarkToggle: onBookmarkToggle,
         onCommentTap: onCommentTap, // <-- Parametreden gelen değer

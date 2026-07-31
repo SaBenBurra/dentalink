@@ -1,15 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/comment_model.dart';
-import '../data/repositories/comment_repository.dart';
-import '../data/repositories/mock_comment_repository.dart';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Repository Provider
-// ─────────────────────────────────────────────────────────────────────────────
-
-final commentRepositoryProvider = Provider<CommentRepository>((ref) {
-  return MockCommentRepository();
-});
+import '../data/providers/repository_providers.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Comments Notifier (post başına)

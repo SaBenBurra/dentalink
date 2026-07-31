@@ -44,10 +44,8 @@ class GlassField extends StatelessWidget {
       borderColor = AppColors.error.withValues(alpha: 0.8);
       bgOpacityColor = AppColors.error.withValues(alpha: isDark ? 0.08 : 0.03);
     } else if (hasFocus) {
-      borderColor = const Color(0xFF13B9A5);
-      bgOpacityColor = const Color(
-        0xFF13B9A5,
-      ).withValues(alpha: isDark ? 0.15 : 0.08);
+      borderColor = AppColors.primary;
+      bgOpacityColor = AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.08);
     }
 
     return AnimatedContainer(
@@ -59,7 +57,7 @@ class GlassField extends StatelessWidget {
         boxShadow: hasFocus
             ? [
                 BoxShadow(
-                  color: const Color(0xFF13B9A5).withValues(alpha: 0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   blurRadius: 16,
                   offset: const Offset(0, 4),
                 ),
@@ -89,7 +87,7 @@ class GlassField extends StatelessWidget {
             child: Icon(
               icon,
               color: hasFocus && !hasError
-                  ? const Color(0xFF13B9A5)
+                  ? AppColors.primary
                   : (hasError ? AppColors.error : AppColors.lightIcon),
               size: AppDimensions.iconMedium,
             ),

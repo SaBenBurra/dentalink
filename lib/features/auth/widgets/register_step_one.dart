@@ -2,6 +2,7 @@ import 'package:dentlink/core/constants/app_colors.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/constants/app_text_styles.dart';
 import 'package:dentlink/data/models/enums.dart';
+import 'package:dentlink/shared/extensions/user_title_ui.dart';
 import 'package:dentlink/shared/widgets/glass_field.dart';
 import 'package:flutter/material.dart';
 

@@ -214,5 +214,17 @@
   "validationEmailInvalid": "Please enter a valid email address.",
   "validationPasswordMinLength": "Password must be at least 8 characters.",
   "validationPasswordMismatch": "Passwords do not match.",
-  "validationPhoneInvalid": "Please enter a valid phone number."
+  "validationPhoneInvalid": "Please enter a valid phone number.",
+
+  "notificationLiked": "{actorName} liked your post.",
+  "@notificationLiked": { "placeholders": { "actorName": { "type": "String" } } },
+  "notificationCommented": "{actorName} commented on your post.",
+  "@notificationCommented": { "placeholders": { "actorName": { "type": "String" } } },
+  "notificationFollowed": "{actorName} started following you.",
+  "@notificationFollowed": { "placeholders": { "actorName": { "type": "String" } } },
+  "notificationMessaged": "{actorName} sent you a message.",
+  "@notificationMessaged": { "placeholders": { "actorName": { "type": "String" } } },
+  "notificationBestAnswer": "{actorName} selected your answer as the best.",
+  "@notificationBestAnswer": { "placeholders": { "actorName": { "type": "String" } } },
+  "notificationBadge": "You earned a new badge!"
 }

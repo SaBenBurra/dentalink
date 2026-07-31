@@ -1021,6 +1021,42 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Geçerli bir telefon numarası girin.'**
   String get validationPhoneInvalid;
+
+  /// No description provided for @notificationLiked.
+  ///
+  /// In tr, this message translates to:
+  /// **'{actorName} gönderini beğendi.'**
+  String notificationLiked(String actorName);
+
+  /// No description provided for @notificationCommented.
+  ///
+  /// In tr, this message translates to:
+  /// **'{actorName} gönderine yorum yaptı.'**
+  String notificationCommented(String actorName);
+
+  /// No description provided for @notificationFollowed.
+  ///
+  /// In tr, this message translates to:
+  /// **'{actorName} seni takip etmeye başladı.'**
+  String notificationFollowed(String actorName);
+
+  /// No description provided for @notificationMessaged.
+  ///
+  /// In tr, this message translates to:
+  /// **'{actorName} sana mesaj gönderdi.'**
+  String notificationMessaged(String actorName);
+
+  /// No description provided for @notificationBestAnswer.
+  ///
+  /// In tr, this message translates to:
+  /// **'{actorName} cevabını en iyi cevap olarak seçti.'**
+  String notificationBestAnswer(String actorName);
+
+  /// No description provided for @notificationBadge.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni bir rozet kazandın!'**
+  String get notificationBadge;
 }
 
 class _AppLocalizationsDelegate

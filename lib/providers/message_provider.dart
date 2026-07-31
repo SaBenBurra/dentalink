@@ -1,16 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/conversation_model.dart';
 import '../data/models/message_model.dart';
-import '../data/repositories/message_repository.dart';
-import '../data/repositories/mock_message_repository.dart';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Repository Provider
-// ─────────────────────────────────────────────────────────────────────────────
-
-final messageRepositoryProvider = Provider<MessageRepository>((ref) {
-  return MockMessageRepository();
-});
+import '../data/providers/repository_providers.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Conversations Notifier
@@ -47,10 +38,13 @@ class ChatNotifier
     extends AutoDisposeFamilyAsyncNotifier<List<MessageModel>, String> {
   @override
   Future<List<MessageModel>> build(String conversationId) async {
-    final repo = ref.read(messageRepositoryProvider);
-    // Konuşmayı açınca okundu olarak işaretle.
-    await repo.markMessagesAsRead(conversationId);
-    return repo.getMessages(conversationId);
+    return ref.read(messageRepositoryProvider).getMessages(conversationId);
+  }
+
+  /// Konuşmadaki mesajları okundu olarak işaretler.
+  /// UI katmanından çağrılmalıdır (ör. ekran açıldığında).
+  Future<void> markAsRead() async {
+    await ref.read(messageRepositoryProvider).markMessagesAsRead(arg);
   }
 
   Future<void> sendMessage(String receiverId, String content) async {
