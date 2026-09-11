@@ -12,27 +12,64 @@
 | --- | --- |
 | **Proje Adı** | DentLink _(placeholder, değişebilir)_ |
 | **Platform** | Mobil (Android + iOS) |
-| **Framework** | Flutter |
+| **Framework** | Flutter (SDK ^3.12.2) |
 | **Backend** | Supabase |
-| **State Management** | Riverpod |
+| **State Management** | Riverpod (flutter_riverpod + riverpod_annotation) |
 | **Navigasyon** | go_router |
-| **Dil Desteği** | Çok dilli (Türkçe + İngilizce) |
-| **Tema** | Karanlık & Aydınlık mod |
-| **Tasarım Kaynağı** | Google Stitch → MCP Server → Flutter Widget |
+| **Dil Desteği** | Çok dilli (Türkçe + İngilizce, ARB tabanlı) |
+| **Tema** | Karanlık & Aydınlık mod (SharedPreferences ile kalıcı) |
+| **Tasarım Dili** | Glassmorphism + Material 3, Teal/Mint renk paleti |
+| **Tipografi** | Plus Jakarta Sans |
+
+---
+
+## 🏗️ Mimari Kararlar
+
+### Feature-Driven Architecture
+Proje **özellik odaklı (feature-driven)** bir klasör yapısı kullanır. Her feature kendi `screens/`, `widgets/` ve `providers/` alt klasörlerine sahiptir.
+
+### Repository Pattern (Clean Architecture)
+Veri erişimi **abstract interface → concrete implementation** ayrımıyla yapılır:
+- Her veri kaynağı için bir abstract repository (örn: `PostRepository`) tanımlanır
+- Mock implementasyonu (`MockPostRepository`) ve gerçek implementasyon (`SupabaseAuthRepository`) ayrı dosyalardadır
+- DI (Dependency Injection) `lib/data/providers/repository_providers.dart` üzerinden Riverpod ile yapılır
+- **Şu an sadece Auth gerçek Supabase'e bağlı**, diğer tüm repository'ler mock implementasyon kullanır
+- Faz 3'te mock'lar gerçek Supabase implementasyonlarıyla değiştirilecek — **UI koduna dokunmadan**
+
+### Provider Katmanı Ayrımı
+- **Global Provider'lar** (`lib/providers/`): Birden fazla feature tarafından kullanılan state (auth, feed, theme, locale vb.)
+- **Feature Controller'ları** (`lib/features/*/providers/`): Tek bir feature'a özel iş mantığı (login_controller, create_case_controller vb.)
+
+### Shared Widget & Extension Sistemi
+- Birden fazla feature'da kullanılan widget'lar `lib/shared/widgets/` altında tutulur
+- Model sınıflarına UI davranışı ekleyen extension'lar `lib/shared/extensions/` altında tutulur (renk, ikon, lokalizasyon)
+- Bu sayede model sınıfları saf kalır (Material bağımlılığı olmaz)
 
 ---
 
 ## 👥 Kullanıcı Sistemi
 
 ### Kayıt & Giriş
-- **Yöntemler:** E-posta, Google Sign-In, Telefon Numarası
-- **Kullanıcı doğrulama (diploma vb.):** Şimdilik yok, ileride eklenecek
+- **Mevcut:** E-posta veya Telefon numarası ile şifresiz OTP doğrulama (Supabase Auth, gerçek bağlantı aktif)
+- **Planlanıyor:** Google Sign-In (Faz 3)
+- **Kullanıcı doğrulama (diploma vb.):** Şimdilik yok (Faz 6)
+
+### Giriş Akışı
+1. Kullanıcı e-posta veya telefon numarası girer
+2. 6 haneli OTP kodu gönderilir
+3. Kullanıcı kodu girer → doğrulama başarılı → feed'e yönlendirilir
+4. İlk kez kayıt oluyorsa → 3 adımlı kayıt sihirbazına yönlendirilir
+
+### Kayıt Akışı (3 Adımlı)
+1. **Adım 1 — "Sizi Tanıyalım":** Ad-Soyad girişi + Unvan seçimi (2 sütunlu kart ızgarası)
+2. **Adım 2 — "Mesleki Bilgiler":** Üniversite, Şehir, Klinik/Hastane, Deneyim Yılı (opsiyonel)
+3. **Adım 3 — "Profil Detayları":** Profil fotoğrafı (kamera/galeri/hazır avatar) + Biyografi
 
 ### Kullanıcı Profili
 
 | Alan | Zorunlu | Açıklama |
 | --- | --- | --- |
-| Profil Fotoğrafı | Opsiyonel | Kullanıcı avatarı |
+| Profil Fotoğrafı | Opsiyonel | Kullanıcı avatarı (Supabase Storage'a yükleniyor) |
 | Ad - Soyad | Zorunlu | Tam isim |
 | Unvan | Zorunlu | Kayıt sırasında seçilir, sonradan değiştirilebilir |
 | Biyografi | Opsiyonel | Kısa tanıtım metni |
@@ -56,7 +93,7 @@ Kullanıcılar aşağıdaki unvanlardan birini seçer. Unvan sonradan değiştir
 - Oral Diagnoz Uzmanı
 - Restoratif Diş Tedavisi Uzmanı
 
-> **Not:** Bu liste genişletilebilir. Yeni unvanlar eklenebilir.
+> **Not:** Bu liste `UserTitle` enum'unda tanımlıdır ve genişletilebilir.
 
 ---
 
@@ -77,15 +114,17 @@ Tüm arayüz bileşenleri, ileride kolayca güncellenebilecek, genişletilebilec
 
 2. **Yeni İçerik Türleri Kolayca Eklenebilmeli:**
    - Mevcut post türlerine (vaka, soru) yeni türler eklenebilecek şekilde soyutlama yapılmalı.
+   - `PostModel` sealed class yapısı ve `PostCardFactory` pattern'i bu amaçla tasarlanmıştır.
    - Feed, arama ve filtreleme mekanizmaları yeni içerik türlerini destekleyecek şekilde genelleştirilmiş olmalı.
 
 3. **Ayarlar ve Profil Sayfaları Genişletilebilir Olmalı:**
-   - Ayarlar sayfasına yeni seçenekler eklemek, sadece bir liste öğesi eklemekle mümkün olmalı.
+   - Ayarlar sayfasına yeni seçenekler eklemek, sadece `_buildSections` listesine yeni bir `SettingsSection` eklemekle mümkün.
    - Profil sayfasına yeni sekmeler veya bilgi alanları kolayca entegre edilebilmeli.
 
 4. **Tasarım Sistemi Ölçeklenebilir Olmalı:**
-   - Renk paleti, tipografi ve spacing değerleri merkezi bir tema dosyasından yönetilmeli.
-   - Yeni bir tema veya renk varyasyonu eklemek minimum değişiklik gerektirmeli.
+   - Renk paleti, tipografi ve spacing değerleri merkezi tema dosyalarından yönetilir (`app_colors.dart`, `app_text_styles.dart`, `app_dimensions.dart`).
+   - Glassmorphism parametreleri `GlassThemeExtension` ile tokenize edilmiştir.
+   - Yeni bir tema veya renk varyasyonu eklemek minimum değişiklik gerektirir.
 
 > **Özet:** "Bugün 5 sekmeli bir menü, yarın 6 sekmeli olabilir. Bugün 2 post türü var, yarın 4 olabilir. Bugün basit bir profil sayfası, yarın çok sekmeli bir profil olabilir." Bu yaklaşım, her ekran ve bileşen için geçerlidir.
 
@@ -93,7 +132,7 @@ Tüm arayüz bileşenleri, ileride kolayca güncellenebilecek, genişletilebilec
 
 ## 📝 İçerik Türleri
 
-### 1. Vaka (Case Post)
+### 1. Vaka (Case Post) — ✅ Mevcut
 Diş hekimlerinin klinik vakalarını paylaştığı gönderi türü.
 
 | Alan | Açıklama |
@@ -105,6 +144,7 @@ Diş hekimlerinin klinik vakalarını paylaştığı gönderi türü.
 | Etiketler | Aranabilirliği artırmak için etiketler eklenir |
 
 #### Branşlar (Vaka İçin)
+`DentalBranch` enum'unda tanımlıdır:
 - Pedodonti
 - Endodonti
 - Ortodonti
@@ -122,7 +162,7 @@ Diş hekimlerinin klinik vakalarını paylaştığı gönderi türü.
 
 ---
 
-### 2. Soru (Question Post)
+### 2. Soru (Question Post) — ✅ Mevcut
 Forum mantığında çalışan soru-cevap sistemi.
 
 | Alan | Açıklama |
@@ -130,17 +170,17 @@ Forum mantığında çalışan soru-cevap sistemi.
 | Başlık | Sorunun başlığı |
 | İçerik | Sorunun detaylı açıklaması |
 | Etiketler | Konuyla ilgili etiketler |
-| Görseller | Opsiyonel, destekleyici görseller |
+| Görseller | Opsiyonel (maks 4), destekleyici görseller |
 
 #### Soru-Cevap Özellikleri
 - Kullanıcılar soruları cevaplayabilir
-- Soru sahibi bir cevabı **"En İyi Cevap"** olarak seçebilir
+- Soru sahibi bir cevabı **"En İyi Cevap"** olarak seçebilir (yeşil çerçeve + onay rozeti)
 - En iyi cevap, diğer cevaplardan ayrı ve üstte gösterilir
 - Cevaplara beğeni yapılabilir
 
 ---
 
-### 3. İş İlanları (Job Posts)
+### 3. İş İlanları (Job Posts) — 📅 Faz 6 (Henüz kodda yok)
 Kliniklerin veya hastanelerin personel ve hekim arayışları için paylaştığı ilan türü.
 
 | Alan | Açıklama |
@@ -152,7 +192,7 @@ Kliniklerin veya hastanelerin personel ve hekim arayışları için paylaştığ
 
 ---
 
-### 4. Malzeme Alış/Satışı (Marketplace Posts)
+### 4. Malzeme Alış/Satışı (Marketplace Posts) — 📅 Faz 6 (Henüz kodda yok)
 Diş hekimlerinin dental cihaz, ekipman ve malzemelerini alıp sattığı pazar yeri gönderileri.
 
 | Alan | Açıklama |
@@ -162,54 +202,67 @@ Diş hekimlerinin dental cihaz, ekipman ve malzemelerini alıp sattığı pazar 
 | Fiyat | Talep edilen ücret |
 | Görseller | Ürün fotoğrafları |
 
-> **Not:** İçerik yapısı genişletilebilir (Extensibility-First) olarak tasarlanmıştır. İlerleyen süreçte sisteme kolayca **yeni post türleri de eklenebilir**.
+> **Not:** İçerik yapısı genişletilebilir (Extensibility-First) olarak tasarlanmıştır. `PostModel` sealed class yapısına yeni varyantlar eklenerek yeni post türleri kolayca entegre edilebilir.
 
 ---
 
 ## 🔄 Sosyal Medya Özellikleri
 
 ### Etkileşim
-- **Beğeni (Like):** Vakalar ve sorular beğenilebilir
+- **Beğeni (Like):** Vakalar, sorular ve yorumlar beğenilebilir (optimistik güncelleme ile)
 - **Yorum:** Vakalara ve sorulara yorum yapılabilir
 - **Takip:** Kullanıcılar birbirini takip edebilir
-- **Kaydetme (Bookmark):** Kullanıcılar vakaları ve soruları kaydedebilir
+- **Kaydetme (Bookmark):** Kullanıcılar vakaları ve soruları kaydedebilir (swipe-to-dismiss ile kaldırılabilir)
 
 ### Mesajlaşma (DM)
 - Sadece **bire bir (DM)** mesajlaşma
+- Mesaj baloncukları (gönderilen/alınan ayrımı), zaman damgası, görsel mesaj desteği
 - Grup mesajlaşması şimdilik yok
 
-### Bildirimler (Push Notification)
+### Bildirimler
 - Beğeni bildirimi
 - Yorum bildirimi
 - Takip bildirimi
 - Mesaj bildirimi
+- En İyi Cevap bildirimi
+- Rozet kazanma bildirimi
+- Tümünü okundu işaretle özelliği
+
+> **Not:** Push notification (FCM) henüz implemente edilmedi. Şu an uygulama içi bildirimler mock data ile çalışıyor.
 
 ---
 
 ## 🏠 Ana Sayfa & Akış (Feed)
 
-### Akış Sıralama Seçenekleri
-Kullanıcı iki sıralama modu arasında **tab ile geçiş** yapabilir:
+### Akış Filtreleme
+Kullanıcı üç sekme arasında geçiş yapabilir:
 
-1. **Kronolojik:** En yeni gönderi en üstte
-2. **Algoritmik:** Popülerlik, etkileşim, ilgi alanı gibi faktörlere göre sıralama
+1. **Tümü:** Tüm gönderi türleri (vakalar + sorular) karışık
+2. **Vakalar:** Sadece vaka paylaşımları
+3. **Sorular:** Sadece sorular
+
+> **Not:** Provider seviyesinde `FeedMode.chronological` ve `FeedMode.algorithmic` tanımlıdır ancak UI'da henüz mod geçişi düğmesi eklenmemiştir. Faz 4'te eklenecek.
+
+### Feed Özellikleri
+- Pull-to-refresh (aşağı çekip yenileme)
+- Shimmer efektli iskelet yükleyici
+- Daralan/kayan AppBar (floating pill animasyonu, glassmorphism blur)
+- Çift tıklama ile beğeni animasyonu (post media üzerinde)
 
 ---
 
 ## 🔍 Keşfet & Arama
 
-### Gelişmiş Arama (Full-Text Search)
-- Vaka başlıklarında ve açıklamalarında tam metin arama
-- Soru başlıklarında ve içeriklerinde tam metin arama
+### Gelişmiş Arama
+- Vaka ve soru başlıklarında/içeriklerinde arama
+- Kullanıcı arama (isim, unvan, üniversite)
+- 2 sekmeli sonuç gösterimi (Gönderiler / Kullanıcılar)
+- Debounce (500ms) ile performanslı arama
 
 ### Filtreler
-- **Branşa göre** filtreleme
-- **Etiketlere göre** filtreleme
-- **Unvana göre** filtreleme (ör. sadece endodontistlerin paylaşımları)
+- **Branşa göre** filtreleme (`DentalBranch` popup menü)
 - **İçerik türüne göre** filtreleme (vaka / soru)
-
-### Kullanıcı Arama
-- İsim, unvan veya üniversiteye göre kullanıcı arama
+- Filtre chip'leri temizlenebilir
 
 ---
 
@@ -222,7 +275,7 @@ Kullanıcıların motivasyonunu artırmak için rozet sistemi.
 - **Yardımsever Rozeti:** Çok sayıda "En İyi Cevap" seçilen kullanıcılar
 - **Yeni Üye Rozeti:** Platforma yeni katılan kullanıcılar
 
-> **Not:** Rozet kuralları ve detayları geliştirme sürecinde belirlenecek.
+> **Not:** Rozet UI'ı profil ekranında vitrin olarak mevcut (`BadgeShowcase` widget'ı). Rozet kazanma kuralları ve backend mantığı Faz 5'te geliştirilecek.
 
 ---
 
@@ -230,20 +283,27 @@ Kullanıcıların motivasyonunu artırmak için rozet sistemi.
 
 | Özellik | Durum |
 | --- | --- |
-| Kullanıcı Raporlama | İleride eklenecek |
-| Kullanıcı Engelleme | İleride eklenecek |
-| İçerik Moderasyonu | İleride eklenecek |
-| Kullanıcı Doğrulama (Diploma) | İleride eklenecek |
+| Kullanıcı Raporlama | Faz 6 |
+| Kullanıcı Engelleme | Faz 6 |
+| İçerik Moderasyonu | Faz 6 |
+| Kullanıcı Doğrulama (Diploma) | Faz 6 |
 
 ---
 
 ## 🗄️ Backend Mimarisi (Supabase)
 
+### Mevcut Backend Durumu
+- **Supabase Auth:** ✅ Aktif — E-posta ve telefon ile OTP doğrulama çalışıyor
+- **Supabase Storage:** ✅ Aktif — Profil fotoğrafı yükleme (avatars bucket)
+- **Supabase Database:** ⏳ Faz 3'te aktifleştirilecek — Tablo şeması aşağıda tanımlı
+- **Supabase Realtime:** ⏳ Faz 3'te mesajlaşma ve bildirimler için bağlanacak
+- **Supabase Edge Functions:** ⏳ Faz 5'te bildirim gönderme, rozet hesaplama için
+
 ### Temel Tablolar
 
-```
+```sql
 -- ─────────────────────────────────────────────────────────────────
--- DÜZELTME #13: branch serbest metin yerine PostgreSQL ENUM
+-- PostgreSQL ENUM Tipleri
 -- ─────────────────────────────────────────────────────────────────
 CREATE TYPE dental_branch AS ENUM (
   'pedodonti', 'endodonti', 'ortodonti', 'periodontoloji',
@@ -251,12 +311,11 @@ CREATE TYPE dental_branch AS ENUM (
   'agiz_dis_cene_radyolojisi', 'oral_diagnoz', 'restoratif_dis_tedavisi'
 );
 
--- ─────────────────────────────────────────────────────────────────
--- DÜZELTME #10: bildirim tipi ENUM (best_answer + badge eklendi)
--- ─────────────────────────────────────────────────────────────────
 CREATE TYPE notification_type AS ENUM (
   'like', 'comment', 'follow', 'message', 'best_answer', 'badge'
 );
+
+-- ─────────────────────────────────────────────────────────────────
 
 users
 ├── id (UUID, PK)
@@ -271,28 +330,28 @@ users
 ├── city
 ├── experience_years
 ├── workplace (klinik/hastane)
-├── followers_count      INT DEFAULT 0           -- #5 denormalize sayaç
-├── following_count      INT DEFAULT 0           -- #5 denormalize sayaç
-├── posts_count          INT DEFAULT 0           -- #5 denormalize sayaç
-├── onboarding_completed BOOL DEFAULT false      -- #9 onboarding bir kez gösterilsin
-├── is_verified          BOOL DEFAULT false      -- #9 Faz 6: diploma doğrulama
-├── last_seen_at         TIMESTAMPTZ             -- #9 mesajlaşmada çevrimiçi göstergesi
-├── notification_preferences JSONB DEFAULT '{}'  -- #9 hangi bildirimler gelsin
+├── followers_count      INT DEFAULT 0           -- denormalize sayaç
+├── following_count      INT DEFAULT 0           -- denormalize sayaç
+├── posts_count          INT DEFAULT 0           -- denormalize sayaç
+├── onboarding_completed BOOL DEFAULT false
+├── is_verified          BOOL DEFAULT false      -- Faz 6: diploma doğrulama
+├── last_seen_at         TIMESTAMPTZ             -- mesajlaşmada çevrimiçi göstergesi
+├── notification_preferences JSONB DEFAULT '{}'  -- hangi bildirimler gelsin
 ├── created_at
 └── updated_at
 
 posts
 ├── id (UUID, PK)
 ├── user_id (FK → users)
-├── type (enum: 'case', 'question', 'job', 'marketplace') -- Yeni post türleri eklenebilir
+├── type (enum: 'case', 'question')             -- Faz 6'da 'job', 'marketplace' eklenecek
 ├── title
 ├── content
-├── branch dental_branch (nullable, vaka için zorunlu) -- #13 ENUM tipine alındı
+├── branch dental_branch (nullable, vaka için zorunlu)
 ├── is_solved (soru için, en iyi cevap seçildi mi)
-├── like_count      INT DEFAULT 0               -- #5 denormalize sayaç (trigger ile güncellenir)
-├── comment_count   INT DEFAULT 0               -- #5 denormalize sayaç (trigger ile güncellenir)
-├── bookmark_count  INT DEFAULT 0               -- #5 denormalize sayaç (trigger ile güncellenir)
-├── view_count      INT DEFAULT 0               -- #6 algoritmik feed için görüntülenme sayısı
+├── like_count      INT DEFAULT 0               -- denormalize sayaç (trigger ile güncellenir)
+├── comment_count   INT DEFAULT 0               -- denormalize sayaç (trigger ile güncellenir)
+├── bookmark_count  INT DEFAULT 0               -- denormalize sayaç (trigger ile güncellenir)
+├── view_count      INT DEFAULT 0               -- algoritmik feed için
 ├── created_at
 └── updated_at
 
@@ -303,7 +362,6 @@ post_images
 ├── order_index
 └── created_at
 
--- #6 Algoritmik feed: kim hangi postu gördü (dedup + sinyal)
 post_views
 ├── user_id (FK → users)
 ├── post_id (FK → posts)
@@ -312,15 +370,15 @@ post_views
 
 tags
 ├── id (UUID, PK)
-├── name        TEXT UNIQUE                     -- "Kanal Tedavisi"
-├── slug        TEXT UNIQUE                     -- #7 "kanal-tedavisi" (URL-safe)
-├── usage_count INT DEFAULT 0                   -- #7 popüler etiket önerisi için
+├── name        TEXT UNIQUE
+├── slug        TEXT UNIQUE                     -- URL-safe slug
+├── usage_count INT DEFAULT 0                   -- popüler etiket önerisi için
 └── created_at
 
 post_tags
 ├── post_id (FK → posts)
 └── tag_id  (FK → tags)
--- PRIMARY KEY (post_id, tag_id)                -- #12 composite PK, duplicate engeller
+-- PRIMARY KEY (post_id, tag_id)
 
 comments
 ├── id (UUID, PK)
@@ -337,25 +395,23 @@ likes
 ├── post_id    (FK → posts,    nullable)
 ├── comment_id (FK → comments, nullable)
 └── created_at
--- CHECK: (post_id IS NOT NULL AND comment_id IS NULL)   -- #2 tam olarak biri dolu olmalı
+-- CHECK: (post_id IS NOT NULL AND comment_id IS NULL)
 --     OR (post_id IS NULL AND comment_id IS NOT NULL)
--- UNIQUE (user_id, post_id)                             -- #2 aynı postu iki kez beğenemez
--- UNIQUE (user_id, comment_id)                          -- #2 aynı yorumu iki kez beğenemez
+-- UNIQUE (user_id, post_id)
+-- UNIQUE (user_id, comment_id)
 
 follows
 ├── follower_id  (FK → users)
 ├── following_id (FK → users)
 └── created_at
 -- PRIMARY KEY (follower_id, following_id)
--- CHECK: follower_id <> following_id                    -- #3 kendini takip engeli
--- UNIQUE (follower_id, following_id)                    -- #3 duplicate engeli
+-- CHECK: follower_id <> following_id
 
 bookmarks
 ├── user_id (FK → users)
 ├── post_id (FK → posts)
 └── created_at
 -- PRIMARY KEY (user_id, post_id)
--- UNIQUE (user_id, post_id)                             -- #4 aynı postu iki kez kaydedemez
 
 messages
 ├── id          (UUID, PK)
@@ -363,27 +419,24 @@ messages
 ├── receiver_id (FK → users)
 ├── content
 ├── is_read
-├── deleted_at  TIMESTAMPTZ NULL                -- #11 soft delete, "Bu mesaj silindi" göstergesi
+├── deleted_at  TIMESTAMPTZ NULL                -- soft delete
 └── created_at
 
--- #1 DÜZELTME: last_message_id kaldırıldı → dairesel FK çözüldü
--- last_message_id yerine last_message_at + last_message_preview kullanılır
--- Trigger: yeni mesaj insert edilince conversations güncellenir
 conversations
 ├── id (UUID, PK)
 ├── user1_id             (FK → users)
 ├── user2_id             (FK → users)
-├── last_message_at      TIMESTAMPTZ             -- #1 dairesel FK yerine timestamp
-├── last_message_preview TEXT                    -- #1 son mesajın ilk 100 karakteri
-├── user1_unread_count   INT DEFAULT 0           -- #14 N+1 sorgu yerine denormalize
-├── user2_unread_count   INT DEFAULT 0           -- #14 N+1 sorgu yerine denormalize
+├── last_message_at      TIMESTAMPTZ
+├── last_message_preview TEXT                    -- son mesajın ilk 100 karakteri
+├── user1_unread_count   INT DEFAULT 0
+├── user2_unread_count   INT DEFAULT 0
 └── updated_at
 -- UNIQUE (user1_id, user2_id)
 
 notifications
 ├── id         (UUID, PK)
 ├── user_id    (FK → users)
-├── type       notification_type              -- #10 best_answer + badge eklendi
+├── type       notification_type
 ├── actor_id   (FK → users)
 ├── post_id    (FK → posts,    nullable)
 ├── comment_id (FK → comments, nullable)
@@ -403,7 +456,7 @@ user_badges
 └── earned_at
 -- PRIMARY KEY (user_id, badge_id)
 
--- #8 Faz 5: FCM push bildirimleri için çok cihaz desteği
+-- Faz 5: FCM push bildirimleri için çok cihaz desteği
 push_tokens
 ├── id       (UUID, PK)
 ├── user_id  (FK → users)
@@ -411,202 +464,240 @@ push_tokens
 ├── platform TEXT  -- 'android' | 'ios'
 └── created_at
 
--- #16 Faz 6: Kullanıcı Engelleme
+-- Faz 6: Kullanıcı Engelleme
 blocks
 ├── blocker_id (FK → users)
 ├── blocked_id (FK → users)
 └── created_at
 -- PRIMARY KEY (blocker_id, blocked_id)
 -- CHECK: blocker_id <> blocked_id
--- UNIQUE (blocker_id, blocked_id)
 
--- #16 Faz 6: İçerik / Kullanıcı Raporlama
+-- Faz 6: İçerik / Kullanıcı Raporlama
 reports
 ├── id          (UUID, PK)
 ├── reporter_id (FK → users)
 ├── post_id     (FK → posts,    nullable)
 ├── comment_id  (FK → comments, nullable)
-├── user_id     (FK → users,    nullable)  -- raporlanan kullanıcı
+├── user_id     (FK → users,    nullable)
 ├── reason      TEXT
 ├── status      TEXT DEFAULT 'pending'     -- 'pending' | 'reviewed' | 'dismissed'
 └── created_at
 -- CHECK: tam olarak biri non-null (post_id / comment_id / user_id)
 ```
 
-### Supabase Servisleri
-- **Supabase Auth:** E-posta, Google, Telefon ile kimlik doğrulama
-- **Supabase Database (PostgreSQL):** Tüm veri depolama
-- **Supabase Storage:** Profil fotoğrafları, vaka görselleri
-- **Supabase Realtime:** Mesajlaşma ve bildirimler için gerçek zamanlı abonelik
-- **Supabase Edge Functions:** Bildirim gönderme, rozet hesaplama gibi sunucu tarafı işlemler
-
 ---
 
-## 📁 Flutter Proje Yapısı (Önerilen)
+## 📁 Flutter Proje Yapısı (Mevcut)
 
 ```
 lib/
-├── main.dart
-├── app.dart
+├── main.dart                              # Uygulama giriş noktası, Supabase init, ProviderScope
 │
 ├── core/
 │   ├── constants/
-│   │   ├── app_colors.dart
-│   │   ├── app_text_styles.dart
-│   │   ├── app_dimensions.dart
-│   │   └── supabase_constants.dart
+│   │   ├── app_colors.dart                # Renk paleti (primary teal, surface, border, shimmer vb.)
+│   │   ├── app_text_styles.dart           # Tipografi (Plus Jakarta Sans, Display→Label arası)
+│   │   └── app_dimensions.dart            # Spacing, radius, avatar boyutları, animasyon süreleri
 │   ├── theme/
-│   │   ├── app_theme.dart
-│   │   ├── dark_theme.dart
-│   │   └── light_theme.dart
+│   │   ├── app_theme.dart                 # Material 3 ThemeData factory (light + dark)
+│   │   ├── light_theme.dart               # Aydınlık mod renk şeması
+│   │   ├── dark_theme.dart                # Karanlık mod renk şeması
+│   │   └── glass_theme.dart               # GlassThemeExtension (blur, tint, frost tokenleri)
 │   ├── router/
-│   │   └── app_router.dart
+│   │   └── app_router.dart                # GoRouter yapılandırması, tüm rotalar, auth guard
 │   ├── utils/
-│   │   ├── validators.dart
-│   │   ├── date_formatter.dart
-│   │   └── image_utils.dart
+│   │   ├── number_formatter.dart          # Kompakt metrik formatlama (1200 → 1.2K)
+│   │   ├── string_utils.dart              # Username üretici, Türkçe slug temizleme
+│   │   └── validators.dart                # TR telefon, e-posta, OTP regex validasyonları
 │   ├── extensions/
-│   │   ├── context_extensions.dart
-│   │   └── string_extensions.dart
+│   │   └── context_extensions.dart        # context.l10n, context.theme, context.isDark vb.
 │   └── l10n/
-│       ├── app_localizations.dart
-│       ├── intl_tr.arb
-│       └── intl_en.arb
+│       ├── l10n.dart                      # Desteklenen locale'ler ve yardımcılar
+│       ├── intl_tr.arb                    # Türkçe çeviriler (~93 anahtar)
+│       ├── intl_en.arb                    # İngilizce çeviriler (~37 anahtar, eksik)
+│       └── generated/                     # Otomatik üretilen lokalizasyon dosyaları
 │
 ├── data/
 │   ├── models/
-│   │   ├── user_model.dart
-│   │   ├── post_model.dart
-│   │   ├── comment_model.dart
-│   │   ├── message_model.dart
-│   │   ├── conversation_model.dart
-│   │   ├── notification_model.dart
-│   │   ├── tag_model.dart
-│   │   └── badge_model.dart
+│   │   ├── enums.dart                     # UserTitle, DentalBranch, PostType, NotificationType
+│   │   ├── user_model.dart                # Kullanıcı profili modeli
+│   │   ├── post_model.dart                # PostModel sealed class (CasePostModel, QuestionPostModel)
+│   │   ├── comment_model.dart             # Yorum modeli (isBestAnswer dahil)
+│   │   ├── conversation_model.dart        # Sohbet modeli
+│   │   ├── message_model.dart             # Mesaj modeli (soft delete dahil)
+│   │   ├── notification_model.dart        # Bildirim modeli
+│   │   ├── tag_model.dart                 # Etiket modeli
+│   │   └── badge_model.dart               # Rozet modeli
 │   ├── repositories/
-│   │   ├── auth_repository.dart
-│   │   ├── user_repository.dart
-│   │   ├── post_repository.dart
-│   │   ├── comment_repository.dart
-│   │   ├── message_repository.dart
-│   │   ├── notification_repository.dart
-│   │   ├── search_repository.dart
-│   │   └── badge_repository.dart
-│   └── datasources/
-│       └── supabase_datasource.dart
+│   │   ├── auth_repository.dart           # Abstract interface
+│   │   ├── post_repository.dart           # Abstract (IFeed, ISearch, IBookmark, IPostAction)
+│   │   ├── comment_repository.dart        # Abstract interface
+│   │   ├── message_repository.dart        # Abstract interface
+│   │   ├── notification_repository.dart   # Abstract interface
+│   │   ├── user_repository.dart           # Abstract interface
+│   │   ├── supabase_auth_repository.dart  # ✅ GERÇEK Supabase implementasyonu
+│   │   ├── mock_auth_repository.dart      # Mock implementasyon
+│   │   ├── mock_post_repository.dart      # Mock implementasyon
+│   │   ├── mock_comment_repository.dart   # Mock implementasyon
+│   │   ├── mock_message_repository.dart   # Mock implementasyon
+│   │   ├── mock_notification_repository.dart # Mock implementasyon
+│   │   ├── mock_user_repository.dart      # Mock implementasyon
+│   │   ├── otp_send_limiter.dart          # OTP rate limiter (SharedPreferences)
+│   │   └── otp_cooldown_exception.dart    # OTP cooldown exception sınıfı
+│   ├── datasources/
+│   │   └── mock_datasource.dart           # Merkezi mock veri kaynağı (1182 satır)
+│   └── providers/
+│       └── repository_providers.dart      # Riverpod DI — mock/real repository seçimi
 │
-├── providers/
-│   ├── auth_provider.dart
-│   ├── user_provider.dart
-│   ├── post_provider.dart
-│   ├── comment_provider.dart
-│   ├── feed_provider.dart
-│   ├── message_provider.dart
-│   ├── notification_provider.dart
-│   ├── search_provider.dart
-│   ├── theme_provider.dart
-│   └── locale_provider.dart
+├── providers/                             # Global state provider'ları
+│   ├── auth_provider.dart                 # AuthNotifier, currentUserProvider, authRedirectHoldProvider
+│   ├── feed_provider.dart                 # FeedNotifier (FeedMode: chronological/algorithmic)
+│   ├── post_provider.dart                 # PostDetailNotifier, userPostsProvider
+│   ├── bookmark_provider.dart             # BookmarkNotifier (optimistik güncelleme)
+│   ├── comment_provider.dart              # CommentsNotifier (yorum ekleme, beğeni, en iyi cevap)
+│   ├── search_provider.dart               # SearchNotifier (paralel post + kullanıcı arama)
+│   ├── user_provider.dart                 # UserProfileNotifier, followers/following, badges
+│   ├── message_provider.dart              # ConversationsNotifier, ChatNotifier, totalUnread
+│   ├── notification_provider.dart         # NotificationsNotifier, unreadCount
+│   ├── theme_provider.dart                # ThemeModeNotifier (system/light/dark)
+│   └── locale_provider.dart               # LocaleModeNotifier (tr/en)
 │
 ├── features/
 │   ├── auth/
+│   │   ├── models/
+│   │   │   └── login_step.dart
+│   │   ├── providers/
+│   │   │   ├── login_controller.dart
+│   │   │   └── register_controller.dart
 │   │   ├── screens/
-│   │   │   ├── login_screen.dart
-│   │   │   ├── register_screen.dart
-│   │   │   ├── phone_verification_screen.dart
-│   │   │   └── title_selection_screen.dart
+│   │   │   ├── login_screen.dart          # OTP tabanlı giriş (e-posta/telefon → 6 haneli kod)
+│   │   │   └── register_screen.dart       # 3 adımlı kayıt sihirbazı
 │   │   └── widgets/
-│   │       ├── auth_form.dart
-│   │       └── social_login_buttons.dart
+│   │       ├── login_background.dart      # Glassmorphism gradient arka plan
+│   │       ├── login_logo_header.dart     # Özel diş logosu (CustomPainter)
+│   │       ├── login_email_phone_input.dart # E-posta/telefon giriş alanı
+│   │       ├── login_otp_input.dart       # 6 haneli OTP kutuları + animasyonlar
+│   │       ├── register_header.dart       # İlerleme çubuğu + adım sayacı
+│   │       ├── register_bottom_actions.dart # Geri/İleri navigasyon butonları
+│   │       ├── register_step_one.dart     # Ad + Unvan kart ızgarası
+│   │       ├── register_step_two.dart     # Mesleki bilgiler formu
+│   │       ├── register_step_three.dart   # Profil fotoğrafı + biyografi
+│   │       └── register_dialog.dart       # Kayıt tamamlama onay penceresi
 │   │
 │   ├── feed/
 │   │   ├── screens/
-│   │   │   └── feed_screen.dart
+│   │   │   └── feed_screen.dart           # 3 sekmeli feed (Tümü/Vakalar/Sorular)
 │   │   └── widgets/
-│   │       ├── feed_tabs.dart
-│   │       ├── case_card.dart
-│   │       └── question_card.dart
+│   │       ├── feed_screen_app_bar.dart   # Daralan/kayan floating pill AppBar
+│   │       ├── feed_list.dart             # PostCardFactory ile gönderi listesi
+│   │       └── feed_skeleton.dart         # Shimmer iskelet yükleyici
 │   │
 │   ├── post/
+│   │   ├── providers/
+│   │   │   ├── create_case_controller.dart
+│   │   │   └── create_question_controller.dart
 │   │   ├── screens/
-│   │   │   ├── create_case_screen.dart
-│   │   │   ├── create_question_screen.dart
-│   │   │   ├── case_detail_screen.dart
-│   │   │   └── question_detail_screen.dart
+│   │   │   ├── create_case_screen.dart    # Vaka oluşturma formu
+│   │   │   ├── create_question_screen.dart # Soru oluşturma formu
+│   │   │   ├── case_detail_screen.dart    # Vaka detay (galeri, yorumlar, etkileşim)
+│   │   │   └── question_detail_screen.dart # Soru detay (cevaplar, en iyi cevap)
 │   │   └── widgets/
-│   │       ├── image_picker_grid.dart
-│   │       ├── branch_selector.dart
-│   │       ├── tag_input.dart
-│   │       ├── comment_section.dart
-│   │       ├── answer_card.dart
-│   │       └── best_answer_badge.dart
+│   │       ├── branch_selector.dart       # Branş seçici modal bottom sheet
+│   │       ├── image_picker_grid.dart     # Görsel seçici grid
+│   │       ├── tag_input.dart             # Etiket girişi (chip'ler)
+│   │       └── detail/
+│   │           ├── case_detail_comments.dart       # Yorum listesi + beğeni
+│   │           ├── question_detail_answers.dart    # Cevap listesi + en iyi cevap
+│   │           ├── post_detail_author_info.dart    # Yazar bilgisi + takip butonu
+│   │           └── post_detail_interaction_bar.dart # Beğeni + yorum sayısı çubuğu
 │   │
 │   ├── profile/
+│   │   ├── providers/
+│   │   │   └── edit_profile_controller.dart
 │   │   ├── screens/
-│   │   │   ├── profile_screen.dart
-│   │   │   ├── edit_profile_screen.dart
-│   │   │   └── followers_screen.dart
+│   │   │   ├── profile_screen.dart        # Profil (header, stats, postlar, rozetler)
+│   │   │   ├── edit_profile_screen.dart   # Profil düzenleme formu
+│   │   │   └── followers_screen.dart      # Takipçiler / Takip Edilenler (2 sekmeli)
 │   │   └── widgets/
-│   │       ├── profile_header.dart
-│   │       ├── profile_stats.dart
-│   │       ├── profile_posts_tab.dart
-│   │       └── badge_showcase.dart
+│   │       ├── profile_header.dart        # Avatar, isim, bio, konum, düzenle butonu
+│   │       ├── profile_stats.dart         # Gönderi, takipçi, takip sayaçları
+│   │       ├── profile_posts_tab.dart     # Sekmeli post listesi (Vakalar/Sorular)
+│   │       ├── badge_showcase.dart        # Rozet vitrini (yatay kaydırılabilir)
+│   │       └── mutual_followers_widget.dart # Ortak takipçi gösterimi
 │   │
 │   ├── search/
 │   │   ├── screens/
-│   │   │   └── search_screen.dart
+│   │   │   └── search_screen.dart         # Arama ekranı (debounce, 2 sekmeli sonuç)
 │   │   └── widgets/
-│   │       ├── search_bar.dart
-│   │       ├── filter_chips.dart
-│   │       └── search_results.dart
+│   │       ├── search_bar.dart            # Özel arama çubuğu
+│   │       ├── filter_chips.dart          # Branş + içerik tipi filtre chip'leri
+│   │       └── search_results.dart        # Gönderi ve kullanıcı sonuç listeleri
 │   │
 │   ├── messaging/
 │   │   ├── screens/
-│   │   │   ├── conversations_screen.dart
-│   │   │   └── chat_screen.dart
+│   │   │   ├── conversations_screen.dart  # Sohbet listesi (arama, okunmamış sayısı)
+│   │   │   └── chat_screen.dart           # Chat detay (baloncuklar, gönderme, eklenti)
 │   │   └── widgets/
-│   │       ├── conversation_tile.dart
-│   │       ├── message_bubble.dart
-│   │       └── chat_input.dart
+│   │       ├── conversation_tile.dart     # Sohbet satır öğesi
+│   │       ├── message_bubble.dart        # Mesaj baloncuğu (gönderilen/alınan)
+│   │       └── chat_input.dart            # Mesaj gönderme çubuğu
 │   │
 │   ├── notifications/
 │   │   ├── screens/
-│   │   │   └── notifications_screen.dart
+│   │   │   └── notifications_screen.dart  # Bildirim listesi
 │   │   └── widgets/
-│   │       └── notification_tile.dart
+│   │       ├── notification_tile.dart     # Bildirim satır öğesi (6 tip)
+│   │       └── notifications_app_bar.dart # Bildirimler AppBar (tümünü okundu işaretle)
 │   │
 │   ├── bookmarks/
-│   │   ├── screens/
-│   │   │   └── bookmarks_screen.dart
-│   │   └── widgets/
-│   │       └── bookmark_list.dart
+│   │   └── screens/
+│   │       └── bookmarks_screen.dart      # Kaydedilenler (swipe-to-dismiss, geri alma)
 │   │
-│   └── settings/
-│       ├── screens/
-│       │   └── settings_screen.dart
-│       └── widgets/
-│           ├── theme_toggle.dart
-│           └── language_selector.dart
+│   ├── settings/
+│   │   ├── screens/
+│   │   │   └── settings_screen.dart       # 5 bölümlü ayarlar (Görünüm, Dil, Bildirim, Hesap, Hakkında)
+│   │   └── widgets/
+│   │       ├── settings_section.dart      # Genişletilebilir bölüm container
+│   │       └── settings_tile.dart         # Ayar satırı (chevron + toggle varyantları)
+│   │
+│   └── shell/
+│       └── main_shell.dart                # Floating bottom nav bar (5 tab, glassmorphism)
 │
 └── shared/
+    ├── extensions/
+    │   ├── dental_branch_ui.dart          # DentalBranch → renk, ikon, Türkçe etiket
+    │   ├── user_title_ui.dart             # UserTitle → Material ikonu
+    │   ├── post_type_l10n.dart            # PostType → lokalize başlık ve emoji
+    │   └── notification_type_l10n.dart    # NotificationType → lokalize bildirim metni
     └── widgets/
-        ├── app_bottom_nav_bar.dart
-        ├── user_avatar.dart
-        ├── loading_indicator.dart
-        ├── error_widget.dart
-        ├── empty_state.dart
-        ├── tag_chip.dart
-        ├── branch_chip.dart
-        ├── like_button.dart
-        ├── bookmark_button.dart
-        ├── post_action_bar.dart
-        ├── user_tile.dart
-        ├── relative_time_text.dart
-        └── stat_count.dart
+        ├── animated_action_button.dart    # Scale bounce + haptic feedback temel buton
+        ├── like_button.dart               # Animasyonlu kalp butonu + sayaç
+        ├── bookmark_button.dart           # Animasyonlu kaydet butonu
+        ├── stat_count.dart                # Kompakt metrik gösterimi (ikon + sayı)
+        ├── app_bottom_nav_bar.dart        # 5-tab floating nav bar (gradient "+" butonu)
+        ├── branch_chip.dart               # Branş rozeti (branşa özel renk)
+        ├── tag_chip.dart                  # Etiket chip'i
+        ├── post_badge.dart                # Post tipi rozeti ("📸 Vaka" / "❓ Soru")
+        ├── user_avatar.dart               # Cached network avatar (fallback initials)
+        ├── user_tile.dart                 # Kullanıcı satır öğesi (avatar, isim, unvan)
+        ├── relative_time_text.dart        # Lokalize göreli zaman ("5 dk önce")
+        ├── post_header.dart               # Yazar avatar, isim, branş, zaman, seçenekler
+        ├── post_media.dart                # Görsel carousel (çift tıklama kalp animasyonu)
+        ├── post_action_bar.dart           # Beğeni + yorum + kaydet buton çubuğu
+        ├── post_glass_container.dart      # Glassmorphism container (blur, border, shadow)
+        ├── case_card.dart                 # Vaka kartı (görsel, etiket, aksiyon çubuğu)
+        ├── question_card.dart             # Soru kartı (metin, etiket, aksiyon çubuğu)
+        ├── post_card_factory.dart         # PostModel → CaseCard/QuestionCard factory
+        ├── glass_field.dart               # Glassmorphism form alanı
+        ├── glass_background_effect.dart   # Radial gradient glow arka plan efekti
+        ├── loading_indicator.dart         # Spinner, shimmer card, loading overlay
+        ├── empty_state.dart               # Boş durum widget'ı (ikon, başlık, alt metin)
+        └── error_widget.dart              # Hata widget'ı (mesaj + yeniden dene butonu)
 ```
 
 ---
 
-## 🔗 Temel Bağımlılıklar (pubspec.yaml)
+## 🔗 Bağımlılıklar (pubspec.yaml)
 
 ```yaml
 dependencies:
@@ -614,99 +705,140 @@ dependencies:
     sdk: flutter
 
   # State Management
-  flutter_riverpod: ^2.x
-  riverpod_annotation: ^2.x
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
 
   # Navigation
-  go_router: ^14.x
+  go_router: ^14.8.1
 
   # Backend
-  supabase_flutter: ^2.x
+  supabase_flutter: ^2.9.0
 
   # Localization
   flutter_localizations:
     sdk: flutter
-  intl: ^0.19.x
+  intl: ^0.20.2
 
   # Image
-  image_picker: ^1.x
-  cached_network_image: ^3.x
+  image_picker: ^1.1.2
+  cached_network_image: ^3.4.1
 
   # UI Utilities
-  shimmer: ^3.x                    # Loading placeholder
-  flutter_svg: ^2.x                # SVG desteği
+  shimmer: ^3.0.0
+  flutter_svg: ^2.0.17
+  flutter_floating_bottom_bar: ^2.0.2
 
-  # Push Notifications
-  firebase_messaging: ^15.x       # FCM
-  flutter_local_notifications: ^17.x
+  # Persistence
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  riverpod_generator: ^2.x
-  build_runner: ^2.x
-  flutter_lints: ^4.x
+  flutter_lints: ^6.0.0
+  riverpod_generator: ^2.6.3
+  build_runner: ^2.4.15
 ```
 
-> **Not:** Bu bağımlılık listesi başlangıç için tasarlanmıştır. Geliştirme sürecinde ihtiyaç duyuldukça yeni bağımlılıklar eklenebilir.
+### İleride Eklenecek Bağımlılıklar
+```yaml
+  # Faz 5 — Push Notifications
+  firebase_messaging: ^15.x
+  flutter_local_notifications: ^17.x
+```
 
 ---
 
 ## 📐 Navigasyon Yapısı
 
-### Ana Navigasyon (Bottom Navigation Bar)
-1. **Ana Sayfa (Feed)** — Akış görünümü
-2. **Keşfet (Explore)** — Arama ve filtreleme
-3. **Oluştur (+)** — Yeni vaka veya soru oluştur
-4. **Mesajlar** — DM listesi
-5. **Profil** — Kullanıcı profili
+### Kayıtlı Rotalar
+
+| Rota | Ekran | Shell |
+| --- | --- | --- |
+| `/login` | `LoginScreen` | Hayır |
+| `/register` | `RegisterScreen` | Hayır |
+| `/feed` | `FeedScreen` | ✅ Bottom Nav |
+| `/search` | `SearchScreen` | ✅ Bottom Nav |
+| `/messages` | `ConversationsScreen` | ✅ Bottom Nav |
+| `/profile` | `ProfileScreen` (mevcut kullanıcı) | ✅ Bottom Nav |
+| `/feed/case/:id` | `CaseDetailScreen` | Hayır |
+| `/feed/question/:id` | `QuestionDetailScreen` | Hayır |
+| `/create-case` | `CreateCaseScreen` | Hayır |
+| `/create-question` | `CreateQuestionScreen` | Hayır |
+| `/chat/:userId` | `ChatScreen` | Hayır |
+| `/profile/:userId` | `ProfileScreen` (başka kullanıcı) | Hayır |
+| `/edit-profile` | `EditProfileScreen` | Hayır |
+| `/network/:id` | `FollowersScreen` (`?tab=0`/`?tab=1`) | Hayır |
+| `/notifications` | `NotificationsScreen` | Hayır |
+| `/bookmarks` | `BookmarksScreen` | Hayır |
+| `/settings` | `SettingsScreen` | Hayır |
+
+### Ana Navigasyon (Bottom Navigation Bar — 5 Sekme)
+
+1. **Ana Sayfa** (`/feed`) — Feed akışı
+2. **Keşfet** (`/search`) — Arama ve filtreleme
+3. **Oluştur (+)** — Modal bottom sheet açar: "Vaka Paylaş" (`/create-case`) veya "Soru Sor" (`/create-question`)
+4. **Mesajlar** (`/messages`) — DM listesi
+5. **Profil** (`/profile`) — Kullanıcı profili
 
 ### Ekran Akışı (Screen Flow)
 
 ```
-Splash Screen
-    ├── Onboarding (ilk açılış)
-    └── Auth Check
-        ├── Login Screen
-        │   ├── Register Screen
-        │   │   └── Title Selection Screen
-        │   └── Phone Verification Screen
-        └── Main Shell (Bottom Nav)
-            ├── Feed Screen
-            │   ├── Case Detail Screen
-            │   │   └── Comments / Full Image View
-            │   └── Question Detail Screen
-            │       └── Answers / Best Answer
-            ├── Search/Explore Screen
-            │   ├── Filter Results
-            │   └── User Profile (other)
-            ├── Create Post Screen
-            │   ├── Create Case
-            │   └── Create Question
-            ├── Messages Screen
-            │   └── Chat Screen
-            └── Profile Screen
-                ├── Edit Profile Screen
-                ├── Followers/Following Screen
-                ├── Bookmarks Screen
-                ├── Badges Screen
-                ├── Settings Screen
-                │   ├── Theme Toggle
-                │   ├── Language Selector
-                │   └── Notifications Settings
-                └── My Posts
+Uygulama Başlatma
+└── Auth Guard (GoRouter redirect)
+    ├── Oturum yok → /login
+    │   ├── OTP Doğrulama (login_screen.dart içinde)
+    │   └── İlk kayıt → /register (3 adımlı sihirbaz)
+    └── Oturum var → /feed
+        └── Main Shell (Floating Bottom Nav Bar)
+            ├── Feed Screen (/feed)
+            │   ├── Case Detail (/feed/case/:id)
+            │   │   └── Yorum Bölümü + Görsel Galerisi
+            │   └── Question Detail (/feed/question/:id)
+            │       └── Cevaplar + En İyi Cevap Seçimi
+            ├── Search Screen (/search)
+            │   └── Filtre Sonuçları (Gönderiler / Kullanıcılar)
+            ├── Create (+) → Modal Sheet
+            │   ├── Vaka Paylaş (/create-case)
+            │   └── Soru Sor (/create-question)
+            ├── Messages Screen (/messages)
+            │   └── Chat Screen (/chat/:userId)
+            └── Profile Screen (/profile)
+                ├── Edit Profile (/edit-profile)
+                ├── Followers/Following (/network/:id)
+                ├── Bookmarks (/bookmarks)
+                ├── Settings (/settings)
+                │   ├── Tema Değiştirme
+                │   ├── Dil Değiştirme
+                │   ├── Bildirim Tercihleri
+                │   └── Çıkış Yap
+                └── Notifications (/notifications)
 ```
 
 ---
 
-## 🎨 Tasarım Notları
+## 🎨 Tasarım Sistemi
 
-- Tüm tasarımlar **Google Stitch** ile hazırlanacak
-- Tasarımlar **MCP Server** üzerinden agenta aktarılacak
-- Agent, tasarımları **Flutter widget'larına** dönüştürecek
-- Karanlık ve aydınlık mod için ayrı renk paletleri tanımlanacak
-- Modern, temiz ve profesyonel bir tasarım dili hedefleniyor
-- Tıbbi/dental bir tema rengi kullanılacak (ör. mavi-yeşil tonları)
+### Renk Paleti
+- **Primary:** Deep Teal `#0D9488` (Light) / Cyan Mint `#2DD4BF` (Dark)
+- **Secondary:** Royal Violet `#7C3AED` (Light) / Lavender `#A78BFA` (Dark)
+- **Surface:** Pure White `#FFFFFF` (Light) / Deep Charcoal `#0B0F17` (Dark)
+- **Etkileşim:** Heart `#EF4444`, Bookmark `#F59E0B`, Success `#10B981`, Error `#EF4444`
+
+### Glassmorphism
+- `GlassThemeExtension` ile tokenize edilmiş blur sigma, surface tint opacity ve frost border renkleri
+- `PostGlassContainer`, `GlassField`, `GlassBackgroundEffect` widget'ları ile uygulanır
+- Hem aydınlık hem karanlık mod için optimize edilmiş parametreler
+
+### Tipografi
+- **Font Ailesi:** Plus Jakarta Sans
+- **Ölçekler:** Display, Headline, Title, Body, Label (Material 3 type scale)
+
+### Animasyonlar
+- OTP kutularında shake, scatter ve merge animasyonları
+- Post media'da çift tıklama kalp pop animasyonu
+- Butonlarda 1.3x scale bounce + haptic feedback
+- Feed AppBar'da floating pill dönüşüm animasyonu
+- Bottom nav bar'da scroll-to-hide davranışı
 
 ---
 
@@ -715,8 +847,10 @@ Splash Screen
 | Konu | Durum |
 | --- | --- |
 | Uygulama ismi (DentLink placeholder) | Karar verilecek |
-| İş ilanları ve Malzeme alış/satış: akışta mı, ayrı sayfalarda mı? | Karar verilecek |
-| Rozet kuralları ve kriterleri | Detaylandırılacak |
-| Algoritmik feed detayları | Tasarlanacak |
-| Görsel sıkıştırma / boyut limiti | Belirlenecek |
-| Etiket öneri sistemi nasıl çalışacak? | Tasarlanacak |
+| İş ilanları ve Malzeme alış/satış: akışta mı, ayrı sayfalarda mı? | Karar verilecek (Faz 6) |
+| Rozet kuralları ve kriterleri | Detaylandırılacak (Faz 5) |
+| Algoritmik feed detayları | Tasarlanacak (Faz 4) |
+| Görsel sıkıştırma / boyut limiti | Belirlenecek (Faz 4) |
+| Etiket öneri sistemi nasıl çalışacak? | Tasarlanacak (Faz 4) |
+| İngilizce çeviriler eksik (~56 anahtar) | Tamamlanacak |
+| Onboarding ekranı eklenecek mi? | Karar verilecek |
