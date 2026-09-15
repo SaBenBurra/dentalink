@@ -46,8 +46,8 @@ class _AuthRefreshNotifier extends ChangeNotifier {
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = _AuthRefreshNotifier();
   ref.onDispose(refresh.dispose);
-  ref.listen(authProvider, (_, _) => refresh.ping());
-  ref.listen(authRedirectHoldProvider, (_, _) => refresh.ping());
+  ref.listen(authProvider, (prev, next) => refresh.ping());
+  ref.listen(authRedirectHoldProvider, (prev, next) => refresh.ping());
 
   return GoRouter(
     initialLocation: '/login',
@@ -97,6 +97,10 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       // ── Auth ──────────────────────────────────────────────
       GoRoute(
+        path: '/',
+        redirect: (context, state) => '/feed',
+      ),
+      GoRoute(
         path: '/login',
         name: 'login',
         builder: (context, state) => const LoginScreen(),
@@ -138,6 +142,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/edit-profile',
         name: 'editProfile',
         builder: (context, state) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: '/profile/:id',
+        name: 'userProfile',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return ProfileScreen(userId: id);
+        },
       ),
       GoRoute(
         path: '/network/:id',

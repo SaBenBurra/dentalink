@@ -3,38 +3,75 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/user_provider.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_stats.dart';
 import '../widgets/badge_showcase.dart';
 import '../widgets/profile_posts_tab.dart';
 import '../../../data/models/enums.dart';
+import '../../../data/models/user_model.dart';
 import '../../../shared/widgets/error_widget.dart';
 
 class ProfileScreen extends ConsumerWidget {
-  const ProfileScreen({super.key});
+  final String? userId;
+
+  const ProfileScreen({super.key, this.userId});
+
+  String _getLocalizedErrorMessage(Object error) {
+    final msg = error.toString().toLowerCase();
+    if (msg.contains('socket') || msg.contains('network') || msg.contains('connection')) {
+      return 'İnternet bağlantınızı kontrol edip tekrar deneyin.';
+    }
+    if (msg.contains('postgrest') || msg.contains('supabase') || msg.contains('timeout')) {
+      return 'Sunucuyla iletişim kurulurken bir sorun oluştu.';
+    }
+    return 'Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin.';
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUserState = ref.watch(authProvider);
+    final currentUser = currentUserState.valueOrNull;
+    
+    final isCurrentUser = userId == null || (currentUser != null && userId == currentUser.id);
+    final targetUserId = userId ?? currentUser?.id;
+
     final theme = Theme.of(context);
+
+    if (targetUserId == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Profil')),
+        body: const Center(child: Text('Kullanıcı bulunamadı.')),
+      );
+    }
+
+    final AsyncValue<UserModel?> userState;
+    if (isCurrentUser) {
+      userState = currentUserState;
+    } else {
+      final profileState = ref.watch(userProfileProvider(targetUserId));
+      userState = profileState.whenData((value) => value);
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profil'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.bookmark_border_rounded),
-            onPressed: () => context.push('/bookmarks'),
-            tooltip: 'Kaydedilenler',
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () => context.push('/settings'),
-            tooltip: 'Ayarlar',
-          ),
-        ],
+        actions: isCurrentUser
+            ? [
+                IconButton(
+                  icon: const Icon(Icons.bookmark_border_rounded),
+                  onPressed: () => context.push('/bookmarks'),
+                  tooltip: 'Kaydedilenler',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.settings_outlined),
+                  onPressed: () => context.push('/settings'),
+                  tooltip: 'Ayarlar',
+                ),
+              ]
+            : null,
       ),
-      body: currentUserState.when(
+      body: userState.when(
         data: (user) {
           if (user == null) {
             return const Center(child: Text('Kullanıcı bulunamadı.'));
@@ -46,7 +83,7 @@ class ProfileScreen extends ConsumerWidget {
               headerSliverBuilder: (context, innerBoxIsScrolled) {
                 return [
                   SliverToBoxAdapter(
-                    child: ProfileHeader(user: user, isCurrentUser: true),
+                    child: ProfileHeader(user: user, isCurrentUser: isCurrentUser),
                   ),
                   SliverToBoxAdapter(child: ProfileStats(user: user)),
                   const SliverToBoxAdapter(child: Divider(height: 32)),
@@ -61,7 +98,6 @@ class ProfileScreen extends ConsumerWidget {
                             theme.colorScheme.onSurfaceVariant,
                         indicatorColor: theme.colorScheme.primary,
                         tabs: [
-                          // <-- Artık metinleri bağlam (context) ile alıyoruz
                           for (final type in PostType.profileTabs)
                             Tab(text: type.getLabelInProfile(context)),
                         ],
@@ -82,8 +118,14 @@ class ProfileScreen extends ConsumerWidget {
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => DentLinkErrorWidget(
-          message: error.toString(),
-          onRetry: () => ref.refresh(authProvider),
+          message: _getLocalizedErrorMessage(error),
+          onRetry: () {
+            if (isCurrentUser) {
+              ref.invalidate(authProvider);
+            } else {
+              ref.invalidate(userProfileProvider(targetUserId));
+            }
+          },
         ),
       ),
     );
@@ -111,7 +153,8 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return false;
+  bool shouldRebuild(covariant _SliverAppBarDelegate oldDelegate) {
+    return _tabBar != oldDelegate._tabBar ||
+        _backgroundColor != oldDelegate._backgroundColor;
   }
 }

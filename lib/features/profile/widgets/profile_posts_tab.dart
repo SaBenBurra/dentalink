@@ -31,8 +31,8 @@ class ProfilePostsTab extends ConsumerWidget {
             // Profil sayfasına özel rota hesaplaması // <-- Eklendi
             // Not: Projenizdeki GoRouter tanımlamalarına göre prefix (örn: /profile) değiştirilebilir.
             final routePath = post.type == PostType.casePost
-                ? '/profile/case/${post.id}'
-                : '/profile/question/${post.id}';
+                ? '/feed/case/${post.id}'
+                : '/feed/question/${post.id}';
 
             return PostCardFactory.build(
               post,

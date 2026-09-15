@@ -232,7 +232,7 @@ class SupabaseAuthRepository implements AuthRepository {
       'updated_at': now,
     };
     profileData.removeWhere((key, value) => value == null);
-    await _client.from('users').upsert(profileData);
+    await _client.from('users').upsert(profileData, onConflict: 'id');
 
     return UserModel(
       id: authUser.id,
