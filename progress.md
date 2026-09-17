@@ -15,7 +15,7 @@
 | **Navigasyon** | ✅ Çalışıyor — GoRouter + Auth guard + Bottom nav shell |
 | **Mock Data Katmanı** | ✅ Çalışıyor — 6 mock repository + merkezi MockDatasource |
 | **Supabase Auth** | ✅ Gerçek bağlantı — OTP (e-posta/SMS) + profil kayıt + avatar yükleme |
-| **Supabase Database** | ⏳ Henüz başlanmadı — Sadece `users` tablosu var (auth akışı için) |
+| **Supabase Database** | ✅ Tamamlandı — Şema, trigger'lar, RLS ve indexler kuruldu |
 | **Diğer Repository'ler** | ⏳ Tamamı mock — Post, Comment, Message, Notification, User |
 
 ---
@@ -106,29 +106,29 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 > **Önkoşul:** Faz 2.5 tamamlanmış olmalı.
 
 ### 3.1 — Veritabanı Altyapısı
-- [ ] Supabase Dashboard'da veritabanı şemasını oluştur (SQL migration):
-  - [ ] PostgreSQL ENUM tipleri (`dental_branch`, `notification_type`)
-  - [ ] `users` tablosu (mevcut, kontrol et + eksik sütunları ekle)
-  - [ ] `posts` tablosu + `post_images` tablosu
-  - [ ] `tags` + `post_tags` (many-to-many)
-  - [ ] `comments` tablosu
-  - [ ] `likes` tablosu (polimorfik: post_id XOR comment_id)
-  - [ ] `follows` tablosu
-  - [ ] `bookmarks` tablosu
-  - [ ] `conversations` + `messages` tabloları
-  - [ ] `notifications` tablosu
-- [ ] Gerekli indeksleri oluştur (foreign key'ler, composite index'ler, full-text search)
-- [ ] Denormalize sayaç trigger'larını yaz (`like_count`, `comment_count`, `bookmark_count`, `followers_count` vb.)
-- [ ] Row Level Security (RLS) politikalarını tanımla:
-  - [ ] `users`: Herkes okuyabilir, sadece kendi profilini güncelleyebilir
-  - [ ] `posts`: Herkes okuyabilir, sadece kendi postunu oluşturabilir/güncelleyebilir/silebilir
-  - [ ] `comments`: Herkes okuyabilir, kendi yorumunu yönetebilir
-  - [ ] `likes` / `bookmarks` / `follows`: Kendi kayıtlarını yönetebilir
-  - [ ] `messages`: Sadece gönderen veya alıcı okuyabilir/yazabilir
-  - [ ] `notifications`: Sadece hedef kullanıcı okuyabilir
-- [ ] Supabase Storage bucket'larını yapılandır:
-  - [ ] `avatars` bucket (mevcut, kontrol et)
-  - [ ] `post-images` bucket (yeni)
+- [x] Supabase Dashboard'da veritabanı şemasını oluştur (SQL migration):
+  - [x] PostgreSQL ENUM tipleri (`dental_branch`, `notification_type`)
+  - [x] `users` tablosu (mevcut, kontrol et + eksik sütunları ekle)
+  - [x] `posts` tablosu + `post_images` tablosu
+  - [x] `tags` + `post_tags` (many-to-many)
+  - [x] `comments` tablosu
+  - [x] `likes` tablosu (polimorfik: post_id XOR comment_id)
+  - [x] `follows` tablosu
+  - [x] `bookmarks` tablosu
+  - [x] `conversations` + `messages` tabloları
+  - [x] `notifications` tablosu
+- [x] Gerekli indeksleri oluştur (foreign key'ler, composite index'ler, full-text search)
+- [x] Denormalize sayaç trigger'larını yaz (`like_count`, `comment_count`, `bookmark_count`, `followers_count` vb.)
+- [x] Row Level Security (RLS) politikalarını tanımla:
+  - [x] `users`: Herkes okuyabilir, sadece kendi profilini güncelleyebilir
+  - [x] `posts`: Herkes okuyabilir, sadece kendi postunu oluşturabilir/güncelleyebilir/silebilir
+  - [x] `comments`: Herkes okuyabilir, kendi yorumunu yönetebilir
+  - [x] `likes` / `bookmarks` / `follows`: Kendi kayıtlarını yönetebilir
+  - [x] `messages`: Sadece gönderen veya alıcı okuyabilir/yazabilir
+  - [x] `notifications`: Sadece hedef kullanıcı okuyabilir
+- [x] Supabase Storage bucket'larını yapılandır:
+  - [x] `avatars` bucket (mevcut, kontrol et)
+  - [x] `post-images` bucket (yeni)
 
 ### 3.2 — Kullanıcı Profili (SupabaseUserRepository)
 - [ ] `SupabaseUserRepository` oluştur (`UserRepository` abstract interface'ini implemente et)
