@@ -1,56 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/conversation_tile.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
+import '../../../providers/message_provider.dart';
+import '../../../shared/widgets/loading_indicator.dart';
+import '../../../shared/widgets/error_widget.dart';
+import '../../../shared/widgets/relative_time_text.dart';
+import '../../../core/l10n/generated/app_localizations.dart';
 
-class ConversationsScreen extends StatefulWidget {
+class ConversationsScreen extends ConsumerStatefulWidget {
   const ConversationsScreen({super.key});
 
   @override
-  State<ConversationsScreen> createState() => _ConversationsScreenState();
+  ConsumerState<ConversationsScreen> createState() => _ConversationsScreenState();
 }
 
-class _ConversationsScreenState extends State<ConversationsScreen> {
+class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
   final TextEditingController _searchController = TextEditingController();
-
-  // Mock veri
-  final List<Map<String, dynamic>> _mockConversations = [
-    {
-      'name': 'Dr. Aras Bulut',
-      'lastMessage': 'Vaka hakkındaki görüşleriniz nelerdir?',
-      'time': '14:30',
-      'unreadCount': 2,
-      'avatarUrl': 'https://i.pravatar.cc/150?u=1',
-    },
-    {
-      'name': 'Dr. Selin Demir',
-      'lastMessage': 'Tamam, teşekkür ederim. Sonra görüşürüz.',
-      'time': '11:15',
-      'unreadCount': 0,
-      'avatarUrl': 'https://i.pravatar.cc/150?u=2',
-    },
-    {
-      'name': 'Dt. Mehmet Yılmaz',
-      'lastMessage': 'Panoramik röntgeni incelediniz mi?',
-      'time': 'Dün',
-      'unreadCount': 5,
-      'avatarUrl': 'https://i.pravatar.cc/150?u=3',
-    },
-    {
-      'name': 'Dr. Ayşe Kaya',
-      'lastMessage': 'Yarın sabahki ameliyat için hazır mıyız?',
-      'time': 'Pazartesi',
-      'unreadCount': 0,
-      'avatarUrl': 'https://i.pravatar.cc/150?u=4',
-    },
-    {
-      'name': 'Prof. Dr. Ahmet Yılmaz',
-      'lastMessage': 'Sunum dosyasını mail attım.',
-      'time': 'Pazar',
-      'unreadCount': 0,
-      'avatarUrl': 'https://i.pravatar.cc/150?u=5',
-    },
-  ];
 
   @override
   void dispose() {
@@ -62,6 +29,9 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
+
+    final conversationsAsync = ref.watch(conversationsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -94,34 +64,58 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
             ),
           ),
           Expanded(
-            child: ListView.separated(
-              itemCount: _mockConversations.length,
-              separatorBuilder: (context, index) =>
-                  const Divider(height: 1, indent: 88),
-              itemBuilder: (context, index) {
-                final conversation = _mockConversations[index];
-
-                // Basit arama filtresi
-                if (_searchController.text.isNotEmpty &&
-                    !conversation['name'].toString().toLowerCase().contains(
-                      _searchController.text.toLowerCase(),
-                    )) {
-                  return const SizedBox.shrink();
+            child: conversationsAsync.when(
+              loading: () => const DentLinkLoadingSpinner(),
+              error: (err, st) => DentLinkErrorWidget(
+                message: 'Konuşmalar yüklenemedi',
+                onRetry: () => ref.read(conversationsProvider.notifier).refresh(),
+              ),
+              data: (conversations) {
+                if (conversations.isEmpty) {
+                  return const Center(child: Text('Henüz mesaj yok.'));
                 }
 
-                return ConversationTile(
-                  name: conversation['name'],
-                  lastMessage: conversation['lastMessage'],
-                  time: conversation['time'],
-                  unreadCount: conversation['unreadCount'],
-                  avatarUrl: conversation['avatarUrl'],
-                  onTap: () {
-                    context.pushNamed(
-                      'chat',
-                      pathParameters: {'userId': 'user_$index'},
-                      queryParameters: {
-                        'name': conversation['name'].toString(),
-                        'avatar': conversation['avatarUrl'].toString(),
+                // Arama Filtresi
+                final filteredConversations = conversations.where((c) {
+                  if (_searchController.text.isNotEmpty) {
+                    return c.otherUser.fullName
+                        .toLowerCase()
+                        .contains(_searchController.text.toLowerCase());
+                  }
+                  return true;
+                }).toList();
+                
+                if (filteredConversations.isEmpty) {
+                  return const Center(child: Text('Sonuç bulunamadı.'));
+                }
+
+                return ListView.separated(
+                  itemCount: filteredConversations.length,
+                  separatorBuilder: (context, index) =>
+                      const Divider(height: 1, indent: 88),
+                  itemBuilder: (context, index) {
+                    final conversation = filteredConversations[index];
+
+                    final timeStr = conversation.lastMessageAt != null
+                        ? RelativeTimeText.format(
+                            conversation.lastMessageAt!, l10n)
+                        : '';
+
+                    return ConversationTile(
+                      name: conversation.otherUser.fullName,
+                      lastMessage: conversation.lastMessagePreview ?? '',
+                      time: timeStr,
+                      unreadCount: conversation.unreadCount,
+                      avatarUrl: conversation.otherUser.avatarUrl ?? '',
+                      onTap: () {
+                        context.pushNamed(
+                          'chat',
+                          pathParameters: {'userId': conversation.otherUser.id},
+                          queryParameters: {
+                            'name': conversation.otherUser.fullName,
+                            'avatar': conversation.otherUser.avatarUrl ?? '',
+                          },
+                        );
                       },
                     );
                   },

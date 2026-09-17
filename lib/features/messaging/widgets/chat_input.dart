@@ -5,12 +5,14 @@ class ChatInput extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
   final VoidCallback onAttachment;
+  final bool isSending;
 
   const ChatInput({
     super.key,
     required this.controller,
     required this.onSend,
     required this.onAttachment,
+    this.isSending = false,
   });
 
   @override
@@ -64,8 +66,14 @@ class ChatInput extends StatelessWidget {
             ),
             const SizedBox(width: AppDimensions.spacing8),
             IconButton(
-              icon: const Icon(Icons.send),
-              onPressed: onSend,
+              icon: isSending
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.send),
+              onPressed: isSending ? null : onSend,
               color: colorScheme.primary,
             ),
           ],

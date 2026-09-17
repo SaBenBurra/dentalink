@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/conversation_model.dart';
 import '../data/models/message_model.dart';
@@ -31,34 +34,120 @@ final conversationsProvider =
     });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Chat Notifier (konuşma başına)
+// Active Chat State & Notifier (peer kullanıcı ID'si ile anahtarlanır)
 // ─────────────────────────────────────────────────────────────────────────────
 
-class ChatNotifier
-    extends AutoDisposeFamilyAsyncNotifier<List<MessageModel>, String> {
-  @override
-  Future<List<MessageModel>> build(String conversationId) async {
-    return ref.read(messageRepositoryProvider).getMessages(conversationId);
-  }
+final _peerConversationProvider = Provider.autoDispose.family<ConversationModel?, String>((ref, peerId) {
+  final list = ref.watch(conversationsProvider).valueOrNull ?? [];
+  return list.firstWhereOrNull((c) => c.otherUser.id == peerId);
+});
 
-  /// Konuşmadaki mesajları okundu olarak işaretler.
-  /// UI katmanından çağrılmalıdır (ör. ekran açıldığında).
-  Future<void> markAsRead() async {
-    await ref.read(messageRepositoryProvider).markMessagesAsRead(arg);
-  }
 
-  Future<void> sendMessage(String receiverId, String content) async {
-    final repo = ref.read(messageRepositoryProvider);
-    final newMsg = await repo.sendMessage(receiverId, content);
-    final current = state.valueOrNull ?? [];
-    state = AsyncData([...current, newMsg]);
+class ActiveChatState {
+  final String? conversationId;
+  final List<MessageModel> messages;
+
+  const ActiveChatState({this.conversationId, required this.messages});
+
+  ActiveChatState copyWith({
+    String? conversationId,
+    List<MessageModel>? messages,
+  }) {
+    return ActiveChatState(
+      conversationId: conversationId ?? this.conversationId,
+      messages: messages ?? this.messages,
+    );
   }
 }
 
-final chatProvider = AsyncNotifierProvider.autoDispose
-    .family<ChatNotifier, List<MessageModel>, String>(() {
-      return ChatNotifier();
+class ActiveChatNotifier
+    extends AutoDisposeFamilyAsyncNotifier<ActiveChatState, String> {
+  bool _isDisposed = false;
+
+  @override
+  Future<ActiveChatState> build(String peerUserId) async {
+    ref.onDispose(() => _isDisposed = true);
+    
+    // 9. Sohbet ekranından kısa süreli çıkıp girmelerde yeniden yüklemeyi (flicker) önler
+    final link = ref.keepAlive();
+    final timer = Timer(const Duration(minutes: 5), link.close);
+    ref.onDispose(timer.cancel);
+
+    // 7. getConversations()'ı doğrudan repo yerine sadece bu sohbete ait id'yi dinle
+    final conversationId = ref.watch(
+      _peerConversationProvider(peerUserId).select((c) => c?.id),
+    );
+
+    if (conversationId == null) {
+      return const ActiveChatState(conversationId: null, messages: []);
+    }
+
+    final repo = ref.read(messageRepositoryProvider);
+    // TODO: Sayfalama/lazy loading eklenebilir (cursor/limit)
+    final messages = await repo.getMessages(conversationId);
+
+    return ActiveChatState(
+      conversationId: conversationId,
+      messages: messages,
+    );
+  }
+
+  /// Mesajları okundu olarak işaretler. UI katmanından (ör. ekran açılışı) tetiklenir.
+  Future<void> markAsRead(String conversationId) async {
+    final repo = ref.read(messageRepositoryProvider);
+    try {
+      await repo.markMessagesAsRead(conversationId);
+      // 2. Asenkron aralık sonrası invalidate için _isDisposed güvencesi
+      if (!_isDisposed) {
+        ref.invalidate(conversationsProvider);
+      }
+    } catch (e) {
+      debugPrint('ActiveChatNotifier: markAsRead hatası: $e');
+    }
+  }
+
+  Future<void> sendMessage(String content) async {
+    final repo = ref.read(messageRepositoryProvider);
+    final peerUserId = arg;
+
+    try {
+      final newMsg = await repo.sendMessage(peerUserId, content);
+      
+      // 3. Mesaj gönderiminde silent data loss'u önlemek için
+      // state'in yüklenmesini bekleyerek güncel veriyi güvenle al.
+      final current = await future;
+      
+      String? convId = current.conversationId;
+      if (convId == null) {
+        // Yeni konuşma ID'sini repodan tazeleyip buluyoruz.
+        // TODO: Backend gecikmeleri (eventual consistency) için retry/backoff eklenecek
+        final convs = await ref.refresh(conversationsProvider.future);
+        convId = convs.firstWhereOrNull((c) => c.otherUser.id == peerUserId)?.id;
+      }
+
+      state = AsyncData(ActiveChatState(
+        conversationId: convId,
+        messages: [...current.messages, newMsg],
+      ));
+
+      if (!_isDisposed) {
+        ref.invalidate(conversationsProvider);
+      }
+    } catch (e, st) {
+      debugPrint('ActiveChatNotifier: sendMessage hatası: $e\n$st');
+      rethrow; // UI hatayı yakalayacak
+    }
+  }
+}
+
+final activeChatProvider = AsyncNotifierProvider.autoDispose
+    .family<ActiveChatNotifier, ActiveChatState, String>(() {
+      return ActiveChatNotifier();
     });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Diğer Provider'lar
+// ─────────────────────────────────────────────────────────────────────────────
 
 /// Toplam okunmamış mesaj sayısı — bottom nav badge için.
 final totalUnreadMessagesProvider = Provider.autoDispose<int>((ref) {
