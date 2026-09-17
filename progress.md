@@ -91,8 +91,8 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 - [x] **B2 düzelt:** `FollowersScreen` takip et/bırak butonunu provider'a bağla (mock seviyesinde çalışır hale getir)
 - [x] **E3 düzelt:** Bildirime tıklanınca ilgili gönderi/profil sayfasına yönlendirme ekle
 - [x] **E4 düzelt:** Chat ekranını `MessageRepository` provider'ına bağla (mock veriyle çalışır hale getir)
-- [ ] **E7 düzelt:** Post header'a seçenekler menüsü ekle (düzenle/sil/raporla — şimdilik sadece UI)
-- [ ] **E10 tamamla:** Eksik İngilizce çevirileri (`intl_en.arb`) tamamla
+- [x] **E7 düzelt:** Post header'a seçenekler menüsü ekle (düzenle/sil/raporla — şimdilik sadece UI)
+- [x] **E10 tamamla:** Eksik İngilizce çevirileri (`intl_en.arb`) tamamla
 - [ ] **UI geçişi:** Tüm ekranlar arası navigasyonları uçtan uca test et, kırık akış kalmamalı
 
 > **Çıktı:** Uygulamanın tüm ekranları arasında sorunsuz gezinilebilen, tüm butonları çalışan (mock seviyesinde) bir demo. Geri bildirim alınır, gerekirse revize edilir.
