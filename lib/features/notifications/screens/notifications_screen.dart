@@ -2,11 +2,15 @@ import 'package:dentlink/data/models/notification_model.dart';
 import 'package:dentlink/features/notifications/widgets/notifications_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
+import '../../../data/models/enums.dart';
+import '../../../data/providers/repository_providers.dart';
 import '../../../providers/notification_provider.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_widget.dart';
+import '../../../core/l10n/generated/app_localizations.dart';
 import '../widgets/notification_tile.dart';
 
 class NotificationsScreen extends ConsumerWidget {
@@ -15,30 +19,91 @@ class NotificationsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final notificationsState = ref.watch(notificationsProvider);
 
     return Scaffold(
       backgroundColor: isDark
           ? const Color(0xFF11211F)
           : AppColors.lightBackground,
       appBar: NotificationsAppBar(),
-      body: listNotifications(notificationsState, isDark, ref),
+      body: const _NotificationListView(),
     );
   }
+}
 
-  Widget? listNotifications(
-    AsyncValue<List<NotificationModel>> notificationsState,
-    bool isDark,
+class _NotificationListView extends ConsumerWidget {
+  const _NotificationListView();
+
+  Future<void> _handleNotificationTap(
+    BuildContext context,
     WidgetRef ref,
-  ) {
+    NotificationModel notification,
+  ) async {
+    final localizations = AppLocalizations.of(context)!;
+    ref.read(notificationsProvider.notifier).markRead(notification.id);
+
+    final type = notification.type;
+    if (type == NotificationType.follow) {
+      context.push('/profile/${notification.actor.id}');
+    } else if (type == NotificationType.message) {
+      context.push(
+        Uri(
+          path: '/chat/${notification.actor.id}',
+          queryParameters: {
+            'name': notification.actor.fullName,
+            'avatar': notification.actor.avatarUrl ?? '',
+          },
+        ).toString(),
+      );
+    } else if (notification.postId != null) {
+      // Yükleme göstergesi
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+      try {
+        final postRepo = ref.read(feedRepositoryProvider);
+        final post = await postRepo.getPostById(notification.postId!);
+        
+        if (!context.mounted) return;
+        context.pop(); // Yükleme göstergesini kapat
+
+        if (post.type == PostType.casePost) {
+          context.push('/feed/case/${post.id}');
+        } else if (post.type == PostType.question) {
+          context.push('/feed/question/${post.id}');
+        }
+      } catch (e) {
+        if (!context.mounted) return;
+        context.pop(); // Yükleme göstergesini kapat
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(localizations.postNotFound),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final notificationsState = ref.watch(notificationsProvider);
+    final localizations = AppLocalizations.of(context)!;
+
     return notificationsState.when(
       data: (notifications) {
         if (notifications.isEmpty) {
-          return const Center(
+          return Center(
             child: DentLinkEmptyState(
               icon: Icons.notifications_off_outlined,
-              title: 'Bildirim Yok',
-              subtitle: 'Henüz yeni bir bildiriminiz bulunmuyor.',
+              title: localizations.notificationsTitle,
+              subtitle: localizations.noNotifications,
             ),
           );
         }
@@ -58,11 +123,7 @@ class NotificationsScreen extends ConsumerWidget {
             final notification = notifications[index];
             return NotificationTile(
               notification: notification,
-              onTap: () {
-                ref
-                    .read(notificationsProvider.notifier)
-                    .markRead(notification.id);
-              },
+              onTap: () => _handleNotificationTap(context, ref, notification),
             );
           },
         );
@@ -70,7 +131,7 @@ class NotificationsScreen extends ConsumerWidget {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (err, stack) => Center(
         child: DentLinkErrorWidget(
-          message: 'Bildirimler yüklenemedi.',
+          message: localizations.postLoadError,
           onRetry: () => ref.refresh(notificationsProvider),
         ),
       ),

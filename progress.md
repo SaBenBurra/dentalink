@@ -89,7 +89,7 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 - [x] **B1 düzelt:** `ProfilePostsTab`'da rota `/feed/case/:id` ve `/feed/question/:id` olarak düzelt
 - [x] **E1 düzelt:** `/profile/:id` rotasını `app_router.dart`'a ekle (başka kullanıcı profil görüntüleme)
 - [x] **B2 düzelt:** `FollowersScreen` takip et/bırak butonunu provider'a bağla (mock seviyesinde çalışır hale getir)
-- [ ] **E3 düzelt:** Bildirime tıklanınca ilgili gönderi/profil sayfasına yönlendirme ekle
+- [x] **E3 düzelt:** Bildirime tıklanınca ilgili gönderi/profil sayfasına yönlendirme ekle
 - [ ] **E4 düzelt:** Chat ekranını `MessageRepository` provider'ına bağla (mock veriyle çalışır hale getir)
 - [ ] **E7 düzelt:** Post header'a seçenekler menüsü ekle (düzenle/sil/raporla — şimdilik sadece UI)
 - [ ] **E10 tamamla:** Eksik İngilizce çevirileri (`intl_en.arb`) tamamla
