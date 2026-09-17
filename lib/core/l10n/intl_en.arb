@@ -16,6 +16,8 @@
   "unknownError": "An unknown error occurred.",
   "networkError": "Please check your internet connection.",
   "noResults": "No results found.",
+  "postNotFound": "Post not found.",
+  "postLoadError": "Error loading post.",
   "emptyFeed": "No posts yet.",
   "seeAll": "See All",
   "sharePost": "Share Post",

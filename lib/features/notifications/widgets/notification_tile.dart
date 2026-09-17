@@ -89,7 +89,7 @@ class NotificationTile extends StatelessWidget {
                   Text(
                     RelativeTimeText.format(
                       notification.createdAt,
-                      AppLocalizations.of(context),
+                      AppLocalizations.of(context)!,
                     ),
                     style: textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,

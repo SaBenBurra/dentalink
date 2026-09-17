@@ -43,7 +43,7 @@ class DentLinkErrorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     final effectiveIconColor = iconColor ?? colorScheme.error;
     final displayMessage = message ?? l10n.unknownError;

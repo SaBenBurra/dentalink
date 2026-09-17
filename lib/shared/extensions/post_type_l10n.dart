@@ -4,7 +4,7 @@ import '../../../data/models/enums.dart';
 
 extension PostTypeL10n on PostType {
   String getLabelInProfile(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return switch (this) {
       PostType.casePost => l10n.casesTabLabelInProfile,
@@ -13,7 +13,7 @@ extension PostTypeL10n on PostType {
   }
 
   String getBadgeLabel(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return switch (this) {
       PostType.casePost => l10n.casePost,
       PostType.question => l10n.questionPost,

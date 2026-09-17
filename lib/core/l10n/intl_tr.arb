@@ -46,6 +46,12 @@
   "noResults": "Sonuç bulunamadı.",
   "@noResults": { "description": "Boş sonuç mesajı" },
 
+  "postNotFound": "Gönderi bulunamadı.",
+  "@postNotFound": { "description": "Gönderi bulunamadı hata mesajı" },
+
+  "postLoadError": "Gönderi yüklenirken hata oluştu.",
+  "@postLoadError": { "description": "Gönderi yükleme hata mesajı" },
+
   "emptyFeed": "Henüz gönderi yok.",
   "@emptyFeed": { "description": "Boş feed mesajı" },
 

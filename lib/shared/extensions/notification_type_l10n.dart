@@ -7,7 +7,7 @@ import '../../data/models/enums.dart';
 extension NotificationTypeL10n on NotificationType {
   /// Bildirim için lokalize okunabilir metin üretir.
   String getBodyText(BuildContext context, String actorName) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return switch (this) {
       NotificationType.like => l10n.notificationLiked(actorName),
       NotificationType.comment => l10n.notificationCommented(actorName),

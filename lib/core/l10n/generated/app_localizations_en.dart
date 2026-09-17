@@ -54,6 +54,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noResults => 'No results found.';
 
   @override
+  String get postNotFound => 'Post not found.';
+
+  @override
+  String get postLoadError => 'Error loading post.';
+
+  @override
   String get emptyFeed => 'No posts yet.';
 
   @override

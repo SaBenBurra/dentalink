@@ -35,7 +35,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final feedState = ref.watch(feedProvider);
 
     final backgroundColor = isDark

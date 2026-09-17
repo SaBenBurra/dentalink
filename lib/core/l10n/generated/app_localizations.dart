@@ -67,8 +67,8 @@ abstract class AppLocalizations {
 
   final String localeName;
 
-  static AppLocalizations of(BuildContext context) {
-    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+  static AppLocalizations? of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
@@ -187,6 +187,18 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Sonuç bulunamadı.'**
   String get noResults;
+
+  /// Gönderi bulunamadı hata mesajı
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönderi bulunamadı.'**
+  String get postNotFound;
+
+  /// Gönderi yükleme hata mesajı
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönderi yüklenirken hata oluştu.'**
+  String get postLoadError;
 
   /// Boş feed mesajı
   ///
