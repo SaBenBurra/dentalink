@@ -34,7 +34,11 @@ class ConversationTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            CircleAvatar(radius: 28, backgroundImage: NetworkImage(avatarUrl)),
+            CircleAvatar(
+              radius: 28,
+              backgroundImage: avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : null,
+              child: avatarUrl.isEmpty ? const Icon(Icons.person, size: 28) : null,
+            ),
             const SizedBox(width: AppDimensions.spacing16),
             Expanded(
               child: Column(
