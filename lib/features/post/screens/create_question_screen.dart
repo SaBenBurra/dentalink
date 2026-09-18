@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../widgets/image_picker_grid.dart';
 import '../widgets/tag_input.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import '../providers/create_question_controller.dart';
@@ -17,7 +16,6 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
-  List<String> _images = [];
   List<String> _tags = [];
 
   @override
@@ -32,7 +30,6 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
       await ref.read(createQuestionProvider.notifier).submit(
         title: _titleController.text,
         content: _contentController.text,
-        imageUrls: _images,
         tags: _tags,
       );
 
@@ -45,7 +42,7 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Sorunuz başarıyla paylaşıldı (Mock)')),
+          const SnackBar(content: Text('Sorunuz başarıyla paylaşıldı!')),
         );
         context.pop();
       }
@@ -137,17 +134,6 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
               onTagsChanged: (tags) {
                 setState(() {
                   _tags = tags;
-                });
-              },
-            ),
-            const SizedBox(height: AppDimensions.spacing24),
-
-            // Görseller (Opsiyonel)
-            ImagePickerGrid(
-              maxImages: 4, // Soru için daha az görsel yeterli olabilir
-              onImagesChanged: (images) {
-                setState(() {
-                  _images = images;
                 });
               },
             ),

@@ -1,36 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
+import '../../../data/models/enums.dart';
 
 /// Vaka oluştururken Diş Hekimliği Branşını seçmek için kullanılan bileşen.
 class BranchSelector extends StatelessWidget {
-  final String? selectedBranch;
-  final ValueChanged<String> onBranchSelected;
+  final DentalBranch? selectedBranch;
+  final ValueChanged<DentalBranch> onBranchSelected;
 
   const BranchSelector({
     super.key,
     this.selectedBranch,
     required this.onBranchSelected,
   });
-
-  static const List<Map<String, String>> _branches = [
-    {'id': 'pedodontist', 'name': 'Pedodontist'},
-    {'id': 'endodontist', 'name': 'Endodontist'},
-    {'id': 'ortodontist', 'name': 'Ortodontist'},
-    {'id': 'periodontolog', 'name': 'Periodontolog'},
-    {'id': 'protez_uzmani', 'name': 'Protez Uzmanı'},
-    {'id': 'agiz_dis_cene_cerrahi', 'name': 'Ağız, Diş ve Çene Cerrahisi'},
-    {'id': 'agiz_dis_cene_radyologu', 'name': 'Ağız, Diş ve Çene Radyolojisi'},
-    {'id': 'oral_diagnoz_uzmani', 'name': 'Oral Diagnoz Uzmanı'},
-    {'id': 'restoratif_dis_tedavisi_uzmani', 'name': 'Restoratif Diş Tedavisi Uzmanı'},
-  ];
-
-  String? _getBranchName(String id) {
-    try {
-      return _branches.firstWhere((b) => b['id'] == id)['name'];
-    } catch (_) {
-      return null;
-    }
-  }
 
   void _showBranchBottomSheet(BuildContext context) {
     showModalBottomSheet(
@@ -69,10 +50,10 @@ class BranchSelector extends StatelessWidget {
                 Expanded(
                   child: ListView.builder(
                     controller: scrollController,
-                    itemCount: _branches.length,
+                    itemCount: DentalBranch.values.length,
                     itemBuilder: (context, index) {
-                      final branch = _branches[index];
-                      final isSelected = selectedBranch == branch['id'];
+                      final branch = DentalBranch.values[index];
+                      final isSelected = selectedBranch == branch;
 
                       return ListTile(
                         leading: Icon(
@@ -82,7 +63,7 @@ class BranchSelector extends StatelessWidget {
                               : colorScheme.onSurfaceVariant,
                         ),
                         title: Text(
-                          branch['name']!,
+                          branch.displayName,
                           style: TextStyle(
                             fontWeight: isSelected
                                 ? FontWeight.bold
@@ -97,7 +78,7 @@ class BranchSelector extends StatelessWidget {
                               )
                             : null,
                         onTap: () {
-                          onBranchSelected(branch['id']!);
+                          onBranchSelected(branch);
                           Navigator.pop(context);
                         },
                       );
@@ -145,7 +126,7 @@ class BranchSelector extends StatelessWidget {
               children: [
                 Text(
                   selectedBranch != null
-                      ? _getBranchName(selectedBranch!) ?? 'Bilinmeyen Branş'
+                      ? selectedBranch!.displayName
                       : 'Lütfen bir branş seçin',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: selectedBranch != null

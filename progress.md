@@ -138,15 +138,15 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 - [x] `repository_providers.dart`'ta `MockUserRepository` → `SupabaseUserRepository` geçişi
 
 ### 3.3 — Post CRUD (SupabasePostRepository)
-- [ ] `SupabasePostRepository` oluştur (`PostRepository` interface'ini — `IFeedRepository`, `ISearchRepository`, `IBookmarkRepository`, `IPostActionRepository` — implemente et)
-- [ ] Vaka oluşturma (post + post_images + post_tags insert) — `CreateCaseController`'ı bağla
-- [ ] Soru oluşturma (post + post_tags insert) — `CreateQuestionController`'ı bağla
-- [ ] Post silme (soft delete veya cascade)
-- [ ] Feed sorgusu (kronolojik sıralama, posts + user join + images)
-- [ ] Post detay getirme (tek post + yorumlar + yazar bilgisi)
-- [ ] Beğeni toggle (insert/delete + sayaç trigger)
-- [ ] Bookmark toggle (insert/delete)
-- [ ] `repository_providers.dart`'ta `MockPostRepository` → `SupabasePostRepository` geçişi
+- [x] `SupabasePostRepository` oluştur (`PostRepository` interface'ini — `IFeedRepository`, `ISearchRepository`, `IBookmarkRepository`, `IPostActionRepository` — implemente et)
+- [x] Vaka oluşturma (post + post_images + post_tags insert) — `CreateCaseController`'ı bağla
+- [x] Soru oluşturma (post + post_tags insert) — `CreateQuestionController`'ı bağla
+- [x] Post silme (soft delete veya cascade)
+- [x] Feed sorgusu (kronolojik sıralama, posts + user join + images)
+- [x] Post detay getirme (tek post + yorumlar + yazar bilgisi)
+- [x] Beğeni toggle (insert/delete + sayaç trigger)
+- [x] Bookmark toggle (insert/delete)
+- [x] `repository_providers.dart`'ta `MockPostRepository` → `SupabasePostRepository` geçişi
 
 ### 3.4 — Yorum Sistemi (SupabaseCommentRepository)
 - [ ] `SupabaseCommentRepository` oluştur

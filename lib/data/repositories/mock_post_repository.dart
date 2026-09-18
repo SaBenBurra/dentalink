@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../datasources/mock_datasource.dart';
 import '../models/enums.dart';
 import '../models/post_model.dart';
@@ -128,4 +130,34 @@ class MockPostRepository implements PostRepository {
     // Mock: view count artışı in-memory saklanır ama UI'a yansıtılmaz.
     await Future.delayed(const Duration(milliseconds: 100));
   }
+
+  @override
+  Future<PostModel> createCase({
+    required String title,
+    required String content,
+    required DentalBranch branch,
+    required List<File> imageFiles,
+    required List<String> tags,
+  }) async {
+    await Future.delayed(const Duration(seconds: 1));
+    // Mock: gerçek kayıt yapmadan sadece başarılı dönüş simüle eder.
+    return MockDatasource.posts.first;
+  }
+
+  @override
+  Future<PostModel> createQuestion({
+    required String title,
+    required String content,
+    required List<String> tags,
+  }) async {
+    await Future.delayed(const Duration(seconds: 1));
+    return MockDatasource.posts.first;
+  }
+
+  @override
+  Future<void> deletePost(String postId) async {
+    await Future.delayed(_delay);
+    _postOverrides.remove(postId);
+  }
 }
+

@@ -11,7 +11,7 @@ import '../repositories/mock_message_repository.dart';
 import '../repositories/notification_repository.dart';
 import '../repositories/mock_notification_repository.dart';
 import '../repositories/post_repository.dart';
-import '../repositories/mock_post_repository.dart';
+import '../repositories/supabase_post_repository.dart';
 import '../repositories/user_repository.dart';
 import '../repositories/supabase_user_repository.dart';
 
@@ -27,13 +27,14 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 
 // ─── Post (ISP Segregated) ───
 final _basePostRepositoryProvider = Provider<PostRepository>((ref) {
-  return MockPostRepository();
+  return SupabasePostRepository(ref.watch(supabaseClientProvider));
 });
 
 final feedRepositoryProvider = Provider<IFeedRepository>((ref) => ref.watch(_basePostRepositoryProvider));
 final bookmarkRepositoryProvider = Provider<IBookmarkRepository>((ref) => ref.watch(_basePostRepositoryProvider));
 final searchRepositoryProvider = Provider<ISearchRepository>((ref) => ref.watch(_basePostRepositoryProvider));
 final postActionRepositoryProvider = Provider<IPostActionRepository>((ref) => ref.watch(_basePostRepositoryProvider));
+final createPostRepositoryProvider = Provider<ICreatePostRepository>((ref) => ref.watch(_basePostRepositoryProvider));
 
 // ─── Comment ───
 final commentRepositoryProvider = Provider<CommentRepository>((ref) {
@@ -54,3 +55,4 @@ final notificationRepositoryProvider = Provider<NotificationRepository>((ref) {
 final userRepositoryProvider = Provider<UserRepository>((ref) {
   return SupabaseUserRepository(client: ref.watch(supabaseClientProvider));
 });
+

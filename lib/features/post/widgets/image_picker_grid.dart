@@ -1,11 +1,15 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 
-/// Vaka veya Soru oluştururken kullanılacak (Mock) Görsel Seçici Izgara
-/// Faz 2'de olduğumuz için galeriye bağlanmaz, sadece mock veri ekler.
+/// Vaka veya Soru oluştururken kullanılacak Görsel Seçici Izgara.
+///
+/// `image_picker` paketi ile cihazın galerisine/kamerasına bağlanır.
+/// Seçilen görseller [File] listesi olarak parent widget'a iletilir.
 class ImagePickerGrid extends StatefulWidget {
   final int maxImages;
-  final ValueChanged<List<String>> onImagesChanged;
+  final ValueChanged<List<File>> onImagesChanged;
 
   const ImagePickerGrid({
     super.key,
@@ -18,10 +22,10 @@ class ImagePickerGrid extends StatefulWidget {
 }
 
 class _ImagePickerGridState extends State<ImagePickerGrid> {
-  // Mock image list (placeholder string list)
-  final List<String> _images = [];
+  final List<File> _images = [];
+  final ImagePicker _picker = ImagePicker();
 
-  void _pickMockImage() {
+  Future<void> _showPickerSourceModal() async {
     if (_images.length >= widget.maxImages) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -33,17 +37,78 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
       return;
     }
 
-    setState(() {
-      _images.add('mock_image_${DateTime.now().millisecondsSinceEpoch}.jpg');
-    });
-    widget.onImagesChanged(_images);
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Galeriden Seç'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _pickImages(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Kameradan Çek'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _pickImages(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImages(ImageSource source) async {
+    if (source == ImageSource.camera) {
+      final pickedFile = await _picker.pickImage(
+        source: source,
+        imageQuality: 85,
+        maxWidth: 1920,
+        maxHeight: 1920,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _images.add(File(pickedFile.path));
+        });
+        widget.onImagesChanged(List.unmodifiable(_images));
+      }
+    } else {
+      final pickedFiles = await _picker.pickMultiImage(
+        imageQuality: 85,
+        maxWidth: 1920,
+        maxHeight: 1920,
+      );
+
+      if (pickedFiles.isEmpty) return;
+
+      final remaining = widget.maxImages - _images.length;
+      final toAdd =
+          pickedFiles.take(remaining).map((xf) => File(xf.path)).toList();
+
+      setState(() {
+        _images.addAll(toAdd);
+      });
+      widget.onImagesChanged(List.unmodifiable(_images));
+    }
   }
 
   void _removeImage(int index) {
     setState(() {
       _images.removeAt(index);
     });
-    widget.onImagesChanged(_images);
+    widget.onImagesChanged(List.unmodifiable(_images));
   }
 
   @override
@@ -72,7 +137,7 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
         ),
         const SizedBox(height: AppDimensions.spacing12),
         SizedBox(
-          height: 120, // Yüksekliği biraz daha artırdık
+          height: 120,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             clipBehavior: Clip.none,
@@ -86,7 +151,7 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
                     right: AppDimensions.spacing12,
                   ),
                   child: InkWell(
-                    onTap: _pickMockImage,
+                    onTap: _showPickerSourceModal,
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
                       width: 100,
@@ -120,8 +185,9 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
                 );
               }
 
-              // Display mock image
+              // Display selected image thumbnail
               final imageIndex = index - 1;
+              final imageFile = _images[imageIndex];
               return Padding(
                 padding: const EdgeInsets.only(
                   top: AppDimensions.spacing12,
@@ -133,19 +199,13 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: colorScheme.surfaceContainerHigh,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.image_outlined,
-                            color: colorScheme.onSurfaceVariant,
-                            size: 40,
-                          ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.file(
+                          imageFile,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
                         ),
                       ),
                       Positioned(
@@ -164,8 +224,7 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
                                 color: Theme.of(
                                   context,
                                 ).scaffoldBackgroundColor,
-                                width:
-                                    2, // Butonun etrafında beyaz/arka plan renginde bir boşluk güzel görünür
+                                width: 2,
                               ),
                             ),
                             child: Icon(

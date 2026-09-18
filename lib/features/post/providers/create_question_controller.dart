@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../data/providers/repository_providers.dart';
+
 /// Soru oluşturma ekranının durumunu ve mantığını yöneten kontrolcü.
 /// (SRP uyumlu: UI katmanından backend ve validasyon mantığını ayırır).
 final createQuestionProvider =
@@ -15,18 +17,24 @@ class CreateQuestionController extends AutoDisposeAsyncNotifier<void> {
   }
 
   /// Yeni soru formunu gönderir.
+  ///
+  /// Soru gönderilerinde görsel opsiyoneldir ve şu anki implementasyonda
+  /// desteklenmez (ileride eklenebilir). Etiketler veritabanına upsert edilir.
   Future<void> submit({
     required String title,
     required String content,
-    required List<String> imageUrls,
     required List<String> tags,
   }) async {
     state = const AsyncLoading();
     try {
-      // TODO: Faz 3'te postRepository üzerinden backend'e gönderilecek.
-      // Şimdilik mock bekleme süresi:
-      await Future.delayed(const Duration(seconds: 1));
-      
+      final repo = ref.read(createPostRepositoryProvider);
+
+      await repo.createQuestion(
+        title: title,
+        content: content,
+        tags: tags,
+      );
+
       state = const AsyncData(null);
     } catch (e, st) {
       state = AsyncError(e, st);

@@ -1,5 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../data/models/enums.dart';
+import '../../../data/providers/repository_providers.dart';
 
 /// Vaka oluşturma ekranının durumunu ve mantığını yöneten kontrolcü.
 /// (SRP uyumlu: UI katmanından backend ve validasyon mantığını ayırır).
@@ -15,19 +19,29 @@ class CreateCaseController extends AutoDisposeAsyncNotifier<void> {
   }
 
   /// Yeni vaka formunu gönderir.
+  ///
+  /// [imageFiles] kullanıcının cihazından seçtiği ham görsel dosyaları.
+  /// Görseller Supabase Storage'a (`post-images` bucket'ı) yüklenir,
+  /// ardından post ve ilişkili kayıtlar veritabanına yazılır.
   Future<void> submit({
     required String title,
     required String content,
-    required String branch,
-    required List<String> imageUrls,
+    required DentalBranch branch,
+    required List<File> imageFiles,
     required List<String> tags,
   }) async {
     state = const AsyncLoading();
     try {
-      // TODO: Faz 3'te postRepository üzerinden backend'e gönderilecek.
-      // Şimdilik mock bekleme süresi:
-      await Future.delayed(const Duration(seconds: 1));
-      
+      final repo = ref.read(createPostRepositoryProvider);
+
+      await repo.createCase(
+        title: title,
+        content: content,
+        branch: branch,
+        imageFiles: imageFiles,
+        tags: tags,
+      );
+
       state = const AsyncData(null);
     } catch (e, st) {
       state = AsyncError(e, st);

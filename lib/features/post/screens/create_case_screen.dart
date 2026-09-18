@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +6,7 @@ import '../widgets/branch_selector.dart';
 import '../widgets/image_picker_grid.dart';
 import '../widgets/tag_input.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
+import '../../../data/models/enums.dart';
 import '../providers/create_case_controller.dart';
 
 class CreateCaseScreen extends ConsumerStatefulWidget {
@@ -18,8 +20,8 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
-  String? _selectedBranch;
-  List<String> _images = [];
+  DentalBranch? _selectedBranch;
+  List<File> _images = [];
   List<String> _tags = [];
 
   @override
@@ -51,7 +53,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
         title: _titleController.text,
         content: _contentController.text,
         branch: _selectedBranch!,
-        imageUrls: _images,
+        imageFiles: _images,
         tags: _tags,
       );
 
@@ -64,7 +66,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Vaka başarıyla paylaşıldı (Mock)')),
+          const SnackBar(content: Text('Vaka başarıyla paylaşıldı!')),
         );
         context.pop();
       }
@@ -167,7 +169,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
               maxImages: 10,
               onImagesChanged: (images) {
                 setState(() {
-                  _images = images;
+                  _images = List.of(images);
                 });
               },
             ),
