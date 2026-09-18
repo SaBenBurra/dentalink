@@ -28,7 +28,6 @@ class MainShell extends StatelessWidget {
           width: MediaQuery.of(context).size.width - 32,
           borderRadius: BorderRadius.circular(28),
           offset: 12,
-          fit: StackFit.expand,
           clip: Clip.none,
         ),
         motion: const BottomBarMotion.cupertino(
@@ -69,11 +68,14 @@ class MainShell extends StatelessWidget {
           ),
         ),
         showIcon: false,
-        body: child,
-        child: AppBottomNavBar(
-          currentIndex: _currentIndex(context),
-          onTap: (index) => _onNavTap(context, index),
-          onCreateTap: () => showCreatePostSheet(context),
+        body: SizedBox.expand(child: child),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+          child: AppBottomNavBar(
+            currentIndex: _currentIndex(context),
+            onTap: (index) => _onNavTap(context, index),
+            onCreateTap: () => showCreatePostSheet(context),
+          ),
         ),
       ),
     );
