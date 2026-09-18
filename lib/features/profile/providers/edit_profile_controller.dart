@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:io' as dart_io;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/models/enums.dart';
+import '../../../data/providers/repository_providers.dart';
+import '../../../providers/auth_provider.dart';
 
 /// Profil düzenleme işlemlerini yöneten Riverpod controller.
 ///
@@ -26,14 +29,30 @@ class EditProfileController extends AutoDisposeAsyncNotifier<void> {
     String? city,
     String? experience,
     String? workplace,
+    dart_io.File? avatarFile,
   }) async {
     state = const AsyncLoading();
     try {
-      // TODO: Faz 3'te userRepository / authRepository üzerinden backend'e gönderilecek.
-      // Şimdilik mock bekleme süresi:
-      await Future.delayed(const Duration(seconds: 1));
-      
-      // authProvider'a gidip local state de güncellenebilir.
+      final currentUserId = ref.read(supabaseClientProvider).auth.currentUser?.id;
+      if (currentUserId != null) {
+        if (avatarFile != null) {
+          await ref.read(userRepositoryProvider).uploadAvatar(currentUserId, avatarFile);
+        }
+
+        await ref.read(userRepositoryProvider).updateProfile(
+          currentUserId,
+          fullName: fullName,
+          title: title,
+          bio: bio,
+          university: university,
+          city: city,
+          experienceYears: experience != null && experience.isNotEmpty ? int.tryParse(experience) : null,
+          workplace: workplace,
+        );
+        
+        // Kullanıcı profilinin UI'da güncellenmesi için provider'ı invalidate et
+        ref.invalidate(authProvider);
+      }
       
       state = const AsyncData(null);
     } catch (e, st) {

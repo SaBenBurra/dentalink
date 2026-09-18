@@ -16,6 +16,17 @@ class BadgeModel {
     required this.earnedAt,
   });
 
+  factory BadgeModel.fromJson(Map<String, dynamic> json) {
+    return BadgeModel(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      description: json['description'] as String,
+      iconName: json['icon_url'] as String, // DB'deki icon_url'i iconName'e mapliyoruz
+      earnedAt: DateTime.parse(json['earned_at'] as String),
+    );
+  }
+
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) || other is BadgeModel && other.id == id;

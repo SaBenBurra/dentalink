@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import '../datasources/mock_datasource.dart';
 import '../models/badge_model.dart';
+import '../models/enums.dart';
 import '../models/user_model.dart';
 import 'user_repository.dart';
 
@@ -13,8 +16,7 @@ class MockUserRepository implements UserRepository {
   @override
   Future<UserModel> getUserById(String id) async {
     await Future.delayed(_delay);
-    final user = MockDatasource.userById(id);
-    return user.copyWith(isFollowing: _followedIds.contains(id));
+    return MockDatasource.userById(id);
   }
 
   @override
@@ -29,7 +31,6 @@ class MockUserRepository implements UserRepository {
               (u.university?.toLowerCase().contains(q) ?? false) ||
               u.title.displayName.toLowerCase().contains(q),
         )
-        .map((u) => u.copyWith(isFollowing: _followedIds.contains(u.id)))
         .toList();
   }
 
@@ -46,13 +47,24 @@ class MockUserRepository implements UserRepository {
   }
 
   @override
+  Future<bool> isFollowingUser(String userId) async {
+    await Future.delayed(_delay);
+    return _followedIds.contains(userId);
+  }
+
+  @override
+  Future<Set<String>> getFollowedUserIds(List<String> userIds) async {
+    await Future.delayed(_delay);
+    return _followedIds.intersection(userIds.toSet());
+  }
+
+  @override
   Future<List<UserModel>> getFollowers(String userId) async {
     await Future.delayed(_delay);
-    // Mock: rastgele 4 kullanıcı döndür.
+    // Mock: kendisi dışındaki ilk 4 kullanıcıyı döndür.
     return MockDatasource.users
         .where((u) => u.id != userId)
         .take(4)
-        .map((u) => u.copyWith(isFollowing: _followedIds.contains(u.id)))
         .toList();
   }
 
@@ -61,7 +73,6 @@ class MockUserRepository implements UserRepository {
     await Future.delayed(_delay);
     return MockDatasource.users
         .where((u) => _followedIds.contains(u.id))
-        .map((u) => u.copyWith(isFollowing: true))
         .toList();
   }
 
@@ -73,5 +84,25 @@ class MockUserRepository implements UserRepository {
     }
     // Diğer kullanıcılar için kısmi rozet listesi döndür.
     return MockDatasource.userBadges.take(1).toList();
+  }
+
+  @override
+  Future<void> updateProfile(
+    String userId, {
+    String? fullName,
+    UserTitle? title,
+    String? bio,
+    String? university,
+    String? city,
+    int? experienceYears,
+    String? workplace,
+  }) async {
+    await Future.delayed(_delay);
+  }
+
+  @override
+  Future<String> uploadAvatar(String userId, File imageFile) async {
+    await Future.delayed(_delay);
+    return 'https://ui-avatars.com/api/?name=Mock+Avatar&background=random';
   }
 }

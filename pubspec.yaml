@@ -35,6 +35,8 @@ dependencies:
   flutter_floating_bottom_bar: ^2.0.2
   shared_preferences: ^2.5.5
 
+  equatable: ^2.0.8
+
 dev_dependencies:
   integration_test:
     sdk: flutter

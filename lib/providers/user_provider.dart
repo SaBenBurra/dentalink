@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/badge_model.dart';
 import '../data/models/user_model.dart';
 import '../data/providers/repository_providers.dart';
+import 'following_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // User Profile Provider
@@ -11,30 +12,46 @@ class UserProfileNotifier
     extends AutoDisposeFamilyAsyncNotifier<UserModel, String> {
   @override
   Future<UserModel> build(String userId) async {
-    return ref.read(userRepositoryProvider).getUserById(userId);
+    final repo = ref.read(userRepositoryProvider);
+
+    // Profil ve takip durumunu paralel yükle.
+    final (user, isFollowing) = await (
+      repo.getUserById(userId),
+      repo.isFollowingUser(userId),
+    ).wait;
+
+    // Takip state'ini merkezi provider'a yaz.
+    // Not: Bu side-effect kasıtlıdır — profil yüklendiğinde takip
+    // durumunun da hazır olması gerekir. followingStateProvider bu
+    // notifier'ın yaşam döngüsünden bağımsız olduğu için rebuild
+    // döngüsü oluşturmaz.
+    ref.read(followingStateProvider.notifier).setFollowStatus(userId, isFollowing);
+
+    return user;
   }
 
   Future<void> toggleFollow() async {
     final user = state.valueOrNull;
     if (user == null) return;
 
-    final repo = ref.read(userRepositoryProvider);
-    if (user.isFollowing) {
-      await repo.unfollowUser(user.id);
-      state = AsyncData(
-        user.copyWith(
-          isFollowing: false,
-          followersCount: (user.followersCount - 1).clamp(0, 999999),
-        ),
-      );
-    } else {
-      await repo.followUser(user.id);
-      state = AsyncData(
-        user.copyWith(
-          isFollowing: true,
-          followersCount: user.followersCount + 1,
-        ),
-      );
+    final followingNotifier = ref.read(followingStateProvider.notifier);
+    final wasFollowing = followingNotifier.isFollowing(user.id);
+
+    // Optimistic update — takipçi sayısını anında güncelle.
+    state = AsyncData(
+      user.copyWith(
+        followersCount: wasFollowing
+            ? (user.followersCount - 1).clamp(0, 999999)
+            : user.followersCount + 1,
+      ),
+    );
+
+    try {
+      await followingNotifier.toggleFollow(user.id);
+    } catch (_) {
+      // Rollback — eski state'e dön.
+      state = AsyncData(user);
+      rethrow;
     }
   }
 }
@@ -43,6 +60,7 @@ final userProfileProvider = AsyncNotifierProvider.autoDispose
     .family<UserProfileNotifier, UserModel, String>(() {
       return UserProfileNotifier();
     });
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Followers / Following Providers

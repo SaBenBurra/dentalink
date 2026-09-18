@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/following_provider.dart';
 import '../../../providers/user_provider.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_widget.dart';
@@ -74,15 +75,45 @@ class _FollowersScreenState extends ConsumerState<FollowersScreen>
   }
 }
 
-class _UserListTab extends ConsumerWidget {
+class _UserListTab extends ConsumerStatefulWidget {
   final AutoDisposeFutureProvider<List<UserModel>> provider;
   final String emptyMessage;
 
   const _UserListTab({required this.provider, required this.emptyMessage});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final asyncData = ref.watch(provider);
+  ConsumerState<_UserListTab> createState() => _UserListTabState();
+}
+
+class _UserListTabState extends ConsumerState<_UserListTab> {
+  bool _statusesLoaded = false;
+
+  /// Takip durumlarını toplu olarak yükler.
+  ///
+  /// [_statusesLoaded] guard'ı sayesinde sadece ilk veri
+  /// yüklemesinde çalışır, sonraki rebuild'lerde atlanır.
+  void _loadFollowStatuses(List<UserModel> users) {
+    if (_statusesLoaded || users.isEmpty) return;
+    _statusesLoaded = true;
+
+    final userIds = users.map((u) => u.id).toList();
+    ref
+        .read(userRepositoryProvider)
+        .getFollowedUserIds(userIds)
+        .then((followedIds) {
+      if (!mounted) return;
+      ref.read(followingStateProvider.notifier).setFollowStatuses({
+        for (final id in userIds) id: followedIds.contains(id),
+      });
+    }).catchError((Object e) {
+      debugPrint('Takip durumları yüklenemedi: $e');
+      if (mounted) _statusesLoaded = false; // Yeniden deneme imkanı
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final asyncData = ref.watch(widget.provider);
 
     return asyncData.when(
       data: (users) {
@@ -90,9 +121,14 @@ class _UserListTab extends ConsumerWidget {
           return DentLinkEmptyState(
             icon: Icons.people_outline,
             title: 'Kullanıcı Bulunamadı',
-            subtitle: emptyMessage,
+            subtitle: widget.emptyMessage,
           );
         }
+
+        // Guard: sadece ilk veri yüklemesinde çalışır.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _loadFollowStatuses(users);
+        });
 
         return ListView.separated(
           padding: const EdgeInsets.all(AppDimensions.spacing16),
@@ -105,7 +141,7 @@ class _UserListTab extends ConsumerWidget {
               user: user,
               trailing: _FollowButton(
                 key: ValueKey(user.id),
-                user: user,
+                userId: user.id,
               ),
             );
           },
@@ -114,16 +150,16 @@ class _UserListTab extends ConsumerWidget {
       loading: () => const Center(child: DentLinkLoadingSpinner()),
       error: (error, stack) => DentLinkErrorWidget(
         message: 'Kullanıcılar yüklenirken bir hata oluştu.',
-        onRetry: () => ref.invalidate(provider),
+        onRetry: () => ref.invalidate(widget.provider),
       ),
     );
   }
 }
 
 class _FollowButton extends ConsumerStatefulWidget {
-  final UserModel user;
+  final String userId;
 
-  const _FollowButton({super.key, required this.user});
+  const _FollowButton({super.key, required this.userId});
 
   @override
   ConsumerState<_FollowButton> createState() => _FollowButtonState();
@@ -131,22 +167,6 @@ class _FollowButton extends ConsumerStatefulWidget {
 
 class _FollowButtonState extends ConsumerState<_FollowButton> {
   bool _isLoading = false;
-  late bool _isFollowing;
-
-  @override
-  void initState() {
-    super.initState();
-    _isFollowing = widget.user.isFollowing;
-  }
-
-  @override
-  void didUpdateWidget(covariant _FollowButton oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.user.id != widget.user.id ||
-        oldWidget.user.isFollowing != widget.user.isFollowing) {
-      _isFollowing = widget.user.isFollowing;
-    }
-  }
 
   Future<void> _toggleFollow() async {
     if (_isLoading) return;
@@ -155,22 +175,17 @@ class _FollowButtonState extends ConsumerState<_FollowButton> {
       _isLoading = true;
     });
 
-    final repo = ref.read(userRepositoryProvider);
     final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     try {
-      if (_isFollowing) {
-        await repo.unfollowUser(widget.user.id);
-      } else {
-        await repo.followUser(widget.user.id);
-      }
+      await ref
+          .read(followingStateProvider.notifier)
+          .toggleFollow(widget.userId);
 
       if (mounted) {
-        setState(() {
-          _isFollowing = !_isFollowing;
-        });
-        ref.invalidate(userProfileProvider(widget.user.id));
-        
+        // İlgili profil provider'ını yenile (takipçi sayısı güncellenmesi için).
+        ref.invalidate(userProfileProvider(widget.userId));
+
         final currentUser = ref.read(currentUserProvider);
         if (currentUser != null) {
           ref.invalidate(userProfileProvider(currentUser.id));
@@ -196,6 +211,8 @@ class _FollowButtonState extends ConsumerState<_FollowButton> {
 
   @override
   Widget build(BuildContext context) {
+    final isFollowing = ref.watch(isFollowingProvider(widget.userId));
+
     return ElevatedButton(
       onPressed: _isLoading ? null : _toggleFollow,
       style: ElevatedButton.styleFrom(
@@ -210,7 +227,8 @@ class _FollowButtonState extends ConsumerState<_FollowButton> {
               height: 16,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : Text(_isFollowing ? 'Takibi Bırak' : 'Takip Et'),
+          : Text(isFollowing ? 'Takibi Bırak' : 'Takip Et'),
     );
   }
 }
+

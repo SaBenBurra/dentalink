@@ -13,7 +13,7 @@ import '../repositories/mock_notification_repository.dart';
 import '../repositories/post_repository.dart';
 import '../repositories/mock_post_repository.dart';
 import '../repositories/user_repository.dart';
-import '../repositories/mock_user_repository.dart';
+import '../repositories/supabase_user_repository.dart';
 
 // ─── Supabase ───
 final supabaseClientProvider = Provider<SupabaseClient>((ref) {
@@ -52,5 +52,5 @@ final notificationRepositoryProvider = Provider<NotificationRepository>((ref) {
 
 // ─── User ───
 final userRepositoryProvider = Provider<UserRepository>((ref) {
-  return MockUserRepository();
+  return SupabaseUserRepository(client: ref.watch(supabaseClientProvider));
 });
