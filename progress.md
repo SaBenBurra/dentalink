@@ -131,11 +131,11 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
   - [x] `post-images` bucket (yeni)
 
 ### 3.2 — Kullanıcı Profili (SupabaseUserRepository)
-- [ ] `SupabaseUserRepository` oluştur (`UserRepository` abstract interface'ini implemente et)
-- [ ] Profil getirme (`getUserById`, `getUsersByIds`)
-- [ ] Profil güncelleme (`updateProfile`) — `EditProfileController`'ı bağla
-- [ ] Avatar yükleme/güncelleme (Storage entegrasyonu)
-- [ ] `repository_providers.dart`'ta `MockUserRepository` → `SupabaseUserRepository` geçişi
+- [x] `SupabaseUserRepository` oluştur (`UserRepository` abstract interface'ini implemente et)
+- [x] Profil getirme (`getUserById`, `getUsersByIds`)
+- [x] Profil güncelleme (`updateProfile`) — `EditProfileController`'ı bağla
+- [x] Avatar yükleme/güncelleme (Storage entegrasyonu)
+- [x] `repository_providers.dart`'ta `MockUserRepository` → `SupabaseUserRepository` geçişi
 
 ### 3.3 — Post CRUD (SupabasePostRepository)
 - [ ] `SupabasePostRepository` oluştur (`PostRepository` interface'ini — `IFeedRepository`, `ISearchRepository`, `IBookmarkRepository`, `IPostActionRepository` — implemente et)
