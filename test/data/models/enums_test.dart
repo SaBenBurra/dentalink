@@ -18,7 +18,7 @@ void main() {
       }
     });
 
-    test('fromDbValue with null returns default disHekimi', () {
+    test('fromDbValue with null returns default unknown', () {
       // Arrange
       const String? value = null;
 
@@ -26,7 +26,7 @@ void main() {
       final result = UserTitle.fromDbValue(value);
 
       // Assert
-      expect(result, equals(UserTitle.disHekimi));
+      expect(result, equals(UserTitle.unknown));
     });
 
     test('fromDbValue with unknown value throws ArgumentError', () {
