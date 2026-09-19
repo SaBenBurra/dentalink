@@ -8,15 +8,15 @@
 
 ## Mevcut Durum Özeti
 
-| Katman | Durum |
-| --- | --- |
-| **Flutter İskeleti** | ✅ Tamamlandı — 136 Dart dosyası, feature-driven mimari |
-| **Tema & Lokalizasyon** | ✅ Çalışıyor — Light/Dark mod, TR çevirileri tam (~93 anahtar), EN eksik (~56 anahtar) |
-| **Navigasyon** | ✅ Çalışıyor — GoRouter + Auth guard + Bottom nav shell |
-| **Mock Data Katmanı** | ✅ Çalışıyor — 6 mock repository + merkezi MockDatasource |
-| **Supabase Auth** | ✅ Gerçek bağlantı — OTP (e-posta/SMS) + profil kayıt + avatar yükleme |
-| **Supabase Database** | ✅ Tamamlandı — Şema, trigger'lar, RLS ve indexler kuruldu |
-| **Diğer Repository'ler** | ⏳ Tamamı mock — Post, Comment, Message, Notification, User |
+| Katman                   | Durum                                                                                 |
+| ------------------------ | ------------------------------------------------------------------------------------- |
+| **Flutter İskeleti**     | ✅ Tamamlandı — 136 Dart dosyası, feature-driven mimari                                |
+| **Tema & Lokalizasyon**  | ✅ Çalışıyor — Light/Dark mod, TR çevirileri tam (~93 anahtar), EN eksik (~56 anahtar) |
+| **Navigasyon**           | ✅ Çalışıyor — GoRouter + Auth guard + Bottom nav shell                                |
+| **Mock Data Katmanı**    | ✅ Çalışıyor — 6 mock repository + merkezi MockDatasource                              |
+| **Supabase Auth**        | ✅ Gerçek bağlantı — OTP (e-posta/SMS) + profil kayıt + avatar yükleme                 |
+| **Supabase Database**    | ✅ Tamamlandı — Şema, trigger'lar, RLS ve indexler kuruldu                             |
+| **Diğer Repository'ler** | ⏳ Tamamı mock — Post, Comment, Message, Notification, User                            |
 
 ---
 
@@ -65,20 +65,20 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 
 ### 🐛 Faz 2 — Bilinen Buglar & Eksikler
 
-| # | Tür | Açıklama | Konum |
-|---|------|----------|-------|
-| B1 | 🐛 Bug | `ProfilePostsTab`: Post tıklaması `/profile/case/:id` rotasına yönleniyor → 404 hatası. Doğru rota: `/feed/case/:id` | [profile_posts_tab.dart](file:///home/user/Projects/dentlink/lib/features/profile/widgets/profile_posts_tab.dart#L34) |
-| B2 | 🐛 Bug | `FollowersScreen`: Takip et/bırak butonu callback'i boş — butona basınca hiçbir şey olmuyor | followers_screen.dart |
-| E1 | ⚠️ Eksik | Başka kullanıcı profili görüntüleme (`/profile/:id`) rotası `app_router.dart`'ta tanımlı değil | [app_router.dart](file:///home/user/Projects/dentlink/lib/core/router/app_router.dart) |
-| E2 | ⚠️ Eksik | Feed'de kronolojik/algoritmik mod geçişi UI'da yok (provider altyapısı var) | feed_screen.dart |
-| E3 | ⚠️ Eksik | Bildirime tıklanınca ilgili gönderi/profile deep-link navigasyon yok | notifications_screen.dart |
-| E4 | ⚠️ Eksik | Mesajlaşma UI'ı repository'ye bağlı değil (hardcoded in-memory veri) | chat_screen.dart |
-| E5 | ⚠️ Eksik | Post oluşturma gönderim mantığı mock (1 sn gecikme, backend'e gitmiyor) | [create_case_controller.dart](file:///home/user/Projects/dentlink/lib/features/post/providers/create_case_controller.dart#L27) |
-| E6 | ⚠️ Eksik | Profil düzenleme kaydetme mantığı mock | [edit_profile_controller.dart](file:///home/user/Projects/dentlink/lib/features/profile/providers/edit_profile_controller.dart#L32) |
-| E7 | ⚠️ Eksik | Post header'da seçenekler menüsü (düzenle/sil/raporla) eklenmemiş | [post_header.dart](file:///home/user/Projects/dentlink/lib/shared/widgets/post_header.dart#L94) |
-| E8 | ⚠️ Eksik | Bildirim tercihleri toggle'ları backend'e bağlı değil | settings_screen.dart |
-| E9 | ⚠️ Eksik | Onboarding ekranı (ilk açılış tanıtım) — dosyası hiç yok | — |
-| E10 | ⚠️ Eksik | İngilizce çeviriler eksik (~56 anahtar `intl_en.arb`'de yok) | intl_en.arb |
+| #   | Tür      | Açıklama                                                                                                             | Konum                                                                                                                               |
+| --- | -------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| B1  | 🐛 Bug   | `ProfilePostsTab`: Post tıklaması `/profile/case/:id` rotasına yönleniyor → 404 hatası. Doğru rota: `/feed/case/:id` | [profile_posts_tab.dart](file:///home/user/Projects/dentlink/lib/features/profile/widgets/profile_posts_tab.dart#L34)               |
+| B2  | 🐛 Bug   | `FollowersScreen`: Takip et/bırak butonu callback'i boş — butona basınca hiçbir şey olmuyor                          | followers_screen.dart                                                                                                               |
+| E1  | ⚠️ Eksik | Başka kullanıcı profili görüntüleme (`/profile/:id`) rotası `app_router.dart`'ta tanımlı değil                       | [app_router.dart](file:///home/user/Projects/dentlink/lib/core/router/app_router.dart)                                              |
+| E2  | ⚠️ Eksik | Feed'de kronolojik/algoritmik mod geçişi UI'da yok (provider altyapısı var)                                          | feed_screen.dart                                                                                                                    |
+| E3  | ⚠️ Eksik | Bildirime tıklanınca ilgili gönderi/profile deep-link navigasyon yok                                                 | notifications_screen.dart                                                                                                           |
+| E4  | ⚠️ Eksik | Mesajlaşma UI'ı repository'ye bağlı değil (hardcoded in-memory veri)                                                 | chat_screen.dart                                                                                                                    |
+| E5  | ⚠️ Eksik | Post oluşturma gönderim mantığı mock (1 sn gecikme, backend'e gitmiyor)                                              | [create_case_controller.dart](file:///home/user/Projects/dentlink/lib/features/post/providers/create_case_controller.dart#L27)      |
+| E6  | ⚠️ Eksik | Profil düzenleme kaydetme mantığı mock                                                                               | [edit_profile_controller.dart](file:///home/user/Projects/dentlink/lib/features/profile/providers/edit_profile_controller.dart#L32) |
+| E7  | ⚠️ Eksik | Post header'da seçenekler menüsü (düzenle/sil/raporla) eklenmemiş                                                    | [post_header.dart](file:///home/user/Projects/dentlink/lib/shared/widgets/post_header.dart#L94)                                     |
+| E8  | ⚠️ Eksik | Bildirim tercihleri toggle'ları backend'e bağlı değil                                                                | settings_screen.dart                                                                                                                |
+| E9  | ⚠️ Eksik | Onboarding ekranı (ilk açılış tanıtım) — dosyası hiç yok                                                             | —                                                                                                                                   |
+| E10 | ⚠️ Eksik | İngilizce çeviriler eksik (~56 anahtar `intl_en.arb`'de yok)                                                         | intl_en.arb                                                                                                                         |
 
 ---
 
@@ -93,7 +93,7 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 - [x] **E4 düzelt:** Chat ekranını `MessageRepository` provider'ına bağla (mock veriyle çalışır hale getir)
 - [x] **E7 düzelt:** Post header'a seçenekler menüsü ekle (düzenle/sil/raporla — şimdilik sadece UI)
 - [x] **E10 tamamla:** Eksik İngilizce çevirileri (`intl_en.arb`) tamamla
-- [ ] **UI geçişi:** Tüm ekranlar arası navigasyonları uçtan uca test et, kırık akış kalmamalı
+- [x] **UI geçişi:** Tüm ekranlar arası navigasyonları uçtan uca test et, kırık akış kalmamalı
 
 > **Çıktı:** Uygulamanın tüm ekranları arasında sorunsuz gezinilebilen, tüm butonları çalışan (mock seviyesinde) bir demo. Geri bildirim alınır, gerekirse revize edilir.
 
@@ -102,10 +102,11 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 ## Faz 3 — Supabase Veritabanı & Çekirdek Backend Entegrasyonu 🗄️
 
 > **Amaç:** Mock data katmanını gerçek Supabase bağlantısıyla değiştir. UI koduna dokunulmaz, sadece repository implementasyonları ve provider'lar güncellenir.
->
+> 
 > **Önkoşul:** Faz 2.5 tamamlanmış olmalı.
 
 ### 3.1 — Veritabanı Altyapısı
+
 - [x] Supabase Dashboard'da veritabanı şemasını oluştur (SQL migration):
   - [x] PostgreSQL ENUM tipleri (`dental_branch`, `notification_type`)
   - [x] `users` tablosu (mevcut, kontrol et + eksik sütunları ekle)
@@ -131,6 +132,7 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
   - [x] `post-images` bucket (yeni)
 
 ### 3.2 — Kullanıcı Profili (SupabaseUserRepository)
+
 - [x] `SupabaseUserRepository` oluştur (`UserRepository` abstract interface'ini implemente et)
 - [x] Profil getirme (`getUserById`, `getUsersByIds`)
 - [x] Profil güncelleme (`updateProfile`) — `EditProfileController`'ı bağla
@@ -138,6 +140,7 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 - [x] `repository_providers.dart`'ta `MockUserRepository` → `SupabaseUserRepository` geçişi
 
 ### 3.3 — Post CRUD (SupabasePostRepository)
+
 - [x] `SupabasePostRepository` oluştur (`PostRepository` interface'ini — `IFeedRepository`, `ISearchRepository`, `IBookmarkRepository`, `IPostActionRepository` — implemente et)
 - [x] Vaka oluşturma (post + post_images + post_tags insert) — `CreateCaseController`'ı bağla
 - [x] Soru oluşturma (post + post_tags insert) — `CreateQuestionController`'ı bağla
@@ -149,6 +152,7 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 - [x] `repository_providers.dart`'ta `MockPostRepository` → `SupabasePostRepository` geçişi
 
 ### 3.4 — Yorum Sistemi (SupabaseCommentRepository)
+
 - [x] `SupabaseCommentRepository` oluştur
 - [x] Yorum ekleme / silme
 - [x] Yorum beğeni toggle
@@ -156,12 +160,14 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 - [x] `repository_providers.dart`'ta geçiş
 
 ### 3.5 — Takip Sistemi
+
 - [x] `follows` tablosu CRUD (follow/unfollow)
 - [x] Takipçi/takip edilen listesi getirme
 - [x] Sayaç trigger'ları (`followers_count`, `following_count`)
 - [x] `UserRepository`'ye takip metodlarını ekle veya ayrı `FollowRepository` oluştur
 
 ### 3.6 — Arama & Filtreleme
+
 - [ ] PostgreSQL full-text search konfigürasyonu (Türkçe dil desteği ile `tsvector`)
 - [ ] Post arama (başlık + içerik)
 - [ ] Kullanıcı arama (isim + unvan + üniversite)
@@ -169,6 +175,7 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 - [ ] `SearchNotifier`'ı gerçek repository'ye bağla
 
 ### 3.7 — Mesajlaşma (SupabaseMessageRepository + Realtime)
+
 - [ ] `SupabaseMessageRepository` oluştur
 - [ ] Conversation CRUD (var olan sohbeti bul veya yeni oluştur)
 - [ ] Mesaj gönderme / silme (soft delete)
@@ -185,10 +192,11 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 ## Faz 4 — Performans, Kalite & Gelişmiş Özellikler ⚡
 
 > **Amaç:** Uygulamayı production-ready kaliteye getir. Veri büyüdükçe ölçeklenecek teknik altyapıyı kur.
->
+> 
 > **Önkoşul:** Faz 3 tamamlanmış olmalı.
 
 ### 4.1 — Sayfalama & Sonsuz Kaydırma
+
 - [ ] Feed'de cursor-based pagination (created_at + id ile)
 - [ ] Yorum listesinde sayfalama
 - [ ] Arama sonuçlarında sayfalama
@@ -196,28 +204,33 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 - [ ] Takipçi/takip edilen listesinde sayfalama
 
 ### 4.2 — Görsel Optimizasyonu
+
 - [ ] Yükleme öncesi istemci tarafı görsel sıkıştırma (boyut + kalite)
 - [ ] Dosya boyutu limiti belirleme ve uygulama (ör: maks 5MB/görsel)
 - [ ] Supabase Storage transform ile thumbnail oluşturma (listeleme için küçük boyut)
 - [ ] Progresif görsel yükleme (blur placeholder → full image)
 
 ### 4.3 — Etiket Sistemi Geliştirmesi
+
 - [ ] Popüler etiket önerisi (usage_count'a göre sıralı)
 - [ ] Etiket otomatik tamamlama (yazarken öneri)
 - [ ] Etiket bazlı gönderi keşfetme (etikete tıklayınca o etiketle filtrelenmiş sonuçlar)
 
 ### 4.4 — Feed İyileştirmeleri
+
 - [ ] Kronolojik / Algoritmik mod geçiş UI'ı feed'e ekle
 - [ ] Algoritmik feed sıralama mantığı tasarla ve uygula (engagement skoru: like + comment + view ağırlıklı)
 - [ ] `post_views` tablosu ile görüntülenme takibi
 - [ ] Feed cache stratejisi (stale-while-revalidate pattern)
 
 ### 4.5 — Soru-Cevap İyileştirmeleri
+
 - [ ] "En İyi Cevap" seçimi backend entegrasyonu (comments.is_best_answer + posts.is_solved güncelleme)
 - [ ] En iyi cevap seçildikten sonra bildirim gönderme altyapısı
 - [ ] Soru "Çözüldü" durumu gösterimi
 
 ### 4.6 — Hata Yönetimi & UX
+
 - [ ] Tüm repository çağrılarına tutarlı hata yakalama ve kullanıcı dostu mesajlar ekle
 - [ ] Ağ bağlantısı yokken graceful degradation (offline banner, retry mekanizması)
 - [ ] Optimistik güncelleme tutarlılığı (beğeni, bookmark, takip için rollback senaryoları)
@@ -229,10 +242,11 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 ## Faz 5 — Bildirimler & Gamification 🔔🏅
 
 > **Amaç:** Push bildirimler ve rozet sistemiyle kullanıcı bağlılığını artır.
->
+> 
 > **Önkoşul:** Faz 4 tamamlanmış olmalı (özellikle "En İyi Cevap" backend'i).
 
 ### 5.1 — Uygulama İçi Bildirimler (Supabase)
+
 - [ ] `SupabaseNotificationRepository` oluştur
 - [ ] Bildirim oluşturma trigger'ları (beğeni, yorum, takip, en iyi cevap → `notifications` tablosu insert)
 - [ ] Bildirim listesi getirme (sayfalı, kullanıcı bilgisiyle)
@@ -242,6 +256,7 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 - [ ] `repository_providers.dart`'ta geçiş
 
 ### 5.2 — Push Bildirimler (FCM)
+
 - [ ] `firebase_messaging` ve `flutter_local_notifications` bağımlılıklarını ekle
 - [ ] Firebase proje kurulumu (Android + iOS yapılandırma dosyaları)
 - [ ] `push_tokens` tablosu CRUD (cihaz token kaydı, platform bilgisi)
@@ -251,6 +266,7 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 - [ ] Bildirime tıklayınca uygulama içi yönlendirme
 
 ### 5.3 — Rozet & Başarım Sistemi
+
 - [ ] `badges` tablosuna başlangıç rozetlerini seed et (Yeni Üye, Uzman, Popüler, Yardımsever)
 - [ ] Rozet kazanma kriterlerini tanımla (JSON criteria formatı):
   - Yeni Üye: Kayıt olduğunda otomatik
@@ -269,25 +285,29 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 ## Faz 6 — Güvenlik, Moderasyon & Yeni İçerik Türleri 🛡️
 
 > **Amaç:** Platform güvenliğini sağla ve içerik çeşitliliğini artır.
->
+> 
 > **Önkoşul:** Faz 5 tamamlanmış olmalı.
 
 ### 6.1 — Kullanıcı Güvenliği
+
 - [ ] Kullanıcı engelleme (`blocks` tablosu, RLS ile engellenen kişinin içeriğini gizleme)
 - [ ] İçerik/kullanıcı raporlama (`reports` tablosu, raporlama modal'ı)
 - [ ] Post seçenekler menüsüne "Raporla" ve "Engelle" seçeneklerini bağla
 
 ### 6.2 — İçerik Moderasyonu
+
 - [ ] Raporlanan içerikleri yönetme arayüzü (admin panel veya Supabase Dashboard üzerinden)
 - [ ] Otomatik spam/uygunsuz içerik filtresi (opsiyonel, Edge Function)
 - [ ] Moderasyon politikaları ve kurallar sayfası
 
 ### 6.3 — Kullanıcı Doğrulama
+
 - [ ] Diploma/belge yükleme akışı (Storage'a yükleme)
 - [ ] Doğrulama durumu gösterimi (onaylı kullanıcı rozeti ✓)
 - [ ] Manuel doğrulama süreci (admin onayı)
 
 ### 6.4 — Yeni İçerik Türleri
+
 - [ ] **İş İlanları (Job Posts):** `PostModel` sealed class'ına `JobPostModel` varyantı ekle
   - [ ] İlan oluşturma ekranı (başlık, açıklama, şehir, kurum)
   - [ ] İlan kartı widget'ı + PostCardFactory'ye entegre
@@ -298,6 +318,7 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
   - [ ] Ayrı sayfa mı yoksa feed içinde mi? → Karar verilecek
 
 ### 6.5 — Ek Özellikler
+
 - [ ] Deep linking & paylaşım (post/profil URL'si oluşturma ve paylaşma)
 - [ ] Onboarding ekranları (ilk açılış tanıtım slaytları)
 - [ ] Gizlilik politikası ve kullanım koşulları sayfaları
@@ -311,7 +332,7 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 ## Faz 7 — Yayına Hazırlık & Lansman 🚀
 
 > **Amaç:** Uygulamayı mağazalara yüklemeye hazırla.
->
+> 
 > **Önkoşul:** Faz 6'nın kritik kısımları (6.1, 6.2) tamamlanmış olmalı.
 
 - [ ] Uygulama ismi kesinleştir (DentLink placeholder)
@@ -330,14 +351,14 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 
 ## ⚠️ Açık Kararlar & Gelecek Tartışmalar
 
-| Konu | İlgili Faz | Durum |
-| --- | --- | --- |
-| Uygulama ismi (DentLink placeholder) | Faz 7 | Karar verilecek |
-| Onboarding ekranı eklenecek mi? | Faz 6.5 | Karar verilecek |
-| İş ilanları ve Marketplace: feed içinde mi, ayrı sayfalarda mı? | Faz 6.4 | Karar verilecek |
-| Rozet kuralları ve kriterleri (eşik değerler) | Faz 5.3 | Detaylandırılacak |
-| Algoritmik feed formülü | Faz 4.4 | Tasarlanacak |
-| Görsel sıkıştırma kalite/boyut limitleri | Faz 4.2 | Belirlenecek |
-| Etiket öneri sistemi nasıl çalışacak? | Faz 4.3 | Tasarlanacak |
-| Türkçe full-text search konfigürasyonu | Faz 3.6 | Araştırılacak |
-| `main.dart`'taki Supabase anahtarları .env'e taşınmalı | Faz 7 | Yapılacak |
+| Konu                                                            | İlgili Faz | Durum             |
+| --------------------------------------------------------------- | ---------- | ----------------- |
+| Uygulama ismi (DentLink placeholder)                            | Faz 7      | Karar verilecek   |
+| Onboarding ekranı eklenecek mi?                                 | Faz 6.5    | Karar verilecek   |
+| İş ilanları ve Marketplace: feed içinde mi, ayrı sayfalarda mı? | Faz 6.4    | Karar verilecek   |
+| Rozet kuralları ve kriterleri (eşik değerler)                   | Faz 5.3    | Detaylandırılacak |
+| Algoritmik feed formülü                                         | Faz 4.4    | Tasarlanacak      |
+| Görsel sıkıştırma kalite/boyut limitleri                        | Faz 4.2    | Belirlenecek      |
+| Etiket öneri sistemi nasıl çalışacak?                           | Faz 4.3    | Tasarlanacak      |
+| Türkçe full-text search konfigürasyonu                          | Faz 3.6    | Araştırılacak     |
+| `main.dart`'taki Supabase anahtarları .env'e taşınmalı          | Faz 7      | Yapılacak         |
