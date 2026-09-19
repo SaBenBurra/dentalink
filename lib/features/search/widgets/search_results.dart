@@ -2,6 +2,7 @@ import 'package:dentlink/shared/widgets/case_card.dart';
 import 'package:dentlink/shared/widgets/question_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../domain/enums/enums.dart';
 import '../../../data/models/post_model.dart';
 import '../../../providers/search_provider.dart';
@@ -9,6 +10,7 @@ import '../../../shared/widgets/user_tile.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/empty_state.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
+import 'package:dentlink/shared/widgets/post_card_factory.dart';
 
 class PostSearchResults extends ConsumerWidget {
   const PostSearchResults({super.key});
@@ -38,19 +40,17 @@ class PostSearchResults extends ConsumerWidget {
               const SizedBox(height: AppDimensions.spacing8),
           itemBuilder: (context, index) {
             final post = posts[index];
-            if (post.type == PostType.casePost) {
-              return CaseCard(
-                post: post as CasePostModel,
-                onLikeToggle: () {},
-                onBookmarkToggle: () {},
-              );
-            } else {
-              return QuestionCard(
-                post: post as QuestionPostModel,
-                onLikeToggle: () {},
-                onBookmarkToggle: () {},
-              );
-            }
+            final routePath = post.type == PostType.casePost
+                ? '/feed/case/${post.id}'
+                : '/feed/question/${post.id}';
+
+            return PostCardFactory.build(
+              post,
+              onLikeToggle: () => ref.read(searchProvider.notifier).toggleLike(post.id),
+              onBookmarkToggle: () => ref.read(searchProvider.notifier).toggleBookmark(post.id),
+              onCommentTap: () => context.push(routePath),
+              onTap: () => context.push(routePath),
+            );
           },
         );
       },

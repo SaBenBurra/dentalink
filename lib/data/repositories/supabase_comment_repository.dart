@@ -49,12 +49,13 @@ class SupabaseCommentRepository implements CommentRepository {
 
   @override
   Future<CommentEntity> addComment(String postId, String content) => guardSupabase(() async {
+    final uid = _uid;
 
     final row = await _client
         .from('comments')
         .insert({
           'post_id': postId,
-          // 'user_id': uid, // RLS ve default auth.uid() sayesinde göndermeye gerek yok
+          'user_id': uid,
           'content': content,
         })
         .select(_fullCommentSelect)
@@ -72,11 +73,16 @@ class SupabaseCommentRepository implements CommentRepository {
   Future<void> likeComment(String commentId) => guardSupabase(() async {
     final uid = _uid;
 
-    await _client.from('likes').upsert(
-      {'user_id': uid, 'comment_id': commentId},
-      onConflict: 'user_id,comment_id',
-      ignoreDuplicates: true,
-    );
+    try {
+      await _client.from('likes').insert({
+        'user_id': uid,
+        'comment_id': commentId,
+      });
+    } on PostgrestException catch (e) {
+      if (e.code != '23505') {
+        rethrow;
+      }
+    }
   });
 
   @override

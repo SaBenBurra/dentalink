@@ -102,6 +102,44 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
   void clear() {
     state = const SearchState();
   }
+
+  Future<void> toggleLike(String postId) async {
+    final posts = state.postResults.valueOrNull;
+    if (posts == null) return;
+
+    final idx = posts.indexWhere((p) => p.id == postId);
+    if (idx == -1) return;
+
+    final post = posts[idx];
+    final repo = ref.read(postActionRepositoryProvider);
+
+    final updated = post.isLiked
+        ? await repo.unlikePost(postId)
+        : await repo.likePost(postId);
+
+    final newList = List<PostModel>.from(posts);
+    newList[idx] = updated;
+    state = state.copyWith(postResults: AsyncData(newList));
+  }
+
+  Future<void> toggleBookmark(String postId) async {
+    final posts = state.postResults.valueOrNull;
+    if (posts == null) return;
+
+    final idx = posts.indexWhere((p) => p.id == postId);
+    if (idx == -1) return;
+
+    final post = posts[idx];
+    final repo = ref.read(bookmarkRepositoryProvider);
+
+    final updated = post.isBookmarked
+        ? await repo.unbookmarkPost(postId)
+        : await repo.bookmarkPost(postId);
+
+    final newList = List<PostModel>.from(posts);
+    newList[idx] = updated;
+    state = state.copyWith(postResults: AsyncData(newList));
+  }
 }
 
 final searchProvider =

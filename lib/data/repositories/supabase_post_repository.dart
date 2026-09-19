@@ -245,10 +245,16 @@ class SupabasePostRepository implements PostRepository {
   Future<PostModel> bookmarkPost(String postId) async {
     final uid = _currentUserId;
 
-    await _client.from('bookmarks').upsert(
-      {'user_id': uid, 'post_id': postId},
-      onConflict: 'user_id,post_id',
-    );
+    try {
+      await _client.from('bookmarks').insert({
+        'user_id': uid,
+        'post_id': postId,
+      });
+    } on PostgrestException catch (e) {
+      if (e.code != '23505') {
+        rethrow;
+      }
+    }
 
     // Güncel post'u yeniden çek (sayaç trigger tarafından güncellenir).
     return getPostById(postId);
@@ -275,11 +281,17 @@ class SupabasePostRepository implements PostRepository {
   Future<PostModel> likePost(String postId) async {
     final uid = _currentUserId;
 
-    await _client.from('likes').upsert(
-      {'user_id': uid, 'post_id': postId},
-      onConflict: 'user_id,post_id',
-      ignoreDuplicates: true,
-    );
+    try {
+      await _client.from('likes').insert({
+        'user_id': uid,
+        'post_id': postId,
+      });
+    } on PostgrestException catch (e) {
+      // 23505 is the PostgreSQL error code for unique_violation
+      if (e.code != '23505') {
+        rethrow;
+      }
+    }
 
     return getPostById(postId);
   }
