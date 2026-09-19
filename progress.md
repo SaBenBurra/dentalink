@@ -156,10 +156,10 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 - [x] `repository_providers.dart`'ta geçiş
 
 ### 3.5 — Takip Sistemi
-- [ ] `follows` tablosu CRUD (follow/unfollow)
-- [ ] Takipçi/takip edilen listesi getirme
-- [ ] Sayaç trigger'ları (`followers_count`, `following_count`)
-- [ ] `UserRepository`'ye takip metodlarını ekle veya ayrı `FollowRepository` oluştur
+- [x] `follows` tablosu CRUD (follow/unfollow)
+- [x] Takipçi/takip edilen listesi getirme
+- [x] Sayaç trigger'ları (`followers_count`, `following_count`)
+- [x] `UserRepository`'ye takip metodlarını ekle veya ayrı `FollowRepository` oluştur
 
 ### 3.6 — Arama & Filtreleme
 - [ ] PostgreSQL full-text search konfigürasyonu (Türkçe dil desteği ile `tsvector`)

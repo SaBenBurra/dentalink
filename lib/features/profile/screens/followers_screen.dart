@@ -98,7 +98,7 @@ class _UserListTabState extends ConsumerState<_UserListTab> {
 
     final userIds = users.map((u) => u.id).toList();
     ref
-        .read(userRepositoryProvider)
+        .read(followRepositoryProvider)
         .getFollowedUserIds(userIds)
         .then((followedIds) {
       if (!mounted) return;

@@ -37,7 +37,7 @@ class FollowingStateNotifier extends StateNotifier<Map<String, bool>> {
   /// Optimistic update uygular: UI anında güncellenir, API başarısız
   /// olursa eski duruma geri dönülür (rollback).
   Future<void> toggleFollow(String userId) async {
-    final repo = _ref.read(userRepositoryProvider);
+    final repo = _ref.read(followRepositoryProvider);
     final wasFollowing = isFollowing(userId);
 
     // Optimistic update — UI anında güncellenir.
