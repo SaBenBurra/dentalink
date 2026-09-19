@@ -1,59 +1,61 @@
 import '../datasources/mock_datasource.dart';
-import '../models/comment_model.dart';
-import 'comment_repository.dart';
+import '../../domain/entities/comment_entity.dart';
+import '../../domain/repositories/comment_repository.dart';
 
 /// Sahte yorum repository. Faz 3'te SupabaseCommentRepository ile swap edilir.
 class MockCommentRepository implements CommentRepository {
-  static const _delay = Duration(milliseconds: 350);
+  final Duration _delay = const Duration(milliseconds: 600);
 
   // Post başına in-memory yorum listesi.
-  final Map<String, List<CommentModel>> _commentOverrides = {};
+  final Map<String, List<CommentEntity>> _commentOverrides = {};
 
-  List<CommentModel> _commentsFor(String postId) {
+  List<CommentEntity> _commentsFor(String postId) {
     return _commentOverrides[postId] ?? (MockDatasource.comments[postId] ?? []);
   }
 
   @override
-  Future<List<CommentModel>> getComments(String postId) async {
+  Future<List<CommentEntity>> getComments(String postId, {int limit = 50, int offset = 0}) async {
     await Future.delayed(_delay);
-    final list = List<CommentModel>.from(_commentsFor(postId));
+    final list = List<CommentEntity>.from(_commentsFor(postId));
     // En iyi cevap en üste gelir.
     list.sort((a, b) {
       if (a.isBestAnswer && !b.isBestAnswer) return -1;
       if (!a.isBestAnswer && b.isBestAnswer) return 1;
       return a.createdAt.compareTo(b.createdAt);
     });
-    return list;
+    
+    // Basit in-memory sayfalama
+    if (offset >= list.length) return [];
+    return list.skip(offset).take(limit).toList();
   }
 
   @override
-  Future<CommentModel> addComment(String postId, String content) async {
+  Future<CommentEntity> addComment(String postId, String content) async {
     await Future.delayed(_delay);
-    final currentUser = MockDatasource.userById(MockDatasource.currentUserId);
-    final newComment = CommentModel(
+    final userModel = MockDatasource.userSummaryById(MockDatasource.currentUserId);
+    final newComment = CommentEntity(
       id: 'c_new_${DateTime.now().millisecondsSinceEpoch}',
       postId: postId,
-      userId: currentUser.id,
+      userId: userModel.id,
       content: content,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
-      author: currentUser,
+      author: userModel,
     );
-    final existing = List<CommentModel>.from(_commentsFor(postId));
+    final existing = List<CommentEntity>.from(_commentsFor(postId));
     existing.add(newComment);
     _commentOverrides[postId] = existing;
     return newComment;
   }
 
   @override
-  Future<CommentModel> markBestAnswer(String commentId) async {
+  Future<void> markBestAnswer(String commentId) async {
     await Future.delayed(_delay);
-    // Tüm postlarda bu comment'i bul ve güncelle.
     for (final entry in {
       ...MockDatasource.comments,
       ..._commentOverrides,
     }.entries) {
-      final list = List<CommentModel>.from(entry.value);
+      final list = List<CommentEntity>.from(entry.value);
       final idx = list.indexWhere((c) => c.id == commentId);
       if (idx != -1) {
         // Önce tüm best_answer'ları kaldır.
@@ -61,25 +63,25 @@ class MockCommentRepository implements CommentRepository {
             .map((c) => c.copyWith(isBestAnswer: c.id == commentId))
             .toList();
         _commentOverrides[entry.key] = updated;
-        return updated[idx].copyWith(isBestAnswer: true);
+        return;
       }
     }
     throw Exception('Comment not found: $commentId');
   }
 
   @override
-  Future<CommentModel> likeComment(String commentId) async {
+  Future<void> likeComment(String commentId) async {
     await Future.delayed(_delay);
-    return _updateComment(
+    _updateComment(
       commentId,
       (c) => c.copyWith(isLiked: true, likeCount: c.likeCount + 1),
     );
   }
 
   @override
-  Future<CommentModel> unlikeComment(String commentId) async {
+  Future<void> unlikeComment(String commentId) async {
     await Future.delayed(_delay);
-    return _updateComment(
+    _updateComment(
       commentId,
       (c) => c.copyWith(
         isLiked: false,
@@ -88,22 +90,22 @@ class MockCommentRepository implements CommentRepository {
     );
   }
 
-  CommentModel _updateComment(
+  void _updateComment(
     String commentId,
-    CommentModel Function(CommentModel) transform,
+    CommentEntity Function(CommentEntity) transform,
   ) {
-    final allSources = <String, List<CommentModel>>{
+    final allSources = <String, List<CommentEntity>>{
       ...MockDatasource.comments,
       ..._commentOverrides,
     };
     for (final entry in allSources.entries) {
-      final list = List<CommentModel>.from(entry.value);
+      final list = List<CommentEntity>.from(entry.value);
       final idx = list.indexWhere((c) => c.id == commentId);
       if (idx != -1) {
         final updated = transform(list[idx]);
         list[idx] = updated;
         _commentOverrides[entry.key] = list;
-        return updated;
+        return;
       }
     }
     throw Exception('Comment not found: $commentId');

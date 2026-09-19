@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'enums.dart';
+import '../../domain/enums/enums.dart';
 
 /// Kullanıcı modeli — Supabase `users` tablosuyla eşleşir.
 ///

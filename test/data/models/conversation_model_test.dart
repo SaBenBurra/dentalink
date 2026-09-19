@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dentlink/data/models/conversation_model.dart';
 import 'package:dentlink/data/models/user_model.dart';
-import 'package:dentlink/data/models/enums.dart';
+import 'package:dentlink/domain/enums/enums.dart';
 
 void main() {
   final otherUser = UserModel(

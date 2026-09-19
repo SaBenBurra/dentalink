@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dentlink/data/models/post_model.dart';
-import 'package:dentlink/data/models/enums.dart';
+import 'package:dentlink/domain/enums/enums.dart';
 import 'package:dentlink/shared/widgets/case_card.dart';
 import 'package:dentlink/shared/widgets/question_card.dart';
 

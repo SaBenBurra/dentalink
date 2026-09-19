@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../data/models/enums.dart';
+import '../../../domain/enums/enums.dart';
 import '../../../providers/auth_provider.dart';
 import '../providers/edit_profile_controller.dart';
 import '../../../shared/widgets/user_avatar.dart';

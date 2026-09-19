@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:dentlink/data/repositories/supabase_user_repository.dart';
-import 'package:dentlink/data/models/enums.dart';
+import 'package:dentlink/domain/enums/enums.dart';
 
 import '../../mocks/generate_mocks.mocks.dart';
 

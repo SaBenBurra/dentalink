@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/badge_model.dart';
-import '../models/enums.dart';
+import '../../domain/enums/enums.dart';
 import '../models/user_model.dart';
 import 'user_repository.dart';
 

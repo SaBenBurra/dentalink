@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import '../datasources/mock_datasource.dart';
-import '../models/enums.dart';
+import '../../domain/enums/enums.dart';
 import '../models/post_model.dart';
 import 'post_repository.dart';
 

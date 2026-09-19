@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
-import '../../../data/models/enums.dart';
+import '../../../domain/enums/enums.dart';
 import '../../../data/models/notification_model.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../../../core/l10n/generated/app_localizations.dart';

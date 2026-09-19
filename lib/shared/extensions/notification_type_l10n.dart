@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import '../../data/models/enums.dart';
+import '../../domain/enums/enums.dart';
 
 
 /// NotificationType için lokalize metin üretimi.

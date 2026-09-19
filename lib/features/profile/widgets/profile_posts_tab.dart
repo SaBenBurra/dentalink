@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../providers/post_provider.dart';
-import '../../../data/models/enums.dart';
+import '../../../domain/enums/enums.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class ProfilePostsTab extends ConsumerWidget {

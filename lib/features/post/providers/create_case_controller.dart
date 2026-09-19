@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../data/models/enums.dart';
+import '../../../domain/enums/enums.dart';
 import '../../../data/providers/repository_providers.dart';
 
 /// Vaka oluşturma ekranının durumunu ve mantığını yöneten kontrolcü.

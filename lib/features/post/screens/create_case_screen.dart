@@ -6,7 +6,7 @@ import '../widgets/branch_selector.dart';
 import '../widgets/image_picker_grid.dart';
 import '../widgets/tag_input.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
-import '../../../data/models/enums.dart';
+import '../../../domain/enums/enums.dart';
 import '../providers/create_case_controller.dart';
 
 class CreateCaseScreen extends ConsumerStatefulWidget {

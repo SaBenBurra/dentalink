@@ -1,6 +1,6 @@
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/data/models/enums.dart';
+import 'package:dentlink/domain/enums/enums.dart';
 import 'package:dentlink/features/feed/widgets/feed_skeleton.dart';
 import 'package:dentlink/providers/feed_provider.dart';
 import 'package:dentlink/shared/widgets/post_card_factory.dart';

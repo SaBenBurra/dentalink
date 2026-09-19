@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../data/models/enums.dart';
+import '../../../domain/enums/enums.dart';
 import '../../../providers/auth_provider.dart';
 
 class RegisterState {

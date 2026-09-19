@@ -1,7 +1,9 @@
 import '../models/badge_model.dart';
-import '../models/comment_model.dart';
+import '../../domain/entities/comment_entity.dart';
+import '../../domain/entities/user_entity.dart';
+import '../../domain/entities/user_summary.dart';
 import '../models/conversation_model.dart';
-import '../models/enums.dart';
+import '../../domain/enums/enums.dart';
 import '../models/message_model.dart';
 import '../models/notification_model.dart';
 import '../models/post_model.dart';
@@ -20,6 +22,32 @@ class MockDatasource {
 
   /// Mock oturumda ilk kullanıcı oturum açmış kabul edilir.
   static const String currentUserId = 'u1';
+
+  static UserSummary userSummaryById(String id) {
+    final user = users.firstWhere((u) => u.id == id);
+    return UserSummary(
+      id: user.id,
+      fullName: user.fullName,
+      username: user.username,
+      avatarUrl: user.avatarUrl,
+      title: user.title,
+      isVerified: user.isVerified,
+      createdAt: user.createdAt,
+    );
+  }
+
+  static UserEntity userEntityById(String id) {
+    final user = userById(id);
+    return UserEntity(
+      id: user.id,
+      fullName: user.fullName,
+      username: user.username,
+      title: user.title,
+      createdAt: user.createdAt,
+      avatarUrl: user.avatarUrl,
+      isVerified: user.isVerified,
+    );
+  }
 
   // ─── Yardımcı zaman üreticileri ──────────────────────────────────────────
 
@@ -796,9 +824,9 @@ class MockDatasource {
 
   // ─── Yorumlar (post ID'ye göre map) ──────────────────────────────────────
 
-  static final Map<String, List<CommentModel>> comments = {
+  static final Map<String, List<CommentEntity>> comments = {
     'p1': [
-      CommentModel(
+      CommentEntity(
         id: 'c1',
         postId: 'p1',
         userId: 'u5',
@@ -809,9 +837,9 @@ class MockDatasource {
         isLiked: false,
         createdAt: _ago(days: 2, hours: 3),
         updatedAt: _ago(days: 2, hours: 3),
-        author: userById('u5'),
+        author: userSummaryById('u5'),
       ),
-      CommentModel(
+      CommentEntity(
         id: 'c2',
         postId: 'p1',
         userId: 'u9',
@@ -822,9 +850,9 @@ class MockDatasource {
         isLiked: false,
         createdAt: _ago(days: 2, hours: 2),
         updatedAt: _ago(days: 2, hours: 2),
-        author: userById('u9'),
+        author: userSummaryById('u9'),
       ),
-      CommentModel(
+      CommentEntity(
         id: 'c3',
         postId: 'p1',
         userId: 'u1',
@@ -835,11 +863,11 @@ class MockDatasource {
         isLiked: true,
         createdAt: _ago(days: 2, hours: 1),
         updatedAt: _ago(days: 2, hours: 1),
-        author: userById('u1'),
+        author: userSummaryById('u1'),
       ),
     ],
     'p2': [
-      CommentModel(
+      CommentEntity(
         id: 'c4',
         postId: 'p2',
         userId: 'u8',
@@ -850,9 +878,9 @@ class MockDatasource {
         isLiked: false,
         createdAt: _ago(days: 4, hours: 5),
         updatedAt: _ago(days: 4, hours: 5),
-        author: userById('u8'),
+        author: userSummaryById('u8'),
       ),
-      CommentModel(
+      CommentEntity(
         id: 'c5',
         postId: 'p2',
         userId: 'u3',
@@ -863,11 +891,11 @@ class MockDatasource {
         isLiked: false,
         createdAt: _ago(days: 4, hours: 4),
         updatedAt: _ago(days: 4, hours: 4),
-        author: userById('u3'),
+        author: userSummaryById('u3'),
       ),
     ],
     'p11': [
-      CommentModel(
+      CommentEntity(
         id: 'c6',
         postId: 'p11',
         userId: 'u1',
@@ -880,9 +908,9 @@ class MockDatasource {
         isLiked: true,
         createdAt: _ago(days: 1, hours: 8),
         updatedAt: _ago(days: 1, hours: 8),
-        author: userById('u1'),
+        author: userSummaryById('u1'),
       ),
-      CommentModel(
+      CommentEntity(
         id: 'c7',
         postId: 'p11',
         userId: 'u5',
@@ -894,11 +922,11 @@ class MockDatasource {
         isLiked: false,
         createdAt: _ago(days: 1, hours: 6),
         updatedAt: _ago(days: 1, hours: 6),
-        author: userById('u5'),
+        author: userSummaryById('u5'),
       ),
     ],
     'p13': [
-      CommentModel(
+      CommentEntity(
         id: 'c8',
         postId: 'p13',
         userId: 'u4',
@@ -912,9 +940,9 @@ class MockDatasource {
         isLiked: false,
         createdAt: _ago(days: 5, hours: 3),
         updatedAt: _ago(days: 5, hours: 3),
-        author: userById('u4'),
+        author: userSummaryById('u4'),
       ),
-      CommentModel(
+      CommentEntity(
         id: 'c9',
         postId: 'p13',
         userId: 'u8',
@@ -925,11 +953,11 @@ class MockDatasource {
         isLiked: false,
         createdAt: _ago(days: 5, hours: 1),
         updatedAt: _ago(days: 5, hours: 1),
-        author: userById('u8'),
+        author: userSummaryById('u8'),
       ),
     ],
     'p16': [
-      CommentModel(
+      CommentEntity(
         id: 'c10',
         postId: 'p16',
         userId: 'u1',
@@ -942,9 +970,9 @@ class MockDatasource {
         isLiked: true,
         createdAt: _ago(days: 10, hours: 4),
         updatedAt: _ago(days: 10, hours: 4),
-        author: userById('u1'),
+        author: userSummaryById('u1'),
       ),
-      CommentModel(
+      CommentEntity(
         id: 'c11',
         postId: 'p16',
         userId: 'u5',
@@ -955,7 +983,7 @@ class MockDatasource {
         isLiked: false,
         createdAt: _ago(days: 10, hours: 2),
         updatedAt: _ago(days: 10, hours: 2),
-        author: userById('u5'),
+        author: userSummaryById('u5'),
       ),
     ],
   };

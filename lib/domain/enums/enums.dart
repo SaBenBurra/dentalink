@@ -2,6 +2,7 @@
 /// Faz 3'te Supabase'in PostgreSQL enum'larıyla eşleştirilir.
 library;
 enum UserTitle {
+  unknown,
   ogrenci,
   disHekimi,
   endodontist,
@@ -15,6 +16,7 @@ enum UserTitle {
   oralDiagnoz;
 
   String get displayName => switch (this) {
+    UserTitle.unknown => 'Bilinmiyor',
     UserTitle.ogrenci => 'Öğrenci',
     UserTitle.disHekimi => 'Genel Diş Hekimi',
     UserTitle.endodontist => 'Endodontist',
@@ -29,6 +31,7 @@ enum UserTitle {
   };
 
   String get dbValue => switch (this) {
+    UserTitle.unknown => 'unknown',
     UserTitle.ogrenci => 'ogrenci',
     UserTitle.disHekimi => 'dis_hekimi',
     UserTitle.endodontist => 'endodontist',
@@ -43,7 +46,7 @@ enum UserTitle {
   };
 
   static UserTitle fromDbValue(String? value) {
-    if (value == null) return UserTitle.disHekimi;
+    if (value == null) return UserTitle.unknown;
     for (final e in UserTitle.values) {
       if (e.dbValue == value) return e;
     }

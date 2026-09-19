@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import '../models/badge_model.dart';
-import '../models/enums.dart';
+import '../../domain/enums/enums.dart';
 import '../models/user_model.dart';
 
 /// Kullanıcı repository arayüzü.

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
-import '../../../data/models/enums.dart';
+import '../../../domain/enums/enums.dart';
 import '../../../providers/feed_provider.dart';
 
 class FeedScreen extends ConsumerStatefulWidget {

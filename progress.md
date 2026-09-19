@@ -149,11 +149,11 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 - [x] `repository_providers.dart`'ta `MockPostRepository` → `SupabasePostRepository` geçişi
 
 ### 3.4 — Yorum Sistemi (SupabaseCommentRepository)
-- [ ] `SupabaseCommentRepository` oluştur
-- [ ] Yorum ekleme / silme
-- [ ] Yorum beğeni toggle
-- [ ] Post'a ait yorumları getirme (kullanıcı bilgisiyle birlikte)
-- [ ] `repository_providers.dart`'ta geçiş
+- [x] `SupabaseCommentRepository` oluştur
+- [x] Yorum ekleme / silme
+- [x] Yorum beğeni toggle
+- [x] Post'a ait yorumları getirme (kullanıcı bilgisiyle birlikte)
+- [x] `repository_providers.dart`'ta geçiş
 
 ### 3.5 — Takip Sistemi
 - [ ] `follows` tablosu CRUD (follow/unfollow)

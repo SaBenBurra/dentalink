@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io' as dart_io;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../data/models/enums.dart';
+import '../../../domain/enums/enums.dart';
 import '../../../data/providers/repository_providers.dart';
 import '../../../providers/auth_provider.dart';
 

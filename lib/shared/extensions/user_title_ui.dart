@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../data/models/enums.dart';
+import '../../domain/enums/enums.dart';
 
 /// UserTitle enum'u için UI katmanı extension'ları.
 ///
@@ -7,6 +7,7 @@ import '../../data/models/enums.dart';
 extension UserTitleUI on UserTitle {
   /// Her unvan için özel Material ikonu.
   IconData get titleIcon => switch (this) {
+    UserTitle.unknown => Icons.person_outline,
     UserTitle.ogrenci => Icons.school_outlined,
     UserTitle.disHekimi => Icons.medical_services_outlined,
     UserTitle.endodontist => Icons.biotech_outlined,

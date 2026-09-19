@@ -3,7 +3,7 @@ import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/shared/extensions/post_type_l10n.dart';
 import 'package:flutter/material.dart';
 
-import '../../../data/models/enums.dart';
+import '../../../domain/enums/enums.dart';
 
 class PostBadge extends StatelessWidget {
   const PostBadge({super.key, required this.postType});

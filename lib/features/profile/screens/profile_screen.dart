@@ -8,7 +8,7 @@ import '../widgets/profile_header.dart';
 import '../widgets/profile_stats.dart';
 import '../widgets/badge_showcase.dart';
 import '../widgets/profile_posts_tab.dart';
-import '../../../data/models/enums.dart';
+import '../../../domain/enums/enums.dart';
 import '../../../data/models/user_model.dart';
 import '../../../shared/widgets/error_widget.dart';
 

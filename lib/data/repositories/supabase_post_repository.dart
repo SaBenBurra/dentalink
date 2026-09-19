@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../models/enums.dart';
+import '../../domain/enums/enums.dart';
 import '../models/post_model.dart';
 import '../models/tag_model.dart';
 import '../models/user_model.dart';

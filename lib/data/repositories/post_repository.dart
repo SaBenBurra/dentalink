@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import '../models/enums.dart';
+import '../../domain/enums/enums.dart';
 import '../models/post_model.dart';
 
 /// Feed odaklı işlemler (Listeleme)

@@ -2,7 +2,7 @@ import 'package:dentlink/shared/widgets/case_card.dart';
 import 'package:dentlink/shared/widgets/question_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../data/models/enums.dart';
+import '../../../domain/enums/enums.dart';
 import '../../../data/models/post_model.dart';
 import '../../../providers/search_provider.dart';
 import '../../../shared/widgets/user_tile.dart';

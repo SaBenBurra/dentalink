@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_dimensions.dart';
-import '../../data/models/enums.dart';
+import '../../domain/enums/enums.dart';
 import '../extensions/dental_branch_ui.dart';
 
 /// Diş hekimliği branşlarını görüntülemek için kullanılan chip widget'ı.

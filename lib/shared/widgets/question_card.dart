@@ -1,5 +1,5 @@
 
-import 'package:dentlink/data/models/enums.dart';
+import 'package:dentlink/domain/enums/enums.dart';
 import 'package:dentlink/providers/auth_provider.dart';
 import 'package:dentlink/shared/widgets/post_action_bar.dart';
 import 'package:dentlink/shared/widgets/post_badge.dart';

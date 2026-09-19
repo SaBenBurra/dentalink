@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../data/models/enums.dart';
+import '../../domain/enums/enums.dart';
 
 /// DentalBranch enum'u için UI katmanı extension'ları.
 ///

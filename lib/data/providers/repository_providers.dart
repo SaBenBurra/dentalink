@@ -4,8 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../repositories/auth_repository.dart';
 import '../repositories/supabase_auth_repository.dart';
-import '../repositories/comment_repository.dart';
-import '../repositories/mock_comment_repository.dart';
+import '../../domain/repositories/comment_repository.dart';
+import '../repositories/supabase_comment_repository.dart';
 import '../repositories/message_repository.dart';
 import '../repositories/mock_message_repository.dart';
 import '../repositories/notification_repository.dart';
@@ -38,7 +38,7 @@ final createPostRepositoryProvider = Provider<ICreatePostRepository>((ref) => re
 
 // ─── Comment ───
 final commentRepositoryProvider = Provider<CommentRepository>((ref) {
-  return MockCommentRepository();
+  return SupabaseCommentRepository(client: ref.watch(supabaseClientProvider));
 });
 
 // ─── Message ───

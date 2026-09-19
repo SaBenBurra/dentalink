@@ -1,6 +1,6 @@
 import 'dart:io';
 import '../datasources/mock_datasource.dart';
-import '../models/enums.dart';
+import '../../domain/enums/enums.dart';
 import '../models/user_model.dart';
 import 'auth_repository.dart';
 import 'otp_send_limiter.dart';
