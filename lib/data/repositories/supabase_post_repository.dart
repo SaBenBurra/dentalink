@@ -187,9 +187,8 @@ class SupabasePostRepository implements PostRepository {
     var request = _basePostQuery();
 
     // Full-text search: `search_vector` sütunu üzerinde `plainto_tsquery`
-    // kullanılır. `simple` konfigürasyonu Türkçe için yeterlidir (stemming
-    // olmadan kelime eşleştirme).
-    request = request.textSearch('search_vector', q, type: TextSearchType.plain);
+    // kullanılır. 'turkish' konfigürasyonu ile kelime kökleri (stemming) desteklenir.
+    request = request.textSearch('search_vector', q, type: TextSearchType.plain, config: 'turkish');
 
     if (branch != null) {
       request = request.eq('branch', branch.dbValue);

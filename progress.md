@@ -168,11 +168,11 @@ Tüm ekranlar mock verilerle görsel olarak tamamlanır. Backend bağlantısı y
 
 ### 3.6 — Arama & Filtreleme
 
-- [ ] PostgreSQL full-text search konfigürasyonu (Türkçe dil desteği ile `tsvector`)
-- [ ] Post arama (başlık + içerik)
-- [ ] Kullanıcı arama (isim + unvan + üniversite)
-- [ ] Branş ve içerik türü filtreleme
-- [ ] `SearchNotifier`'ı gerçek repository'ye bağla
+- [x] PostgreSQL full-text search konfigürasyonu (Türkçe dil desteği ile `tsvector`)
+- [x] Post arama (başlık + içerik)
+- [x] Kullanıcı arama (isim + unvan + üniversite)
+- [x] Branş ve içerik türü filtreleme
+- [x] `SearchNotifier`'ı gerçek repository'ye bağla
 
 ### 3.7 — Mesajlaşma (SupabaseMessageRepository + Realtime)
 

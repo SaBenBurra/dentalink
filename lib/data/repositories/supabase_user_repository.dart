@@ -26,16 +26,13 @@ class SupabaseUserRepository implements UserRepository {
 
   @override
   Future<List<UserModel>> searchUsers(String query) async {
-    // PostgREST filter özel karakterlerini escape et.
-    final safeQuery = query
-        .replaceAll(r'\', r'\\')
-        .replaceAll('%', r'\%')
-        .replaceAll('_', r'\_');
+    final q = query.trim();
+    if (q.isEmpty) return [];
 
     final response = await client
         .from('users')
         .select()
-        .or('full_name.ilike.%$safeQuery%,username.ilike.%$safeQuery%,university.ilike.%$safeQuery%')
+        .textSearch('search_vector', q, type: TextSearchType.plain, config: 'turkish')
         .limit(50);
 
     return (response as List<dynamic>)
