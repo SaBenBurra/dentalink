@@ -7,7 +7,7 @@ import '../repositories/supabase_auth_repository.dart';
 import '../../domain/repositories/comment_repository.dart';
 import '../repositories/supabase_comment_repository.dart';
 import '../repositories/message_repository.dart';
-import '../repositories/mock_message_repository.dart';
+import '../repositories/supabase_message_repository.dart';
 import '../repositories/notification_repository.dart';
 import '../repositories/mock_notification_repository.dart';
 import '../repositories/post_repository.dart';
@@ -45,7 +45,7 @@ final commentRepositoryProvider = Provider<CommentRepository>((ref) {
 
 // ─── Message ───
 final messageRepositoryProvider = Provider<MessageRepository>((ref) {
-  return MockMessageRepository();
+  return SupabaseMessageRepository(client: ref.watch(supabaseClientProvider));
 });
 
 // ─── Notification ───

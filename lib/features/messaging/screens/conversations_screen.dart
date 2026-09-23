@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/conversation_tile.dart';
+import '../widgets/user_search_delegate.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import '../../../providers/message_provider.dart';
 import '../../../shared/widgets/loading_indicator.dart';
@@ -37,6 +38,25 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
       appBar: AppBar(
         title: Text('Mesajlar', style: textTheme.titleLarge),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () async {
+              final selectedUser = await showSearch(
+                context: context,
+                delegate: UserSearchDelegate(ref),
+              );
+              if (selectedUser != null && context.mounted) {
+                context.pushNamed(
+                  'chat',
+                  pathParameters: {'userId': selectedUser.id},
+                  queryParameters: {
+                    'name': selectedUser.fullName,
+                    'avatar': selectedUser.avatarUrl ?? '',
+                  },
+                );
+              }
+            },
+          ),
           IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
         ],
       ),

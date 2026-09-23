@@ -1,10 +1,8 @@
-import 'package:dentlink/shared/widgets/case_card.dart';
-import 'package:dentlink/shared/widgets/question_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/error/app_failures.dart';
 import '../../../domain/enums/enums.dart';
-import '../../../data/models/post_model.dart';
 import '../../../providers/search_provider.dart';
 import '../../../shared/widgets/user_tile.dart';
 import '../../../shared/widgets/loading_indicator.dart';
@@ -55,7 +53,26 @@ class PostSearchResults extends ConsumerWidget {
         );
       },
       loading: () => const DentLinkLoadingSpinner(),
-      error: (err, stack) => Center(child: Text('Hata: $err')),
+      error: (err, stack) {
+        final msg = switch (err) {
+          ValidationFailure(:final message) => message,
+          ServerFailure(:final message) => message ?? 'Sonuçlar yüklenemedi.',
+          NetworkFailure() => 'İnternet bağlantınızı kontrol edin.',
+          _ => 'Sonuçlar yüklenemedi.',
+        };
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(msg),
+              TextButton(
+                onPressed: () => ref.read(searchProvider.notifier).search(ref.read(searchProvider).query),
+                child: const Text('Tekrar Dene'),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -92,7 +109,26 @@ class UserSearchResults extends ConsumerWidget {
         );
       },
       loading: () => const DentLinkLoadingSpinner(),
-      error: (err, stack) => Center(child: Text('Hata: $err')),
+      error: (err, stack) {
+        final msg = switch (err) {
+          ValidationFailure(:final message) => message,
+          ServerFailure(:final message) => message ?? 'Sonuçlar yüklenemedi.',
+          NetworkFailure() => 'İnternet bağlantınızı kontrol edin.',
+          _ => 'Sonuçlar yüklenemedi.',
+        };
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(msg),
+              TextButton(
+                onPressed: () => ref.read(searchProvider.notifier).search(ref.read(searchProvider).query),
+                child: const Text('Tekrar Dene'),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }
