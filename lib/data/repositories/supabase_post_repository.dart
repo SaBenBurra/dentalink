@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 
+import '../../core/error/app_failures.dart';
+import '../../core/utils/supabase_error_mapper.dart';
 import '../../domain/enums/enums.dart';
 import '../models/post_model.dart';
 import '../models/tag_model.dart';
@@ -384,30 +387,38 @@ class SupabasePostRepository implements PostRepository {
   }
 
   @override
-  Future<void> deletePost(String postId) async {
-    // 1) Storage'dan fiziksel görselleri sil (orphan files engelleme)
+  Future<void> deletePost(String postId) => guardSupabase(() async {
+    // 1) Görsel yollarını, satır CASCADE ile silinmeden önce al.
     final images = await _client
         .from('post_images')
         .select('image_url')
         .eq('post_id', postId);
 
-    if ((images as List).isNotEmpty) {
-      final paths = images.map((e) {
-        final url = e['image_url'] as String;
-        // Public URL'den bucket içi dosya yolunu çıkar
-        final pathMatches = RegExp(r'post-images/(.*)').firstMatch(url);
-        return pathMatches?.group(1) ?? '';
-      }).where((p) => p.isNotEmpty).toList();
+    // 2) Önce satırı sil. RLS sahibi olmayanın silmesini hata vermeden 0 satıra
+    // düşürdüğü için silinen satır döndürülüp kontrol edilir.
+    final deleted = await _client
+        .from('posts')
+        .delete()
+        .eq('id', postId)
+        .select('id');
+    if (deleted.isEmpty) throw const PermissionDeniedFailure();
 
-      if (paths.isNotEmpty) {
+    // 3) En son dosyalar: burada hata olsa bile post zaten silinmiştir,
+    // en kötü ihtimalle yetim dosya kalır (veri kaybı değil).
+    final paths = images
+        .map((e) => RegExp(r'post-images/(.*)')
+            .firstMatch(e['image_url'] as String)
+            ?.group(1))
+        .whereType<String>()
+        .toList();
+    if (paths.isNotEmpty) {
+      try {
         await _client.storage.from('post-images').remove(paths);
+      } catch (e) {
+        debugPrint('deletePost: görseller silinemedi: $e');
       }
     }
-
-    // 2) CASCADE foreign key'ler sayesinde post_images, post_tags, likes,
-    // bookmarks ve comments DB'den otomatik silinir.
-    await _client.from('posts').delete().eq('id', postId);
-  }
+  });
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  PRİVATE YARDIMCILAR
@@ -463,32 +474,31 @@ class SupabasePostRepository implements PostRepository {
   /// Etiketleri `tags` tablosuna upsert eder (yoksa oluşturur) ve
   /// `post_tags` junction tablosuna bağlar.
   Future<void> _upsertAndLinkTags(String postId, List<String> tagNames) async {
-    if (tagNames.isEmpty) return;
-
+    // slug → ilk görülen isim. Boş slug'lar ("???") ve tekrarlar atlanır.
+    final bySlug = <String, String>{};
     for (final name in tagNames) {
       final trimmedName = name.trim();
-      if (trimmedName.isEmpty) continue;
-
       final slug = _slugify(trimmedName);
-
-      // Tag'i upsert et (varsa mevcut kaydı döndür).
-      final tagRow = await _client
-          .from('tags')
-          .upsert(
-            {'name': trimmedName, 'slug': slug},
-            onConflict: 'slug',
-          )
-          .select('id')
-          .single();
-
-      final tagId = tagRow['id'] as String;
-
-      // post_tags junction kaydı
-      await _client.from('post_tags').upsert(
-        {'post_id': postId, 'tag_id': tagId},
-        onConflict: 'post_id,tag_id',
-      );
+      if (slug.isNotEmpty) bySlug.putIfAbsent(slug, () => trimmedName);
     }
+    if (bySlug.isEmpty) return;
+
+    // Var olan etiketlere dokunma (ON CONFLICT DO NOTHING): başkasının etiket
+    // adını ezmez ve tags üzerinde UPDATE yetkisi gerektirmez.
+    await _client.from('tags').upsert(
+      [for (final e in bySlug.entries) {'name': e.value, 'slug': e.key}],
+      onConflict: 'slug',
+      ignoreDuplicates: true,
+    );
+
+    final tagRows = await _client
+        .from('tags')
+        .select('id')
+        .inFilter('slug', bySlug.keys.toList());
+
+    await _client.from('post_tags').insert([
+      for (final row in tagRows) {'post_id': postId, 'tag_id': row['id']},
+    ]);
   }
 
   /// Türkçe uyumlu basit slug oluşturma.

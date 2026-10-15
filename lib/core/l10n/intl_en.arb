@@ -228,5 +228,12 @@
   "@notificationMessaged": { "placeholders": { "actorName": { "type": "String" } } },
   "notificationBestAnswer": "{actorName} selected your answer as the best.",
   "@notificationBestAnswer": { "placeholders": { "actorName": { "type": "String" } } },
-  "notificationBadge": "You earned a new badge!"
+  "notificationBadge": "You earned a new badge!",
+  "authProfileLoadError": "Your profile could not be loaded. Check your connection and try again.",
+  "profileMessageButton": "Message",
+  "postDeleteTitle": "Delete post",
+  "postDeleteConfirm": "This post will be permanently deleted. Are you sure?",
+  "postDeleted": "Post deleted.",
+  "profileNoPosts": "No posts yet.",
+  "back": "Go Back"
 }

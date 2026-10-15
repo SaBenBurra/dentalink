@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../shared/utils/error_messages.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
@@ -72,7 +73,7 @@ class BookmarksScreen extends ConsumerWidget {
                   ),
                   confirmDismiss: (_) => _showRemoveConfirmation(context),
                   onDismissed: (_) {
-                    ref.read(bookmarkProvider.notifier).removeBookmark(post.id);
+                    _remove(context, ref, post.id);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: const Text('Kaydedilenlerden kaldırıldı'),
@@ -95,11 +96,7 @@ class BookmarksScreen extends ConsumerWidget {
                       // Bookmark ekranında like toggle feed ile senkronize
                       // olacak. Şimdilik no-op.
                     },
-                    onBookmarkToggle: () {
-                      ref
-                          .read(bookmarkProvider.notifier)
-                          .removeBookmark(post.id);
-                    },
+                    onBookmarkToggle: () => _remove(context, ref, post.id),
                     onTap: () {
                       final route = post.type == PostType.casePost
                           ? '/feed/case/${post.id}'
@@ -121,6 +118,13 @@ class BookmarksScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  void _remove(BuildContext context, WidgetRef ref, String postId) {
+    final messenger = ScaffoldMessenger.of(context);
+    ref.read(bookmarkProvider.notifier).removeBookmark(postId).catchError((Object e) {
+      messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
+    });
   }
 
   Future<bool?> _showRemoveConfirmation(BuildContext context) {

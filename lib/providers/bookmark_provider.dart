@@ -31,12 +31,16 @@ class BookmarkNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
     final posts = state.valueOrNull;
     if (posts == null) return;
 
-    final repo = ref.read(bookmarkRepositoryProvider);
-    await repo.unbookmarkPost(postId);
+    // Önce listeden çıkar (await'ten ÖNCE): Dismissible kaydırıldığı anda
+    // ağaçtan kalkmalı, aksi halde "dismissed Dismissible" assertion'ı çıkar.
+    state = AsyncData(posts.where((p) => p.id != postId).toList());
 
-    // Optimistik: listeden çıkar
-    final updated = posts.where((p) => p.id != postId).toList();
-    state = AsyncData(updated);
+    try {
+      await ref.read(bookmarkRepositoryProvider).unbookmarkPost(postId);
+    } catch (_) {
+      state = AsyncData(posts); // Rollback
+      rethrow;
+    }
   }
 
   /// Bookmark toggle eder (feed'den gelen senkronizasyon için).

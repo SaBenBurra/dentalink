@@ -104,7 +104,10 @@ class UserSearchResults extends ConsumerWidget {
           separatorBuilder: (_, _) => const Divider(height: 1),
           itemBuilder: (context, index) {
             final user = users[index];
-            return UserTile(user: user);
+            return UserTile(
+              user: user,
+              onTap: () => context.push('/profile/${user.id}'),
+            );
           },
         );
       },

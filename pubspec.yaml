@@ -16,7 +16,7 @@ dependencies:
   # Navigation
   go_router: ^14.8.1
 
-  # Backend (Faz 3'te aktif kullanılacak, şimdilik kurulu)
+  # Backend
   supabase_flutter: ^2.9.0
 
   # Localization
@@ -30,12 +30,10 @@ dependencies:
 
   # UI Utilities
   shimmer: ^3.0.0
-  flutter_svg: ^2.0.17
   flutter_floating_bottom_bar: ^2.0.2
   shared_preferences: ^2.5.5
 
   equatable: ^2.1.0
-  mockito: ^5.8.1
   http: ^1.6.0
   collection: ^1.19.1
 
@@ -46,6 +44,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   build_runner: ^2.16.1
+  mockito: ^5.8.1
 
 flutter:
   uses-material-design: true

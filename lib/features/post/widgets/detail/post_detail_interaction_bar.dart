@@ -6,13 +6,13 @@ import '../../../../shared/widgets/like_button.dart';
 class PostDetailInteractionBar extends StatelessWidget {
   final PostModel post;
   final VoidCallback onLikeToggle;
-  final Widget trailing;
+  final Widget? trailing;
   
   const PostDetailInteractionBar({
     super.key,
     required this.post,
     required this.onLikeToggle,
-    required this.trailing,
+    this.trailing,
   });
 
   @override
@@ -58,7 +58,7 @@ class PostDetailInteractionBar extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          trailing,
+          ?trailing,
         ],
       ),
     );

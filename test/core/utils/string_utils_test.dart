@@ -82,15 +82,10 @@ void main() {
       expect(username, matches(RegExp(r'^[a-z0-9_]+$')));
     });
 
-    test('strips non-ASCII Turkish characters before Turkish normalization map is applied', () {
-      // Arrange
-      const fullName = 'Çağla Öztürk';
-
-      // Act
-      final username = generateUsername(fullName);
-
-      // Assert
-      expect(username, startsWith('ala_ztrk_'));
+    test('transliterates Turkish characters (upper and lower case) to ASCII', () {
+      expect(generateUsername('Çağla Öztürk'), startsWith('cagla_ozturk_'));
+      expect(generateUsername('İsmail IŞIK'), startsWith('ismail_isik_'));
+      expect(generateUsername('Şule Güneş'), matches(RegExp(r'^sule_gunes_\d{6}$')));
     });
   });
 }

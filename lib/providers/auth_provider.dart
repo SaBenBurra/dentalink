@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 import '../core/utils/string_utils.dart';
 import '../domain/enums/enums.dart';
 import '../data/models/user_model.dart';
@@ -57,19 +58,28 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
   }) async {
     state = const AsyncLoading();
     try {
-      final username = generateUsername(fullName);
-      final user = await ref.read(authRepositoryProvider).completeRegistration(
-        fullName: fullName,
-        username: username,
-        title: title,
-        bio: bio,
-        university: university,
-        city: city,
-        workplace: workplace,
-        experienceYears: experienceYears,
-        avatarFile: avatarFile,
-      );
-      state = AsyncData(user);
+      // Kullanıcı adı çakışırsa (23505 users_username_key) yeni ekle tekrar dene.
+      for (var attempt = 1;; attempt++) {
+        try {
+          final user = await ref.read(authRepositoryProvider).completeRegistration(
+            fullName: fullName,
+            username: generateUsername(fullName),
+            title: title,
+            bio: bio,
+            university: university,
+            city: city,
+            workplace: workplace,
+            experienceYears: experienceYears,
+            avatarFile: avatarFile,
+          );
+          state = AsyncData(user);
+          return;
+        } on PostgrestException catch (e) {
+          final usernameTaken =
+              e.code == '23505' && e.message.contains('username');
+          if (!usernameTaken || attempt >= 3) rethrow;
+        }
+      }
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
       rethrow;

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -13,6 +12,10 @@ import '../../../data/models/post_model.dart';
 import '../widgets/detail/case_detail_comments.dart';
 import '../widgets/detail/post_detail_author_info.dart';
 import '../widgets/detail/post_detail_interaction_bar.dart';
+import '../widgets/detail/detail_states.dart';
+import '../../../core/error/app_failures.dart';
+import '../../../shared/utils/error_messages.dart';
+import '../../../shared/widgets/follow_button.dart';
 
 class CaseDetailScreen extends ConsumerStatefulWidget {
   const CaseDetailScreen({super.key, required this.postId});
@@ -27,10 +30,6 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
   late final TextEditingController _commentController;
   late final PageController _pageController;
   int _currentPage = 0;
-  bool _isFollowing = false; // Mock local state
-
-  static const String _placeholderXrayUrl =
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuAPl3lEc-lZWgnv5TAsSlfAgOpm0oO_QaSi9ubmfjaK_3B-D30x7l21Xssng_I_zQ_gCGuJDjVDckGgtEW7m4EdRjYww2ecYghimvtA4_qB6Sohj-0sqV_Vq125CIFwzuuCTYTRRoauzQsqYiBG_sDmnR5ypGD8oCVZgwKegW6csc-3MsdPRoUAYXVt08y6kP--KFFHeq4J-behHpP0EUo8jlEwgnS-wq98zyjHymKYzdBHbN1Gcym86xRFLJt477f6_b7Lgqmkn6H8';
 
   @override
   void initState() {
@@ -55,7 +54,7 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Yorum eklenirken hata oluştu: $e')),
+          SnackBar(content: Text(getErrorMessage(e))),
         );
       }
       return;
@@ -91,10 +90,12 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
       backgroundColor: backgroundColor,
       body: postAsync.when(
         data: (postModel) {
-          final post = postModel as CasePostModel;
-          final imageUrls = post.imageUrls.isNotEmpty
-              ? post.imageUrls
-              : [_placeholderXrayUrl];
+          if (postModel is! CasePostModel) {
+            return PostDetailError(message: getErrorMessage(const NotFoundFailure()));
+          }
+          final post = postModel;
+          // Görselsiz vakada başka bir görsel gösterilmez (yanıltıcı tıbbi içerik).
+          final imageUrls = post.imageUrls;
 
           return Stack(
             children: [
@@ -153,8 +154,17 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                   _currentPage = idx;
                                 });
                               },
-                              itemCount: imageUrls.length,
+                              itemCount: imageUrls.isEmpty ? 1 : imageUrls.length,
                               itemBuilder: (context, index) {
+                                if (imageUrls.isEmpty) {
+                                  return Center(
+                                    child: Icon(
+                                      Icons.image_not_supported_outlined,
+                                      size: 48,
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
+                                  );
+                                }
                                 return CachedNetworkImage(
                                   imageUrl: imageUrls[index],
                                   fit: BoxFit.cover,
@@ -241,35 +251,14 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                               PostDetailAuthorInfo(
                                 post: post,
                                 trailing: currentUser?.id != post.userId
-                                    ? OutlinedButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _isFollowing = !_isFollowing;
-                                          });
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                _isFollowing
-                                                    ? 'Dr. ${post.author.fullName.split(' ').last} takip ediliyor.'
-                                                    : 'Takip bırakıldı.',
-                                              ),
-                                              duration: const Duration(seconds: 1),
+                                    ? FollowButton(
+                                        userId: post.userId,
+                                        style: ButtonStyle(
+                                          shape: WidgetStatePropertyAll(
+                                            RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
                                             ),
-                                          );
-                                        },
-                                        style: OutlinedButton.styleFrom(
-                                          foregroundColor: colorScheme.primary,
-                                          side: BorderSide(
-                                            color: colorScheme.primary.withValues(alpha: 0.5),
                                           ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing16),
-                                        ),
-                                        child: Text(
-                                          _isFollowing ? 'Takip Ediliyor' : 'Takip Et',
-                                          style: textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
                                         ),
                                       )
                                     : null,
@@ -336,15 +325,6 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                 onLikeToggle: () => ref
                                     .read(postDetailProvider(widget.postId).notifier)
                                     .toggleLike(),
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.share_outlined),
-                                  color: colorScheme.onSurfaceVariant,
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Bağlantı kopyalandı!')),
-                                    );
-                                  },
-                                ),
                               ),
                               const SizedBox(height: AppDimensions.spacing24),
                               CaseDetailComments(postId: widget.postId),
@@ -374,7 +354,7 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
-                        onTap: () => context.pop(),
+                        onTap: () => popOrGoFeed(context),
                         child: Container(
                           width: 40,
                           height: 40,
@@ -507,22 +487,8 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.grey),
-              const SizedBox(height: AppDimensions.spacing16),
-              Text('Vaka yüklenirken hata oluştu: $err'),
-              const SizedBox(height: AppDimensions.spacing16),
-              TextButton(
-                onPressed: () => context.pop(),
-                child: const Text('Geri Dön'),
-              ),
-            ],
-          ),
-        ),
+        loading: () => const PostDetailLoading(),
+        error: (err, stack) => PostDetailError(message: getErrorMessage(err)),
       ),
     );
   }

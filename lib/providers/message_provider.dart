@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../data/models/conversation_model.dart';
 import '../data/models/message_model.dart';
 import '../data/providers/repository_providers.dart';
+import 'auth_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Conversations Notifier
@@ -18,7 +19,8 @@ class ConversationsNotifier
   @override
   Future<List<ConversationModel>> build() async {
     final client = ref.watch(supabaseClientProvider);
-    final uid = client.auth.currentUser?.id;
+    // Hesap değişince yeniden kurulur; eski kullanıcının sohbetleri ve kanalı kalmaz.
+    final uid = ref.watch(authProvider.select((s) => s.valueOrNull?.id));
 
     if (uid != null) {
       _channel = client
@@ -37,7 +39,7 @@ class ConversationsNotifier
           .subscribe();
 
       ref.onDispose(() {
-        _channel?.unsubscribe();
+        if (_channel != null) client.removeChannel(_channel!);
       });
     }
 
@@ -93,8 +95,9 @@ class ActiveChatNotifier
 
   @override
   Future<ActiveChatState> build(String peerUserId) async {
+    final client = ref.watch(supabaseClientProvider);
     ref.onDispose(() {
-      _channel?.unsubscribe();
+      if (_channel != null) client.removeChannel(_channel!);
     });
     
     // 9. Sohbet ekranından kısa süreli çıkıp girmelerde yeniden yüklemeyi (flicker) önler
@@ -111,7 +114,6 @@ class ActiveChatNotifier
       return const ActiveChatState(conversationId: null, messages: []);
     }
 
-    final client = ref.watch(supabaseClientProvider);
     _channel = client
         .channel('public:messages:conversation_id=$conversationId')
         .onPostgresChanges(

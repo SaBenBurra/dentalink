@@ -7,6 +7,7 @@ import 'package:dentlink/shared/widgets/post_body.dart';
 import 'package:dentlink/shared/widgets/post_glass_container.dart';
 import 'package:dentlink/shared/widgets/post_header.dart';
 import 'package:dentlink/shared/widgets/post_media.dart';
+import 'package:dentlink/shared/utils/post_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -46,7 +47,9 @@ class CaseCard extends ConsumerWidget {
             isOwner: isOwner,
             badge: PostBadge(postType: PostType.casePost),
             onMenuSelected: (action) {
-              // TODO: PostMenuAction işlemleri Faz 3'te (Supabase CRUD) bağlanacak
+              if (action == PostMenuAction.delete) {
+                confirmAndDeletePost(context, ref, post.id);
+              }
             },
           ),
 

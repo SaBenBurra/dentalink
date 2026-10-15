@@ -59,7 +59,7 @@ abstract class ICreatePostRepository {
   Future<void> deletePost(String postId);
 }
 
-/// Tüm gönderi işlemlerini birleştiren arayüz (Geriye dönük uyumluluk ve MockDatasource için)
+/// Tüm gönderi işlemlerini birleştiren arayüz (Supabase implementasyonu tek sınıfta).
 abstract class PostRepository
     implements
         IFeedRepository,

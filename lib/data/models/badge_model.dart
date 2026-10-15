@@ -21,7 +21,7 @@ class BadgeModel {
       id: json['id'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
-      iconName: json['icon_url'] as String, // DB'deki icon_url'i iconName'e mapliyoruz
+      iconName: json['icon_name'] as String,
       earnedAt: DateTime.parse(json['earned_at'] as String),
     );
   }

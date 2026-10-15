@@ -62,7 +62,11 @@ void main() {
     });
 
     test('updateProfile calls update on users table', () async {
-      // Arrange
+      // Arrange — yalnızca kendi profilini güncelleyebilir.
+      final mockUser = MockUser();
+      when(mockUser.id).thenReturn('123');
+      when(mockAuthClient.currentUser).thenReturn(mockUser);
+
       final mockQueryBuilder = MockSupabaseQueryBuilder();
       final mockFilterBuilder = MockPostgrestFilterBuilderList();
 
@@ -95,7 +99,8 @@ void main() {
               as Map<String, dynamic>;
       expect(updateArgs['full_name'], 'Updated Name');
       expect(updateArgs['title'], UserTitle.ortodontist.dbValue);
-      expect(updateArgs.containsKey('updated_at'), isTrue);
+      // updated_at DB trigger'ı tarafından yazılır, istemci göndermez.
+      expect(updateArgs.containsKey('updated_at'), isFalse);
 
       verify(mockFilterBuilder.eq('id', '123')).called(1);
     });

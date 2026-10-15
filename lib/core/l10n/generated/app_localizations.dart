@@ -1069,6 +1069,48 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Yeni bir rozet kazandın!'**
   String get notificationBadge;
+
+  /// No description provided for @authProfileLoadError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profilin yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.'**
+  String get authProfileLoadError;
+
+  /// No description provided for @profileMessageButton.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mesaj'**
+  String get profileMessageButton;
+
+  /// No description provided for @postDeleteTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönderiyi sil'**
+  String get postDeleteTitle;
+
+  /// No description provided for @postDeleteConfirm.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu gönderi kalıcı olarak silinecek. Emin misin?'**
+  String get postDeleteConfirm;
+
+  /// No description provided for @postDeleted.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönderi silindi.'**
+  String get postDeleted;
+
+  /// No description provided for @profileNoPosts.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz gönderi yok.'**
+  String get profileNoPosts;
+
+  /// No description provided for @back.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geri Dön'**
+  String get back;
 }
 
 class _AppLocalizationsDelegate

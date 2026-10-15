@@ -511,5 +511,12 @@
   "@notificationMessaged": { "placeholders": { "actorName": { "type": "String" } } },
   "notificationBestAnswer": "{actorName} cevabını en iyi cevap olarak seçti.",
   "@notificationBestAnswer": { "placeholders": { "actorName": { "type": "String" } } },
-  "notificationBadge": "Yeni bir rozet kazandın!"
+  "notificationBadge": "Yeni bir rozet kazandın!",
+  "authProfileLoadError": "Profilin yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.",
+  "profileMessageButton": "Mesaj",
+  "postDeleteTitle": "Gönderiyi sil",
+  "postDeleteConfirm": "Bu gönderi kalıcı olarak silinecek. Emin misin?",
+  "postDeleted": "Gönderi silindi.",
+  "profileNoPosts": "Henüz gönderi yok.",
+  "back": "Geri Dön"
 }

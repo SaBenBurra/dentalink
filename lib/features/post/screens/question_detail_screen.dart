@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../providers/post_provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/comment_provider.dart';
 import '../../../shared/widgets/tag_chip.dart';
+import '../../../core/error/app_failures.dart';
+import '../../../shared/utils/error_messages.dart';
+import '../widgets/detail/detail_states.dart';
 import '../../../shared/widgets/bookmark_button.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../../../data/models/post_model.dart';
@@ -48,7 +50,7 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Cevap eklenirken hata oluştu: $e')),
+          SnackBar(content: Text(getErrorMessage(e))),
         );
       }
       return;
@@ -84,7 +86,10 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
       backgroundColor: backgroundColor,
       body: postAsync.when(
         data: (postModel) {
-          final post = postModel as QuestionPostModel;
+          if (postModel is! QuestionPostModel) {
+            return PostDetailError(message: getErrorMessage(const NotFoundFailure()));
+          }
+          final post = postModel;
           final isPostOwner = currentUser?.id == post.userId;
 
           return Stack(
@@ -257,7 +262,7 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
-                        onTap: () => context.pop(),
+                        onTap: () => popOrGoFeed(context),
                         child: Container(
                           width: 40,
                           height: 40,
@@ -366,22 +371,8 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.grey),
-              const SizedBox(height: AppDimensions.spacing16),
-              Text('Soru yüklenirken hata oluştu: $err'),
-              const SizedBox(height: AppDimensions.spacing16),
-              TextButton(
-                onPressed: () => context.pop(),
-                child: const Text('Geri Dön'),
-              ),
-            ],
-          ),
-        ),
+        loading: () => const PostDetailLoading(),
+        error: (err, stack) => PostDetailError(message: getErrorMessage(err)),
       ),
     );
   }

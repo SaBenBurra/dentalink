@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/following_provider.dart';
@@ -137,12 +138,16 @@ class _UserListTabState extends ConsumerState<_UserListTab> {
               const SizedBox(height: AppDimensions.spacing8),
           itemBuilder: (context, index) {
             final user = users[index];
+            final isMe = user.id == ref.watch(currentUserProvider)?.id;
             return UserTile(
               user: user,
-              trailing: _FollowButton(
-                key: ValueKey(user.id),
-                userId: user.id,
-              ),
+              onTap: () => context.push('/profile/${user.id}'),
+              trailing: isMe
+                  ? null
+                  : _FollowButton(
+                      key: ValueKey(user.id),
+                      userId: user.id,
+                    ),
             );
           },
         );

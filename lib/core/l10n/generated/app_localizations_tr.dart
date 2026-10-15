@@ -530,4 +530,27 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get notificationBadge => 'Yeni bir rozet kazandın!';
+
+  @override
+  String get authProfileLoadError =>
+      'Profilin yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.';
+
+  @override
+  String get profileMessageButton => 'Mesaj';
+
+  @override
+  String get postDeleteTitle => 'Gönderiyi sil';
+
+  @override
+  String get postDeleteConfirm =>
+      'Bu gönderi kalıcı olarak silinecek. Emin misin?';
+
+  @override
+  String get postDeleted => 'Gönderi silindi.';
+
+  @override
+  String get profileNoPosts => 'Henüz gönderi yok.';
+
+  @override
+  String get back => 'Geri Dön';
 }

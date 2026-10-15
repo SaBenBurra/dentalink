@@ -13,15 +13,17 @@ class SupabaseFollowRepository implements FollowRepository {
     final currentUserId = client.auth.currentUser?.id;
     if (currentUserId == null) throw Exception('Oturum açılmamış.');
 
-    // Duplicate follow koruması: aynı çift tekrar eklenirse hata yerine
-    // sessizce yok sayılır.
-    await client.from('follows').upsert(
-      {
+    // Duplicate follow koruması: aynı çift tekrar eklenirse (23505) sessizce
+    // yok sayılır. upsert kullanılmaz; ON CONFLICT DO UPDATE, follows üzerinde
+    // olmayan UPDATE yetkisini ister.
+    try {
+      await client.from('follows').insert({
         'follower_id': currentUserId,
         'following_id': userId,
-      },
-      onConflict: 'follower_id,following_id',
-    );
+      });
+    } on PostgrestException catch (e) {
+      if (e.code != '23505') rethrow;
+    }
   }
 
   @override

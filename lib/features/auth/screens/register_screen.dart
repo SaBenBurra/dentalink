@@ -13,6 +13,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../providers/register_controller.dart';
+import '../../../providers/auth_provider.dart';
+import '../../../shared/utils/error_messages.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -109,7 +111,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      context.go('/login');
+      // Oturum açık kaldıkça redirect /register'a geri atar; başka hesaba
+      // geçebilmek için çıkış yapılır (AUDIT AUTH-3). Router /login'e taşır.
+      ref.read(authProvider.notifier).signOut();
     }
   }
 
@@ -149,7 +153,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Kayıt sırasında hata oluştu: $e'),
+          content: Text(getErrorMessage(e)),
           behavior: SnackBarBehavior.floating,
           backgroundColor: AppColors.error,
         ),

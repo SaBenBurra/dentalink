@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../shared/utils/error_messages.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../domain/enums/enums.dart';
@@ -70,7 +71,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       final state = ref.read(editProfileProvider);
       if (state.hasError) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Hata: ${state.error}')),
+          SnackBar(content: Text(getErrorMessage(state.error!))),
         );
       } else {
         ScaffoldMessenger.of(

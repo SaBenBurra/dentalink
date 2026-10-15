@@ -531,4 +531,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationBadge => 'You earned a new badge!';
+
+  @override
+  String get authProfileLoadError =>
+      'Your profile could not be loaded. Check your connection and try again.';
+
+  @override
+  String get profileMessageButton => 'Message';
+
+  @override
+  String get postDeleteTitle => 'Delete post';
+
+  @override
+  String get postDeleteConfirm =>
+      'This post will be permanently deleted. Are you sure?';
+
+  @override
+  String get postDeleted => 'Post deleted.';
+
+  @override
+  String get profileNoPosts => 'No posts yet.';
+
+  @override
+  String get back => 'Go Back';
 }

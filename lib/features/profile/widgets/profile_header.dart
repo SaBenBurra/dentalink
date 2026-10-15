@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../data/models/user_model.dart';
+import '../../../shared/widgets/follow_button.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import 'mutual_followers_widget.dart';
 import 'package:go_router/go_router.dart';
@@ -67,6 +69,9 @@ class ProfileHeader extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppDimensions.spacing16),
+          ] else ...[
+            _FollowAndMessageButtons(user: user),
+            const SizedBox(height: AppDimensions.spacing16),
           ],
           if (user.bio != null && user.bio!.isNotEmpty) ...[
             Text(user.bio!, style: textTheme.bodyMedium),
@@ -98,6 +103,40 @@ class ProfileHeader extends StatelessWidget {
           MutualFollowersWidget(userId: user.id),
         ],
       ),
+    );
+  }
+}
+
+/// Başka bir kullanıcının profilinde Takip Et / Mesaj butonları.
+class _FollowAndMessageButtons extends StatelessWidget {
+  final UserModel user;
+
+  const _FollowAndMessageButtons({required this.user});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Row(
+      children: [
+        Expanded(child: FollowButton(userId: user.id)),
+        const SizedBox(width: AppDimensions.spacing12),
+        Expanded(
+          child: OutlinedButton.icon(
+            icon: const Icon(Icons.chat_bubble_outline, size: 18),
+            label: Text(l10n.profileMessageButton),
+            onPressed: () => context.push(
+              Uri(
+                path: '/chat/${user.id}',
+                queryParameters: {
+                  'name': user.fullName,
+                  'avatar': user.avatarUrl ?? '',
+                },
+              ).toString(),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

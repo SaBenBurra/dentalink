@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../shared/utils/error_messages.dart';
+import '../../../shared/utils/post_actions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/tag_input.dart';
@@ -38,9 +40,10 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
       final state = ref.read(createQuestionProvider);
       if (state.hasError) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Hata: ${state.error}')),
+          SnackBar(content: Text(getErrorMessage(state.error!))),
         );
       } else {
+        invalidateMyPosts(ref);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Sorunuz başarıyla paylaşıldı!')),
         );

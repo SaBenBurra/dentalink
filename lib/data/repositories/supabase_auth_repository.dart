@@ -34,7 +34,7 @@ class SupabaseAuthRepository implements AuthRepository {
   /// Türkiye telefon numarası formatı: +90XXXXXXXXXX
   /// Kullanıcı "5551234567" girerse → "+905551234567" olur.
   static final _phoneRegex = RegExp(r'^\+?[0-9]{8,15}$');
-  static final _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  static final _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$');
 
   bool _isPhone(String input) => _phoneRegex.hasMatch(input);
   bool _isEmail(String input) => _emailRegex.hasMatch(input);
@@ -102,22 +102,21 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Future<UserModel?> verifyOtp(String emailOrPhone, String otpCode) async {
-    final input = emailOrPhone.trim();
+    final destination = _normalizeDestination(emailOrPhone);
 
-    AuthResponse response;
+    final AuthResponse response;
 
-    if (_isEmail(input)) {
+    if (_isEmail(destination)) {
       response = await _client.auth.verifyOTP(
         type: OtpType.email,
         token: otpCode,
-        email: input,
+        email: destination,
       );
     } else {
-      final normalizedPhone = _normalizePhone(input);
       response = await _client.auth.verifyOTP(
         type: OtpType.sms,
         token: otpCode,
-        phone: normalizedPhone,
+        phone: destination,
       );
     }
 
@@ -153,20 +152,23 @@ class SupabaseAuthRepository implements AuthRepository {
 
   /// Auth user ID ile public.users tablosundan profil çeker.
   /// Profil yoksa null döner (yeni kullanıcı → kayıt ekranına yönlendirilir).
+  /// Ağ/sunucu hatası null DEĞİLDİR, fırlatılır; aksi halde mevcut kullanıcı
+  /// kayıt ekranına atılıp profili ezilebilir (AUDIT AUTH-1).
   Future<UserModel?> _fetchUserProfile(String userId) async {
-    try {
-      final data = await _client
-          .from('users')
-          .select()
-          .eq('id', userId)
-          .maybeSingle();
+    final data = await _client
+        .from('users')
+        .select()
+        .eq('id', userId)
+        .maybeSingle();
 
-      if (data == null) return null;
+    if (data == null) return null;
 
-      return UserModel(
+    // email/phone public.users'ta tutulmaz (KVKK); oturumdaki auth kullanıcısından gelir.
+    final authUser = _client.auth.currentUser;
+    return UserModel(
         id: data['id'] as String,
-        email: data['email'] as String?,
-        phone: data['phone'] as String?,
+        email: authUser?.email,
+        phone: authUser?.phone,
         fullName: data['full_name'] as String,
         username: data['username'] as String,
         avatarUrl: data['avatar_url'] as String?,
@@ -186,9 +188,6 @@ class SupabaseAuthRepository implements AuthRepository {
             : null,
         createdAt: DateTime.parse(data['created_at'] as String),
       );
-    } catch (_) {
-      return null;
-    }
   }
 
   @override
@@ -213,11 +212,10 @@ class SupabaseAuthRepository implements AuthRepository {
       avatarUrl = await _uploadAvatar(authUser.id, avatarFile);
     }
 
-    final now = DateTime.now().toIso8601String();
+    // insert (upsert değil): mevcut bir profil asla ezilmez; çakışma 23505 olarak
+    // fırlar. created_at/updated_at DB varsayılanlarından gelir.
     final profileData = {
       'id': authUser.id,
-      'email': authUser.email,
-      'phone': authUser.phone,
       'full_name': fullName,
       'username': username,
       'avatar_url': avatarUrl,
@@ -228,11 +226,9 @@ class SupabaseAuthRepository implements AuthRepository {
       'experience_years': experienceYears,
       'workplace': workplace,
       'onboarding_completed': true,
-      'created_at': now,
-      'updated_at': now,
     };
     profileData.removeWhere((key, value) => value == null);
-    await _client.from('users').upsert(profileData, onConflict: 'id');
+    await _client.from('users').insert(profileData);
 
     return UserModel(
       id: authUser.id,

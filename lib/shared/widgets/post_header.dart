@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../data/models/post_model.dart';
 import '../../../domain/enums/enums.dart';
@@ -37,6 +38,7 @@ class PostHeader extends StatelessWidget {
             name: post.author.fullName,
             imageUrl: post.author.avatarUrl,
             size: AvatarSize.medium,
+            onTap: () => context.push('/profile/${post.author.id}'),
           ),
           const SizedBox(width: AppDimensions.spacing12),
           Expanded(
@@ -87,46 +89,35 @@ class PostHeader extends StatelessWidget {
             children: [
               badge,
               const SizedBox(width: AppDimensions.spacing16),
-              if (onMenuSelected != null)
+              // shortcut: Düzenle (Faz 1) ve Raporla (Faz 4) hazır olana kadar menü
+              // yalnızca sahibine ve yalnızca "Sil" ile görünür (ölü buton yok).
+              if (onMenuSelected != null && isOwner)
                 PopupMenuButton<PostMenuAction>(
                   padding: EdgeInsets.zero,
-                  icon: Icon(Icons.more_horiz, color: colorScheme.onSurfaceVariant),
+                  icon: Icon(
+                    Icons.more_horiz,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                   tooltip: l10n.moreOptions,
                   onSelected: onMenuSelected,
                   itemBuilder: (context) => [
-                    if (isOwner)
-                      PopupMenuItem(
-                        value: PostMenuAction.edit,
-                        child: Row(
-                          children: [
-                            const Icon(Icons.edit_outlined, size: 20),
-                            const SizedBox(width: 8),
-                            Text(l10n.edit),
-                          ],
-                        ),
+                    PopupMenuItem(
+                      value: PostMenuAction.delete,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.delete_outline,
+                            size: 20,
+                            color: colorScheme.error,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            l10n.delete,
+                            style: TextStyle(color: colorScheme.error),
+                          ),
+                        ],
                       ),
-                    if (isOwner)
-                      PopupMenuItem(
-                        value: PostMenuAction.delete,
-                        child: Row(
-                          children: [
-                            Icon(Icons.delete_outline, size: 20, color: colorScheme.error),
-                            const SizedBox(width: 8),
-                            Text(l10n.delete, style: TextStyle(color: colorScheme.error)),
-                          ],
-                        ),
-                      ),
-                    if (!isOwner)
-                      PopupMenuItem(
-                        value: PostMenuAction.report,
-                        child: Row(
-                          children: [
-                            const Icon(Icons.flag_outlined, size: 20),
-                            const SizedBox(width: 8),
-                            Text(l10n.report),
-                          ],
-                        ),
-                      ),
+                    ),
                   ],
                 ),
             ],

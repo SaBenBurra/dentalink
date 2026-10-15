@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../data/models/post_model.dart';
@@ -28,6 +29,7 @@ class PostDetailAuthorInfo extends StatelessWidget {
           name: post.author.fullName,
           imageUrl: post.author.avatarUrl,
           size: AvatarSize.medium,
+          onTap: () => context.push('/profile/${post.author.id}'),
         ),
         const SizedBox(width: AppDimensions.spacing12),
         Expanded(

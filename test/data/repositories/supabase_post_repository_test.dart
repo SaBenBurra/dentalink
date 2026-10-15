@@ -20,14 +20,14 @@ void main() {
 
   group('SupabasePostRepository -', () {
     test(
-      'likePost upserts into likes table and fetches updated post',
+      'likePost inserts into likes table and fetches updated post',
       () async {
         // Arrange
         final mockUser = MockUser();
         when(mockUser.id).thenReturn('current-user');
         when(mockAuthClient.currentUser).thenReturn(mockUser);
 
-        // Mocks for upsert
+        // Mocks for insert
         final mockUpsertQueryBuilder = MockSupabaseQueryBuilder();
         final mockUpsertFilterBuilder = MockPostgrestFilterBuilderList();
 
@@ -35,11 +35,7 @@ void main() {
           mockSupabaseClient.from('likes'),
         ).thenAnswer((_) => mockUpsertQueryBuilder);
         when(
-          mockUpsertQueryBuilder.upsert(
-            any,
-            onConflict: anyNamed('onConflict'),
-            ignoreDuplicates: anyNamed('ignoreDuplicates'),
-          ),
+          mockUpsertQueryBuilder.insert(any, defaultToNull: anyNamed('defaultToNull')),
         ).thenAnswer((_) => mockUpsertFilterBuilder);
         when(
           mockUpsertFilterBuilder.then(any, onError: anyNamed('onError')),
@@ -126,11 +122,7 @@ void main() {
         // Assert
         final upsertArgs =
             verify(
-                  mockUpsertQueryBuilder.upsert(
-                    captureAny,
-                    onConflict: 'user_id,post_id',
-                    ignoreDuplicates: true,
-                  ),
+                  mockUpsertQueryBuilder.insert(captureAny, defaultToNull: anyNamed('defaultToNull')),
                 ).captured.single
                 as Map<String, dynamic>;
         expect(upsertArgs['user_id'], 'current-user');

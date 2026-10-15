@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/providers/repository_providers.dart';
+import 'auth_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Following State Provider
@@ -59,6 +60,8 @@ class FollowingStateNotifier extends StateNotifier<Map<String, bool>> {
 
 final followingStateProvider =
     StateNotifierProvider<FollowingStateNotifier, Map<String, bool>>((ref) {
+  // Kullanıcı değişince (çıkış/başka hesap) önceki kullanıcının takip haritası sıfırlanır.
+  ref.watch(authProvider.select((s) => s.valueOrNull?.id));
   return FollowingStateNotifier(ref);
 });
 

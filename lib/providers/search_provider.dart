@@ -25,15 +25,16 @@ class SearchState {
 
   SearchState copyWith({
     String? query,
-    DentalBranch? branchFilter,
-    PostType? typeFilter,
+    // ValueGetter: filtreyi null'a (Tümü) çekebilmek için; '??' ile mümkün değil.
+    DentalBranch? Function()? branchFilter,
+    PostType? Function()? typeFilter,
     AsyncValue<List<PostModel>>? postResults,
     AsyncValue<List<UserModel>>? userResults,
   }) {
     return SearchState(
       query: query ?? this.query,
-      branchFilter: branchFilter ?? this.branchFilter,
-      typeFilter: typeFilter ?? this.typeFilter,
+      branchFilter: branchFilter != null ? branchFilter() : this.branchFilter,
+      typeFilter: typeFilter != null ? typeFilter() : this.typeFilter,
       postResults: postResults ?? this.postResults,
       userResults: userResults ?? this.userResults,
     );
@@ -50,12 +51,19 @@ class SearchState {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class SearchNotifier extends AutoDisposeNotifier<SearchState> {
+  /// Yalnızca en son isteğin sonucu yazılır; yavaş eski bir yanıt yenisini ezmez.
+  int _requestId = 0;
+
   @override
   SearchState build() => const SearchState();
 
   Future<void> search(String query) async {
+    final requestId = ++_requestId;
     if (query.trim().isEmpty) {
-      state = const SearchState();
+      state = SearchState(
+        branchFilter: state.branchFilter,
+        typeFilter: state.typeFilter,
+      );
       return;
     }
 
@@ -68,29 +76,27 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
     final postRepo = ref.read(searchRepositoryProvider);
     final userRepo = ref.read(userRepositoryProvider);
 
-    // Post ve kullanıcı aramasını paralel çalıştır.
-    final results = await Future.wait([
-      postRepo.searchPosts(
-        query,
-        branch: state.branchFilter,
-        type: state.typeFilter,
-      ),
-      userRepo.searchUsers(query),
-    ]);
+    // Post ve kullanıcı aramasını paralel çalıştır; biri hata verse de diğeri gösterilir.
+    final postsFuture = AsyncValue.guard(() => postRepo.searchPosts(
+          query,
+          branch: state.branchFilter,
+          type: state.typeFilter,
+        ));
+    final usersFuture = AsyncValue.guard(() => userRepo.searchUsers(query));
+    final posts = await postsFuture;
+    final users = await usersFuture;
 
-    state = state.copyWith(
-      postResults: AsyncData(results[0] as List<PostModel>),
-      userResults: AsyncData(results[1] as List<UserModel>),
-    );
+    if (requestId != _requestId) return;
+    state = state.copyWith(postResults: posts, userResults: users);
   }
 
   void setBranchFilter(DentalBranch? branch) {
-    state = state.copyWith(branchFilter: branch);
+    state = state.copyWith(branchFilter: () => branch);
     if (state.query.isNotEmpty) search(state.query);
   }
 
   void setTypeFilter(PostType? type) {
-    state = state.copyWith(typeFilter: type);
+    state = state.copyWith(typeFilter: () => type);
     if (state.query.isNotEmpty) search(state.query);
   }
 
@@ -100,6 +106,7 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
   }
 
   void clear() {
+    _requestId++;
     state = const SearchState();
   }
 

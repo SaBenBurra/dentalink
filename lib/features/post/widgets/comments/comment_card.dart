@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_dimensions.dart';
 import '../../../../../domain/entities/comment_entity.dart';
@@ -207,6 +208,9 @@ class CommentCard extends ConsumerWidget {
                     name: authorName,
                     imageUrl: avatarUrl,
                     size: AvatarSize.small,
+                    onTap: comment.author == null
+                        ? null
+                        : () => context.push('/profile/${comment.author!.id}'),
                   ),
                   const SizedBox(width: AppDimensions.spacing12),
                   Expanded(

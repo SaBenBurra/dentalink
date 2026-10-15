@@ -8,7 +8,7 @@ void main() {
         'id': 'badge-1',
         'name': 'İlk Gönderi',
         'description': 'İlk gönderinizi paylaştınız!',
-        'icon_url': 'star',
+        'icon_name': 'star',
         'earned_at': '2024-01-15T10:30:00.000Z',
       };
 
@@ -17,16 +17,16 @@ void main() {
       expect(badge.id, 'badge-1');
       expect(badge.name, 'İlk Gönderi');
       expect(badge.description, 'İlk gönderinizi paylaştınız!');
-      expect(badge.iconName, 'star'); // icon_url → iconName mapping
+      expect(badge.iconName, 'star'); // icon_name → iconName mapping
       expect(badge.earnedAt, DateTime.utc(2024, 1, 15, 10, 30));
     });
 
-    test('fromJson maps icon_url to iconName correctly', () {
+    test('fromJson maps icon_name to iconName correctly', () {
       final json = {
         'id': 'badge-2',
         'name': 'Verified',
         'description': 'Doğrulanmış hesap',
-        'icon_url': 'verified',
+        'icon_name': 'verified',
         'earned_at': '2024-06-01T00:00:00.000Z',
       };
 
@@ -40,7 +40,7 @@ void main() {
         'id': 'badge-3',
         'name': 'Test',
         'description': 'Desc',
-        'icon_url': 'emoji_events',
+        'icon_name': 'emoji_events',
         'earned_at': '2025-12-31T23:59:59.000Z',
       };
 

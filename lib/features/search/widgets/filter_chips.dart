@@ -36,7 +36,11 @@ class SearchFilterChips extends ConsumerWidget {
               initialValue: state.typeFilter,
               onSelected: (val) => notifier.setTypeFilter(val),
               itemBuilder: (context) => [
-                const PopupMenuItem(value: null, child: Text('Tümü')),
+                // value: null seçimi menüde "iptal" sayılır ve onSelected tetiklenmez.
+                PopupMenuItem(
+                  onTap: () => notifier.setTypeFilter(null),
+                  child: const Text('Tümü'),
+                ),
                 ...PostType.values.map(
                   (type) => PopupMenuItem(
                     value: type,
@@ -70,7 +74,10 @@ class SearchFilterChips extends ConsumerWidget {
               initialValue: state.branchFilter,
               onSelected: (val) => notifier.setBranchFilter(val),
               itemBuilder: (context) => [
-                const PopupMenuItem(value: null, child: Text('Tüm Branşlar')),
+                PopupMenuItem(
+                  onTap: () => notifier.setBranchFilter(null),
+                  child: const Text('Tüm Branşlar'),
+                ),
                 ...DentalBranch.values.map(
                   (branch) => PopupMenuItem(
                     value: branch,

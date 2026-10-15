@@ -78,9 +78,8 @@ class SupabaseUserRepository implements UserRepository {
       throw const ServerFailure(message: 'Yetkisiz işlem: Sadece kendi profilinizi güncelleyebilirsiniz.');
     }
 
-    final updates = <String, dynamic>{
-      'updated_at': DateTime.now().toIso8601String(),
-    };
+    // updated_at DB trigger'ı (set_updated_at) tarafından yazılır.
+    final updates = <String, dynamic>{};
 
     if (fullName != null) updates['full_name'] = fullName;
     if (title != null) updates['title'] = title.dbValue;
@@ -90,7 +89,7 @@ class SupabaseUserRepository implements UserRepository {
     if (experienceYears != null) updates['experience_years'] = experienceYears;
     if (workplace != null) updates['workplace'] = workplace;
 
-    if (updates.length > 1) { // 1 is updated_at
+    if (updates.isNotEmpty) {
       await client.from('users').update(updates).eq('id', userId);
     }
   });
@@ -101,12 +100,9 @@ class SupabaseUserRepository implements UserRepository {
       throw const ServerFailure(message: 'Yetkisiz işlem: Sadece kendi avatarınızı güncelleyebilirsiniz.');
     }
 
-    // Storage leak önlemi: eski dosyaları bulup sil.
+    // Eski dosyalar yeni avatar yüklenip profile yazıldıktan SONRA silinir;
+    // aksi halde yükleme başarısız olursa avatar_url silinmiş dosyayı gösterir.
     final oldFiles = await client.storage.from('avatars').list(path: userId);
-    if (oldFiles.isNotEmpty) {
-      final fileNames = oldFiles.map((f) => '$userId/${f.name}').toList();
-      await client.storage.from('avatars').remove(fileNames);
-    }
 
     final ext = imageFile.path.split('.').last.toLowerCase();
     final fileName = '$userId/avatar_${DateTime.now().millisecondsSinceEpoch}.$ext';
@@ -120,6 +116,12 @@ class SupabaseUserRepository implements UserRepository {
     final publicUrl = client.storage.from('avatars').getPublicUrl(fileName);
 
     await client.from('users').update({'avatar_url': publicUrl}).eq('id', userId);
+
+    if (oldFiles.isNotEmpty) {
+      await client.storage
+          .from('avatars')
+          .remove([for (final f in oldFiles) '$userId/${f.name}']);
+    }
 
     return publicUrl;
   });

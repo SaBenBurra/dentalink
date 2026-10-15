@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/providers/repository_providers.dart';
+import '../../features/auth/screens/auth_error_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/feed/screens/feed_screen.dart';
@@ -21,10 +22,44 @@ import '../../features/settings/screens/settings_screen.dart';
 import '../../features/bookmarks/screens/bookmarks_screen.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import '../../providers/auth_provider.dart';
+import '../../data/models/user_model.dart';
 
 /// Auth durumu değişince GoRouter redirect'ini yeniden çalıştırır.
 class _AuthRefreshNotifier extends ChangeNotifier {
   void ping() => notifyListeners();
+}
+
+/// Auth guard kararı (saf fonksiyon; test: test/core/router/auth_redirect_test.dart).
+///
+/// [hold]: OTP başarı animasyonu sürerken yönlendirme bekletilir.
+String? resolveAuthRedirect({
+  required String location,
+  required bool hasSession,
+  required bool hold,
+  required AsyncValue<UserModel?> auth,
+}) {
+  final isLogin = location == '/login';
+  final isRegister = location == '/register';
+  final isAuthError = location == '/auth-error';
+  final isAuthRoute = isLogin || isRegister || isAuthError;
+
+  // Oturum yoksa korumalı sayfalara girilemez.
+  if (!hasSession) return (isLogin || isRegister) ? null : '/login';
+
+  if (hold) return null;
+
+  // Profil yüklenirken karar verme (yanlış /feed veya /register atlamasını önler).
+  if (auth.isLoading) return null;
+
+  // Profil yüklenemedi (ağ/sunucu hatası) ≠ profil yok (AUDIT AUTH-1).
+  // Kayıt ekranındaki hatalar (ör. kayıt insert'ü) ekranın kendisinde gösterilir.
+  if (auth.hasError) return (isRegister || isAuthError) ? null : '/auth-error';
+
+  // Oturum var ama public.users satırı yok → kayıt tamamlanmamış.
+  if (auth.valueOrNull == null) return isRegister ? null : '/register';
+
+  // Tam kayıtlı kullanıcı login/register/hata ekranında kalmasın.
+  return isAuthRoute ? '/feed' : null;
 }
 
 /// DentLink uygulama router'ı.
@@ -55,44 +90,12 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: refresh,
 
     // ── Auth Redirect ─────────────────────────────────────────────────
-    redirect: (context, state) {
-      final authRepo = ref.read(authRepositoryProvider);
-      final hasSession = authRepo.hasSession;
-      final location = state.matchedLocation;
-      final isLogin = location == '/login';
-      final isRegister = location == '/register';
-      final isAuthRoute = isLogin || isRegister;
-
-      // Oturum yoksa korumalı sayfalara girilemez.
-      if (!hasSession && !isAuthRoute) {
-        return '/login';
-      }
-
-      // OTP başarı animasyonu bitene kadar yönlendirmeyi beklet.
-      if (ref.read(authRedirectHoldProvider)) {
-        return null;
-      }
-
-      // Profil henüz yüklenirken yönlendirme yapma (yanlış /feed atlamasını
-      // önler). Oturum varsa login'de bekleriz; yükleme bitince karar veririz.
-      final authAsync = ref.read(authProvider);
-      if (hasSession && authAsync.isLoading) {
-        return null;
-      }
-
-      // Oturum var ama public.users satırı yok → kayıt tamamlanmamış.
-      final hasProfile = authAsync.valueOrNull != null;
-      if (hasSession && !hasProfile) {
-        return isRegister ? null : '/register';
-      }
-
-      // Tam kayıtlı kullanıcı login/register'da kalmasın.
-      if (hasSession && hasProfile && isAuthRoute) {
-        return '/feed';
-      }
-
-      return null;
-    },
+    redirect: (context, state) => resolveAuthRedirect(
+          location: state.matchedLocation,
+          hasSession: ref.read(authRepositoryProvider).hasSession,
+          hold: ref.read(authRedirectHoldProvider),
+          auth: ref.read(authProvider),
+        ),
 
     routes: [
       // ── Auth ──────────────────────────────────────────────
@@ -109,6 +112,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/register',
         name: 'register',
         builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: '/auth-error',
+        name: 'authError',
+        builder: (context, state) => const AuthErrorScreen(),
       ),
 
       // ── Gönderi Detayları (Root level - Bottom Nav gizlenir) ─
