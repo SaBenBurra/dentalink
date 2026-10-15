@@ -415,6 +415,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get noNotifications => 'Henüz bildiriminiz yok.';
 
   @override
+  String get notificationsLoadError => 'Bildirimler yüklenemedi.';
+
+  @override
   String notifLiked(String name) {
     return '$name gönderinizi beğendi.';
   }

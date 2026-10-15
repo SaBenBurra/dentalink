@@ -161,6 +161,7 @@
 
   "notificationsTitle": "Notifications",
   "noNotifications": "No notifications yet.",
+  "notificationsLoadError": "Could not load notifications.",
 
   "notifLiked": "{name} liked your post.",
   "@notifLiked": {

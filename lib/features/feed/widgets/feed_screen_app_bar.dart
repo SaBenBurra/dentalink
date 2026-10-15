@@ -4,7 +4,10 @@ import 'package:dentlink/core/constants/app_colors.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../../providers/notification_provider.dart';
 
 class FeedScreenAppBar extends StatelessWidget {
   const FeedScreenAppBar({
@@ -249,12 +252,7 @@ class _FeedAppBarDelegate extends SliverPersistentHeaderDelegate {
           right: iconRight,
           width: _iconBox,
           height: _iconBox,
-          child: IconButton(
-            icon: const Icon(Icons.notifications_none_rounded),
-            onPressed: () => context.push('/notifications'),
-            color: colorScheme.primary,
-            tooltip: 'Notifications',
-          ),
+          child: _NotificationBell(color: colorScheme.primary),
         ),
       ],
     );
@@ -269,5 +267,27 @@ class _FeedAppBarDelegate extends SliverPersistentHeaderDelegate {
         tabController != oldDelegate.tabController ||
         l10n != oldDelegate.l10n ||
         topPadding != oldDelegate.topPadding;
+  }
+}
+
+/// Zil ikonu + okunmamış bildirim rozeti. Delegate Consumer olmadığı için ayrı widget.
+class _NotificationBell extends ConsumerWidget {
+  const _NotificationBell({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final unread = ref.watch(unreadNotificationCountProvider);
+    return IconButton(
+      icon: Badge.count(
+        count: unread,
+        isLabelVisible: unread > 0,
+        child: const Icon(Icons.notifications_none_rounded),
+      ),
+      onPressed: () => context.push('/notifications'),
+      color: color,
+      tooltip: AppLocalizations.of(context)!.notificationsTitle,
+    );
   }
 }

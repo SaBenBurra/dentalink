@@ -10,6 +10,7 @@ import '../../../data/providers/repository_providers.dart';
 import '../../../providers/notification_provider.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_widget.dart';
+import '../../../shared/utils/error_messages.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../widgets/notification_tile.dart';
 
@@ -39,7 +40,14 @@ class _NotificationListView extends ConsumerWidget {
     NotificationModel notification,
   ) async {
     final localizations = AppLocalizations.of(context)!;
-    ref.read(notificationsProvider.notifier).markRead(notification.id);
+    final messenger = ScaffoldMessenger.of(context);
+    // Gezinmeyi bekletme; hata olursa notifier geri alır, burada yalnızca bildir.
+    ref
+        .read(notificationsProvider.notifier)
+        .markRead(notification.id)
+        .catchError((Object e) => messenger.showSnackBar(
+              SnackBar(content: Text(getErrorMessage(e))),
+            ));
 
     final type = notification.type;
     if (type == NotificationType.follow) {
@@ -131,7 +139,7 @@ class _NotificationListView extends ConsumerWidget {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (err, stack) => Center(
         child: DentLinkErrorWidget(
-          message: localizations.postLoadError,
+          message: localizations.notificationsLoadError,
           onRetry: () => ref.refresh(notificationsProvider),
         ),
       ),

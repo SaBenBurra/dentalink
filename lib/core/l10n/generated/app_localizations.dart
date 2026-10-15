@@ -872,6 +872,12 @@ abstract class AppLocalizations {
   /// **'Henüz bildiriminiz yok.'**
   String get noNotifications;
 
+  /// Bildirim listesi yükleme hatası
+  ///
+  /// In tr, this message translates to:
+  /// **'Bildirimler yüklenemedi.'**
+  String get notificationsLoadError;
+
   /// Beğeni bildirimi
   ///
   /// In tr, this message translates to:

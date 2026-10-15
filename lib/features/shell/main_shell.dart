@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 import 'package:go_router/go_router.dart';
+import '../../providers/message_provider.dart';
 import '../../shared/widgets/app_bottom_nav_bar.dart';
 
 /// Ana shell — go_router ShellRoute tarafından sarılır.
@@ -12,13 +14,13 @@ import '../../shared/widgets/app_bottom_nav_bar.dart';
 ///   2 → (create sheet — route yok)
 ///   3 → /messages
 ///   4 → /profile
-class MainShell extends StatelessWidget {
+class MainShell extends ConsumerWidget {
   const MainShell({super.key, required this.child});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -75,6 +77,7 @@ class MainShell extends StatelessWidget {
             currentIndex: _currentIndex(context),
             onTap: (index) => _onNavTap(context, index),
             onCreateTap: () => showCreatePostSheet(context),
+            unreadMessages: ref.watch(totalUnreadMessagesProvider),
           ),
         ),
       ),

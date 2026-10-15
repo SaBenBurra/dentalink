@@ -83,7 +83,7 @@
 
 ## Faz 1 — Çekirdek akışların tamamlanması 🟠
 
-- [ ] **Bildirimler (gerçek):** _(okuma tarafı `SupabaseNotificationRepository` Faz 0'da bağlandı)_ SECURITY DEFINER trigger'lar (like, yorum, takip, mesaj, en iyi cevap; aktör = alıcı ise atla), `SupabaseNotificationRepository`, realtime, okunmamış rozetleri — `DATA-5`, `UX-1`, `BUG-23`
+- [x] **Bildirimler (gerçek):** migration 013 (like, yorum, takip, en iyi cevap trigger'ları; aktör = alıcı ise atlanır, okunmamış tekrar yazılmaz), realtime, zil ve mesaj rozetleri, iyimser okundu + rollback. Mesaj için ayrı bildirim yok, sohbet `unreadCount` yeterli. _(2026-10-15; iki hesapla cihaz testi bekliyor)_ — `DATA-5`, `UX-1`, `BUG-23`
 - [ ] **Mesajlaşma tamamlama:**
   - `send_message` RPC (get-or-create + insert tek işlemde, SEC-2'nin kalıcı çözümü), `nullsFirst:false` — `DATA-10`
   - Realtime'da append + filtre (`removeChannel` Faz 0'da yapıldı) — `BUG-18`

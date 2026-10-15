@@ -19,6 +19,7 @@ class AppBottomNavBar extends StatelessWidget {
     required this.currentIndex,
     required this.onTap,
     required this.onCreateTap,
+    this.unreadMessages = 0,
   });
 
   /// Seçili sekme indeksi (0–4, 2 hariç).
@@ -29,6 +30,9 @@ class AppBottomNavBar extends StatelessWidget {
 
   /// Ortadaki "+" butonuna tıklandığında çağrılır.
   final VoidCallback onCreateTap;
+
+  /// Mesajlar sekmesindeki rozet; 0 ise gizli.
+  final int unreadMessages;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +78,7 @@ class AppBottomNavBar extends StatelessWidget {
           selected: currentIndex == 3,
           color: isDark ? Colors.white60 : Colors.black54,
           selectedColor: colorScheme.primary,
+          badgeCount: unreadMessages,
           onTap: () => onTap(3),
         ),
 
@@ -102,6 +107,7 @@ class _NavItem extends StatelessWidget {
     required this.color,
     required this.selectedColor,
     required this.onTap,
+    this.badgeCount = 0,
   });
 
   final IconData icon;
@@ -111,6 +117,7 @@ class _NavItem extends StatelessWidget {
   final Color color;
   final Color selectedColor;
   final VoidCallback onTap;
+  final int badgeCount;
 
   @override
   Widget build(BuildContext context) {
@@ -126,10 +133,14 @@ class _NavItem extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                selected ? selectedIcon : icon,
-                size: 24,
-                color: effectiveColor,
+              Badge.count(
+                count: badgeCount,
+                isLabelVisible: badgeCount > 0,
+                child: Icon(
+                  selected ? selectedIcon : icon,
+                  size: 24,
+                  color: effectiveColor,
+                ),
               ),
               const SizedBox(height: 2),
               Text(

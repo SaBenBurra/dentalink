@@ -5,6 +5,9 @@ abstract class NotificationRepository {
   /// Mevcut kullanıcının bildirimlerini getirir (en yeni önce).
   Future<List<NotificationModel>> getNotifications();
 
+  /// [userId]'ye yeni düşen bildirimler (realtime). Dinleme bitince kanal kapanır.
+  Stream<NotificationModel> watchNew(String userId);
+
   /// Okunmamış bildirim sayısını döndürür.
   Future<int> getUnreadCount();
 

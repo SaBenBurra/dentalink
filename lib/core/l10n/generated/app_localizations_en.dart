@@ -415,6 +415,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noNotifications => 'No notifications yet.';
 
   @override
+  String get notificationsLoadError => 'Could not load notifications.';
+
+  @override
   String notifLiked(String name) {
     return '$name liked your post.';
   }

@@ -398,6 +398,8 @@
   "@notificationsTitle": { "description": "Bildirimler ekranı başlığı" },
 
   "noNotifications": "Henüz bildiriminiz yok.",
+  "notificationsLoadError": "Bildirimler yüklenemedi.",
+  "@notificationsLoadError": { "description": "Bildirim listesi yükleme hatası" },
   "@noNotifications": { "description": "Boş bildirim listesi" },
 
   "notifLiked": "{name} gönderinizi beğendi.",

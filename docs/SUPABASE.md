@@ -60,7 +60,7 @@ RLS **hangi satırlara** dokunulabileceğini belirler; GRANT **hangi kolonlara**
 
 ## 4. Realtime
 
-- Yayına eklenen tablolar: `messages`, `conversations` (012).
+- Yayına eklenen tablolar: `messages`, `conversations` (012), `notifications` (013).
 - İstemcide kanal kapatılırken `client.removeChannel(channel)` çağrılır; yalnızca `unsubscribe()` yetmez.
 - Her olayda tüm listeyi yeniden çekme; gelen `payload.newRecord`'u state'e ekle.
 
@@ -118,6 +118,17 @@ begin;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
 update public.posts set like_count = 9999 where user_id = '<A>';
+rollback;
+
+-- 8) Takip, alıcıya trigger ile bildirim yazar (013) → BEKLENEN: 1
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+delete from public.follows where follower_id = '<A>' and following_id = '<C>';
+insert into public.follows (follower_id, following_id) values ('<A>', '<C>');
+reset role;
+select count(*) from public.notifications
+where user_id = '<C>' and actor_id = '<A>' and type = 'follow' and created_at = now();
 rollback;
 ```
 

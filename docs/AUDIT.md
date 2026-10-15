@@ -56,7 +56,7 @@
 | DATA-2 | 🔴 | `005_faz_3_3_fixes.sql:31-32`; `supabase_post_repository.dart:285-294`, `supabase_comment_repository.dart:76-85` | `UNIQUE NULLS NOT DISTINCT (user_id, post_id)` ve `(user_id, comment_id)`: NULL'lar eşit sayılıyor. Kod 23505 hatasını "zaten beğenilmiş" diye yutuyor. | **Her kullanıcı ömründe yalnızca 1 post ve 1 yorum beğenebiliyor.** Sonraki beğeniler sessizce başarısız oluyor. | Constraint'leri düşür; partial unique index (`WHERE post_id IS NOT NULL`). | ✅ |
 | DATA-3 | 🟠 | `lib/data/models/badge_model.dart:24` | `json['icon_url'] as String` okunuyor, ama kolonun adı `icon_name`. | Rozeti olan kullanıcının profili TypeError ile çöküyor. | `icon_name` oku. | ✅ |
 | DATA-4 | 🟠 | `supabase_post_repository.dart:333-383, 455-491` | Post oluşturma 4 ayrı adımdan oluşuyor: post, görsel yükleme, `post_images`, etiketler. | Orta adımda hata olursa feed'de yarım post kalır, `posts_count` artar, yetim dosyalar oluşur. | Önce görselleri yükle, sonra tek `create_post` RPC; hata olursa yüklenenleri sil. *(Faz 1)* | ⬜ |
-| DATA-5 | 🟠 | migration'lar | `notifications`'a yazan **hiçbir trigger yok**. | Bildirim sistemi backend'de hiç çalışmıyor. | `likes`, `comments`, `follows`, `messages` ve `mark_best_answer` için AFTER INSERT trigger'ları. *(Faz 1)* | 🔧 |
+| DATA-5 | 🟠 | migration'lar | `notifications`'a yazan **hiçbir trigger yok**. | Bildirim sistemi backend'de hiç çalışmıyor. | `likes`, `comments`, `follows`, `messages` ve `mark_best_answer` için AFTER INSERT trigger'ları. *(Faz 1)* | ✅ |
 | DATA-6 | 🟡 | `005:6-16` | `increment_view_count` SECURITY INVOKER; RLS yalnızca sahibe izin veriyor. | Görüntülenme sayısı yalnızca sahip kendi postuna bakınca artıyor. | SECURITY DEFINER + `search_path`, `anon`'dan revoke. | ✅ |
 | DATA-7 | 🟡 | `supabase_post_repository.dart:389-409` | `deletePost` önce dosyaları siliyor, sonra satırı. Etkilenen satır sayısı kontrol edilmiyor. | Silme başarısız olur ya da RLS 0 satır döndürürse post kırık görsellerle kalır. | Önce satırı sil (`.select()` ile doğrula), sonra dosyaları. | ✅ |
 | DATA-8 | 🟡 | `supabase_user_repository.dart:105-109` | Eski avatar yeni avatar yüklenmeden siliniyor. | Yükleme başarısız olursa `avatar_url` silinmiş bir dosyayı gösterir. | Önce yükle, satırı güncelle, sonra eskiyi sil. | ✅ |
@@ -120,7 +120,7 @@
 | BUG-20 | 🟡 | `followers_screen.dart:142` | Kullanıcının kendi satırında takip butonu görünüyor. | Kendini takip etmeye çalışabiliyor. | `user.id == me` ise butonu gizle. | ✅ |
 | BUG-21 | 🟡 | `register_screen.dart:122-147` | Başarı diyaloğu ile router redirect'i yarışıyor. | Diyalog görünmeyebilir. | `authRedirectHoldProvider`'ı OTP akışındaki gibi kullan. | ⬜ |
 | BUG-22 | 🟡 | `user_search_delegate.dart:254` | "Debounce" aslında gecikme: her tuşta istek gidiyor. | Gereksiz istekler. | `Timer` iptal kalıbı. | ⬜ |
-| BUG-23 | 🟡 | `notifications_screen.dart:42,134` | `markRead` await edilmiyor, hatası yakalanmıyor; hata durumu `postLoadError` metnini kullanıyor. | Sessiz hatalar. | *(Faz 1, gerçek repo ile)* | ⬜ |
+| BUG-23 | 🟡 | `notifications_screen.dart:42,134` | `markRead` await edilmiyor, hatası yakalanmıyor; hata durumu `postLoadError` metnini kullanıyor. | Sessiz hatalar. | *(Faz 1, gerçek repo ile)* | ✅ |
 | BUG-24 | 🟡 | `bookmarks_screen.dart:94` | Kaydedilenlerdeki like butonu animasyon oynatıyor ama hiçbir şey yapmıyor; bookmark ikonu onaysız ve geri almasız siliyor. | Tutarsız davranış. | Bağla; undo snackbar. | ⬜ |
 | BUG-25 | 🟡 | `tag_input.dart:36`, `post_body.dart:16` | Onaylanmamış etiket gönderimde kayboluyor; etiket limiti yok; `#` ve boşluk temizlenmiyor; etiket tıklanabilir görünüyor ama `onTagTap` null. | Veri kaybı ve yanıltıcı UI. | Gönderimde bekleyen etiketi ekle, normalize et, limit koy. | ⬜ |
 | BUG-26 | ⚪ | `feed_provider.dart:28` | `FeedMode`/`switchMode` kullanılmıyor; `getFeed`'in `chronological` parametresi yok sayılıyor. | Ölü kod. | Kaldır (algoritmik feed yayın sonrası). | ⬜ |
@@ -131,7 +131,7 @@
 
 | ID | Önem | Konum | Sorun | Çözüm | Durum |
 |---|---|---|---|---|---|
-| UX-1 | 🟠 | `app_bottom_nav_bar.dart:70`, `feed_screen_app_bar.dart:252` | Okunmamış mesaj ve bildirim rozeti yok (provider'lar var ama izlenmiyor). | `Badge` widget'ı. *(Faz 1)* | ⬜ |
+| UX-1 | 🟠 | `app_bottom_nav_bar.dart:70`, `feed_screen_app_bar.dart:252` | Okunmamış mesaj ve bildirim rozeti yok (provider'lar var ama izlenmiyor). | `Badge` widget'ı. *(Faz 1)* | ✅ |
 | UX-2 | 🟠 | create/edit ekranları | `PopScope` yok; dolu form ve yükleme sırasında geri basılınca veri kayboluyor, retry'da duplicate oluşabiliyor. | `PopScope(canPop: !loading && !dirty)` + onay diyaloğu. *(Faz 3)* | ⬜ |
 | UX-3 | 🟠 | `create_case_screen.dart:65`, `create_question_screen.dart:41`, `edit_profile_screen.dart:73`, `case_detail_screen.dart:58,517`, `question_detail_screen.dart:51,376`, `register_screen.dart:153`, `profile_posts_tab.dart:51` | Ham `Exception: ...` metni kullanıcıya gösteriliyor. | `getErrorMessage(e)` (`lib/shared/utils/error_messages.dart`). | ✅ |
 | UX-4 | 🟠 | `settings_screen.dart:303-332` | Bildirim toggle'ları `value: true` ile sabit; `onToggle` boş. | Gizle ya da bağla. *(Faz 1)* | ⬜ |
