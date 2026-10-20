@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/error/app_failures.dart';
 import '../../../domain/enums/enums.dart';
 import '../../../providers/search_provider.dart';
+import '../../../shared/utils/error_messages.dart';
 import '../../../shared/widgets/user_tile.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/empty_state.dart';
@@ -44,8 +45,14 @@ class PostSearchResults extends ConsumerWidget {
 
             return PostCardFactory.build(
               post,
-              onLikeToggle: () => ref.read(searchProvider.notifier).toggleLike(post.id),
-              onBookmarkToggle: () => ref.read(searchProvider.notifier).toggleBookmark(post.id),
+              onLikeToggle: () => runOrShowError(
+                context,
+                () => ref.read(searchProvider.notifier).toggleLike(post.id),
+              ),
+              onBookmarkToggle: () => runOrShowError(
+                context,
+                () => ref.read(searchProvider.notifier).toggleBookmark(post.id),
+              ),
               onCommentTap: () => context.push(routePath),
               onTap: () => context.push(routePath),
             );

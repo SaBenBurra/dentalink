@@ -88,7 +88,7 @@
   - `send_message` RPC (get-or-create + insert tek işlemde, SEC-2'nin kalıcı çözümü), `nullsFirst:false` — `DATA-10`
   - Realtime'da append + filtre (`removeChannel` Faz 0'da yapıldı) — `BUG-18`
   - Sohbet ekranındaki ölü butonlar ve karşı kullanıcı bilgisi — `BUG-17`
-- [ ] **Atomik post oluşturma:** önce görselleri yükle, sonra `create_post` RPC; hata olursa dosyaları temizle — `DATA-4`, `SEC-13`, `DATA-9`
+- [x] **Atomik post oluşturma:** migration 015; `post_images.image_url` artık bucket içi yol, istemci `getPublicUrl` ile URL üretir. Önce görseller yüklenir, sonra `create_post` RPC; hata olursa dosyalar silinir. _(2026-10-20; push ve cihaz testi bekliyor)_ — `DATA-4`, `SEC-13`, `DATA-9`
 - [ ] **Post düzenleme ekranı** (başlık, içerik, branş, etiket) + menüde "Düzenle"
 - [ ] **Avatar değiştirme** (edit profile) — `BUG-16`
 - [ ] **İyimser like/bookmark**, in-flight guard, rollback; detaydan feed'i komple yeniden yükleme yerine tek öğe güncelle — `BUG-12`

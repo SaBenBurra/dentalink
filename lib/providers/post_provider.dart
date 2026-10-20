@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../core/error/app_failures.dart';
 import '../data/models/post_model.dart';
 import '../data/providers/repository_providers.dart';
 import 'feed_provider.dart';
@@ -13,25 +14,28 @@ class PostDetailNotifier
     return ref.read(feedRepositoryProvider).getPostById(arg);
   }
 
-  Future<void> toggleLike() async {
-    final post = state.valueOrNull;
-    if (post == null) return;
-    final repo = ref.read(postActionRepositoryProvider);
-    final updated = post.isLiked
-        ? await repo.unlikePost(arg)
-        : await repo.likePost(arg);
-    state = AsyncData(updated);
-    ref.invalidate(feedProvider);
-  }
+  Future<void> toggleLike() => _update((post) {
+        final repo = ref.read(postActionRepositoryProvider);
+        return post.isLiked ? repo.unlikePost(arg) : repo.likePost(arg);
+      });
 
-  Future<void> toggleBookmark() async {
+  Future<void> toggleBookmark() => _update((post) {
+        final repo = ref.read(bookmarkRepositoryProvider);
+        return post.isBookmarked
+            ? repo.unbookmarkPost(arg)
+            : repo.bookmarkPost(arg);
+      });
+
+  /// Post başka cihazda silinmişse ekran "bulunamadı" durumuna geçer;
+  /// diğer hatalar UI'ın göstermesi için fırlatılır.
+  Future<void> _update(Future<PostModel> Function(PostModel post) action) async {
     final post = state.valueOrNull;
     if (post == null) return;
-    final repo = ref.read(bookmarkRepositoryProvider);
-    final updated = post.isBookmarked
-        ? await repo.unbookmarkPost(arg)
-        : await repo.bookmarkPost(arg);
-    state = AsyncData(updated);
+    try {
+      state = AsyncData(await action(post));
+    } on NotFoundFailure catch (e, st) {
+      state = AsyncError(e, st);
+    }
     ref.invalidate(feedProvider);
   }
 }

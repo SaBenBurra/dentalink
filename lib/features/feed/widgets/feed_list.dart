@@ -6,6 +6,7 @@ import 'package:dentlink/providers/feed_provider.dart';
 import 'package:dentlink/shared/widgets/post_card_factory.dart';
 import 'package:dentlink/shared/widgets/empty_state.dart';
 import 'package:dentlink/shared/widgets/error_widget.dart';
+import 'package:dentlink/shared/utils/error_messages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -76,10 +77,14 @@ class FeedList extends StatelessWidget {
 
               return PostCardFactory.build(
                 post,
-                onLikeToggle: () =>
-                    ref.read(feedProvider.notifier).toggleLike(post.id),
-                onBookmarkToggle: () =>
-                    ref.read(feedProvider.notifier).toggleBookmark(post.id),
+                onLikeToggle: () => runOrShowError(
+                  context,
+                  () => ref.read(feedProvider.notifier).toggleLike(post.id),
+                ),
+                onBookmarkToggle: () => runOrShowError(
+                  context,
+                  () => ref.read(feedProvider.notifier).toggleBookmark(post.id),
+                ),
                 onCommentTap: () => context.push(routePath),
                 onTap: () => context.push(routePath),
               );

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/enums/enums.dart';
+import '../core/error/app_failures.dart';
 import '../data/models/post_model.dart';
 import '../data/models/user_model.dart';
 import '../data/providers/repository_providers.dart';
@@ -110,42 +111,40 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
     state = const SearchState();
   }
 
-  Future<void> toggleLike(String postId) async {
-    final posts = state.postResults.valueOrNull;
-    if (posts == null) return;
+  Future<void> toggleLike(String postId) => _update(postId, (post) {
+        final repo = ref.read(postActionRepositoryProvider);
+        return post.isLiked ? repo.unlikePost(postId) : repo.likePost(postId);
+      });
 
-    final idx = posts.indexWhere((p) => p.id == postId);
-    if (idx == -1) return;
+  Future<void> toggleBookmark(String postId) => _update(postId, (post) {
+        final repo = ref.read(bookmarkRepositoryProvider);
+        return post.isBookmarked
+            ? repo.unbookmarkPost(postId)
+            : repo.bookmarkPost(postId);
+      });
 
-    final post = posts[idx];
-    final repo = ref.read(postActionRepositoryProvider);
-
-    final updated = post.isLiked
-        ? await repo.unlikePost(postId)
-        : await repo.likePost(postId);
-
-    final newList = List<PostModel>.from(posts);
-    newList[idx] = updated;
-    state = state.copyWith(postResults: AsyncData(newList));
-  }
-
-  Future<void> toggleBookmark(String postId) async {
-    final posts = state.postResults.valueOrNull;
-    if (posts == null) return;
-
-    final idx = posts.indexWhere((p) => p.id == postId);
-    if (idx == -1) return;
-
-    final post = posts[idx];
-    final repo = ref.read(bookmarkRepositoryProvider);
-
-    final updated = post.isBookmarked
-        ? await repo.unbookmarkPost(postId)
-        : await repo.bookmarkPost(postId);
-
-    final newList = List<PostModel>.from(posts);
-    newList[idx] = updated;
-    state = state.copyWith(postResults: AsyncData(newList));
+  /// Başka cihazda silinmiş post (NotFound) sonuçlardan düşer; hata yine
+  /// fırlatılır ki UI kullanıcıya bildirsin.
+  Future<void> _update(
+    String postId,
+    Future<PostModel> Function(PostModel post) action,
+  ) async {
+    final post =
+        state.postResults.valueOrNull?.where((p) => p.id == postId).firstOrNull;
+    if (post == null) return;
+    try {
+      final updated = await action(post);
+      state = state.copyWith(postResults: AsyncData([
+        for (final p in state.postResults.valueOrNull ?? const <PostModel>[])
+          p.id == postId ? updated : p,
+      ]));
+    } on NotFoundFailure {
+      state = state.copyWith(postResults: AsyncData([
+        for (final p in state.postResults.valueOrNull ?? const <PostModel>[])
+          if (p.id != postId) p,
+      ]));
+      rethrow;
+    }
   }
 }
 

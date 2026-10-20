@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+
 import 'package:supabase_flutter/supabase_flutter.dart'
     show AuthRetryableFetchException, PostgrestException;
 
@@ -28,4 +30,18 @@ String getErrorMessage(Object e) {
     return 'Bu işlem için yetkiniz yok.';
   }
   return 'Beklenmeyen bir hata oluştu.';
+}
+
+/// Kullanıcı aksiyonunu çalıştırır; hata olursa SnackBar ile gösterir.
+/// Messenger önceden alınır: öğe listeden düşüp unmount olsa da mesaj görünür.
+Future<void> runOrShowError(
+  BuildContext context,
+  Future<void> Function() action,
+) async {
+  final messenger = ScaffoldMessenger.of(context);
+  try {
+    await action();
+  } catch (e) {
+    messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
+  }
 }

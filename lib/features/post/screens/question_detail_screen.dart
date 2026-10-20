@@ -220,14 +220,14 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                             const SizedBox(height: AppDimensions.spacing16),
                             PostDetailInteractionBar(
                               post: post,
-                              onLikeToggle: () => ref
+                              onLikeToggle: () => runOrShowError(context, () => ref
                                   .read(postDetailProvider(widget.postId).notifier)
-                                  .toggleLike(),
+                                  .toggleLike()),
                               trailing: BookmarkButton(
                                 isBookmarked: post.isBookmarked,
-                                onToggle: () => ref
+                                onToggle: () => runOrShowError(context, () => ref
                                     .read(postDetailProvider(widget.postId).notifier)
-                                    .toggleBookmark(),
+                                    .toggleBookmark()),
                                 bookmarkCount: post.bookmarkCount,
                                 showCount: false,
                               ),

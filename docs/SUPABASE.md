@@ -25,6 +25,7 @@ supabase migration list                            # local == remote olmalı
   - `CREATE INDEX IF NOT EXISTS`
   - `ADD COLUMN IF NOT EXISTS`
   - `EXCEPTION WHEN OTHERS THEN NULL` **kullanma**; hataları gizliyor.
+  - plpgsql gövdesinde `CASE … END` ifadesi **kullanma**: CLI'ın SQL bölücüsü onu blok sonu sanıp dosyayı yanlış yerden kesiyor. `IF` ya da değişken kullan.
 - **Yayınlanmış migration'ı düzenleme.** Düzeltme her zaman yeni bir migration'dır.
 - `supabase start`/`db reset` bu ortamda yok (docker yok). Yalnızca uzak proje kullanılır.
 
@@ -137,6 +138,17 @@ begin;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
 select sender_id, content from public.send_message('<B>', '  smoke  ');
+rollback;
+
+-- 10) create_post: post + görsel + etiket tek işlemde (015) → BEKLENEN: n_tags = 1, branch = null
+--     Doğrudan posts/tags insert → permission denied; olmayan görsel yolu → invalid image path
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select set_config('t.id', public.create_post('question', 'Başlık', 'içerik', null, null,
+  '[{"name":"İmplant","slug":"implant"},{"name":"implant","slug":"implant"}]')::text, true);
+select (select count(*) from public.post_tags where post_id = current_setting('t.id')::uuid) n_tags, branch
+from public.posts where id = current_setting('t.id')::uuid;
 rollback;
 ```
 

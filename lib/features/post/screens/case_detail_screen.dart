@@ -322,9 +322,9 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                               const SizedBox(height: AppDimensions.spacing24),
                               PostDetailInteractionBar(
                                 post: post,
-                                onLikeToggle: () => ref
+                                onLikeToggle: () => runOrShowError(context, () => ref
                                     .read(postDetailProvider(widget.postId).notifier)
-                                    .toggleLike(),
+                                    .toggleLike()),
                               ),
                               const SizedBox(height: AppDimensions.spacing24),
                               CaseDetailComments(postId: widget.postId),
@@ -373,9 +373,9 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () => ref
+                        onTap: () => runOrShowError(context, () => ref
                             .read(postDetailProvider(widget.postId).notifier)
-                            .toggleBookmark(),
+                            .toggleBookmark()),
                         child: Container(
                           width: 40,
                           height: 40,

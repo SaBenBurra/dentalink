@@ -58,8 +58,11 @@ class SupabasePostRepository implements PostRepository {
     // sort_order'a göre sırala
     rawImages.sort((a, b) =>
         (a['sort_order'] as int? ?? 0).compareTo(b['sort_order'] as int? ?? 0));
-    final imageUrls =
-        rawImages.map((e) => e['image_url'] as String).toList();
+    // image_url bucket içi yol tutar (migration 015).
+    final bucket = rawImages.isEmpty ? null : _client.storage.from('post-images');
+    final imageUrls = [
+      for (final e in rawImages) bucket!.getPublicUrl(e['image_url'] as String),
+    ];
 
     // --- Etiketler ---
     final rawTags = row['post_tags'] as List<dynamic>? ?? [];
@@ -154,13 +157,13 @@ class SupabasePostRepository implements PostRepository {
   }
 
   @override
-  Future<PostModel> getPostById(String id) async {
+  Future<PostModel> getPostById(String id) => guardSupabase(() async {
     final response = await _basePostQuery()
         .eq('id', id)
         .single();
 
     return _mapRowToPost(response);
-  }
+  });
 
   @override
   Future<List<PostModel>> getPostsByUser(String userId) async {
@@ -245,7 +248,7 @@ class SupabasePostRepository implements PostRepository {
   }
 
   @override
-  Future<PostModel> bookmarkPost(String postId) async {
+  Future<PostModel> bookmarkPost(String postId) => guardSupabase(() async {
     final uid = _currentUserId;
 
     try {
@@ -261,10 +264,10 @@ class SupabasePostRepository implements PostRepository {
 
     // Güncel post'u yeniden çek (sayaç trigger tarafından güncellenir).
     return getPostById(postId);
-  }
+  });
 
   @override
-  Future<PostModel> unbookmarkPost(String postId) async {
+  Future<PostModel> unbookmarkPost(String postId) => guardSupabase(() async {
     final uid = _currentUserId;
 
     await _client
@@ -274,14 +277,14 @@ class SupabasePostRepository implements PostRepository {
         .eq('post_id', postId);
 
     return getPostById(postId);
-  }
+  });
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  IPostActionRepository
   // ═══════════════════════════════════════════════════════════════════════════
 
   @override
-  Future<PostModel> likePost(String postId) async {
+  Future<PostModel> likePost(String postId) => guardSupabase(() async {
     final uid = _currentUserId;
 
     try {
@@ -297,10 +300,10 @@ class SupabasePostRepository implements PostRepository {
     }
 
     return getPostById(postId);
-  }
+  });
 
   @override
-  Future<PostModel> unlikePost(String postId) async {
+  Future<PostModel> unlikePost(String postId) => guardSupabase(() async {
     final uid = _currentUserId;
 
     await _client
@@ -310,7 +313,7 @@ class SupabasePostRepository implements PostRepository {
         .eq('post_id', postId);
 
     return getPostById(postId);
-  }
+  });
 
   @override
   Future<void> incrementViewCount(String postId) async {
@@ -329,60 +332,53 @@ class SupabasePostRepository implements PostRepository {
     required DentalBranch branch,
     required List<File> imageFiles,
     required List<String> tags,
-  }) async {
+  }) => guardSupabase(() async {
     final uid = _currentUserId;
-
-    // 1) Post kaydı oluştur
-    final postRow = await _client
-        .from('posts')
-        .insert({
-          'user_id': uid,
-          'type': PostType.casePost.dbValue,
-          'title': title,
-          'content': content,
-          'branch': branch.dbValue,
-        })
-        .select('id')
-        .single();
-
-    final postId = postRow['id'] as String;
-
-    // 2) Görselleri Storage'a yükle ve post_images'a kaydet
-    await _uploadAndLinkImages(postId, uid, imageFiles);
-
-    // 3) Etiketleri upsert et ve post_tags'a bağla
-    await _upsertAndLinkTags(postId, tags);
-
-    // 4) Oluşturulan postu tam ilişkileriyle getir
-    return getPostById(postId);
-  }
+    // Görseller önce; post, görsel kayıtları ve etiketler tek RPC'de (migration 015).
+    final paths = await _uploadImages(uid, imageFiles);
+    try {
+      return await _createPost(
+        type: PostType.casePost,
+        title: title,
+        content: content,
+        branch: branch,
+        imagePaths: paths,
+        tags: tags,
+      );
+    } catch (_) {
+      await _removeImages(paths);
+      rethrow;
+    }
+  });
 
   @override
   Future<PostModel> createQuestion({
     required String title,
     required String content,
     required List<String> tags,
+  }) => guardSupabase(() => _createPost(
+        type: PostType.question,
+        title: title,
+        content: content,
+        tags: tags,
+      ));
+
+  Future<PostModel> _createPost({
+    required PostType type,
+    required String title,
+    required String content,
+    DentalBranch? branch,
+    List<String> imagePaths = const [],
+    required List<String> tags,
   }) async {
-    final uid = _currentUserId;
-
-    // 1) Post kaydı oluştur
-    final postRow = await _client
-        .from('posts')
-        .insert({
-          'user_id': uid,
-          'type': PostType.question.dbValue,
-          'title': title,
-          'content': content,
-        })
-        .select('id')
-        .single();
-
-    final postId = postRow['id'] as String;
-
-    // 2) Etiketleri upsert et ve post_tags'a bağla
-    await _upsertAndLinkTags(postId, tags);
-
-    // 3) Oluşturulan postu tam ilişkileriyle getir
+    final postId = await _client.rpc('create_post', params: {
+      'p_type': type.dbValue,
+      'p_title': title,
+      'p_content': content,
+      'p_branch': branch?.dbValue,
+      'p_image_paths': imagePaths,
+      'p_tags': _tagsPayload(tags),
+    }) as String;
     return getPostById(postId);
   }
 
@@ -405,100 +401,58 @@ class SupabasePostRepository implements PostRepository {
 
     // 3) En son dosyalar: burada hata olsa bile post zaten silinmiştir,
     // en kötü ihtimalle yetim dosya kalır (veri kaybı değil).
-    final paths = images
-        .map((e) => RegExp(r'post-images/(.*)')
-            .firstMatch(e['image_url'] as String)
-            ?.group(1))
-        .whereType<String>()
-        .toList();
-    if (paths.isNotEmpty) {
-      try {
-        await _client.storage.from('post-images').remove(paths);
-      } catch (e) {
-        debugPrint('deletePost: görseller silinemedi: $e');
-      }
-    }
+    await _removeImages([for (final e in images) e['image_url'] as String]);
   });
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  PRİVATE YARDIMCILAR
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /// Görselleri `post-images` bucket'ına yükler ve `post_images` tablosuna
-  /// kayıt ekler.
-  ///
-  /// Storage RLS politikası, dosyaların kullanıcının kendi klasörüne
-  /// (`<uid>/<dosya_adı>`) yüklenmesini zorunlu kılar.
-  Future<void> _uploadAndLinkImages(
-    String postId,
-    String userId,
-    List<File> imageFiles,
-  ) async {
-    if (imageFiles.isEmpty) return;
+  /// Görselleri `post-images` bucket'ına kullanıcının klasörüne yükler,
+  /// bucket içi yolları döndürür. Biri bile başarısız olursa yüklenenler
+  /// silinir ve hata fırlatılır.
+  Future<List<String>> _uploadImages(String userId, List<File> imageFiles) async {
+    final stamp = DateTime.now().millisecondsSinceEpoch;
+    final paths = [
+      for (final (i, f) in imageFiles.indexed)
+        '$userId/${stamp}_$i.${f.path.split('.').last.toLowerCase()}',
+    ];
+    try {
+      await Future.wait([
+        for (final (i, f) in imageFiles.indexed)
+          _client.storage.from('post-images').upload(
+                paths[i],
+                f,
+                fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+              ),
+      ]);
+    } catch (_) {
+      // remove(), olmayan yolları sessizce atlar.
+      await _removeImages(paths);
+      rethrow;
+    }
+    return paths;
+  }
 
-    // Paralel yükleme ile performans artışı
-    final uploadTasks = imageFiles.asMap().entries.map((entry) async {
-      final i = entry.key;
-      final file = entry.value;
-      final ext = file.path.split('.').last.toLowerCase();
-      final storagePath =
-          '$userId/${postId}_${i}_${DateTime.now().millisecondsSinceEpoch}.$ext';
-
-      // Storage'a yükle
-      await _client.storage.from('post-images').upload(
-            storagePath,
-            file,
-            fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
-          );
-
-      // Public URL al
-      final publicUrl =
-          _client.storage.from('post-images').getPublicUrl(storagePath);
-
-      // post_images tablosuna eklenecek veri
-      return {
-        'post_id': postId,
-        'image_url': publicUrl,
-        'sort_order': i,
-      };
-    });
-
-    final imageRecords = await Future.wait(uploadTasks);
-
-    // DB kayıtlarını tek bir insert ile (batch) yapıyoruz
-    if (imageRecords.isNotEmpty) {
-      await _client.from('post_images').insert(imageRecords);
+  /// En iyi çaba: hata olursa en kötü ihtimalle yetim dosya kalır.
+  Future<void> _removeImages(List<String> paths) async {
+    if (paths.isEmpty) return;
+    try {
+      await _client.storage.from('post-images').remove(paths);
+    } catch (e) {
+      debugPrint('post-images silinemedi: $e');
     }
   }
 
-  /// Etiketleri `tags` tablosuna upsert eder (yoksa oluşturur) ve
-  /// `post_tags` junction tablosuna bağlar.
-  Future<void> _upsertAndLinkTags(String postId, List<String> tagNames) async {
-    // slug → ilk görülen isim. Boş slug'lar ("???") ve tekrarlar atlanır.
+  /// slug → ilk görülen isim. Boş slug'lar ("???") ve tekrarlar atlanır.
+  List<Map<String, String>> _tagsPayload(List<String> tagNames) {
     final bySlug = <String, String>{};
     for (final name in tagNames) {
       final trimmedName = name.trim();
       final slug = _slugify(trimmedName);
       if (slug.isNotEmpty) bySlug.putIfAbsent(slug, () => trimmedName);
     }
-    if (bySlug.isEmpty) return;
-
-    // Var olan etiketlere dokunma (ON CONFLICT DO NOTHING): başkasının etiket
-    // adını ezmez ve tags üzerinde UPDATE yetkisi gerektirmez.
-    await _client.from('tags').upsert(
-      [for (final e in bySlug.entries) {'name': e.value, 'slug': e.key}],
-      onConflict: 'slug',
-      ignoreDuplicates: true,
-    );
-
-    final tagRows = await _client
-        .from('tags')
-        .select('id')
-        .inFilter('slug', bySlug.keys.toList());
-
-    await _client.from('post_tags').insert([
-      for (final row in tagRows) {'post_id': postId, 'tag_id': row['id']},
-    ]);
+    return [for (final e in bySlug.entries) {'name': e.value, 'slug': e.key}];
   }
 
   /// Türkçe uyumlu basit slug oluşturma.

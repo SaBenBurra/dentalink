@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../core/error/app_failures.dart';
 import '../data/models/post_model.dart';
 import '../data/providers/repository_providers.dart';
 
@@ -36,43 +37,40 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
   }
 
   /// Post beğenisini toggle eder ve feed state'ini günceller.
-  Future<void> toggleLike(String postId) async {
-    final posts = state.valueOrNull;
-    if (posts == null) return;
-
-    final idx = posts.indexWhere((p) => p.id == postId);
-    if (idx == -1) return;
-
-    final post = posts[idx];
-    final repo = ref.read(postActionRepositoryProvider);
-
-    final updated = post.isLiked
-        ? await repo.unlikePost(postId)
-        : await repo.likePost(postId);
-
-    final newList = List<PostModel>.from(posts);
-    newList[idx] = updated;
-    state = AsyncData(newList);
-  }
+  Future<void> toggleLike(String postId) => _update(postId, (post) {
+        final repo = ref.read(postActionRepositoryProvider);
+        return post.isLiked ? repo.unlikePost(postId) : repo.likePost(postId);
+      });
 
   /// Bookmark toggle eder ve feed state'ini günceller.
-  Future<void> toggleBookmark(String postId) async {
-    final posts = state.valueOrNull;
-    if (posts == null) return;
+  Future<void> toggleBookmark(String postId) => _update(postId, (post) {
+        final repo = ref.read(bookmarkRepositoryProvider);
+        return post.isBookmarked
+            ? repo.unbookmarkPost(postId)
+            : repo.bookmarkPost(postId);
+      });
 
-    final idx = posts.indexWhere((p) => p.id == postId);
-    if (idx == -1) return;
-
-    final post = posts[idx];
-    final repo = ref.read(bookmarkRepositoryProvider);
-
-    final updated = post.isBookmarked
-        ? await repo.unbookmarkPost(postId)
-        : await repo.bookmarkPost(postId);
-
-    final newList = List<PostModel>.from(posts);
-    newList[idx] = updated;
-    state = AsyncData(newList);
+  /// Başka cihazda silinmiş post (NotFound) listeden düşer; hata yine
+  /// fırlatılır ki UI kullanıcıya bildirsin.
+  Future<void> _update(
+    String postId,
+    Future<PostModel> Function(PostModel post) action,
+  ) async {
+    final post = state.valueOrNull?.where((p) => p.id == postId).firstOrNull;
+    if (post == null) return;
+    try {
+      final updated = await action(post);
+      state = AsyncData([
+        for (final p in state.valueOrNull ?? const <PostModel>[])
+          p.id == postId ? updated : p,
+      ]);
+    } on NotFoundFailure {
+      state = AsyncData([
+        for (final p in state.valueOrNull ?? const <PostModel>[])
+          if (p.id != postId) p,
+      ]);
+      rethrow;
+    }
   }
 }
 
