@@ -571,4 +571,16 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get postUpdated => 'Gönderi güncellendi.';
+
+  @override
+  String get pickFromGallery => 'Galeriden Seç';
+
+  @override
+  String get pickFromCamera => 'Kameradan Çek';
+
+  @override
+  String get changePhoto => 'Fotoğrafı değiştir';
+
+  @override
+  String get validationExperience => '0 ile 70 arasında bir sayı girin.';
 }

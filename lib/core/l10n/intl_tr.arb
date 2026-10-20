@@ -526,5 +526,9 @@
   "chatSendError": "Mesaj gönderilemedi, lütfen tekrar deneyin.",
   "editPost": "Gönderiyi Düzenle",
   "@editPost": { "description": "Gönderi düzenleme ekranı başlığı" },
-  "postUpdated": "Gönderi güncellendi."
+  "postUpdated": "Gönderi güncellendi.",
+  "pickFromGallery": "Galeriden Seç",
+  "pickFromCamera": "Kameradan Çek",
+  "changePhoto": "Fotoğrafı değiştir",
+  "validationExperience": "0 ile 70 arasında bir sayı girin."
 }

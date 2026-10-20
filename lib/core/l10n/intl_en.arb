@@ -241,5 +241,9 @@
   "chatLoadError": "Messages could not be loaded.",
   "chatSendError": "Message could not be sent. Please try again.",
   "editPost": "Edit Post",
-  "postUpdated": "Post updated."
+  "postUpdated": "Post updated.",
+  "pickFromGallery": "Choose from Gallery",
+  "pickFromCamera": "Take Photo",
+  "changePhoto": "Change photo",
+  "validationExperience": "Enter a number between 0 and 70."
 }

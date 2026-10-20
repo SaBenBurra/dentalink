@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../shared/utils/error_messages.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -26,6 +30,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   late TextEditingController _workplaceController;
 
   UserTitle? _selectedTitle;
+  File? _avatarFile;
 
   @override
   void initState() {
@@ -64,6 +69,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             city: _cityController.text,
             experience: _experienceController.text,
             workplace: _workplaceController.text,
+            avatarFile: _avatarFile,
           );
 
       if (!mounted) return;
@@ -79,6 +85,44 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         ).showSnackBar(const SnackBar(content: Text('Profil güncellendi')));
         context.pop();
       }
+    }
+  }
+
+  Future<void> _pickAvatar() async {
+    final l10n = AppLocalizations.of(context)!;
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: Text(l10n.pickFromGallery),
+              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: Text(l10n.pickFromCamera),
+              onTap: () => Navigator.pop(ctx, ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (source == null) return;
+    try {
+      // Kayıttaki avatar ile aynı boyut ve kalite.
+      final image = await ImagePicker().pickImage(
+        source: source,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 85,
+      );
+      if (image != null && mounted) setState(() => _avatarFile = File(image.path));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
     }
   }
 
@@ -121,39 +165,50 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         child: ListView(
           padding: const EdgeInsets.all(AppDimensions.spacing16),
           children: [
+            // Dokunma alanı avatarın tamamı; kamera yalnızca küçük bir rozet
+            // (IconButton'ın 48dp alanı küçük avatarı kapatıyordu).
             Center(
-              child: Stack(
-                children: [
-                  UserAvatar(
-                    name: user.fullName,
-                    imageUrl: user.avatarUrl,
-                    size: AvatarSize.large,
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: colorScheme.primary,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: theme.scaffoldBackgroundColor,
-                          width: 2,
+              child: Tooltip(
+                message: AppLocalizations.of(context)!.changePhoto,
+                child: InkWell(
+                  onTap: _pickAvatar,
+                  customBorder: const CircleBorder(),
+                  child: Stack(
+                    children: [
+                      if (_avatarFile != null)
+                        CircleAvatar(
+                          radius: AvatarSize.profile.value / 2,
+                          backgroundImage: FileImage(_avatarFile!),
+                        )
+                      else
+                        UserAvatar(
+                          name: user.fullName,
+                          imageUrl: user.avatarUrl,
+                          size: AvatarSize.profile,
+                        ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(AppDimensions.spacing6),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: theme.scaffoldBackgroundColor,
+                              width: 2,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.camera_alt,
+                            size: 16,
+                            color: colorScheme.onPrimary,
+                          ),
                         ),
                       ),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.camera_alt,
-                          size: 20,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          // Mock image picker
-                        },
-                      ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
             const SizedBox(height: AppDimensions.spacing24),
@@ -217,6 +272,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
+              validator: (value) {
+                final v = value?.trim() ?? '';
+                if (v.isEmpty) return null;
+                final n = int.tryParse(v);
+                return n == null || n < 0 || n > 70
+                    ? AppLocalizations.of(context)!.validationExperience
+                    : null;
+              },
             ),
             const SizedBox(height: AppDimensions.spacing16),
             TextFormField(

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show debugPrint;
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -117,10 +118,15 @@ class SupabaseUserRepository implements UserRepository {
 
     await client.from('users').update({'avatar_url': publicUrl}).eq('id', userId);
 
+    // En iyi çaba: avatar zaten değişti; silinemezse yetim dosya kalır, hata gösterilmez.
     if (oldFiles.isNotEmpty) {
-      await client.storage
-          .from('avatars')
-          .remove([for (final f in oldFiles) '$userId/${f.name}']);
+      try {
+        await client.storage
+            .from('avatars')
+            .remove([for (final f in oldFiles) '$userId/${f.name}']);
+      } catch (e) {
+        debugPrint('eski avatarlar silinemedi: $e');
+      }
     }
 
     return publicUrl;

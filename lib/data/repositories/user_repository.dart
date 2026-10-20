@@ -36,9 +36,7 @@ abstract class UserRepository {
     String? workplace,
   });
 
-  /// Kullanıcı avatarını yükler ve yeni public URL'yi döndürür.
-  ///
-  /// Eski avatar dosyası otomatik olarak silinmez (storage upsert ile
-  /// aynı path'e yazıldığında üzerine yazılır).
+  /// Kullanıcı avatarını yükler, `avatar_url`'i günceller ve yeni public
+  /// URL'yi döndürür. Eski avatar dosyaları ardından silinir (en iyi çaba).
   Future<String> uploadAvatar(String userId, File imageFile);
 }

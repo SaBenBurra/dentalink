@@ -90,7 +90,7 @@
   - Sohbet ekranındaki ölü butonlar ve karşı kullanıcı bilgisi — `BUG-17`
 - [x] **Atomik post oluşturma:** migration 015; `post_images.image_url` artık bucket içi yol, istemci `getPublicUrl` ile URL üretir. Önce görseller yüklenir, sonra `create_post` RPC; hata olursa dosyalar silinir. _(2026-10-20; canlıda, cihazda görselli vaka oluştur/sil ve silinmiş postu beğenme (BUG-27) doğrulandı)_ — `DATA-4`, `SEC-13`, `DATA-9`
 - [x] **Post düzenleme ekranı** (başlık, içerik, branş, etiket) + menüde "Düzenle": migration 016 `update_post` RPC (sahiplik, doğrulama, etiket eşitleme); `posts` UPDATE yetkisi kaldırıldı. Görseller düzenlenmez. _(2026-10-20; canlıda, cihazda vaka ve soru düzenleme doğrulandı)_
-- [ ] **Avatar değiştirme** (edit profile) — `BUG-16`
+- [x] **Avatar değiştirme** (edit profile): galeri/kamera, önizleme, kaydette yükleme; oturumsuz "başarılı" dönmüyor; deneyim 0–70 doğrulaması. _(2026-10-20; cihazda doğrulandı)_ — `BUG-16`
 - [ ] **İyimser like/bookmark**, in-flight guard, rollback; detaydan feed'i komple yeniden yükleme yerine tek öğe güncelle — `BUG-12`
 - [ ] **Çift gönderim korumaları** (yorum, cevap) + sayaç güncelleme — `BUG-13`
 - [ ] **Image picker** izin ve hata yönetimi — `BUG-15`

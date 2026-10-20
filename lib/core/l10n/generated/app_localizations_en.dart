@@ -572,4 +572,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get postUpdated => 'Post updated.';
+
+  @override
+  String get pickFromGallery => 'Choose from Gallery';
+
+  @override
+  String get pickFromCamera => 'Take Photo';
+
+  @override
+  String get changePhoto => 'Change photo';
+
+  @override
+  String get validationExperience => 'Enter a number between 0 and 70.';
 }

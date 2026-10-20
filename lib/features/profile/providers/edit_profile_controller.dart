@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../domain/enums/enums.dart';
 import '../../../data/providers/repository_providers.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../core/error/app_failures.dart';
 
 /// Profil düzenleme işlemlerini yöneten Riverpod controller.
 ///
@@ -33,27 +34,27 @@ class EditProfileController extends AutoDisposeAsyncNotifier<void> {
   }) async {
     state = const AsyncLoading();
     try {
-      final currentUserId = ref.read(supabaseClientProvider).auth.currentUser?.id;
-      if (currentUserId != null) {
-        if (avatarFile != null) {
-          await ref.read(userRepositoryProvider).uploadAvatar(currentUserId, avatarFile);
-        }
-
-        await ref.read(userRepositoryProvider).updateProfile(
-          currentUserId,
-          fullName: fullName,
-          title: title,
-          bio: bio,
-          university: university,
-          city: city,
-          experienceYears: experience != null && experience.isNotEmpty ? int.tryParse(experience) : null,
-          workplace: workplace,
-        );
-        
-        // Kullanıcı profilinin UI'da güncellenmesi için provider'ı invalidate et
-        ref.invalidate(authProvider);
+      final currentUserId = ref.read(currentUserProvider)?.id;
+      if (currentUserId == null) throw const AuthRequiredFailure();
+      if (avatarFile != null) {
+        await ref.read(userRepositoryProvider).uploadAvatar(currentUserId, avatarFile);
       }
-      
+
+      await ref.read(userRepositoryProvider).updateProfile(
+        currentUserId,
+        fullName: fullName,
+        title: title,
+        bio: bio,
+        university: university,
+        city: city,
+        // Form doğruladı; boşsa null.
+        experienceYears: int.tryParse(experience?.trim() ?? ''),
+        workplace: workplace,
+      );
+
+      // Kullanıcı profilinin UI'da güncellenmesi için provider'ı invalidate et
+      ref.invalidate(authProvider);
+
       state = const AsyncData(null);
     } catch (e, st) {
       state = AsyncError(e, st);

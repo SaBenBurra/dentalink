@@ -1147,6 +1147,30 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Gönderi güncellendi.'**
   String get postUpdated;
+
+  /// No description provided for @pickFromGallery.
+  ///
+  /// In tr, this message translates to:
+  /// **'Galeriden Seç'**
+  String get pickFromGallery;
+
+  /// No description provided for @pickFromCamera.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kameradan Çek'**
+  String get pickFromCamera;
+
+  /// No description provided for @changePhoto.
+  ///
+  /// In tr, this message translates to:
+  /// **'Fotoğrafı değiştir'**
+  String get changePhoto;
+
+  /// No description provided for @validationExperience.
+  ///
+  /// In tr, this message translates to:
+  /// **'0 ile 70 arasında bir sayı girin.'**
+  String get validationExperience;
 }
 
 class _AppLocalizationsDelegate
