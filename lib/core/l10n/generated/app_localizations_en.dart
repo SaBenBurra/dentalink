@@ -557,4 +557,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get back => 'Go Back';
+
+  @override
+  String get chatEmpty => 'No messages yet. Send the first one!';
+
+  @override
+  String get chatLoadError => 'Messages could not be loaded.';
+
+  @override
+  String get chatSendError => 'Message could not be sent. Please try again.';
 }

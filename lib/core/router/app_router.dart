@@ -174,7 +174,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'chat',
         builder: (context, state) {
           final userId = state.pathParameters['userId']!;
-          final name = state.uri.queryParameters['name'] ?? 'Kullanıcı';
+          final name = state.uri.queryParameters['name'] ?? '';
           final avatar = state.uri.queryParameters['avatar'] ?? '';
           return ChatScreen(userId: userId, userName: name, avatarUrl: avatar);
         },

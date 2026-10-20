@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../data/models/conversation_model.dart';
 import '../data/models/message_model.dart';
 import '../data/providers/repository_providers.dart';
@@ -14,36 +13,35 @@ import 'auth_provider.dart';
 
 class ConversationsNotifier
     extends AutoDisposeAsyncNotifier<List<ConversationModel>> {
-  RealtimeChannel? _channel;
-
   @override
   Future<List<ConversationModel>> build() async {
-    final client = ref.watch(supabaseClientProvider);
     // Hesap değişince yeniden kurulur; eski kullanıcının sohbetleri ve kanalı kalmaz.
     final uid = ref.watch(authProvider.select((s) => s.valueOrNull?.id));
+    if (uid == null) return const [];
 
-    if (uid != null) {
-      _channel = client
-          .channel('public:conversations:uid=$uid')
-          .onPostgresChanges(
-            event: PostgresChangeEvent.all,
-            schema: 'public',
-            table: 'conversations',
-            callback: (payload) {
-              final rec = payload.newRecord.isNotEmpty ? payload.newRecord : payload.oldRecord;
-              if (rec['user1_id'] == uid || rec['user2_id'] == uid) {
-                ref.invalidateSelf();
-              }
-            },
-          )
-          .subscribe();
+    final repo = ref.watch(messageRepositoryProvider);
+    final sub = repo.watchConversations(uid).listen(
+      _upsert,
+      onError: (Object e) => debugPrint('ConversationsNotifier realtime: $e'),
+    );
+    ref.onDispose(sub.cancel);
 
-      ref.onDispose(() {
-        if (_channel != null) client.removeChannel(_channel!);
-      });
-    }
+    return repo.getConversations();
+  }
 
-    return ref.read(messageRepositoryProvider).getConversations();
+  /// Gelen sohbeti listede günceller (yoksa ekler); son mesaja göre sıralar.
+  void _upsert(ConversationModel c) {
+    final current = state.valueOrNull;
+    if (current == null) return;
+    state = AsyncData(
+      [c, for (final x in current) if (x.id != c.id) x]..sort(_byLastMessageDesc),
+    );
+  }
+
+  static int _byLastMessageDesc(ConversationModel a, ConversationModel b) {
+    final x = a.lastMessageAt, y = b.lastMessageAt;
+    if (x == null || y == null) return x == y ? 0 : (x == null ? 1 : -1);
+    return y.compareTo(x);
   }
 
   Future<void> refresh() async {
@@ -89,17 +87,15 @@ class ActiveChatState {
   }
 }
 
+/// id ile tekilleştirir (sonraki kazanır: realtime UPDATE eskiyi ezer), eski → yeni sıralar.
+List<MessageModel> _merge(List<MessageModel> a, Iterable<MessageModel> b) =>
+    {for (final m in [...a, ...b]) m.id: m}.values.toList()
+      ..sort((x, y) => x.createdAt.compareTo(y.createdAt));
+
 class ActiveChatNotifier
     extends AutoDisposeFamilyAsyncNotifier<ActiveChatState, String> {
-  RealtimeChannel? _channel;
-
   @override
   Future<ActiveChatState> build(String peerUserId) async {
-    final client = ref.watch(supabaseClientProvider);
-    ref.onDispose(() {
-      if (_channel != null) client.removeChannel(_channel!);
-    });
-    
     // 9. Sohbet ekranından kısa süreli çıkıp girmelerde yeniden yüklemeyi (flicker) önler
     final link = ref.keepAlive();
     final timer = Timer(const Duration(minutes: 5), link.close);
@@ -114,76 +110,49 @@ class ActiveChatNotifier
       return const ActiveChatState(conversationId: null, messages: []);
     }
 
-    _channel = client
-        .channel('public:messages:conversation_id=$conversationId')
-        .onPostgresChanges(
-          event: PostgresChangeEvent.all,
-          schema: 'public',
-          table: 'messages',
-          filter: PostgresChangeFilter(
-            type: PostgresChangeFilterType.eq,
-            column: 'conversation_id',
-            value: conversationId,
-          ),
-          callback: (payload) {
-            ref.invalidateSelf();
-          },
-        )
-        .subscribe();
+    final repo = ref.watch(messageRepositoryProvider);
+    // İlk yükleme sürerken gelen olaylar kaybolmasın diye tamponlanır.
+    final early = <MessageModel>[];
+    var loaded = false;
+    final sub = repo.watchMessages(conversationId).listen(
+      (m) => loaded ? _upsert(m) : early.add(m),
+      onError: (Object e) => debugPrint('ActiveChatNotifier realtime: $e'),
+    );
+    ref.onDispose(sub.cancel);
 
-    final repo = ref.read(messageRepositoryProvider);
     // TODO: Sayfalama/lazy loading eklenebilir (cursor/limit)
     final messages = await repo.getMessages(conversationId);
+    loaded = true;
 
     return ActiveChatState(
       conversationId: conversationId,
-      messages: messages,
+      messages: _merge(messages, early),
     );
+  }
+
+  void _upsert(MessageModel m) {
+    final current = state.valueOrNull;
+    if (current == null) return;
+    state = AsyncData(current.copyWith(messages: _merge(current.messages, [m])));
   }
 
   /// Mesajları okundu olarak işaretler. UI katmanından (ör. ekran açılışı) tetiklenir.
   Future<void> markAsRead(String conversationId) async {
     final repo = ref.read(messageRepositoryProvider);
     await repo.markMessagesAsRead(conversationId);
-    // Not: conversationsProvider'ı manuel invalidate etmeye gerek yok, 
-    // Realtime (ConversationsNotifier içindeki) unread_count değişikliğini algılayıp 
-    // otomatik refresh yapacaktır.
+    // unread_count değişikliği conversations realtime'ı ile listeye düşer.
   }
 
   Future<void> sendMessage(String content) async {
-    final repo = ref.read(messageRepositoryProvider);
-    final peerUserId = arg;
+    final newMsg = await ref.read(messageRepositoryProvider).sendMessage(arg, content);
+    // Yükleme sürerken gönderildiyse mesaj düşmesin.
+    final current = await future;
+    state = AsyncData(current.copyWith(messages: _merge(current.messages, [newMsg])));
 
-    try {
-      final newMsg = await repo.sendMessage(peerUserId, content);
-      
-      // 3. Mesaj gönderiminde silent data loss'u önlemek için
-      // state'in yüklenmesini bekleyerek güncel veriyi güvenle al.
-      final current = await future;
-      
-      String? convId = current.conversationId;
-      if (convId == null) {
-        // Yeni konuşma ID'sini repodan tazeleyip buluyoruz.
-        final convs = await ref.refresh(conversationsProvider.future);
-        convId = convs.firstWhereOrNull((c) => c.otherUser.id == peerUserId)?.id;
-      }
-
-      // Race condition (realtime duplicate) önlemek için ID bazlı tekilleştirme:
-      final merged = {
-        for (final m in [...current.messages, newMsg]) m.id: m
-      }.values.toList()
-        ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
-
-      state = AsyncData(ActiveChatState(
-        conversationId: convId,
-        messages: merged,
-      ));
-
-      // Not: conversationsProvider'ı manuel invalidate etmeye gerek yok, 
-      // Realtime tetikleyecektir.
-    } catch (e, st) {
-      debugPrint('ActiveChatNotifier: sendMessage hatası: $e\n$st');
-      rethrow; // UI hatayı yakalayacak
+    // İlk mesaj: sohbet yeni oluştu. Liste yenilenince build bu sohbetin
+    // kanalına abone olur ve mesajları baştan çeker.
+    if (current.conversationId == null) {
+      ref.invalidate(conversationsProvider);
     }
   }
 }

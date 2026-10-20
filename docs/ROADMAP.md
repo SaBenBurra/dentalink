@@ -83,8 +83,8 @@
 
 ## Faz 1 — Çekirdek akışların tamamlanması 🟠
 
-- [x] **Bildirimler (gerçek):** migration 013 (like, yorum, takip, en iyi cevap trigger'ları; aktör = alıcı ise atlanır, okunmamış tekrar yazılmaz), realtime, zil ve mesaj rozetleri, iyimser okundu + rollback. Mesaj için ayrı bildirim yok, sohbet `unreadCount` yeterli. _(2026-10-15; iki hesapla cihaz testi bekliyor)_ — `DATA-5`, `UX-1`, `BUG-23`
-- [ ] **Mesajlaşma tamamlama:**
+- [x] **Bildirimler (gerçek):** migration 013 (like, yorum, takip, en iyi cevap trigger'ları; aktör = alıcı ise atlanır, okunmamış tekrar yazılmaz), realtime, zil ve mesaj rozetleri, iyimser okundu + rollback. Mesaj için ayrı bildirim yok, sohbet `unreadCount` yeterli. _(2026-10-15; iki hesapla cihazda doğrulandı 2026-10-20)_ — `DATA-5`, `UX-1`, `BUG-23`
+- [x] **Mesajlaşma tamamlama:** migration 014 canlıda, smoke 9 geçti; doğrudan `messages` insert'ü kapalı. _(2026-10-20; cihazda anlık mesaj ve okunmamış rozeti doğrulandı)_
   - `send_message` RPC (get-or-create + insert tek işlemde, SEC-2'nin kalıcı çözümü), `nullsFirst:false` — `DATA-10`
   - Realtime'da append + filtre (`removeChannel` Faz 0'da yapıldı) — `BUG-18`
   - Sohbet ekranındaki ölü butonlar ve karşı kullanıcı bilgisi — `BUG-17`

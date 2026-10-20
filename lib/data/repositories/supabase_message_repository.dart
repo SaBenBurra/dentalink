@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/error/app_failures.dart';
 import '../../core/utils/supabase_error_mapper.dart';
@@ -11,6 +13,11 @@ class SupabaseMessageRepository implements MessageRepository {
 
   SupabaseMessageRepository({required SupabaseClient client}) : _client = client;
 
+  // Güvenlik: users tablosundan sadece gerekli alanlar çekiliyor
+  static const _userSelect = 'id, full_name, username, avatar_url, title, is_verified, created_at';
+  static const _conversationSelect =
+      '*, user1:users!conversations_user1_id_fkey($_userSelect), user2:users!conversations_user2_id_fkey($_userSelect)';
+
   String get _uid {
     final id = _client.auth.currentUser?.id;
     if (id == null) throw const AuthRequiredFailure();
@@ -20,13 +27,13 @@ class SupabaseMessageRepository implements MessageRepository {
   ConversationModel _mapConversation(Map<String, dynamic> row, String currentUserId) {
     final isUser1 = row['user1_id'] == currentUserId;
     final otherUserData = isUser1 ? row['user2'] : row['user1'];
-    
+
     if (otherUserData == null) {
       throw const ServerFailure(message: 'Karşı kullanıcı bilgisi alınamadı.');
     }
 
     final unreadCount = isUser1 ? (row['user1_unread_count'] as int? ?? 0) : (row['user2_unread_count'] as int? ?? 0);
-    
+
     return ConversationModel(
       id: row['id'] as String,
       otherUser: UserModel.fromJson(otherUserData as Map<String, dynamic>),
@@ -51,13 +58,11 @@ class SupabaseMessageRepository implements MessageRepository {
   @override
   Future<List<ConversationModel>> getConversations() => guardSupabase(() async {
     final uid = _uid;
-    // Güvenlik: users tablosundan sadece gerekli alanlar çekiliyor
-    const userSelect = 'id, full_name, username, avatar_url, title, is_verified, created_at';
     final response = await _client
         .from('conversations')
-        .select('*, user1:users!conversations_user1_id_fkey($userSelect), user2:users!conversations_user2_id_fkey($userSelect)')
+        .select(_conversationSelect)
         .or('user1_id.eq.$uid,user2_id.eq.$uid')
-        .order('last_message_at', ascending: false);
+        .order('last_message_at', ascending: false, nullsFirst: false);
 
     return (response as List<dynamic>)
         .map((e) => _mapConversation(e as Map<String, dynamic>, uid))
@@ -79,33 +84,108 @@ class SupabaseMessageRepository implements MessageRepository {
 
   @override
   Future<MessageModel> sendMessage(String receiverId, String content) => guardSupabase(() async {
-    final uid = _uid; // ensure authenticated
-    
-    if (uid == receiverId) {
+    if (_uid == receiverId) {
       throw const ValidationFailure('Kendinize mesaj gönderemezsiniz.');
     }
-    
-    // Güvenlik ve Race Condition koruması: Filtre yerine RPC kullanımı.
-    // RPC, LEAST/GREATEST mantığıyla conflictleri tek transaction'da engeller.
-    final convIdResponse = await _client.rpc('get_or_create_conversation', params: {
-      'p_other_user_id': receiverId
+    // Sohbet get-or-create + insert tek işlemde (migration 014).
+    final row = await _client.rpc('send_message', params: {
+      'p_receiver_id': receiverId,
+      'p_content': content,
     });
-    
-    final conversationId = convIdResponse as String;
-
-    final msgRow = await _client
-        .from('messages')
-        .insert({
-          'conversation_id': conversationId,
-          'sender_id': _uid,
-          'receiver_id': receiverId,
-          'content': content,
-        })
-        .select('*')
-        .single();
-        
-    return _mapMessage(msgRow);
+    return _mapMessage(row as Map<String, dynamic>);
   });
+
+  @override
+  Stream<MessageModel> watchMessages(String conversationId) {
+    RealtimeChannel? channel;
+    late final StreamController<MessageModel> controller;
+    controller = StreamController<MessageModel>(
+      onListen: () {
+        channel = _client
+            .channel('public:messages:conversation_id=$conversationId')
+            .onPostgresChanges(
+              event: PostgresChangeEvent.all,
+              schema: 'public',
+              table: 'messages',
+              filter: PostgresChangeFilter(
+                type: PostgresChangeFilterType.eq,
+                column: 'conversation_id',
+                value: conversationId,
+              ),
+              callback: (payload) {
+                // Yalnızca soft delete var; DELETE olayının newRecord'u boş.
+                if (payload.newRecord.isEmpty || controller.isClosed) return;
+                controller.add(_mapMessage(payload.newRecord));
+              },
+            )
+            .subscribe();
+      },
+      onCancel: () async {
+        if (channel != null) await _client.removeChannel(channel!);
+        await controller.close();
+      },
+    );
+    return controller.stream;
+  }
+
+  @override
+  Stream<ConversationModel> watchConversations(String userId) {
+    RealtimeChannel? channel;
+    late final StreamController<ConversationModel> controller;
+
+    // Payload'da karşı kullanıcı join'i yok; tek satırı join ile çek.
+    Future<void> emit(String id) async {
+      try {
+        final row = await guardSupabase(() => _client
+            .from('conversations')
+            .select(_conversationSelect)
+            .eq('id', id)
+            .maybeSingle());
+        if (row != null && !controller.isClosed) controller.add(_mapConversation(row, userId));
+      } catch (e, st) {
+        if (!controller.isClosed) controller.addError(e, st);
+      }
+    }
+
+    void onChange(PostgresChangePayload payload) {
+      final id = payload.newRecord['id'] as String?;
+      if (id != null) emit(id);
+    }
+
+    // Filtre tek kolon alıyor; kullanıcı user1 de user2 de olabilir.
+    PostgresChangeFilter filterOn(String column) => PostgresChangeFilter(
+          type: PostgresChangeFilterType.eq,
+          column: column,
+          value: userId,
+        );
+
+    controller = StreamController<ConversationModel>(
+      onListen: () {
+        channel = _client
+            .channel('public:conversations:uid=$userId')
+            .onPostgresChanges(
+              event: PostgresChangeEvent.all,
+              schema: 'public',
+              table: 'conversations',
+              filter: filterOn('user1_id'),
+              callback: onChange,
+            )
+            .onPostgresChanges(
+              event: PostgresChangeEvent.all,
+              schema: 'public',
+              table: 'conversations',
+              filter: filterOn('user2_id'),
+              callback: onChange,
+            )
+            .subscribe();
+      },
+      onCancel: () async {
+        if (channel != null) await _client.removeChannel(channel!);
+        await controller.close();
+      },
+    );
+    return controller.stream;
+  }
 
   @override
   Future<void> markMessagesAsRead(String conversationId) => guardSupabase(() async {

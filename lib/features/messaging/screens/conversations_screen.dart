@@ -57,7 +57,6 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
               }
             },
           ),
-          IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
         ],
       ),
       body: Column(

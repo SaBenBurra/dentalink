@@ -556,4 +556,13 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get back => 'Geri Dön';
+
+  @override
+  String get chatEmpty => 'Henüz mesaj yok. İlk mesajı siz gönderin!';
+
+  @override
+  String get chatLoadError => 'Mesajlar yüklenemedi.';
+
+  @override
+  String get chatSendError => 'Mesaj gönderilemedi, lütfen tekrar deneyin.';
 }

@@ -11,6 +11,8 @@ import '../../../providers/auth_provider.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/error_widget.dart';
 import '../../../data/models/conversation_model.dart';
+import '../../../providers/user_provider.dart';
+import '../../../core/l10n/generated/app_localizations.dart';
 /// Saat formatı — her build/itemBuilder çağrısında yeniden oluşturulmasını
 /// önlemek için modül seviyesinde tanımlanır.
 final _timeFormatter = DateFormat('HH:mm');
@@ -74,8 +76,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       if (mounted) {
         debugPrint('ChatScreen: _sendMessage hatası: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          // TODO(l10n): Localizations dosyasına taşınacak
-          const SnackBar(content: Text('Mesaj gönderilemedi, lütfen tekrar deneyin.')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.chatSendError)),
         );
       }
     } finally {
@@ -95,7 +96,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
     final currentUser = ref.watch(currentUserProvider);
+
+    // Deep link/bildirimden açılınca isim ve avatar query'de olmayabilir.
+    final needsPeer = widget.userName.isEmpty;
+    final peer = needsPeer ? ref.watch(userProfileProvider(widget.userId)).valueOrNull : null;
+    final userName = needsPeer ? (peer?.fullName ?? '') : widget.userName;
+    final avatarUrl = needsPeer ? (peer?.avatarUrl ?? '') : widget.avatarUrl;
 
     // Tek provider — konuşma bulma, mesaj yükleme ve okundu işaretleme
     // mantığının tamamı ActiveChatNotifier içinde kapsüllenmiştir.
@@ -114,14 +122,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         title: Row(
           children: [
             UserAvatar(
-              name: widget.userName,
-              imageUrl: widget.avatarUrl,
+              name: userName,
+              imageUrl: avatarUrl,
               size: AvatarSize.medium,
             ),
             const SizedBox(width: AppDimensions.spacing12),
             Expanded(
               child: Text(
-                widget.userName,
+                userName,
                 style: textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -130,14 +138,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {
-              // TODO(E4): Sohbet detayları / şikayet et vb. menü eklenecek
-            },
-          ),
-        ],
+        // ⋮ menüsü (şikayet/engelle) Faz 4'te eklenecek.
       ),
       body: Column(
         children: [
@@ -147,7 +148,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               error: (err, st) {
                 debugPrint('ChatScreen: mesaj yükleme hatası: $err\n$st');
                 return DentLinkErrorWidget(
-                  message: 'Mesajlar yüklenemedi',
+                  message: l10n.chatLoadError,
                   onRetry: () =>
                       ref.invalidate(activeChatProvider(widget.userId)),
                 );
@@ -156,10 +157,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 final messages = state.messages;
 
                 if (messages.isEmpty) {
-                  return const Center(
-                    // TODO(l10n): Localizations dosyasına taşınacak
-                    child: Text('Henüz mesaj yok. İlk mesajı siz gönderin!'),
-                  );
+                  return Center(child: Text(l10n.chatEmpty));
                 }
 
                 // reversed.toList() yerine index matematiği ile ters sıralama.
@@ -195,9 +193,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             controller: _messageController,
             isSending: _isSending,
             onSend: _sendMessage,
-            onAttachment: () {
-              // TODO(E4): Görsel mesaj gönderme — Faz 3'te implemente edilecek.
-            },
           ),
         ],
       ),

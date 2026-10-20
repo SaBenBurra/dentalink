@@ -520,5 +520,8 @@
   "postDeleteConfirm": "Bu gönderi kalıcı olarak silinecek. Emin misin?",
   "postDeleted": "Gönderi silindi.",
   "profileNoPosts": "Henüz gönderi yok.",
-  "back": "Geri Dön"
+  "back": "Geri Dön",
+  "chatEmpty": "Henüz mesaj yok. İlk mesajı siz gönderin!",
+  "chatLoadError": "Mesajlar yüklenemedi.",
+  "chatSendError": "Mesaj gönderilemedi, lütfen tekrar deneyin."
 }

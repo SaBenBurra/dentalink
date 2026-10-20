@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
+import '../../../core/l10n/generated/app_localizations.dart';
 
 class ChatInput extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
-  final VoidCallback onAttachment;
   final bool isSending;
+
+  /// send_message RPC ile aynı sınır (migration 014).
+  static const maxLength = 2000;
 
   const ChatInput({
     super.key,
     required this.controller,
     required this.onSend,
-    required this.onAttachment,
     this.isSending = false,
   });
 
@@ -37,17 +39,14 @@ class ChatInput extends StatelessWidget {
       child: SafeArea(
         child: Row(
           children: [
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: onAttachment,
-              color: colorScheme.primary,
-            ),
             const SizedBox(width: AppDimensions.spacing8),
             Expanded(
               child: TextField(
                 controller: controller,
+                maxLength: maxLength,
                 decoration: InputDecoration(
-                  hintText: 'Mesaj yazın...',
+                  hintText: AppLocalizations.of(context)!.typeMessage,
+                  counterText: '',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24.0),
                     borderSide: BorderSide.none,

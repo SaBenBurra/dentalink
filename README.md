@@ -29,6 +29,7 @@ Supabase URL ve anon key şu an `lib/main.dart` içinde. Faz 5'te `--dart-define
 
 ```bash
 supabase link --project-ref lknvufbxekceevdblgmq   # SUPABASE_ACCESS_TOKEN ve SUPABASE_DB_PASSWORD gerekir
+                                                   # şifre: supabase/.env.local içine SUPABASE_DB_PASSWORD=… (gitignored, CLI otomatik okur)
 supabase migration list                            # local == remote olmalı
 supabase migration new <ad>                        # yeni şema değişikliği
 supabase db push --dry-run && supabase db push

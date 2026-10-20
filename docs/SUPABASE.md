@@ -38,7 +38,7 @@ RLS **hangi satırlara** dokunulabileceğini belirler; GRANT **hangi kolonlara**
 |---|---|
 | `authenticated` rolüne UPDATE/INSERT'i **kolon bazlı** ver: `GRANT UPDATE (title, content) ON posts TO authenticated`. | Aksi halde kullanıcı kendi satırındaki `is_verified`, `like_count` gibi alanları yazabilir. |
 | Sayaçlar (`*_count`), `is_verified`, `is_best_answer`, `is_solved`, `unread_count` **yalnızca trigger veya RPC** ile değişir. | Kullanıcının sahte rakam üretmesini engeller. |
-| Birden fazla satıra dokunan veya bir kural uygulayan işlemler `SECURITY DEFINER` RPC ile yapılır, ilgili tabloya doğrudan yazma revoke edilir. | Örnek: `get_or_create_conversation`, `mark_best_answer`, `mark_messages_as_read`. |
+| Birden fazla satıra dokunan veya bir kural uygulayan işlemler `SECURITY DEFINER` RPC ile yapılır, ilgili tabloya doğrudan yazma revoke edilir. | Örnek: `send_message`, `mark_best_answer`, `mark_messages_as_read`. |
 | Her `SECURITY DEFINER` fonksiyonda `SET search_path = ''` (ya da en azından `public`), fonksiyonun içinde `auth.uid()` kontrolü ve `REVOKE EXECUTE … FROM public, anon` bulunur. | Yetki yükseltmeyi engeller. |
 | `notifications` tablosuna istemci **asla** yazmaz; yalnızca trigger'lar yazar. | Sahte bildirimi engeller. |
 | `users.email` ve `users.phone` istemciye **okunmaz**. | KVKK. |
@@ -88,7 +88,7 @@ rollback;
 -- 3) public.users'ta e-posta/telefon tutulmaz (012'de kaldırıldı) → BEKLENEN: column "email" does not exist
 select email from public.users limit 1;
 
--- 4) C, A–B sohbetine mesaj ekleyememeli → BEKLENEN: new row violates row-level security policy
+-- 4) messages'a doğrudan insert yasak, mesaj yalnızca send_message ile (014) → BEKLENEN: permission denied
 begin;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<C>","role":"authenticated"}', true);
@@ -129,6 +129,14 @@ insert into public.follows (follower_id, following_id) values ('<A>', '<C>');
 reset role;
 select count(*) from public.notifications
 where user_id = '<C>' and actor_id = '<A>' and type = 'follow' and created_at = now();
+rollback;
+
+-- 9) send_message: gönderen auth.uid(), sohbet yoksa oluşur (014) → BEKLENEN: 1 satır, content = 'smoke'
+--    Kendine gönderim → invalid receiver; boş içerik → invalid content; anon → permission denied
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select sender_id, content from public.send_message('<B>', '  smoke  ');
 rollback;
 ```
 

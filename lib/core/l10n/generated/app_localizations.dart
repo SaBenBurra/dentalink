@@ -1117,6 +1117,24 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Geri Dön'**
   String get back;
+
+  /// No description provided for @chatEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz mesaj yok. İlk mesajı siz gönderin!'**
+  String get chatEmpty;
+
+  /// No description provided for @chatLoadError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mesajlar yüklenemedi.'**
+  String get chatLoadError;
+
+  /// No description provided for @chatSendError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mesaj gönderilemedi, lütfen tekrar deneyin.'**
+  String get chatSendError;
 }
 
 class _AppLocalizationsDelegate
