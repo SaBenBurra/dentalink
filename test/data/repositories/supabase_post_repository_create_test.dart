@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dentlink/core/error/app_failures.dart';
 import 'package:dentlink/data/repositories/supabase_post_repository.dart';
 import 'package:dentlink/domain/enums/enums.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -64,5 +65,29 @@ void main() {
 
     verifyNever(client.rpc(any, params: anyNamed('params')));
     expect(verify(bucket.remove(captureAny)).captured.single, hasLength(2));
+  });
+
+  test('update_post: parametreler gönderilir, başkasının/olmayan post NotFound olur', () async {
+    when(client.rpc('update_post', params: anyNamed('params')))
+        .thenThrow(const PostgrestException(message: 'post not found', code: 'P0002'));
+
+    await expectLater(
+      repository.updatePost(
+        postId: 'p1',
+        title: 't',
+        content: 'c',
+        tags: const ['İmplant', 'implant'],
+      ),
+      throwsA(isA<NotFoundFailure>()),
+    );
+
+    final params = verify(client.rpc('update_post', params: captureAnyNamed('params')))
+        .captured
+        .single as Map<String, dynamic>;
+    expect(params['p_post_id'], 'p1');
+    expect(params['p_branch'], isNull);
+    expect(params['p_tags'], [
+      {'name': 'İmplant', 'slug': 'implant'},
+    ]);
   });
 }

@@ -565,4 +565,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get chatSendError => 'Mesaj gönderilemedi, lütfen tekrar deneyin.';
+
+  @override
+  String get editPost => 'Gönderiyi Düzenle';
+
+  @override
+  String get postUpdated => 'Gönderi güncellendi.';
 }

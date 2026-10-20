@@ -383,6 +383,24 @@ class SupabasePostRepository implements PostRepository {
   }
 
   @override
+  Future<PostModel> updatePost({
+    required String postId,
+    required String title,
+    required String content,
+    DentalBranch? branch,
+    required List<String> tags,
+  }) => guardSupabase(() async {
+    await _client.rpc('update_post', params: {
+      'p_post_id': postId,
+      'p_title': title,
+      'p_content': content,
+      'p_branch': branch?.dbValue,
+      'p_tags': _tagsPayload(tags),
+    });
+    return getPostById(postId);
+  });
+
+  @override
   Future<void> deletePost(String postId) => guardSupabase(() async {
     // 1) Görsel yollarını, satır CASCADE ile silinmeden önce al.
     final images = await _client

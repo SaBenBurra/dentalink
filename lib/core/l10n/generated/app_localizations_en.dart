@@ -566,4 +566,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatSendError => 'Message could not be sent. Please try again.';
+
+  @override
+  String get editPost => 'Edit Post';
+
+  @override
+  String get postUpdated => 'Post updated.';
 }

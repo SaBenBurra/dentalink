@@ -55,6 +55,16 @@ abstract class ICreatePostRepository {
     required List<String> tags,
   });
 
+  /// Başlık, içerik, branş (yalnızca vaka) ve etiketleri günceller.
+  /// Görseller düzenlenmez. Post yoksa ya da başkasınınsa [NotFoundFailure].
+  Future<PostModel> updatePost({
+    required String postId,
+    required String title,
+    required String content,
+    DentalBranch? branch,
+    required List<String> tags,
+  });
+
   /// Gönderiyi siler (cascade: images, tags, likes, bookmarks, comments).
   Future<void> deletePost(String postId);
 }

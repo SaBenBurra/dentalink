@@ -14,6 +14,7 @@ import '../../features/post/screens/case_detail_screen.dart';
 import '../../features/post/screens/question_detail_screen.dart';
 import '../../features/post/screens/create_case_screen.dart';
 import '../../features/post/screens/create_question_screen.dart';
+import '../../features/post/screens/edit_post_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/followers_screen.dart';
 import '../../features/messaging/screens/chat_screen.dart';
@@ -145,6 +146,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/create-question',
         name: 'createQuestion',
         builder: (context, state) => const CreateQuestionScreen(),
+      ),
+      GoRoute(
+        path: '/edit-post/:id',
+        name: 'editPost',
+        builder: (context, state) =>
+            EditPostScreen(postId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: '/edit-profile',

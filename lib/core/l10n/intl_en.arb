@@ -239,5 +239,7 @@
   "back": "Go Back",
   "chatEmpty": "No messages yet. Send the first one!",
   "chatLoadError": "Messages could not be loaded.",
-  "chatSendError": "Message could not be sent. Please try again."
+  "chatSendError": "Message could not be sent. Please try again.",
+  "editPost": "Edit Post",
+  "postUpdated": "Post updated."
 }

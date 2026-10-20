@@ -89,8 +89,8 @@ class PostHeader extends StatelessWidget {
             children: [
               badge,
               const SizedBox(width: AppDimensions.spacing16),
-              // shortcut: Düzenle (Faz 1) ve Raporla (Faz 4) hazır olana kadar menü
-              // yalnızca sahibine ve yalnızca "Sil" ile görünür (ölü buton yok).
+              // shortcut: Raporla (Faz 4) hazır olana kadar menü yalnızca sahibine
+              // görünür (ölü buton yok).
               if (onMenuSelected != null && isOwner)
                 PopupMenuButton<PostMenuAction>(
                   padding: EdgeInsets.zero,
@@ -101,6 +101,16 @@ class PostHeader extends StatelessWidget {
                   tooltip: l10n.moreOptions,
                   onSelected: onMenuSelected,
                   itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: PostMenuAction.edit,
+                      child: Row(
+                        children: [
+                          const Icon(Icons.edit_outlined, size: 20),
+                          const SizedBox(width: 8),
+                          Text(l10n.edit),
+                        ],
+                      ),
+                    ),
                     PopupMenuItem(
                       value: PostMenuAction.delete,
                       child: Row(

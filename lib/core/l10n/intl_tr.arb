@@ -523,5 +523,8 @@
   "back": "Geri Dön",
   "chatEmpty": "Henüz mesaj yok. İlk mesajı siz gönderin!",
   "chatLoadError": "Mesajlar yüklenemedi.",
-  "chatSendError": "Mesaj gönderilemedi, lütfen tekrar deneyin."
+  "chatSendError": "Mesaj gönderilemedi, lütfen tekrar deneyin.",
+  "editPost": "Gönderiyi Düzenle",
+  "@editPost": { "description": "Gönderi düzenleme ekranı başlığı" },
+  "postUpdated": "Gönderi güncellendi."
 }

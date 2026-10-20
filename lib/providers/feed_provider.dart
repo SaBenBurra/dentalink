@@ -50,6 +50,13 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
             : repo.bookmarkPost(postId);
       });
 
+  /// Düzenlenen postu listeyi yeniden çekmeden günceller.
+  void replacePost(PostModel updated) {
+    final posts = state.valueOrNull;
+    if (posts == null) return;
+    state = AsyncData([for (final p in posts) p.id == updated.id ? updated : p]);
+  }
+
   /// Başka cihazda silinmiş post (NotFound) listeden düşer; hata yine
   /// fırlatılır ki UI kullanıcıya bildirsin.
   Future<void> _update(

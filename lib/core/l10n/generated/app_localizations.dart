@@ -1135,6 +1135,18 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Mesaj gönderilemedi, lütfen tekrar deneyin.'**
   String get chatSendError;
+
+  /// Gönderi düzenleme ekranı başlığı
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönderiyi Düzenle'**
+  String get editPost;
+
+  /// No description provided for @postUpdated.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönderi güncellendi.'**
+  String get postUpdated;
 }
 
 class _AppLocalizationsDelegate

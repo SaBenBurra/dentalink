@@ -10,6 +10,7 @@ import 'package:dentlink/shared/widgets/post_media.dart';
 import 'package:dentlink/shared/utils/post_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../data/models/post_model.dart';
 
@@ -46,10 +47,10 @@ class CaseCard extends ConsumerWidget {
             subtitle: post.branch?.displayName ?? post.author.title.displayName,
             isOwner: isOwner,
             badge: PostBadge(postType: PostType.casePost),
-            onMenuSelected: (action) {
-              if (action == PostMenuAction.delete) {
-                confirmAndDeletePost(context, ref, post.id);
-              }
+            onMenuSelected: (action) => switch (action) {
+              PostMenuAction.edit => context.push('/edit-post/${post.id}'),
+              PostMenuAction.delete => confirmAndDeletePost(context, ref, post.id),
+              PostMenuAction.report => null,
             },
           ),
 

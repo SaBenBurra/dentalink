@@ -150,6 +150,18 @@ select set_config('t.id', public.create_post('question', 'Başlık', 'içerik', 
 select (select count(*) from public.post_tags where post_id = current_setting('t.id')::uuid) n_tags, branch
 from public.posts where id = current_setting('t.id')::uuid;
 rollback;
+
+-- 11) update_post: sahibi düzenler, etiketler eşitlenir (016) → BEKLENEN: title = 'Yeni', n_tags = 1
+--     Başka kullanıcı (<B>) → post not found; doğrudan UPDATE posts → permission denied
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select set_config('t.id', public.create_post('question', 'Eski', 'içerik', null, null,
+  '[{"name":"a","slug":"a"},{"name":"b","slug":"b"}]')::text, true);
+select public.update_post(current_setting('t.id')::uuid, 'Yeni', 'içerik', null, '[{"name":"b","slug":"b"}]');
+select title, (select count(*) from public.post_tags where post_id = p.id) n_tags
+from public.posts p where id = current_setting('t.id')::uuid;
+rollback;
 ```
 
 ---
