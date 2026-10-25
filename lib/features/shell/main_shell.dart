@@ -85,7 +85,7 @@ class MainShell extends ConsumerWidget {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
           child: AppBottomNavBar(
             currentIndex: _currentIndex(context),
             onTap: (index) => _onNavTap(context, index),

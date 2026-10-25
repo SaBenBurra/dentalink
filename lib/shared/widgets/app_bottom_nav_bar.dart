@@ -130,24 +130,25 @@ class _NavItem extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Badge.count(
                 count: badgeCount,
                 isLabelVisible: badgeCount > 0,
                 child: Icon(
                   selected ? selectedIcon : icon,
-                  size: 24,
+                  size: 22,
                   color: effectiveColor,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 1),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: effectiveColor,
                 ),
