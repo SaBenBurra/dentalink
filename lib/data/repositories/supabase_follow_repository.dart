@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/utils/paging.dart';
+import '../../core/utils/supabase_error_mapper.dart';
 import '../models/user_model.dart';
 import 'keyset.dart';
 import 'follow_repository.dart';
@@ -102,17 +103,20 @@ class SupabaseFollowRepository implements FollowRepository {
     );
   }
 
-  // shortcut: tüm takipçileri tek sorguda çeker (yalnızca ortak takipçiler
-  // için); büyük hesaplarda yavaşlarsa DB'de kesişim alan RPC'ye geç.
+  /// Kesişim DB'de alınır (migration 018); oturumsuz ya da kendi profilinde boş.
   @override
-  Future<List<UserModel>> getAllFollowers(String userId) async {
-    final response = await client
-        .from('follows')
-        .select('users!follows_follower_id_fkey(*)')
-        .eq('following_id', userId);
-
-    return (response as List<dynamic>)
-        .map((e) => UserModel.fromJson(e['users']))
-        .toList();
-  }
+  Future<MutualFollowers> getMutualFollowers(String userId, {int limit = 3}) =>
+      guardSupabase(() async {
+        final result = await client.rpc<Map<String, dynamic>>(
+          'get_mutual_followers',
+          params: {'p_user_id': userId, 'p_limit': limit},
+        );
+        return (
+          users: [
+            for (final u in result['users'] as List<dynamic>)
+              UserModel.fromJson(u as Map<String, dynamic>),
+          ],
+          total: result['total'] as int,
+        );
+      });
 }

@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Mevcut dosyalar `001_…`–`012_…` biçiminde. Yeni dosyalar da aynı sırayla devam eder (son: `017_…`).
+- **Dosya adı:** Mevcut dosyalar `001_…`–`012_…` biçiminde. Yeni dosyalar da aynı sırayla devam eder (son: `018_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`

@@ -192,8 +192,8 @@ class _FakeFollowRepository implements FollowRepository {
       (items: userId == otherUser.id ? <UserModel>[] : [otherUser], next: null);
 
   @override
-  Future<List<UserModel>> getAllFollowers(String userId) async =>
-      userId == otherUser.id ? [] : [otherUser];
+  Future<MutualFollowers> getMutualFollowers(String userId, {int limit = 3}) async =>
+      (users: <UserModel>[], total: 0);
 
   @override
   Future<PageResult<UserModel>> getFollowing(String userId,

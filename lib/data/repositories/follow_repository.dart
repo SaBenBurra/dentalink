@@ -1,6 +1,8 @@
 import '../../core/utils/paging.dart';
 import '../models/user_model.dart';
 
+typedef MutualFollowers = ({List<UserModel> users, int total});
+
 /// Takip sistemi arayüzü.
 ///
 /// Tüm implementasyonlar (Supabase, Mock) bu sözleşmeye uymalıdır.
@@ -31,8 +33,9 @@ abstract class FollowRepository {
   /// Kullanıcının takipçileri, en son takip eden önce; [before] ile sonraki sayfa.
   Future<PageResult<UserModel>> getFollowers(String userId, {PageCursor? before});
 
-  /// Sayfasız tüm takipçiler; yalnızca ortak takipçi hesabı için.
-  Future<List<UserModel>> getAllFollowers(String userId);
+  /// [userId]'yi takip edenlerden oturumdaki kullanıcının takip ettikleri:
+  /// en son takip eden önce en fazla [limit] kişi ve toplam sayı.
+  Future<MutualFollowers> getMutualFollowers(String userId, {int limit = 3});
 
   /// Kullanıcının takip ettikleri, en son takip edilen önce; [before] ile sonraki sayfa.
   Future<PageResult<UserModel>> getFollowing(String userId, {PageCursor? before});

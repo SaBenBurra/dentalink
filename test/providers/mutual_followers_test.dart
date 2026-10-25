@@ -19,15 +19,15 @@ UserModel _user(String id) => UserModel(
       createdAt: DateTime(2024),
     );
 
-/// 'p' profilini x, y, z takip ediyor; oturumdaki kullanıcı yalnızca y'yi takip ediyor.
+/// Kesişim DB'de (get_mutual_followers); burada yalnızca istenen profiller kaydedilir.
 class _FollowRepo implements FollowRepository {
-  @override
-  Future<List<UserModel>> getAllFollowers(String userId) async =>
-      [_user('x'), _user('y'), _user('z')];
+  final asked = <String>[];
 
   @override
-  Future<Set<String>> getFollowedUserIds(List<String> userIds) async =>
-      {'y'}.intersection(userIds.toSet());
+  Future<MutualFollowers> getMutualFollowers(String userId, {int limit = 3}) async {
+    asked.add(userId);
+    return (users: [_user('y')], total: 4);
+  }
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -35,27 +35,33 @@ class _FollowRepo implements FollowRepository {
 
 void main() {
   late ProviderContainer container;
+  late _FollowRepo repo;
 
   setUp(() async {
+    repo = _FollowRepo();
     container = ProviderContainer(overrides: [
       authRepositoryProvider.overrideWithValue(MockAuthForTest()),
-      followRepositoryProvider.overrideWithValue(_FollowRepo()),
+      followRepositoryProvider.overrideWithValue(repo),
     ]);
     addTearDown(container.dispose);
     await container.read(authProvider.future);
   });
 
-  Future<List<String>> mutual(String userId) async {
+  Future<MutualFollowers> mutual(String userId) {
     container.listen(mutualFollowersProvider(userId), (_, _) {});
-    final users = await container.read(mutualFollowersProvider(userId).future);
-    return [for (final u in users) u.id];
+    return container.read(mutualFollowersProvider(userId).future);
   }
 
-  test('yalnızca benim de takip ettiğim takipçiler döner', () async {
-    expect(await mutual('p'), ['y']);
+  test('başka profilde DB sonucu (ilk kişiler + toplam) döner', () async {
+    final result = await mutual('p');
+    expect(result.users.map((u) => u.id), ['y']);
+    expect(result.total, 4);
   });
 
-  test('kendi profilimde boş', () async {
-    expect(await mutual(_me), isEmpty);
+  test('kendi profilimde boş ve istek gitmez', () async {
+    final result = await mutual(_me);
+    expect(result.users, isEmpty);
+    expect(result.total, 0);
+    expect(repo.asked, isEmpty);
   });
 }

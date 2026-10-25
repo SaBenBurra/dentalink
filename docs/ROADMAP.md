@@ -115,7 +115,7 @@
 
 ## Faz 2 — Ölçek & dayanıklılık 🟡
 
-- [x] Cursor (keyset) sayfalama + sonsuz kaydırma: feed, yorumlar, arama, mesajlar, takipçiler, bookmark'lar. Liste sonundaki `LoadMoreFooter` göründükçe sonraki sayfayı ister (sohbette yukarı kaydırınca eski mesajlar); yorumlarda "Daha fazla göster" butonu. Silme ve profil etkileşimi yüklenen sayfaları korur (tek öğe güncellenir). Sohbet listesi sayfasız; ortak takipçiler hâlâ tam takipçi listesinden (DB kesişim RPC'si ayrı iş). _(2026-10-25; testli, cihazda doğrulanmadı)_ — `DATA-12`
+- [x] Cursor (keyset) sayfalama + sonsuz kaydırma: feed, yorumlar, arama, mesajlar, takipçiler, bookmark'lar. Liste sonundaki `LoadMoreFooter` göründükçe sonraki sayfayı ister (sohbette yukarı kaydırınca eski mesajlar); yorumlarda "Daha fazla göster" butonu. Silme ve profil etkileşimi yüklenen sayfaları korur (tek öğe güncellenir). Sohbet listesi sayfasız. Ortak takipçiler migration 018 `get_mutual_followers` RPC'siyle DB'de kesişimden (ilk 3 kişi + toplam). _(2026-10-25; testli, cihazda doğrulanmadı)_ — `DATA-12`
 - [ ] Görsel sıkıştırma (istemci tarafı) ve boyut limiti (ör. uzun kenar 2048px, ~1MB)
 - [ ] `post-images` bucket'ını private yap + signed URL (KVKK) — `SEC-9`
 - [ ] Tutarlı hata yönetimi: tüm repository'ler `guardSupabase` kullansın; `23505` ve `StorageException` eşlemesi

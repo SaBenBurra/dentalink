@@ -15,10 +15,10 @@ class MutualFollowersWidget extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return followersAsync.when(
-      data: (followers) {
-        if (followers.isEmpty) return const SizedBox.shrink();
+      data: (mutual) {
+        if (mutual.users.isEmpty) return const SizedBox.shrink();
 
-        final displayUsers = followers.take(3).toList();
+        final displayUsers = mutual.users.take(3).toList();
 
         return Padding(
           padding: const EdgeInsets.only(top: AppDimensions.spacing12),
@@ -60,10 +60,10 @@ class MutualFollowersWidget extends ConsumerWidget {
                         text: displayUsers.first.fullName,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      if (followers.length > 1) ...[
+                      if (mutual.total > 1) ...[
                         const TextSpan(text: ' ve '),
                         TextSpan(
-                          text: '${followers.length - 1} diğer kişi',
+                          text: '${mutual.total - 1} diğer kişi',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],

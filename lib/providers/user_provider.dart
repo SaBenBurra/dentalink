@@ -112,17 +112,13 @@ final followingProvider = AsyncNotifierProvider.autoDispose
 );
 
 /// Profili takip edenlerden oturumdaki kullanıcının takip ettikleri.
-/// Kendi profilinde ve oturumsuzken boş. Kesişim istemcide alınır
-/// (bkz. `getAllFollowers` shortcut'ı).
+/// İlk birkaç kişi ve toplam; kendi profilinde ve oturumsuzken istek gitmez.
+/// Hesap değişince yeniden hesaplanır.
 final mutualFollowersProvider =
-    AutoDisposeFutureProvider.family<List<UserModel>, String>((ref, userId) async {
+    AutoDisposeFutureProvider.family<MutualFollowers, String>((ref, userId) async {
   final me = ref.watch(authProvider.select((a) => a.value?.id));
-  if (me == null || me == userId) return const [];
-  final repo = ref.read(followRepositoryProvider);
-  final followers = await repo.getAllFollowers(userId);
-  final followed =
-      await repo.getFollowedUserIds([for (final u in followers) u.id]);
-  return [for (final u in followers) if (followed.contains(u.id)) u];
+  if (me == null || me == userId) return (users: <UserModel>[], total: 0);
+  return ref.read(followRepositoryProvider).getMutualFollowers(userId);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
