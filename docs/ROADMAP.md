@@ -91,13 +91,13 @@
 - [x] **Atomik post oluşturma:** migration 015; `post_images.image_url` artık bucket içi yol, istemci `getPublicUrl` ile URL üretir. Önce görseller yüklenir, sonra `create_post` RPC; hata olursa dosyalar silinir. _(2026-10-20; canlıda, cihazda görselli vaka oluştur/sil ve silinmiş postu beğenme (BUG-27) doğrulandı)_ — `DATA-4`, `SEC-13`, `DATA-9`
 - [x] **Post düzenleme ekranı** (başlık, içerik, branş, etiket) + menüde "Düzenle": migration 016 `update_post` RPC (sahiplik, doğrulama, etiket eşitleme); `posts` UPDATE yetkisi kaldırıldı. Görseller düzenlenmez. _(2026-10-20; canlıda, cihazda vaka ve soru düzenleme doğrulandı)_
 - [x] **Avatar değiştirme** (edit profile): galeri/kamera, önizleme, kaydette yükleme; oturumsuz "başarılı" dönmüyor; deneyim 0–70 doğrulaması. _(2026-10-20; cihazda doğrulandı)_ — `BUG-16`
-- [ ] **İyimser like/bookmark**, in-flight guard, rollback; detaydan feed'i komple yeniden yükleme yerine tek öğe güncelle — `BUG-12`
+- [x] **İyimser like/bookmark**, in-flight guard, rollback; detaydan feed ve aramadaki tek öğe güncellenir (ortak `post_toggle.dart`). _(2026-10-21; testli, cihazda doğrulanmadı)_ — `BUG-12`
 - [ ] **Çift gönderim korumaları** (yorum, cevap) + sayaç güncelleme — `BUG-13`
 - [ ] **Image picker** izin ve hata yönetimi — `BUG-15`
 - [ ] **Etiket girişi** normalize ve limit — `BUG-25`
 - [ ] `mark_best_answer`: tip kontrolü, geri alma, silme trigger'ı — `DATA-16`
 - [ ] İçerik uzunluk CHECK'leri (DB) — `DATA-17`
-- [ ] Paylaş butonu (kopyala/paylaş) — `BUG-11`
+- [x] Paylaş butonu kaldırıldı — `BUG-11`
 - [ ] Ortak takipçiler widget'ı: düzelt ya da kaldır — `BUG-19`
 - [ ] Bildirim ayarları toggle'ları (bağla ya da gizle) — `UX-4`
 - [ ] Integration test'i fake repository'lerle çalışır hale getir — `TEST-2`

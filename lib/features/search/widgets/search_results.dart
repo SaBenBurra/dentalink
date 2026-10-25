@@ -33,7 +33,10 @@ class PostSearchResults extends ConsumerWidget {
           );
         }
         return ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing8),
+          padding: EdgeInsets.only(
+            top: AppDimensions.spacing8,
+            bottom: AppDimensions.spacing8 + MediaQuery.paddingOf(context).bottom,
+          ),
           itemCount: posts.length,
           separatorBuilder: (_, _) =>
               const SizedBox(height: AppDimensions.spacing8),
@@ -106,7 +109,10 @@ class UserSearchResults extends ConsumerWidget {
           );
         }
         return ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing8),
+          padding: EdgeInsets.only(
+            top: AppDimensions.spacing8,
+            bottom: AppDimensions.spacing8 + MediaQuery.paddingOf(context).bottom,
+          ),
           itemCount: users.length,
           separatorBuilder: (_, _) => const Divider(height: 1),
           itemBuilder: (context, index) {

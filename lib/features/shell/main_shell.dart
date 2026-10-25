@@ -70,7 +70,20 @@ class MainShell extends ConsumerWidget {
           ),
         ),
         showIcon: false,
-        body: SizedBox.expand(child: child),
+        // Yüzen bar içeriğin üstünde durur; listeler son öğeyi barın üstüne
+        // kaydırabilsin diye bar yüksekliği alt boşluk (MediaQuery) olarak verilir.
+        body: Builder(
+          builder: (context) => ValueListenableBuilder<double>(
+            valueListenable: BottomBarScope.of(context).barHeight,
+            builder: (context, barHeight, child) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                padding: MediaQuery.paddingOf(context).copyWith(bottom: barHeight),
+              ),
+              child: child!,
+            ),
+            child: SizedBox.expand(child: child),
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
           child: AppBottomNavBar(

@@ -61,9 +61,11 @@ class FeedList extends StatelessWidget {
 
           return ListView.separated(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.spacing16,
-              vertical: AppDimensions.spacing12,
+            padding: EdgeInsets.fromLTRB(
+              AppDimensions.spacing16,
+              AppDimensions.spacing12,
+              AppDimensions.spacing16,
+              AppDimensions.spacing12 + MediaQuery.paddingOf(context).bottom,
             ),
             itemCount: filteredPosts.length,
             separatorBuilder: (context, index) =>

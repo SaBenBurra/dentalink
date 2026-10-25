@@ -4,6 +4,7 @@ import '../core/error/app_failures.dart';
 import '../data/models/post_model.dart';
 import '../data/models/user_model.dart';
 import '../data/providers/repository_providers.dart';
+import 'post_toggle.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Search State
@@ -54,6 +55,7 @@ class SearchState {
 class SearchNotifier extends AutoDisposeNotifier<SearchState> {
   /// Yalnızca en son isteğin sonucu yazılır; yavaş eski bir yanıt yenisini ezmez.
   int _requestId = 0;
+  final _pending = <(String, PostToggle)>{};
 
   @override
   SearchState build() => const SearchState();
@@ -111,38 +113,44 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
     state = const SearchState();
   }
 
-  Future<void> toggleLike(String postId) => _update(postId, (post) {
-        final repo = ref.read(postActionRepositoryProvider);
-        return post.isLiked ? repo.unlikePost(postId) : repo.likePost(postId);
-      });
+  Future<void> toggleLike(String postId) => _toggle(postId, PostToggle.like);
 
-  Future<void> toggleBookmark(String postId) => _update(postId, (post) {
-        final repo = ref.read(bookmarkRepositoryProvider);
-        return post.isBookmarked
-            ? repo.unbookmarkPost(postId)
-            : repo.bookmarkPost(postId);
-      });
+  Future<void> toggleBookmark(String postId) =>
+      _toggle(postId, PostToggle.bookmark);
+
+  /// Sonuçlardaki tek postu günceller (detay ekranından senkronizasyon dahil).
+  void patchPost(String postId, PostModel Function(PostModel) update) {
+    final posts = state.postResults.valueOrNull;
+    if (posts == null) return;
+    state = state.copyWith(postResults: AsyncData([
+      for (final p in posts) p.id == postId ? update(p) : p,
+    ]));
+  }
+
+  void removePost(String postId) {
+    final posts = state.postResults.valueOrNull;
+    if (posts == null) return;
+    state = state.copyWith(postResults: AsyncData([
+      for (final p in posts) if (p.id != postId) p,
+    ]));
+  }
 
   /// Başka cihazda silinmiş post (NotFound) sonuçlardan düşer; hata yine
   /// fırlatılır ki UI kullanıcıya bildirsin.
-  Future<void> _update(
-    String postId,
-    Future<PostModel> Function(PostModel post) action,
-  ) async {
-    final post =
-        state.postResults.valueOrNull?.where((p) => p.id == postId).firstOrNull;
-    if (post == null) return;
+  Future<void> _toggle(String postId, PostToggle toggle) async {
     try {
-      final updated = await action(post);
-      state = state.copyWith(postResults: AsyncData([
-        for (final p in state.postResults.valueOrNull ?? const <PostModel>[])
-          p.id == postId ? updated : p,
-      ]));
+      await runPostToggle(
+        ref,
+        _pending,
+        toggle,
+        postId,
+        current: () => state.postResults.valueOrNull
+            ?.where((p) => p.id == postId)
+            .firstOrNull,
+        patch: (update) => patchPost(postId, update),
+      );
     } on NotFoundFailure {
-      state = state.copyWith(postResults: AsyncData([
-        for (final p in state.postResults.valueOrNull ?? const <PostModel>[])
-          if (p.id != postId) p,
-      ]));
+      removePost(postId);
       rethrow;
     }
   }

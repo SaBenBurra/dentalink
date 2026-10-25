@@ -52,7 +52,10 @@ class ProfilePostsTab extends ConsumerWidget {
         }
 
         return ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing8),
+          padding: EdgeInsets.only(
+            top: AppDimensions.spacing8,
+            bottom: AppDimensions.spacing8 + MediaQuery.paddingOf(context).bottom,
+          ),
           itemCount: posts.length,
           separatorBuilder: (context, index) => const Divider(),
           itemBuilder: (context, index) {

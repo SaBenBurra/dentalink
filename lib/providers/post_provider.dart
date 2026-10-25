@@ -3,6 +3,8 @@ import '../core/error/app_failures.dart';
 import '../data/models/post_model.dart';
 import '../data/providers/repository_providers.dart';
 import 'feed_provider.dart';
+import 'post_toggle.dart';
+import 'search_provider.dart';
 // ─────────────────────────────────────────────────────────────────────────────
 // Tek Post Detay Provider
 // ─────────────────────────────────────────────────────────────────────────────
@@ -14,29 +16,43 @@ class PostDetailNotifier
     return ref.read(feedRepositoryProvider).getPostById(arg);
   }
 
-  Future<void> toggleLike() => _update((post) {
-        final repo = ref.read(postActionRepositoryProvider);
-        return post.isLiked ? repo.unlikePost(arg) : repo.likePost(arg);
-      });
+  final _pending = <(String, PostToggle)>{};
 
-  Future<void> toggleBookmark() => _update((post) {
-        final repo = ref.read(bookmarkRepositoryProvider);
-        return post.isBookmarked
-            ? repo.unbookmarkPost(arg)
-            : repo.bookmarkPost(arg);
-      });
+  Future<void> toggleLike() => _toggle(PostToggle.like);
+
+  Future<void> toggleBookmark() => _toggle(PostToggle.bookmark);
 
   /// Post başka cihazda silinmişse ekran "bulunamadı" durumuna geçer;
-  /// diğer hatalar UI'ın göstermesi için fırlatılır.
-  Future<void> _update(Future<PostModel> Function(PostModel post) action) async {
-    final post = state.valueOrNull;
-    if (post == null) return;
+  /// diğer hatalar UI'ın göstermesi için fırlatılır. Feed ve arama listesindeki
+  /// aynı post yeniden çekilmeden güncellenir.
+  Future<void> _toggle(PostToggle toggle) async {
     try {
-      state = AsyncData(await action(post));
+      final server = await runPostToggle(
+        ref,
+        _pending,
+        toggle,
+        arg,
+        current: () => state.valueOrNull,
+        patch: (update) {
+          final post = state.valueOrNull;
+          if (post != null) state = AsyncData(update(post));
+        },
+      );
+      if (server == null) return;
+      PostModel sync(PostModel p) => toggle.copyFields(p, server);
+      if (ref.exists(feedProvider)) {
+        ref.read(feedProvider.notifier).patchPost(arg, sync);
+      }
+      if (ref.exists(searchProvider)) {
+        ref.read(searchProvider.notifier).patchPost(arg, sync);
+      }
     } on NotFoundFailure catch (e, st) {
       state = AsyncError(e, st);
+      if (ref.exists(feedProvider)) ref.read(feedProvider.notifier).removePost(arg);
+      if (ref.exists(searchProvider)) {
+        ref.read(searchProvider.notifier).removePost(arg);
+      }
     }
-    ref.invalidate(feedProvider);
   }
 }
 
