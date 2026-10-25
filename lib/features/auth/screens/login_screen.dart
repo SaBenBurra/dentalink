@@ -222,7 +222,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDark
-        ? const Color(0xFF11211F)
+        ? AppColors.darkBackground
         : AppColors.bgGradientStart;
         
     final state = ref.watch(loginControllerProvider);

@@ -45,7 +45,7 @@ class LoginEmailPhoneInput extends StatelessWidget {
       borderColor = AppColors.error.withValues(alpha: 0.8);
       bgOpacityColor = AppColors.error.withValues(alpha: isDark ? 0.08 : 0.03);
     } else if (hasFocus) {
-      borderColor = const Color(0xFF13B9A5);
+      borderColor = Theme.of(context).colorScheme.primary;
       bgOpacityColor = const Color(
         0xFF13B9A5,
       ).withValues(alpha: isDark ? 0.15 : 0.08);
@@ -65,7 +65,7 @@ class LoginEmailPhoneInput extends StatelessWidget {
             boxShadow: hasFocus
                 ? [
                     BoxShadow(
-                      color: const Color(0xFF13B9A5).withValues(alpha: 0.1),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                       blurRadius: 16,
                       offset: const Offset(0, 4),
                     ),
@@ -95,11 +95,11 @@ class LoginEmailPhoneInput extends StatelessWidget {
                 prefixIcon: Icon(
                   Icons.alternate_email_rounded,
                   color: hasFocus && !hasError
-                      ? const Color(0xFF13B9A5)
+                      ? Theme.of(context).colorScheme.primary
                       : (hasError ? AppColors.error : AppColors.lightIcon),
                   size: AppDimensions.iconMedium,
                 ),
-                suffixIcon: _buildSuffixIcon(),
+                suffixIcon: _buildSuffixIcon(context),
                 filled: true,
                 fillColor: Colors.transparent,
                 border: InputBorder.none,
@@ -137,16 +137,16 @@ class LoginEmailPhoneInput extends StatelessWidget {
     );
   }
 
-  Widget _buildSuffixIcon() {
+  Widget _buildSuffixIcon(BuildContext context) {
     if (isLoading) {
-      return const Padding(
-        padding: EdgeInsets.all(AppDimensions.spacing12),
+      return Padding(
+        padding: const EdgeInsets.all(AppDimensions.spacing12),
         child: SizedBox(
           width: 20,
           height: 20,
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF13B9A5)),
+            valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
           ),
         ),
       );
@@ -162,7 +162,7 @@ class LoginEmailPhoneInput extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(AppDimensions.spacing6),
           child: Material(
-            color: const Color(0xFF13B9A5),
+            color: Theme.of(context).colorScheme.primary,
             shape: const CircleBorder(),
             child: IconButton(
               icon: const Icon(

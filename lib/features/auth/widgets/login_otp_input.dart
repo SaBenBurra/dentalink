@@ -47,7 +47,6 @@ class LoginOtpInput extends StatefulWidget {
 
 class _LoginOtpInputState extends State<LoginOtpInput>
     with TickerProviderStateMixin {
-  static const _brandTeal = Color(0xFF13B9A5);
 
   static const _scatterOffsets = [
     Offset(-42, -16),
@@ -173,7 +172,7 @@ class _LoginOtpInputState extends State<LoginOtpInput>
             animation: _successController,
             digits: _displayDigits,
             mergeOffsets: _mergeOffsets,
-            brandColor: _brandTeal,
+            brandColor: Theme.of(context).colorScheme.primary,
             message: widget.successMessage,
           )
         else ...[
@@ -254,12 +253,12 @@ class _LoginOtpInputState extends State<LoginOtpInput>
         const SizedBox(height: AppDimensions.spacing24),
         if (!showSuccess) ...[
           if (widget.isLoading)
-            const SizedBox(
+            SizedBox(
               width: 24,
               height: 24,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(_brandTeal),
+                valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
               ),
             )
           else
@@ -270,7 +269,7 @@ class _LoginOtpInputState extends State<LoginOtpInput>
                     ? 'Kodu Tekrar Gönder'
                     : 'Kodu Tekrar Gönder (${widget.resendCountdown}s)',
                 style: TextStyle(
-                  color: widget.canResend ? _brandTeal : Colors.grey,
+                  color: widget.canResend ? Theme.of(context).colorScheme.primary : Colors.grey,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -518,7 +517,7 @@ class _OtpDigitBox extends StatelessWidget {
           color: hasError
               ? AppColors.error.withValues(alpha: 0.85)
               : hasFocus
-                  ? const Color(0xFF13B9A5)
+                  ? Theme.of(context).colorScheme.primary
                   : glassBorderColor,
           width: hasError || hasFocus ? 2.0 : 1.0,
         ),
@@ -599,7 +598,7 @@ class _OtpDigitBox extends StatelessWidget {
             textAlign: TextAlign.center,
             textAlignVertical: TextAlignVertical.center,
             showCursor: true,
-            cursorColor: const Color(0xFF13B9A5),
+            cursorColor: Theme.of(context).colorScheme.primary,
             style: digitStyle.copyWith(color: Colors.transparent),
             // resizeToAvoidBottomInset kapalı; scroll ekran seviyesinde
             // yönetiliyor, küçük tampon yeterli.

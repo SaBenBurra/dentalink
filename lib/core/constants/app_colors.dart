@@ -136,6 +136,19 @@ abstract final class AppColors {
   static const Color bestAnswer = Color(0xFF22C55E); // Green
 
   // ────────────────────────────────────────────
+  // Branş Renkleri (DentalBranchUI.color)
+  // ────────────────────────────────────────────
+  static const Color branchPedodonti = Color(0xFFE91E63);
+  static const Color branchEndodonti = Color(0xFF2196F3);
+  static const Color branchOrtodonti = Color(0xFF9C27B0);
+  static const Color branchPeriodontoloji = Color(0xFF4CAF50);
+  static const Color branchProtetikDisTedavisi = Color(0xFFFF9800);
+  static const Color branchAgizDisCeneCerrahisi = Color(0xFFF44336);
+  static const Color branchAgizDisCeneRadyolojisi = Color(0xFF00BCD4);
+  static const Color branchOralDiagnoz = Color(0xFF795548);
+  static const Color branchRestoratifDisTedavisi = Color(0xFF607D8B);
+
+  // ────────────────────────────────────────────
   // Rozet Renkleri
   // ────────────────────────────────────────────
   static const Color badgeBronze = Color(0xFFCD7F32);

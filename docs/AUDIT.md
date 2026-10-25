@@ -148,7 +148,7 @@
 | UX-13 | ⚪ | `app_bottom_nav_bar.dart:163`, detail geri/bookmark daireleri, gönder butonları vb. | Yalnızca ikon içeren butonlarda tooltip ve semantics yok. | `tooltip:` / `Semantics`. *(Faz 3)* | ⬜ |
 | UX-14 | ⚪ | `image_picker_grid.dart:364` (~22px), create butonu (~38px), `animated_action_button.dart:76` | Dokunma alanları küçük. | Minimum 48×48. *(Faz 3)* | ⬜ |
 | UX-15 | ⚪ | `case_detail_screen.dart:484`, `question_detail_screen.dart:343`; `darkTextTertiary` | Düşük kontrast (2.7:1, 3.6:1); alt menü etiketleri 10px. | 4.5:1 hedefi. *(Faz 3)* | ⬜ |
-| UX-16 | ⚪ | birçok ekran | `Color(0xFF11211F)` ve `Color(0xFF13B9A5)` sabit yazılmış, tema kullanılmıyor. | `Theme.of(context).colorScheme`. *(Faz 3)* | ⬜ |
+| UX-16 | ⚪ | birçok ekran | `Color(0xFF11211F)` ve `Color(0xFF13B9A5)` sabit yazılmış, tema kullanılmıyor. | `Theme.of(context).colorScheme`. *(Faz 3)* | ✅ |
 | UX-17 | ⚪ | — | Oturum açıkken önce login formu görünüyor (bkz. AUTH-11); splash yok. | Faz 5. | ⬜ |
 
 ---

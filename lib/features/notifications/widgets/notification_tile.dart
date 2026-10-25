@@ -56,7 +56,7 @@ class NotificationTile extends StatelessWidget {
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: isDark
-                            ? const Color(0xFF11211F)
+                            ? AppColors.darkBackground
                             : AppColors.lightBackground,
                         width: 2,
                       ),

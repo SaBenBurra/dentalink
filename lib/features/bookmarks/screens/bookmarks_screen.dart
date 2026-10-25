@@ -26,7 +26,7 @@ class BookmarksScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF11211F)
+          ? AppColors.darkBackground
           : AppColors.lightBackground,
       appBar: AppBar(
         title: const Text('Kaydedilenler'),
@@ -50,7 +50,7 @@ class BookmarksScreen extends ConsumerWidget {
 
           return RefreshIndicator(
             onRefresh: () => ref.read(bookmarkProvider.notifier).refresh(),
-            color: const Color(0xFF13B9A5),
+            color: Theme.of(context).colorScheme.primary,
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(
                 vertical: AppDimensions.spacing8,

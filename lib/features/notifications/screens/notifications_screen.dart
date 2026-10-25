@@ -23,7 +23,7 @@ class NotificationsScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF11211F)
+          ? AppColors.darkBackground
           : AppColors.lightBackground,
       appBar: NotificationsAppBar(),
       body: const _NotificationListView(),

@@ -79,7 +79,7 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
     final currentUser = ref.watch(currentUserProvider);
 
     final backgroundColor = isDark
-        ? const Color(0xFF11211F)
+        ? AppColors.darkBackground
         : AppColors.bgGradientStart;
 
     final glassBgColor = isDark

@@ -75,7 +75,7 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
     final currentUser = ref.watch(currentUserProvider);
 
     final backgroundColor = isDark
-        ? const Color(0xFF11211F)
+        ? AppColors.darkBackground
         : AppColors.bgGradientStart;
 
     final glassBgColor = isDark

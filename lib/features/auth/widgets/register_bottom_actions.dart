@@ -67,13 +67,13 @@ class RegisterBottomActions extends StatelessWidget {
                 child: Ink(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF13B9A5),
+                    color: Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(
                       AppDimensions.radiusMedium,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF13B9A5).withValues(alpha: 0.25),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),

@@ -64,8 +64,8 @@ class LoginLogoHeader extends StatelessWidget {
               size: const Size(48, 48),
               painter: ToothPainter(
                 colors: [
-                  isDark ? AppColors.primaryLight : const Color(0xFF13B9A5),
-                  isDark ? AppColors.secondaryLight : const Color(0xFF3B82F6),
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.secondary,
                 ],
               ),
             ),

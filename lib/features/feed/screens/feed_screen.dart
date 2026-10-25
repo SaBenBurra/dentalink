@@ -39,7 +39,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
     final feedState = ref.watch(feedProvider);
 
     final backgroundColor = isDark
-        ? const Color(0xFF11211F)
+        ? AppColors.darkBackground
         : AppColors.bgGradientStart;
 
     final glassBorderColor = isDark

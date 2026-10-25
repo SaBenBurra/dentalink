@@ -35,13 +35,13 @@ class SettingsSection extends StatelessWidget {
                 Icon(
                   icon,
                   size: AppDimensions.iconMedium,
-                  color: const Color(0xFF13B9A5), // Primary color
+                  color: Theme.of(context).colorScheme.primary, // Primary color
                 ),
                 const SizedBox(width: AppDimensions.spacing8),
                 Text(
                   title,
                   style: AppTextStyles.titleSmall.copyWith(
-                    color: const Color(0xFF13B9A5),
+                    color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

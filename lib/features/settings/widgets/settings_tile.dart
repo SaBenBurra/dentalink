@@ -111,7 +111,7 @@ class SettingsTile extends StatelessWidget {
                 Switch(
                   value: toggleValue,
                   onChanged: enabled ? onToggle : null,
-                  activeTrackColor: const Color(0xFF13B9A5),
+                  activeTrackColor: Theme.of(context).colorScheme.primary,
                 )
               else if (onTap != null)
                 Icon(

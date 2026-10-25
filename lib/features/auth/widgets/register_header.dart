@@ -53,10 +53,10 @@ class RegisterHeader extends StatelessWidget {
                 opacity: currentStep > 0 ? 1.0 : 0.0,
                 child: TextButton(
                   onPressed: currentStep > 0 ? () => nextStep : null,
-                  child: const Text(
+                  child: Text(
                     'Geç',
                     style: TextStyle(
-                      color: Color(0xFF13B9A5),
+                      color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -83,13 +83,16 @@ class RegisterHeader extends StatelessWidget {
                 height: 6,
                 width: MediaQuery.of(context).size.width * progress - 48,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF13B9A5), Color(0xFF3B82F6)],
+                  gradient: LinearGradient(
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.secondary,
+                    ],
                   ),
                   borderRadius: BorderRadius.circular(3),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF13B9A5).withValues(alpha: 0.3),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                       blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),
@@ -114,7 +117,7 @@ class RegisterHeader extends StatelessWidget {
               Text(
                 'Adım ${currentStep + 1} / $totalSteps',
                 style: AppTextStyles.bodySmall.copyWith(
-                  color: const Color(0xFF13B9A5),
+                  color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),

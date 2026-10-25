@@ -109,15 +109,15 @@ class RegisterStepOne extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? (isDark
-                              ? const Color(0xFF13B9A5).withValues(alpha: 0.15)
-                              : const Color(0xFF13B9A5).withValues(alpha: 0.08))
+                              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)
+                              : Theme.of(context).colorScheme.primary.withValues(alpha: 0.08))
                         : glassBgColor,
                     borderRadius: BorderRadius.circular(
                       AppDimensions.radiusMedium,
                     ),
                     border: Border.all(
                       color: isSelected
-                          ? const Color(0xFF13B9A5)
+                          ? Theme.of(context).colorScheme.primary
                           : glassBorderColor,
                       width: isSelected ? 1.5 : 1.0,
                     ),
@@ -141,7 +141,7 @@ class RegisterStepOne extends StatelessWidget {
                           title.titleIcon,
                           size: 16,
                           color: isSelected
-                              ? const Color(0xFF13B9A5)
+                              ? Theme.of(context).colorScheme.primary
                               : (isDark ? Colors.white60 : Colors.black54),
                         ),
                         const SizedBox(width: AppDimensions.spacing8),
@@ -153,7 +153,7 @@ class RegisterStepOne extends StatelessWidget {
                                   ? FontWeight.bold
                                   : FontWeight.normal,
                               color: isSelected
-                                  ? const Color(0xFF13B9A5)
+                                  ? Theme.of(context).colorScheme.primary
                                   : textPrimaryColor,
                             ),
                             maxLines: 2,

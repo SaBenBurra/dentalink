@@ -178,7 +178,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final state = ref.watch(registerControllerProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = isDark
-        ? const Color(0xFF11211F)
+        ? AppColors.darkBackground
         : AppColors.bgGradientStart;
     final textPrimaryColor = isDark
         ? AppColors.darkTextPrimary
@@ -303,9 +303,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const CircularProgressIndicator(
+                        CircularProgressIndicator(
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            Color(0xFF13B9A5),
+                            Theme.of(context).colorScheme.primary,
                           ),
                         ),
                         const SizedBox(height: AppDimensions.spacing16),

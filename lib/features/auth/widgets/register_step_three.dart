@@ -109,10 +109,10 @@ class RegisterStepThree extends StatelessWidget {
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF13B9A5),
+                        color: Theme.of(context).colorScheme.primary,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isDark ? const Color(0xFF11211F) : Colors.white,
+                          color: isDark ? AppColors.darkBackground : Colors.white,
                           width: 2,
                         ),
                       ),
@@ -231,7 +231,7 @@ class _ActionButton extends StatelessWidget {
             Icon(
               icon,
               size: 18,
-              color: const Color(0xFF13B9A5),
+              color: Theme.of(context).colorScheme.primary,
             ),
             const SizedBox(width: AppDimensions.spacing8),
             Text(

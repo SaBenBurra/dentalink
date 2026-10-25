@@ -23,7 +23,7 @@ class SettingsScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF11211F)
+          ? AppColors.darkBackground
           : AppColors.lightBackground,
       appBar: AppBar(
         title: const Text('Ayarlar'),
@@ -160,16 +160,16 @@ class SettingsScreen extends ConsumerWidget {
   }) {
     final isSelected = mode == current;
     return ListTile(
-      leading: Icon(icon, color: isSelected ? const Color(0xFF13B9A5) : null),
+      leading: Icon(icon, color: isSelected ? Theme.of(context).colorScheme.primary : null),
       title: Text(
         label,
         style: TextStyle(
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? const Color(0xFF13B9A5) : null,
+          color: isSelected ? Theme.of(context).colorScheme.primary : null,
         ),
       ),
       trailing: isSelected
-          ? const Icon(Icons.check_rounded, color: Color(0xFF13B9A5))
+          ? Icon(Icons.check_rounded, color: Theme.of(context).colorScheme.primary)
           : null,
       onTap: () {
         ref.read(themeModeProvider.notifier).setThemeMode(mode);
@@ -275,11 +275,11 @@ class SettingsScreen extends ConsumerWidget {
         label,
         style: TextStyle(
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? const Color(0xFF13B9A5) : null,
+          color: isSelected ? Theme.of(context).colorScheme.primary : null,
         ),
       ),
       trailing: isSelected
-          ? const Icon(Icons.check_rounded, color: Color(0xFF13B9A5))
+          ? Icon(Icons.check_rounded, color: Theme.of(context).colorScheme.primary)
           : null,
       onTap: () {
         ref.read(localeModeProvider.notifier).setLocale(locale);

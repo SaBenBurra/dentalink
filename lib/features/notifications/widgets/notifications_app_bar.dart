@@ -24,7 +24,7 @@ class NotificationsAppBar extends ConsumerWidget
         horizontal: AppDimensions.spacing10,
       ),
       backgroundColor: isDark
-          ? const Color(0xFF11211F)
+          ? AppColors.darkBackground
           : AppColors.lightBackground,
       elevation: 0,
       surfaceTintColor: Colors.transparent,
