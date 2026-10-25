@@ -136,28 +136,31 @@ class _UserListTabState extends ConsumerState<_UserListTab> {
           _loadFollowStatuses(users);
         });
 
-        return ListView.separated(
-          padding: const EdgeInsets.all(AppDimensions.spacing16),
-          itemCount: users.length + (hasMore ? 1 : 0),
-          separatorBuilder: (context, index) =>
-              const SizedBox(height: AppDimensions.spacing8),
-          itemBuilder: (context, index) {
-            if (index == users.length) {
-              return LoadMoreFooter(onLoadMore: notifier.loadMore);
-            }
-            final user = users[index];
-            final isMe = user.id == ref.watch(currentUserProvider)?.id;
-            return UserTile(
-              user: user,
-              onTap: () => context.push('/profile/${user.id}'),
-              trailing: isMe
-                  ? null
-                  : _FollowButton(
-                      key: ValueKey(user.id),
-                      userId: user.id,
-                    ),
-            );
-          },
+        return RefreshIndicator(
+          onRefresh: () => ref.refresh(widget.provider.future),
+          child: ListView.separated(
+            padding: const EdgeInsets.all(AppDimensions.spacing16),
+            itemCount: users.length + (hasMore ? 1 : 0),
+            separatorBuilder: (context, index) =>
+                const SizedBox(height: AppDimensions.spacing8),
+            itemBuilder: (context, index) {
+              if (index == users.length) {
+                return LoadMoreFooter(onLoadMore: notifier.loadMore);
+              }
+              final user = users[index];
+              final isMe = user.id == ref.watch(currentUserProvider)?.id;
+              return UserTile(
+                user: user,
+                onTap: () => context.push('/profile/${user.id}'),
+                trailing: isMe
+                    ? null
+                    : _FollowButton(
+                        key: ValueKey(user.id),
+                        userId: user.id,
+                      ),
+              );
+            },
+          ),
         );
       },
       loading: () => const Center(child: DentLinkLoadingSpinner()),

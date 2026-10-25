@@ -57,39 +57,42 @@ class ProfilePostsTab extends ConsumerWidget {
           );
         }
 
-        return ListView.separated(
-          padding: EdgeInsets.only(
-            top: AppDimensions.spacing8,
-            bottom: AppDimensions.spacing8 + MediaQuery.paddingOf(context).bottom,
+        return RefreshIndicator(
+          onRefresh: () => ref.refresh(userPostsProvider(userId).future),
+          child: ListView.separated(
+            padding: EdgeInsets.only(
+              top: AppDimensions.spacing8,
+              bottom: AppDimensions.spacing8 + MediaQuery.paddingOf(context).bottom,
+            ),
+            itemCount: posts.length + (hasMore ? 1 : 0),
+            separatorBuilder: (context, index) => const Divider(),
+            itemBuilder: (context, index) {
+              if (index == posts.length) {
+                return LoadMoreFooter(onLoadMore: notifier.loadMore);
+              }
+              final post = posts[index];
+
+              final routePath = post.type == PostType.casePost
+                  ? '/feed/case/${post.id}'
+                  : '/feed/question/${post.id}';
+
+              return PostCardFactory.build(
+                post,
+                onLikeToggle: () => _run(context, ref, () {
+                  final repo = ref.read(postActionRepositoryProvider);
+                  return post.isLiked ? repo.unlikePost(post.id) : repo.likePost(post.id);
+                }),
+                onBookmarkToggle: () => _run(context, ref, () {
+                  final repo = ref.read(bookmarkRepositoryProvider);
+                  return post.isBookmarked
+                      ? repo.unbookmarkPost(post.id)
+                      : repo.bookmarkPost(post.id);
+                }),
+                onCommentTap: () => context.push(routePath),
+                onTap: () => context.push(routePath),
+              );
+            },
           ),
-          itemCount: posts.length + (hasMore ? 1 : 0),
-          separatorBuilder: (context, index) => const Divider(),
-          itemBuilder: (context, index) {
-            if (index == posts.length) {
-              return LoadMoreFooter(onLoadMore: notifier.loadMore);
-            }
-            final post = posts[index];
-
-            final routePath = post.type == PostType.casePost
-                ? '/feed/case/${post.id}'
-                : '/feed/question/${post.id}';
-
-            return PostCardFactory.build(
-              post,
-              onLikeToggle: () => _run(context, ref, () {
-                final repo = ref.read(postActionRepositoryProvider);
-                return post.isLiked ? repo.unlikePost(post.id) : repo.likePost(post.id);
-              }),
-              onBookmarkToggle: () => _run(context, ref, () {
-                final repo = ref.read(bookmarkRepositoryProvider);
-                return post.isBookmarked
-                    ? repo.unbookmarkPost(post.id)
-                    : repo.bookmarkPost(post.id);
-              }),
-              onCommentTap: () => context.push(routePath),
-              onTap: () => context.push(routePath),
-            );
-          },
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),

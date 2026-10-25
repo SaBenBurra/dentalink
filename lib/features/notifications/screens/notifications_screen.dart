@@ -116,24 +116,27 @@ class _NotificationListView extends ConsumerWidget {
           );
         }
 
-        return ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing8),
-          itemCount: notifications.length,
-          separatorBuilder: (context, index) => Divider(
-            height: 1,
-            thickness: 1,
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.05)
-                : Colors.black.withValues(alpha: 0.05),
-            indent: 72,
+        return RefreshIndicator(
+          onRefresh: () => ref.refresh(notificationsProvider.future),
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing8),
+            itemCount: notifications.length,
+            separatorBuilder: (context, index) => Divider(
+              height: 1,
+              thickness: 1,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.black.withValues(alpha: 0.05),
+              indent: 72,
+            ),
+            itemBuilder: (context, index) {
+              final notification = notifications[index];
+              return NotificationTile(
+                notification: notification,
+                onTap: () => _handleNotificationTap(context, ref, notification),
+              );
+            },
           ),
-          itemBuilder: (context, index) {
-            final notification = notifications[index];
-            return NotificationTile(
-              notification: notification,
-              onTap: () => _handleNotificationTap(context, ref, notification),
-            );
-          },
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
