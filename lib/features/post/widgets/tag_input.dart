@@ -6,6 +6,17 @@ class TagInput extends StatefulWidget {
   final List<String> initialTags;
   final ValueChanged<List<String>> onTagsChanged;
 
+  static const maxTags = 5;
+  static const maxTagLength = 30;
+
+  /// `#` ve boşluk atılır; Türkçe I/İ doğru küçültülür.
+  static String normalize(String value) => value
+      .replaceAll('#', '')
+      .trim()
+      .replaceAll('I', 'ı')
+      .replaceAll('İ', 'i')
+      .toLowerCase();
+
   const TagInput({
     super.key,
     this.initialTags = const [],
@@ -34,22 +45,45 @@ class _TagInputState extends State<TagInput> {
     super.dispose();
   }
 
+  bool get _isFull => _tags.length >= TagInput.maxTags;
+
   void _addTag(String value) {
-    final cleanValue = value.trim().toLowerCase();
-    if (cleanValue.isNotEmpty && !_tags.contains(cleanValue)) {
-      setState(() {
-        _tags.add(cleanValue);
-      });
-      widget.onTagsChanged(_tags);
+    final tag = TagInput.normalize(value);
+    if (tag.isNotEmpty && !_isFull && !_tags.contains(tag)) _tags.add(tag);
+  }
+
+  /// Yazılmakta olan etiket de dahil edilir: gönderimde kaybolmasın.
+  void _emit() {
+    final pending = TagInput.normalize(_controller.text);
+    widget.onTagsChanged([
+      ..._tags,
+      if (pending.isNotEmpty && !_isFull && !_tags.contains(pending)) pending,
+    ]);
+  }
+
+  void _onChanged(String value) {
+    final parts = value.split(RegExp(r'[\s,]'));
+    if (parts.length > 1) {
+      // Boşluk/virgülle bitenler eklenir; son parça yazılmaya devam eder.
+      setState(() => parts.take(parts.length - 1).forEach(_addTag));
+      final rest = _isFull ? '' : parts.last;
+      _controller.value = TextEditingValue(
+        text: rest,
+        selection: TextSelection.collapsed(offset: rest.length),
+      );
     }
+    _emit();
+  }
+
+  void _onSubmitted(String value) {
+    setState(() => _addTag(value));
     _controller.clear();
+    _emit();
   }
 
   void _removeTag(String tag) {
-    setState(() {
-      _tags.remove(tag);
-    });
-    widget.onTagsChanged(_tags);
+    setState(() => _tags.remove(tag));
+    _emit();
   }
 
   @override
@@ -95,24 +129,23 @@ class _TagInputState extends State<TagInput> {
                 ),
                 const SizedBox(height: AppDimensions.spacing8),
               ],
-              TextField(
-                controller: _controller,
-                focusNode: _focusNode,
-                decoration: InputDecoration(
-                  hintText: 'Etiket ekle (Enter\'a bas)',
-                  border: InputBorder.none,
-                  isDense: true,
-                  contentPadding: EdgeInsets.zero,
-                  hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+              if (!_isFull)
+                TextField(
+                  controller: _controller,
+                  maxLength: TagInput.maxTagLength,
+                  focusNode: _focusNode,
+                  decoration: InputDecoration(
+                    hintText: 'Etiket ekle (Enter\'a bas)',
+                    counterText: '',
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                    hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+                  ),
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: _onSubmitted,
+                  onChanged: _onChanged,
                 ),
-                textInputAction: TextInputAction.done,
-                onSubmitted: _addTag,
-                onChanged: (val) {
-                  if (val.endsWith(' ') || val.endsWith(',')) {
-                    _addTag(val.substring(0, val.length - 1));
-                  }
-                },
-              ),
             ],
           ),
         ),

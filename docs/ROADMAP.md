@@ -94,9 +94,9 @@
 - [x] **İyimser like/bookmark**, in-flight guard, rollback; detaydan feed ve aramadaki tek öğe güncellenir (ortak `post_toggle.dart`); seri dokunuşta son dokunuş kazanır, 400 ms debounce ile tek istek. _(2026-10-21; cihazda doğrulandı 2026-10-25; debounce cihazda doğrulandı 2026-10-25)_ — `BUG-12`
 - [x] **Çift gönderim korumaları** (yorum, cevap): gönderirken buton kilitli, `maxLength` 2000; yorum sayacı detay, feed ve aramada yeniden çekmeden +1. _(2026-10-25; testli, cihazda doğrulandı)_ — `BUG-13`
 - [x] **Image picker** izin ve hata yönetimi: izin reddi ve picker hataları SnackBar ile anlatılır (vaka/soru ızgarası, kayıt avatarı), `limit:` ile seçim sınırlı, fazlası atılırsa uyarı. Ayarlara yönlendirme butonu yok (yeni paket gerekirdi), mesaj ayarları işaret eder. Android kamera ve galeri için sistem uygulamasını kullandığından izin istemez. _(2026-10-25; testli, Android cihazda limit doğrulandı)_ — `BUG-15`
-- [ ] **Etiket girişi** normalize ve limit — `BUG-25`
+- [x] **Etiket girişi:** `#` ve boşluk temizlenir, Türkçe küçültme, en fazla 5 etiket × 30 karakter, yapıştırılan metin bölünür; yazılmakta olan etiket de kaydedilir; `onTagTap` yokken etiket tıklanabilir görünmez. _(2026-10-25; testli, cihazda doğrulandı)_ — `BUG-25`
 - [ ] `mark_best_answer`: tip kontrolü, geri alma, silme trigger'ı — `DATA-16`
-- [ ] İçerik uzunluk CHECK'leri (DB) — `DATA-17`
+- [ ] İçerik uzunluk CHECK'leri (DB); RPC'lerde etiket sayısı ve uzunluğu (istemcideki 5 × 30 ile aynı) — `DATA-17`
 - [x] Paylaş butonu kaldırıldı — `BUG-11`
 - [ ] Ortak takipçiler widget'ı: düzelt ya da kaldır — `BUG-19`
 - [ ] Bildirim ayarları toggle'ları (bağla ya da gizle) — `UX-4`

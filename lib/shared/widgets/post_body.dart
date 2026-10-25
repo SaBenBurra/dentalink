@@ -58,7 +58,7 @@ class PostBody extends StatelessWidget {
                   .map(
                     (tag) => TagChip(
                       label: '#${tag.name}',
-                      onTap: () => onTagTap?.call(tag),
+                      onTap: onTagTap == null ? null : () => onTagTap!(tag),
                     ),
                   )
                   .toList(),
