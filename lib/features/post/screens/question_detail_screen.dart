@@ -41,24 +41,27 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
     super.dispose();
   }
 
+  static const _commentMax = 2000;
+  bool _isSubmitting = false;
+
   Future<void> _submitAnswer() async {
     final text = _answerController.text.trim();
-    if (text.isEmpty) return;
+    if (text.isEmpty || _isSubmitting) return;
 
+    setState(() => _isSubmitting = true);
     try {
       await ref.read(commentsProvider(widget.postId).notifier).addComment(text);
+      if (!mounted) return;
+      _answerController.clear();
+      FocusScope.of(context).unfocus();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(getErrorMessage(e))),
         );
       }
-      return;
-    }
-
-    if (mounted) {
-      _answerController.clear();
-      FocusScope.of(context).unfocus();
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 
@@ -336,12 +339,14 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                               Expanded(
                                 child: TextField(
                                   controller: _answerController,
+                                  maxLength: _commentMax,
                                   style: textTheme.bodyMedium?.copyWith(
                                     color: isDark
                                         ? AppColors.darkTextPrimary
                                         : AppColors.lightTextPrimary,
                                   ),
                                   decoration: const InputDecoration(
+                                    counterText: '',
                                     hintText: 'Cevabınızı yazın...',
                                     border: InputBorder.none,
                                     isDense: true,
@@ -358,7 +363,7 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                 icon: const Icon(Icons.send_rounded),
                                 color: colorScheme.primary,
                                 iconSize: 20,
-                                onPressed: _submitAnswer,
+                                onPressed: _isSubmitting ? null : _submitAnswer,
                               ),
                             ],
                           ),

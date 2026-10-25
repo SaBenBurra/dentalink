@@ -1,0 +1,90 @@
+import 'package:dentlink/data/models/post_model.dart';
+import 'package:dentlink/data/models/user_model.dart';
+import 'package:dentlink/data/providers/repository_providers.dart';
+import 'package:dentlink/data/repositories/post_repository.dart';
+import 'package:dentlink/domain/entities/comment_entity.dart';
+import 'package:dentlink/domain/enums/enums.dart';
+import 'package:dentlink/domain/repositories/comment_repository.dart';
+import 'package:dentlink/providers/comment_provider.dart';
+import 'package:dentlink/providers/feed_provider.dart';
+import 'package:dentlink/providers/post_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+final _post = QuestionPostModel(
+  id: 'p1',
+  userId: 'a',
+  title: 't',
+  content: 'c',
+  commentCount: 2,
+  createdAt: DateTime(2024),
+  updatedAt: DateTime(2024),
+  author: UserModel(
+    id: 'a',
+    fullName: 'A',
+    username: 'a',
+    title: UserTitle.disHekimi,
+    createdAt: DateTime(2024),
+  ),
+);
+
+class _PostRepo implements PostRepository {
+  int feedCalls = 0;
+
+  @override
+  Future<List<PostModel>> getFeed({bool chronological = true}) async {
+    feedCalls++;
+    return [_post];
+  }
+
+  @override
+  Future<PostModel> getPostById(String id) async => _post;
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _CommentRepo implements CommentRepository {
+  @override
+  Future<List<CommentEntity>> getComments(String postId,
+          {int limit = 50, int offset = 0}) async =>
+      [];
+
+  @override
+  Future<CommentEntity> addComment(String postId, String content) async =>
+      CommentEntity(
+        id: 'c1',
+        postId: postId,
+        userId: 'b',
+        content: content,
+        createdAt: DateTime(2024),
+        updatedAt: DateTime(2024),
+      );
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+void main() {
+  test('yorum eklenince detay ve feed sayacı yeniden çekmeden artar', () async {
+    final repo = _PostRepo();
+    final container = ProviderContainer(overrides: [
+      feedRepositoryProvider.overrideWithValue(repo),
+      commentRepositoryProvider.overrideWithValue(_CommentRepo()),
+    ]);
+    addTearDown(container.dispose);
+    container.listen(feedProvider, (_, _) {});
+    container.listen(postDetailProvider('p1'), (_, _) {});
+    container.listen(commentsProvider('p1'), (_, _) {});
+    await container.read(feedProvider.future);
+    await container.read(postDetailProvider('p1').future);
+    await container.read(commentsProvider('p1').future);
+
+    await container.read(commentsProvider('p1').notifier).addComment('merhaba');
+
+    expect(container.read(commentsProvider('p1')).value, hasLength(1));
+    expect(container.read(postDetailProvider('p1')).value!.commentCount, 3);
+    expect(container.read(feedProvider).value!.single.commentCount, 3);
+    expect(repo.feedCalls, 1);
+  });
+}

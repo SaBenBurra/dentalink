@@ -6,6 +6,11 @@ import '../data/providers/repository_providers.dart';
 enum PostToggle { like, bookmark }
 
 extension PostToggleX on PostToggle {
+  bool isOn(PostModel p) => switch (this) {
+        PostToggle.like => p.isLiked,
+        PostToggle.bookmark => p.isBookmarked,
+      };
+
   /// İyimser durum: alanı ters çevirir, sayacı ±1 günceller.
   PostModel flip(PostModel p) => switch (this) {
         PostToggle.like => p.copyWith(
@@ -45,32 +50,70 @@ extension PostToggleX on PostToggle {
   }
 }
 
-/// İyimser toggle: in-flight guard → anında [patch] → istek → sunucu
-/// değerleriyle birleştir. Hata olursa yalnızca bu alanlar geri alınır ve hata
-/// fırlatılır. Post yoksa veya aynı istek sürüyorsa null döner.
+/// Dokunuşlar bu süre kesilince sunucuya yalnızca son durum gider.
+const postToggleDebounce = Duration(milliseconds: 400);
+
+/// Bir notifier'ın post başına bekleyen toggle durumu.
+class PostToggleQueue {
+  /// Sunucudaki son bilinen hâl (seri dokunuşlar başlamadan önceki ya da son yanıt).
+  final _confirmed = <(String, PostToggle), PostModel>{};
+  final _lastTap = <(String, PostToggle), int>{};
+  final _syncing = <(String, PostToggle)>{};
+  int _taps = 0;
+}
+
+/// Son dokunuş kazanır: her dokunuş anında [patch] ile ters çevrilir; dokunuşlar
+/// [postToggleDebounce] kadar kesilince istenen hâl sunucudakinden farklıysa
+/// tek istek gider (istek sürerken gelen dokunuşlar ardından senkronlanır).
+/// Hata olursa yalnızca bu alanlar sunucudaki hâle döner ve hata fırlatılır.
+/// Senkronu yapan çağrı sunucu postunu döner; diğerleri ve post yoksa null.
 Future<PostModel?> runPostToggle(
   Ref<Object?> ref,
-  Set<(String, PostToggle)> pending,
+  PostToggleQueue queue,
   PostToggle toggle,
   String postId, {
   required PostModel? Function() current,
   required void Function(PostModel Function(PostModel) update) patch,
 }) async {
   final original = current();
+  if (original == null) return null;
   final key = (postId, toggle);
-  if (original == null || !pending.add(key)) return null;
 
   final link = ref.keepAlive(); // ekran kapansa da sonuç/rollback yazılabilsin
   try {
+    queue._confirmed.putIfAbsent(key, () => original);
     patch(toggle.flip);
-    final server = await toggle._send(ref, original);
-    patch((p) => toggle.copyFields(p, server));
-    return server;
-  } catch (_) {
-    patch((p) => toggle.copyFields(p, original));
-    rethrow;
+    final tap = queue._lastTap[key] = ++queue._taps;
+
+    await Future<void>.delayed(postToggleDebounce);
+    // Daha yeni dokunuş senkronu üstlenir; süren senkron bitince son hâli kontrol eder.
+    if (queue._lastTap[key] != tap || !queue._syncing.add(key)) return null;
+
+    try {
+      PostModel? server;
+      while (true) {
+        final want = current();
+        // base yoksa önceki senkron bu dokunuşu da kapsadı.
+        final base = queue._confirmed[key];
+        if (want == null || base == null || toggle.isOn(want) == toggle.isOn(base)) {
+          break;
+        }
+        server = await toggle._send(ref, base);
+        queue._confirmed[key] = server;
+      }
+      final last = server;
+      // Çıkışta istenen hâl sunucuyla aynı; sayaç sunucudan alınır.
+      if (last != null) patch((p) => toggle.copyFields(p, last));
+      return last;
+    } catch (_) {
+      final base = queue._confirmed[key];
+      if (base != null) patch((p) => toggle.copyFields(p, base));
+      rethrow;
+    } finally {
+      queue._syncing.remove(key);
+      queue._confirmed.remove(key);
+    }
   } finally {
-    pending.remove(key);
     link.close();
   }
 }

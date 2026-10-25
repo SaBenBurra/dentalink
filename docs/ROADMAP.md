@@ -91,8 +91,8 @@
 - [x] **Atomik post oluşturma:** migration 015; `post_images.image_url` artık bucket içi yol, istemci `getPublicUrl` ile URL üretir. Önce görseller yüklenir, sonra `create_post` RPC; hata olursa dosyalar silinir. _(2026-10-20; canlıda, cihazda görselli vaka oluştur/sil ve silinmiş postu beğenme (BUG-27) doğrulandı)_ — `DATA-4`, `SEC-13`, `DATA-9`
 - [x] **Post düzenleme ekranı** (başlık, içerik, branş, etiket) + menüde "Düzenle": migration 016 `update_post` RPC (sahiplik, doğrulama, etiket eşitleme); `posts` UPDATE yetkisi kaldırıldı. Görseller düzenlenmez. _(2026-10-20; canlıda, cihazda vaka ve soru düzenleme doğrulandı)_
 - [x] **Avatar değiştirme** (edit profile): galeri/kamera, önizleme, kaydette yükleme; oturumsuz "başarılı" dönmüyor; deneyim 0–70 doğrulaması. _(2026-10-20; cihazda doğrulandı)_ — `BUG-16`
-- [x] **İyimser like/bookmark**, in-flight guard, rollback; detaydan feed ve aramadaki tek öğe güncellenir (ortak `post_toggle.dart`). _(2026-10-21; testli, cihazda doğrulandı 2026-10-25)_ — `BUG-12`
-- [ ] **Çift gönderim korumaları** (yorum, cevap) + sayaç güncelleme — `BUG-13`
+- [x] **İyimser like/bookmark**, in-flight guard, rollback; detaydan feed ve aramadaki tek öğe güncellenir (ortak `post_toggle.dart`); seri dokunuşta son dokunuş kazanır, 400 ms debounce ile tek istek. _(2026-10-21; cihazda doğrulandı 2026-10-25; debounce cihazda doğrulandı 2026-10-25)_ — `BUG-12`
+- [x] **Çift gönderim korumaları** (yorum, cevap): gönderirken buton kilitli, `maxLength` 2000; yorum sayacı detay, feed ve aramada yeniden çekmeden +1. _(2026-10-25; testli, cihazda doğrulandı)_ — `BUG-13`
 - [ ] **Image picker** izin ve hata yönetimi — `BUG-15`
 - [ ] **Etiket girişi** normalize ve limit — `BUG-25`
 - [ ] `mark_best_answer`: tip kontrolü, geri alma, silme trigger'ı — `DATA-16`

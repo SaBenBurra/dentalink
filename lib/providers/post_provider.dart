@@ -16,7 +16,12 @@ class PostDetailNotifier
     return ref.read(feedRepositoryProvider).getPostById(arg);
   }
 
-  final _pending = <(String, PostToggle)>{};
+  final _pending = PostToggleQueue();
+
+  void patch(PostModel Function(PostModel) update) {
+    final post = state.valueOrNull;
+    if (post != null) state = AsyncData(update(post));
+  }
 
   Future<void> toggleLike() => _toggle(PostToggle.like);
 
@@ -33,10 +38,7 @@ class PostDetailNotifier
         toggle,
         arg,
         current: () => state.valueOrNull,
-        patch: (update) {
-          final post = state.valueOrNull;
-          if (post != null) state = AsyncData(update(post));
-        },
+        patch: patch,
       );
       if (server == null) return;
       PostModel sync(PostModel p) => toggle.copyFields(p, server);

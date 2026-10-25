@@ -13,7 +13,7 @@ enum FeedMode { chronological, algorithmic }
 
 class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
   FeedMode _mode = FeedMode.chronological;
-  final _pending = <(String, PostToggle)>{};
+  final _pending = PostToggleQueue();
 
   FeedMode get mode => _mode;
 

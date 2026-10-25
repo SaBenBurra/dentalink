@@ -45,24 +45,27 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
     super.dispose();
   }
 
+  static const _commentMax = 2000;
+  bool _isSubmitting = false;
+
   Future<void> _submitComment() async {
     final text = _commentController.text.trim();
-    if (text.isEmpty) return;
+    if (text.isEmpty || _isSubmitting) return;
 
+    setState(() => _isSubmitting = true);
     try {
       await ref.read(commentsProvider(widget.postId).notifier).addComment(text);
+      if (!mounted) return;
+      _commentController.clear();
+      FocusScope.of(context).unfocus();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(getErrorMessage(e))),
         );
       }
-      return;
-    }
-
-    if (mounted) {
-      _commentController.clear();
-      FocusScope.of(context).unfocus();
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 
@@ -452,12 +455,14 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                               Expanded(
                                 child: TextField(
                                   controller: _commentController,
+                                  maxLength: _commentMax,
                                   style: textTheme.bodyMedium?.copyWith(
                                     color: isDark
                                         ? AppColors.darkTextPrimary
                                         : AppColors.lightTextPrimary,
                                   ),
                                   decoration: const InputDecoration(
+                                    counterText: '',
                                     hintText: 'Mesleki tartışmaya katılın...',
                                     border: InputBorder.none,
                                     isDense: true,
@@ -474,7 +479,7 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                 icon: const Icon(Icons.send_rounded),
                                 color: colorScheme.primary,
                                 iconSize: 20,
-                                onPressed: _submitComment,
+                                onPressed: _isSubmitting ? null : _submitComment,
                               ),
                             ],
                           ),

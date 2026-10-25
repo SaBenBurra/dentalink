@@ -70,26 +70,51 @@ void main() {
 
   PostModel feedPost() => container.read(feedProvider).value!.single;
 
-  test('beğeni istek bitmeden görünür, çift dokunuş tek istek atar', () async {
-    final notifier = container.read(feedProvider.notifier);
-    final first = notifier.toggleLike('p1');
-    final second = notifier.toggleLike('p1');
+  test('beğeni anında görünür, istek dokunuşlar kesilince gider', () async {
+    final future = container.read(feedProvider.notifier).toggleLike('p1');
 
     expect(feedPost().isLiked, isTrue);
     expect(feedPost().likeCount, 6);
+    expect(repo.likeCalls, 0, reason: 'debounce süresi dolmadı');
 
     repo.likeCompleter.complete(_post.copyWith(isLiked: true, likeCount: 7));
-    await Future.wait([first, second]);
+    await future;
 
     expect(repo.likeCalls, 1);
     expect(feedPost().likeCount, 7, reason: 'sunucu sayacı esas alınır');
   });
 
+  test('çift sayıda dokunuş istek atmaz, sayaç yalnızca 5↔6 gider', () async {
+    final notifier = container.read(feedProvider.notifier);
+    final first = notifier.toggleLike('p1');
+    expect(feedPost().likeCount, 6);
+    final second = notifier.toggleLike('p1');
+    expect(feedPost().likeCount, 5);
+    await Future.wait([first, second]);
+
+    expect(repo.likeCalls, 0);
+    expect(feedPost().isLiked, isFalse);
+  });
+
+  test('tek sayıda seri dokunuşta yalnızca son hâl için tek istek gider', () async {
+    final notifier = container.read(feedProvider.notifier);
+    final taps = [for (var i = 0; i < 3; i++) notifier.toggleLike('p1')];
+    expect(feedPost().likeCount, 6);
+
+    repo.likeCompleter.complete(_post.copyWith(isLiked: true, likeCount: 6));
+    await Future.wait(taps);
+
+    expect(repo.likeCalls, 1);
+    expect(feedPost().isLiked, isTrue);
+  });
+
   test('hata olursa beğeni geri alınır ve hata fırlatılır', () async {
     final future = container.read(feedProvider.notifier).toggleLike('p1');
+    final failed = expectLater(future, throwsA(isA<NetworkFailure>()));
+    repo.likeCompleter.future.ignore(); // istek debounce sonrası dinler
     repo.likeCompleter.completeError(const NetworkFailure());
 
-    await expectLater(future, throwsA(isA<NetworkFailure>()));
+    await failed;
     expect(feedPost().isLiked, isFalse);
     expect(feedPost().likeCount, 5);
   });

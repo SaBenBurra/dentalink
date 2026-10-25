@@ -55,7 +55,7 @@ class SearchState {
 class SearchNotifier extends AutoDisposeNotifier<SearchState> {
   /// Yalnızca en son isteğin sonucu yazılır; yavaş eski bir yanıt yenisini ezmez.
   int _requestId = 0;
-  final _pending = <(String, PostToggle)>{};
+  final _pending = PostToggleQueue();
 
   @override
   SearchState build() => const SearchState();

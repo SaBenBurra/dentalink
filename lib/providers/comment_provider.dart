@@ -3,7 +3,10 @@ import '../domain/entities/comment_entity.dart';
 import '../domain/repositories/comment_repository.dart';
 import '../data/providers/repository_providers.dart';
 import '../core/error/app_failures.dart';
+import '../data/models/post_model.dart';
+import 'feed_provider.dart';
 import 'post_provider.dart';
+import 'search_provider.dart';
 
 class CommentsNotifier extends AutoDisposeFamilyAsyncNotifier<List<CommentEntity>, String> {
   final _pendingLikes = <String>{};
@@ -28,6 +31,7 @@ class CommentsNotifier extends AutoDisposeFamilyAsyncNotifier<List<CommentEntity
     final text = content.trim();
     if (text.isEmpty) throw const ValidationFailure('empty_content');
     final newComment = await _repo.addComment(arg, text);
+    _bumpCommentCount();
     final current = state.valueOrNull;
     if (current == null) {
       ref.invalidateSelf(); // liste yüklenmemişken tek yorumluk listeyle ezme
@@ -35,6 +39,16 @@ class CommentsNotifier extends AutoDisposeFamilyAsyncNotifier<List<CommentEntity
     }
     state = AsyncData([...current, newComment]);
   });
+
+  /// Sayaç DB trigger'ıyla artar; ekrandaki kopyalar yeniden çekilmeden +1 olur.
+  void _bumpCommentCount() {
+    PostModel bump(PostModel p) => p.copyWith(commentCount: p.commentCount + 1);
+    if (ref.exists(postDetailProvider(arg))) {
+      ref.read(postDetailProvider(arg).notifier).patch(bump);
+    }
+    if (ref.exists(feedProvider)) ref.read(feedProvider.notifier).patchPost(arg, bump);
+    if (ref.exists(searchProvider)) ref.read(searchProvider.notifier).patchPost(arg, bump);
+  }
 
   /// Her zaman GÜNCEL state üzerinden id ile değiştirir (eski liste kopyası yok).
   void _replace(CommentEntity updated) {
