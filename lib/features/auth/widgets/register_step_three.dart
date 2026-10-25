@@ -93,9 +93,7 @@ class RegisterStepThree extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 54,
-                      backgroundColor: const Color(
-                        0xFF13B9A5,
-                      ).withValues(alpha: 0.2),
+                      backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                       backgroundImage:
                           hasCustomImage ? FileImage(selectedImageFile!) : null,
                       child: hasCustomImage

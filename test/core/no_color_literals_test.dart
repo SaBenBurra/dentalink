@@ -10,7 +10,7 @@ void main() {
         if (f.path.endsWith('.dart') &&
             !f.path.endsWith('app_colors.dart') &&
             !f.path.contains('${Platform.pathSeparator}theme${Platform.pathSeparator}') &&
-            f.readAsStringSync().contains('Color(0x'))
+            RegExp(r'Color\(\s*0x').hasMatch(f.readAsStringSync()))
           f.path,
     ];
     expect(offenders, isEmpty);

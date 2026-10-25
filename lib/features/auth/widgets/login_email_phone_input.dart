@@ -47,9 +47,7 @@ class LoginEmailPhoneInput extends StatelessWidget {
       bgOpacityColor = AppColors.error.withValues(alpha: isDark ? 0.08 : 0.03);
     } else if (hasFocus) {
       borderColor = Theme.of(context).colorScheme.primary;
-      bgOpacityColor = const Color(
-        0xFF13B9A5,
-      ).withValues(alpha: isDark ? 0.15 : 0.08);
+      bgOpacityColor = Theme.of(context).colorScheme.primary.withValues(alpha: isDark ? 0.15 : 0.08);
     }
 
     return Column(

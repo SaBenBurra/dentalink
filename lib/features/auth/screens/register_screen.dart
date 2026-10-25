@@ -252,10 +252,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           ref.read(registerControllerProvider.notifier).clearNameError();
                         },
                         onTitleSelected: (title) {
+                          // Uyarı giderildi; floating SnackBar "Devam Et"i örtmesin.
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ref.read(registerControllerProvider.notifier).setTitle(title);
                         },
                         acceptedTerms: state.acceptedTerms,
                         onAcceptedTermsChanged: (value) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ref.read(registerControllerProvider.notifier).setAcceptedTerms(value);
                         },
                       ),

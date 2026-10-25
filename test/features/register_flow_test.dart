@@ -54,8 +54,6 @@ void main() {
     await tester.ensureVisible(find.byType(CheckboxListTile));
     await tester.tap(find.byType(CheckboxListTile));
     await tester.pumpAndSettle();
-    await tester.pump(const Duration(seconds: 5)); // SnackBar "Devam Et"i örtmesin
-    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Devam Et'));
     await tester.pumpAndSettle();

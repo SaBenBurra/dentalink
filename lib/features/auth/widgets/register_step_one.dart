@@ -131,9 +131,7 @@ class RegisterStepOne extends StatelessWidget {
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: const Color(
-                                0xFF13B9A5,
-                              ).withValues(alpha: 0.15),
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
