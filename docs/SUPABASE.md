@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Mevcut dosyalar `001_…`–`012_…` biçiminde. Yeni dosyalar da aynı sırayla devam eder (son: `020_…`).
+- **Dosya adı:** Mevcut dosyalar `001_…`–`012_…` biçiminde. Yeni dosyalar da aynı sırayla devam eder (son: `021_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -190,6 +190,17 @@ select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', 
 select public.create_post('question', 'Soru', 'içerik', null, null,
   '[{"name":"a","slug":"a"},{"name":"b","slug":"b"},{"name":"c","slug":"c"},
     {"name":"d","slug":"d"},{"name":"e","slug":"e"},{"name":"f","slug":"f"}]');
+rollback;
+
+-- 14) Sayaçlar (021) → BEKLENEN: ilk blok permission denied;
+--     ikinci blok (SQL Editor, postgres) posts_like_count_nonneg (23514)
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select public.reconcile_counters();
+rollback;
+begin;
+update public.posts set like_count = -1 where id = (select id from public.posts limit 1);
 rollback;
 ```
 
