@@ -336,6 +336,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedFilterQuestions => 'Questions';
 
   @override
+  String get feedFilterJobs => 'Jobs';
+
+  @override
+  String get feedJobsEmptyTitle => 'No job posts yet';
+
+  @override
+  String get feedJobsEmptySubtitle => 'Job posts will be here soon.';
+
+  @override
   String get casesTabLabelInProfile => 'Cases';
 
   @override
@@ -387,7 +396,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exploreTitle => 'Explore';
 
   @override
-  String get searchHint => 'Search cases, questions or users...';
+  String get searchHint => 'Search cases, dentists or questions...';
 
   @override
   String get filterByBranch => 'By Branch';

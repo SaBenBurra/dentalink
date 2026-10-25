@@ -322,6 +322,10 @@
   "@feedFilterCases": { "description": "Akış filtre - Vakalar" },
   "feedFilterQuestions": "Sorular",
   "@feedFilterQuestions": { "description": "Akış filtre - Sorular" },
+  "feedFilterJobs": "İş İlanları",
+  "@feedFilterJobs": { "description": "Akış filtre - İş ilanları (henüz içerik yok)" },
+  "feedJobsEmptyTitle": "Henüz iş ilanı yok",
+  "feedJobsEmptySubtitle": "İş ilanları yakında burada olacak.",
 
   "casesTabLabelInProfile": "Vakalar",
   "@casesTabLabelInProfile": {"description": "Profildeki vakalar sekmesi başlığı"},
@@ -370,7 +374,7 @@
   "exploreTitle": "Keşfet",
   "@exploreTitle": { "description": "Keşfet ekranı başlığı" },
 
-  "searchHint": "Vaka, soru veya kullanıcı ara...",
+  "searchHint": "Vaka, hekim veya soru ara...",
   "@searchHint": { "description": "Arama alanı ipucu" },
 
   "filterByBranch": "Branşa Göre",

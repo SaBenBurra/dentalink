@@ -746,6 +746,24 @@ abstract class AppLocalizations {
   /// **'Sorular'**
   String get feedFilterQuestions;
 
+  /// Akış filtre - İş ilanları (henüz içerik yok)
+  ///
+  /// In tr, this message translates to:
+  /// **'İş İlanları'**
+  String get feedFilterJobs;
+
+  /// No description provided for @feedJobsEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz iş ilanı yok'**
+  String get feedJobsEmptyTitle;
+
+  /// No description provided for @feedJobsEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'İş ilanları yakında burada olacak.'**
+  String get feedJobsEmptySubtitle;
+
   /// Profildeki vakalar sekmesi başlığı
   ///
   /// In tr, this message translates to:
@@ -815,7 +833,7 @@ abstract class AppLocalizations {
   /// Arama alanı ipucu
   ///
   /// In tr, this message translates to:
-  /// **'Vaka, soru veya kullanıcı ara...'**
+  /// **'Vaka, hekim veya soru ara...'**
   String get searchHint;
 
   /// Branş filtresi

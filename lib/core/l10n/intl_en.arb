@@ -118,6 +118,9 @@
   "feedFilterAll": "All",
   "feedFilterCases": "Cases",
   "feedFilterQuestions": "Questions",
+  "feedFilterJobs": "Jobs",
+  "feedJobsEmptyTitle": "No job posts yet",
+  "feedJobsEmptySubtitle": "Job posts will be here soon.",
 
   "casesTabLabelInProfile": "Cases",
   "questionsTabLabelInProfile": "Questions",
@@ -150,7 +153,7 @@
   "sendMessage": "Send",
 
   "exploreTitle": "Explore",
-  "searchHint": "Search cases, questions or users...",
+  "searchHint": "Search cases, dentists or questions...",
   "filterByBranch": "By Branch",
   "filterByTitle": "By Title",
   "filterByType": "By Type",

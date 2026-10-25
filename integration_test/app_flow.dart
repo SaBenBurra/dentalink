@@ -60,6 +60,21 @@ Future<void> runAppFlow(WidgetTester tester) async {
   await _goBack(tester);
   expect(find.text(seedCase.title), findsOneWidget);
 
+  // Feed sekmeleri: sola kaydır → Vakalar (vaka görünür) → Sorular (görünmez);
+  // segmente dokununca Tümü'ye döner.
+  await tester.fling(find.text(seedCase.title), const Offset(-400, 0), 1000);
+  await tester.pumpAndSettle();
+  expect(find.text(seedCase.title), findsOneWidget);
+  await tester.fling(find.text(seedCase.title), const Offset(-400, 0), 1000);
+  await tester.pumpAndSettle();
+  expect(find.text(seedCase.title), findsNothing);
+  // 4. sekme (İş İlanları) henüz boş: boş durum mesajı.
+  await tester.fling(find.byType(PageView), const Offset(-400, 0), 1000);
+  await tester.pumpAndSettle();
+  expect(find.text('Henüz iş ilanı yok'), findsOneWidget);
+  await _tapAndSettle(tester, find.text('Tümü'));
+  expect(find.text(seedCase.title), findsOneWidget);
+
   // Bildirimler: zil → takip bildirimi.
   await _tapAndSettle(tester, find.byTooltip('Bildirimler'));
   expect(find.textContaining(otherUser.fullName), findsWidgets);

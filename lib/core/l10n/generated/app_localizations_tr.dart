@@ -336,6 +336,15 @@ class AppLocalizationsTr extends AppLocalizations {
   String get feedFilterQuestions => 'Sorular';
 
   @override
+  String get feedFilterJobs => 'İş İlanları';
+
+  @override
+  String get feedJobsEmptyTitle => 'Henüz iş ilanı yok';
+
+  @override
+  String get feedJobsEmptySubtitle => 'İş ilanları yakında burada olacak.';
+
+  @override
   String get casesTabLabelInProfile => 'Vakalar';
 
   @override
@@ -387,7 +396,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get exploreTitle => 'Keşfet';
 
   @override
-  String get searchHint => 'Vaka, soru veya kullanıcı ara...';
+  String get searchHint => 'Vaka, hekim veya soru ara...';
 
   @override
   String get filterByBranch => 'Branşa Göre';

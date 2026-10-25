@@ -6,6 +6,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../data/models/enums.dart';
 import '../../../providers/feed_provider.dart';
+import '../../../shared/widgets/empty_state.dart';
 
 class FeedScreen extends ConsumerStatefulWidget {
   const FeedScreen({super.key});
@@ -14,82 +15,79 @@ class FeedScreen extends ConsumerStatefulWidget {
   ConsumerState<FeedScreen> createState() => _FeedScreenState();
 }
 
-class _FeedScreenState extends ConsumerState<FeedScreen>
-    with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
+class _FeedScreenState extends ConsumerState<FeedScreen> {
+  final _pageController = PageController();
+  int _index = 0;
+  // Segmente dokununca sayfa ara sayfalardan geçer; o sırada gelen
+  // onPageChanged seçimi geri çekmesin.
+  bool _animatingToTap = false;
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _pageController.dispose();
     super.dispose();
+  }
+
+  Future<void> _select(int index) async {
+    if (index == _index) return;
+    setState(() => _index = index);
+    _animatingToTap = true;
+    await _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOutCubic,
+    );
+    _animatingToTap = false;
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-    final l10n = AppLocalizations.of(context)!;
     final feedState = ref.watch(feedProvider);
+    final l10n = AppLocalizations.of(context)!;
 
-    final backgroundColor = isDark
-        ? AppColors.darkBackground
-        : AppColors.bgGradientStart;
+    Widget list(PostType? type) => FeedList(
+      ref: ref,
+      context: context,
+      feedState: feedState,
+      filterType: type,
+      l10n: l10n,
+      colorScheme: Theme.of(context).colorScheme,
+    );
 
-    final glassBorderColor = isDark
-        ? Colors.white.withValues(alpha: 0.12)
-        : Colors.white.withValues(alpha: 0.8);
+    // Sekme sırası: (segment etiketi, sayfa). Yeni sekme = yeni satır.
+    final tabs = <(String, Widget)>[
+      (l10n.feedFilterAll, list(null)),
+      (l10n.feedFilterCases, list(PostType.casePost)),
+      (l10n.feedFilterQuestions, list(PostType.question)),
+      // İş ilanı türü henüz yok (yayın sonrası); sekme boş durum gösterir.
+      (
+        l10n.feedFilterJobs,
+        Center(
+          child: DentLinkEmptyState(
+            icon: Icons.work_outline_rounded,
+            title: l10n.feedJobsEmptyTitle,
+            subtitle: l10n.feedJobsEmptySubtitle,
+          ),
+        ),
+      ),
+    ];
 
     return Scaffold(
-      backgroundColor: backgroundColor,
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            FeedScreenAppBar(
-              isDark: isDark,
-              glassBorderColor: glassBorderColor,
-              textTheme: textTheme,
-              colorScheme: colorScheme,
-              tabController: _tabController,
-              l10n: l10n,
-            ),
-          ];
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.bgGradientStart,
+      appBar: FeedScreenAppBar(
+        labels: [for (final (label, _) in tabs) label],
+        selectedIndex: _index,
+        onSelected: _select,
+      ),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (i) {
+          if (!_animatingToTap) setState(() => _index = i);
         },
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            FeedList(
-              ref: ref,
-              context: context,
-              feedState: feedState,
-              filterType: null,
-              l10n: l10n,
-              colorScheme: colorScheme,
-            ),
-            FeedList(
-              ref: ref,
-              context: context,
-              feedState: feedState,
-              filterType: PostType.casePost,
-              l10n: l10n,
-              colorScheme: colorScheme,
-            ),
-            FeedList(
-              ref: ref,
-              context: context,
-              feedState: feedState,
-              filterType: PostType.question,
-              l10n: l10n,
-              colorScheme: colorScheme,
-            ),
-          ],
-        ),
+        children: [for (final (_, page) in tabs) page],
       ),
     );
   }
