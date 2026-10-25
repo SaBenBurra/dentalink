@@ -21,7 +21,8 @@ class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelected;
 
-  static const double _height = 48;
+  // Alt çizgiyle birlikte 56dp (Material toolbar); alt menüyle (~58dp) dengeli.
+  static const double _height = 55;
   static const double _iconPad = (48 - AppDimensions.iconMedium) / 2;
 
   @override
