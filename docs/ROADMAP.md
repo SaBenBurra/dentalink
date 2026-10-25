@@ -100,7 +100,7 @@
 - [x] Paylaş butonu kaldırıldı — `BUG-11`
 - [x] Ortak takipçiler: profili takip edenlerden benim takip ettiklerim (`mutualFollowersProvider`); kendi profilinde gizli. _(2026-10-25; testli, cihazda doğrulandı)_ — `BUG-19`
 - [x] Bildirim ayarları toggle'ları kaldırıldı (DB tercihi ve push yok); tercihler Faz 5'te push ile gelir — `UX-4`
-- [ ] Integration test'i fake repository'lerle çalışır hale getir — `TEST-2`
+- [x] Integration test fake repository'lerle (`integration_test/fake_repositories.dart`); koşullu assertion yok; aynı akış headless `test/app_flow_test.dart` ile `flutter test`'te ve GitHub Actions CI'da (`.github/workflows/ci.yml`: analyze + test) koşar. _(2026-10-25; yerelde ve Android emülatörde yeşil, CI push sonrası bekliyor)_ — `TEST-2`
 
 **Bitti tanımı:**
 - İki gerçek hesapla: beğeni, yorum ve takip karşı tarafa bildirim olarak düşüyor; okunmamış rozeti artıp azalıyor.

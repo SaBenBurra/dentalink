@@ -9,7 +9,7 @@ import '../mappers/comment_mapper.dart';
 class SupabaseCommentRepository implements CommentRepository {
   final SupabaseClient _client;
 
-  SupabaseCommentRepository({required SupabaseClient client}) : _client = client;
+  SupabaseCommentRepository({required this._client});
 
   String get _uid {
     final id = _client.auth.currentUser?.id;

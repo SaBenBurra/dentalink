@@ -14,8 +14,7 @@ import 'notification_repository.dart';
 class SupabaseNotificationRepository implements NotificationRepository {
   final SupabaseClient _client;
 
-  SupabaseNotificationRepository({required SupabaseClient client})
-      : _client = client;
+  SupabaseNotificationRepository({required this._client});
 
   static const _select = '*, actor:users!notifications_actor_id_fkey(*)';
 

@@ -41,7 +41,7 @@ Ayrıntılar ve kurallar: [`docs/SUPABASE.md`](docs/SUPABASE.md).
 
 ```bash
 flutter analyze
-flutter test                                       # unit testler
+flutter test                                       # unit testler + headless uçtan uca akış (CI da bunu koşar)
 dart run build_runner build -d                     # test/mocks/*.mocks.dart yeniden üret
 flutter test integration_test                      # cihaz/emülatör gerekir
 ```

@@ -11,7 +11,7 @@ import 'message_repository.dart';
 class SupabaseMessageRepository implements MessageRepository {
   final SupabaseClient _client;
 
-  SupabaseMessageRepository({required SupabaseClient client}) : _client = client;
+  SupabaseMessageRepository({required this._client});
 
   // Güvenlik: users tablosundan sadece gerekli alanlar çekiliyor
   static const _userSelect = 'id, full_name, username, avatar_url, title, is_verified, created_at';

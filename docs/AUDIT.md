@@ -172,7 +172,7 @@
 | ID | Önem | Konum | Sorun | Çözüm | Durum |
 |---|---|---|---|---|---|
 | TEST-1 | 🟠 | `test/data/repositories/supabase_post_repository_test.dart`, `…_bookmark_test.dart`, `supabase_user_repository_test.dart` | 3 test kırık: mock'lar `upsert` bekliyor, kod `insert` kullanıyor; user update testi "0 satır" yolunu stub'lamıyor. | Testleri güncel koda uydur. | ✅ |
-| TEST-2 | 🟠 | `integration_test/app_test.dart:33-40` | Yalnızca auth override ediliyor, diğer ekranlar `Supabase.instance` çağırıp fırlatıyor; assertion'lar `if (tester.any(...))` içinde. | Tüm repository'leri fake'le; koşullu assertion'ları kaldır. *(Faz 1)* | ⬜ |
+| TEST-2 | 🟠 | `integration_test/app_test.dart:33-40` | Yalnızca auth override ediliyor, diğer ekranlar `Supabase.instance` çağırıp fırlatıyor; assertion'lar `if (tester.any(...))` içinde. | Tüm repository'leri fake'le; koşullu assertion'ları kaldır. *(Faz 1)* | ✅ |
 | TEST-3 | 🟡 | `test/` | Auth repository, redirect mantığı, provider'lar, comment/message/follow repository'leri ve widget'lar için hiç test yok. | Önce redirect matrisi ve sign-out temizliği testleri. | 🔧 |
 
 ---
