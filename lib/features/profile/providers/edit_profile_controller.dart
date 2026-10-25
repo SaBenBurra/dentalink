@@ -42,14 +42,14 @@ class EditProfileController extends AutoDisposeAsyncNotifier<void> {
 
       await ref.read(userRepositoryProvider).updateProfile(
         currentUserId,
-        fullName: fullName,
+        fullName: fullName.trim(),
         title: title,
-        bio: bio,
-        university: university,
-        city: city,
+        bio: bio?.trim(),
+        university: university?.trim(),
+        city: city?.trim(),
         // Form doğruladı; boşsa null.
         experienceYears: int.tryParse(experience?.trim() ?? ''),
-        workplace: workplace,
+        workplace: workplace?.trim(),
       );
 
       // Kullanıcı profilinin UI'da güncellenmesi için provider'ı invalidate et

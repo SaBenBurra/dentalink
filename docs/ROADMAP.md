@@ -139,7 +139,7 @@
 - [ ] Tüm sabit metinleri ARB'ye taşı (enum `displayName` dahil) — `UX-12`
 - [ ] Boş, hata ve yenileme durumları her listede — `UX-7`
 - [ ] `PopScope` (kaydedilmemiş form ve yükleme sırasında) — `UX-2`
-- [ ] `maxLength`, `maxLines`, taşma düzeltmeleri, form doğrulamaları — `UX-8`, `UX-9`, `UX-10`
+- [ ] `maxLength`, `maxLines`, taşma düzeltmeleri, form doğrulamaları — `UX-8`, `UX-9`, `UX-10` ✅ (profil düzenleme: alanlar trim, deneyim yalnızca rakam, en fazla 2 hane; 2026-10-25, testli)
 - [ ] Erişilebilirlik: tooltip/semantics, 48dp dokunma alanı, kontrast — `UX-13`, `UX-14`, `UX-15`
 - [ ] Hardcoded renkleri temaya taşı — `UX-16`
 - [ ] Tema tercihini kalıcı yap — `UX-11`

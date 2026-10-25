@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../shared/utils/error_messages.dart';
@@ -219,7 +220,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 border: OutlineInputBorder(),
               ),
               validator: (value) =>
-                  value == null || value.isEmpty ? 'Ad Soyad zorunludur' : null,
+                  (value ?? '').trim().isEmpty ? 'Ad Soyad zorunludur' : null,
             ),
             const SizedBox(height: AppDimensions.spacing16),
             DropdownButtonFormField<UserTitle>(
@@ -272,6 +273,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(2),
+              ],
               validator: (value) {
                 final v = value?.trim() ?? '';
                 if (v.isEmpty) return null;

@@ -14,6 +14,7 @@ import '../../integration_test/mock_auth_for_test.dart';
 class _FakeUserRepo implements UserRepository {
   final calls = <String>[];
   int? experienceYears;
+  String? fullName;
 
   @override
   Future<String> uploadAvatar(String userId, File imageFile) async {
@@ -34,6 +35,7 @@ class _FakeUserRepo implements UserRepository {
   }) async {
     calls.add('update:$userId');
     this.experienceYears = experienceYears;
+    this.fullName = fullName;
   }
 
   @override
@@ -57,7 +59,7 @@ void main() {
     await container.read(authProvider.future);
 
     await container.read(editProfileProvider.notifier).saveProfile(
-          fullName: 'A',
+          fullName: '  A  ',
           title: UserTitle.ogrenci,
           experience: ' 3 ',
           avatarFile: File('a.jpg'),
@@ -66,6 +68,7 @@ void main() {
     expect(container.read(editProfileProvider).hasError, isFalse);
     expect(repo.calls, ['upload:mock_test_user_id', 'update:mock_test_user_id']);
     expect(repo.experienceYears, 3);
+    expect(repo.fullName, 'A'); // UX-10
   });
 
   test('oturum yoksa "başarılı" dönmez (BUG-16)', () async {
