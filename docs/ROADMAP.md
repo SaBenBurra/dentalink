@@ -115,7 +115,7 @@
 
 ## Faz 2 — Ölçek & dayanıklılık 🟡
 
-- [ ] Cursor (keyset) sayfalama + sonsuz kaydırma: feed, yorumlar, arama, mesajlar, takipçiler, bookmark'lar — `DATA-12`
+- [x] Cursor (keyset) sayfalama + sonsuz kaydırma: feed, yorumlar, arama, mesajlar, takipçiler, bookmark'lar. Liste sonundaki `LoadMoreFooter` göründükçe sonraki sayfayı ister (sohbette yukarı kaydırınca eski mesajlar); yorumlarda "Daha fazla göster" butonu. Silme ve profil etkileşimi yüklenen sayfaları korur (tek öğe güncellenir). Sohbet listesi sayfasız; ortak takipçiler hâlâ tam takipçi listesinden (DB kesişim RPC'si ayrı iş). _(2026-10-25; testli, cihazda doğrulanmadı)_ — `DATA-12`
 - [ ] Görsel sıkıştırma (istemci tarafı) ve boyut limiti (ör. uzun kenar 2048px, ~1MB)
 - [ ] `post-images` bucket'ını private yap + signed URL (KVKK) — `SEC-9`
 - [ ] Tutarlı hata yönetimi: tüm repository'ler `guardSupabase` kullansın; `23505` ve `StorageException` eşlemesi
@@ -141,7 +141,7 @@
 - [ ] Kayıt başarı diyaloğu yarışı; hazır avatar kararı — `BUG-21`, `AUTH-8`
 - [ ] Login küçük UX düzeltmeleri — `AUTH-10`
 - [ ] Domain katmanı kararı (tamamla ya da kaldır) — `DATA-19`
-- [ ] Ölü kod: `FeedMode`; sohbet kullanıcı aramasında gerçek debounce — `BUG-26`, `BUG-22`
+- [ ] Ölü kod: ~~`FeedMode`~~ (DATA-12 ile kaldırıldı, `BUG-26` ✅); sohbet kullanıcı aramasında gerçek debounce — `BUG-22`
 
 **Bitti tanımı:** Uygulama dili İngilizce'ye alınınca hiçbir Türkçe metin görünmüyor; en büyük yazı boyutunda ekranlar taşmıyor.
 

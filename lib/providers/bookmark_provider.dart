@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../core/utils/paging.dart';
 import '../data/models/post_model.dart';
 import '../data/providers/repository_providers.dart';
 
@@ -11,20 +12,34 @@ import '../data/providers/repository_providers.dart';
 /// [PostRepository.getBookmarkedPosts] ile verileri çeker.
 /// Toggle ve kaldırma işlemleri yerel state'i optimistik olarak günceller.
 class BookmarkNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
+  final _pager = Pager<PostModel>();
+
+  bool get hasMore => _pager.hasMore;
+
   @override
   Future<List<PostModel>> build() async {
     return _fetchBookmarks();
   }
 
-  Future<List<PostModel>> _fetchBookmarks() {
-    return ref.read(bookmarkRepositoryProvider).getBookmarkedPosts();
-  }
+  Future<List<PostModel>> _fetchBookmarks() async => _pager
+      .first(await ref.read(bookmarkRepositoryProvider).getBookmarkedPosts());
 
   /// Listeyi yeniden yükler.
   Future<void> refresh() async {
+    _pager.reset();
     state = const AsyncLoading();
     state = await AsyncValue.guard(_fetchBookmarks);
   }
+
+  Future<void> loadMore() => _pager.loadMore(
+        (before) => ref
+            .read(bookmarkRepositoryProvider)
+            .getBookmarkedPosts(before: before),
+        (items) {
+          final posts = state.valueOrNull;
+          if (posts != null) state = AsyncData([...posts, ...items]);
+        },
+      );
 
   /// Bookmark'u kaldırır ve listeyi günceller.
   Future<void> removeBookmark(String postId) async {

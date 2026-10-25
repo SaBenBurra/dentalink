@@ -4,11 +4,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
 
 import '../../core/error/app_failures.dart';
+import '../../core/utils/paging.dart';
 import '../../core/utils/supabase_error_mapper.dart';
 import '../../domain/enums/enums.dart';
 import '../models/post_model.dart';
 import '../models/tag_model.dart';
 import '../models/user_model.dart';
+import 'keyset.dart';
 import 'post_repository.dart';
 
 /// Supabase tabanlı gönderi repository implementasyonu.
@@ -146,14 +148,8 @@ class SupabasePostRepository implements PostRepository {
   // ═══════════════════════════════════════════════════════════════════════════
 
   @override
-  Future<List<PostModel>> getFeed({bool chronological = true}) async {
-    final response = await _basePostQuery()
-        .order('created_at', ascending: false)
-        .limit(50);
-
-    return (response as List<dynamic>)
-        .map((e) => _mapRowToPost(e as Map<String, dynamic>))
-        .toList();
+  Future<PageResult<PostModel>> getFeed({PageCursor? before}) async {
+    return _toPage(await _basePostQuery().pageBefore(before));
   }
 
   @override
@@ -166,29 +162,32 @@ class SupabasePostRepository implements PostRepository {
   });
 
   @override
-  Future<List<PostModel>> getPostsByUser(String userId) async {
-    final response = await _basePostQuery()
-        .eq('user_id', userId)
-        .order('created_at', ascending: false);
-
-    return (response as List<dynamic>)
-        .map((e) => _mapRowToPost(e as Map<String, dynamic>))
-        .toList();
+  Future<PageResult<PostModel>> getPostsByUser(
+    String userId, {
+    PageCursor? before,
+  }) async {
+    return _toPage(
+      await _basePostQuery().eq('user_id', userId).pageBefore(before),
+    );
   }
+
+  PageResult<PostModel> _toPage(List<Map<String, dynamic>> rows) =>
+      (items: rows.map(_mapRowToPost).toList(), next: nextCursor(rows));
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  ISearchRepository
   // ═══════════════════════════════════════════════════════════════════════════
 
   @override
-  Future<List<PostModel>> searchPosts(
+  Future<PageResult<PostModel>> searchPosts(
     String query, {
     DentalBranch? branch,
     PostType? type,
+    PageCursor? before,
   }) async {
     // Boş sorgu — boş sonuç döndür.
     final q = query.trim();
-    if (q.isEmpty) return [];
+    if (q.isEmpty) return (items: <PostModel>[], next: null);
 
     var request = _basePostQuery();
 
@@ -203,48 +202,39 @@ class SupabasePostRepository implements PostRepository {
       request = request.eq('type', type.dbValue);
     }
 
-    final response = await request
-        .order('created_at', ascending: false)
-        .limit(50);
-
-    return (response as List<dynamic>)
-        .map((e) => _mapRowToPost(e as Map<String, dynamic>))
-        .toList();
+    return _toPage(await request.pageBefore(before));
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  IBookmarkRepository
   // ═══════════════════════════════════════════════════════════════════════════
 
+  /// Sayfa kaydedilme zamanına göre; imleç bookmark satırıdır.
   @override
-  Future<List<PostModel>> getBookmarkedPosts() async {
+  Future<PageResult<PostModel>> getBookmarkedPosts({PageCursor? before}) async {
     final uid = _currentUserId;
 
     // Bookmark'lanmış post id'lerini çek, ardından postları getir.
     final bookmarkRows = await _client
         .from('bookmarks')
-        .select('post_id')
+        .select('id, created_at, post_id')
         .eq('user_id', uid)
-        .order('created_at', ascending: false);
+        .pageBefore(before);
 
-    final postIds = (bookmarkRows as List<dynamic>)
-        .map((e) => e['post_id'] as String)
-        .toList();
-
-    if (postIds.isEmpty) return [];
+    final postIds = [for (final row in bookmarkRows) row['post_id'] as String];
+    final next = nextCursor(bookmarkRows);
+    if (postIds.isEmpty) return (items: <PostModel>[], next: next);
 
     final response = await _basePostQuery()
         .inFilter('id', postIds);
 
-    final posts = (response as List<dynamic>)
-        .map((e) => _mapRowToPost(e as Map<String, dynamic>))
-        .toList();
+    final posts = response.map(_mapRowToPost).toList();
 
     // Bookmark sırasını koru (en son kaydedilen üstte).
     final idOrder = {for (var i = 0; i < postIds.length; i++) postIds[i]: i};
     posts.sort((a, b) => (idOrder[a.id] ?? 0).compareTo(idOrder[b.id] ?? 0));
 
-    return posts;
+    return (items: posts, next: next);
   }
 
   @override

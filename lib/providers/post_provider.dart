@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/error/app_failures.dart';
+import '../core/utils/paging.dart';
 import '../data/models/post_model.dart';
 import '../data/providers/repository_providers.dart';
 import 'feed_provider.dart';
@@ -67,11 +68,40 @@ final postDetailProvider = AsyncNotifierProvider.autoDispose
 // Kullanıcı Postları Provider
 // ─────────────────────────────────────────────────────────────────────────────
 
-final userPostsProvider =
-    AutoDisposeFutureProvider.family<List<PostModel>, String>((
-      ref,
-      userId,
-    ) async {
-      return ref.read(feedRepositoryProvider).getPostsByUser(userId);
-    });
+class UserPostsNotifier
+    extends AutoDisposeFamilyAsyncNotifier<List<PostModel>, String> {
+  final _pager = Pager<PostModel>();
+
+  bool get hasMore => _pager.hasMore;
+
+  @override
+  Future<List<PostModel>> build(String arg) async =>
+      _pager.first(await ref.read(feedRepositoryProvider).getPostsByUser(arg));
+
+  Future<void> loadMore() => _pager.loadMore(
+        (before) => ref
+            .read(feedRepositoryProvider)
+            .getPostsByUser(arg, before: before),
+        (items) {
+          final posts = state.valueOrNull;
+          if (posts != null) state = AsyncData([...posts, ...items]);
+        },
+      );
+
+  /// Listedeki tek postu yeniden çekmeden günceller (yüklenen sayfalar kalır).
+  void patchPost(String postId, PostModel Function(PostModel) update) {
+    final posts = state.valueOrNull;
+    if (posts == null) return;
+    state = AsyncData([for (final p in posts) p.id == postId ? update(p) : p]);
+  }
+
+  void removePost(String postId) {
+    final posts = state.valueOrNull;
+    if (posts == null) return;
+    state = AsyncData([for (final p in posts) if (p.id != postId) p]);
+  }
+}
+
+final userPostsProvider = AsyncNotifierProvider.autoDispose
+    .family<UserPostsNotifier, List<PostModel>, String>(UserPostsNotifier.new);
 

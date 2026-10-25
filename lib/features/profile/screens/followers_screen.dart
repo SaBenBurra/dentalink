@@ -7,6 +7,7 @@ import '../../../providers/following_provider.dart';
 import '../../../providers/user_provider.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_widget.dart';
+import '../../../shared/widgets/load_more_footer.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/providers/repository_providers.dart';
 import '../../../shared/widgets/loading_indicator.dart';
@@ -77,7 +78,8 @@ class _FollowersScreenState extends ConsumerState<FollowersScreen>
 }
 
 class _UserListTab extends ConsumerStatefulWidget {
-  final AutoDisposeFutureProvider<List<UserModel>> provider;
+  final AutoDisposeFamilyAsyncNotifierProvider<FollowListNotifier,
+      List<UserModel>, String> provider;
   final String emptyMessage;
 
   const _UserListTab({required this.provider, required this.emptyMessage});
@@ -87,17 +89,18 @@ class _UserListTab extends ConsumerStatefulWidget {
 }
 
 class _UserListTabState extends ConsumerState<_UserListTab> {
-  bool _statusesLoaded = false;
+  /// Takip durumu istenmiş kullanıcılar; rebuild'lerde tekrar istenmez.
+  final _statusRequested = <String>{};
 
-  /// Takip durumlarını toplu olarak yükler.
-  ///
-  /// [_statusesLoaded] guard'ı sayesinde sadece ilk veri
-  /// yüklemesinde çalışır, sonraki rebuild'lerde atlanır.
+  /// Henüz istenmemiş kullanıcıların (ilk ya da yeni gelen sayfa) takip
+  /// durumlarını toplu olarak yükler.
   void _loadFollowStatuses(List<UserModel> users) {
-    if (_statusesLoaded || users.isEmpty) return;
-    _statusesLoaded = true;
+    final userIds = [
+      for (final u in users)
+        if (_statusRequested.add(u.id)) u.id,
+    ];
+    if (userIds.isEmpty) return;
 
-    final userIds = users.map((u) => u.id).toList();
     ref
         .read(followRepositoryProvider)
         .getFollowedUserIds(userIds)
@@ -108,7 +111,7 @@ class _UserListTabState extends ConsumerState<_UserListTab> {
       });
     }).catchError((Object e) {
       debugPrint('Takip durumları yüklenemedi: $e');
-      if (mounted) _statusesLoaded = false; // Yeniden deneme imkanı
+      if (mounted) _statusRequested.removeAll(userIds); // Yeniden deneme imkanı
     });
   }
 
@@ -118,7 +121,9 @@ class _UserListTabState extends ConsumerState<_UserListTab> {
 
     return asyncData.when(
       data: (users) {
-        if (users.isEmpty) {
+        final notifier = ref.read(widget.provider.notifier);
+        final hasMore = notifier.hasMore;
+        if (users.isEmpty && !hasMore) {
           return DentLinkEmptyState(
             icon: Icons.people_outline,
             title: 'Kullanıcı Bulunamadı',
@@ -126,17 +131,20 @@ class _UserListTabState extends ConsumerState<_UserListTab> {
           );
         }
 
-        // Guard: sadece ilk veri yüklemesinde çalışır.
+        // Yalnızca yeni gelen kullanıcılar için istek gider.
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _loadFollowStatuses(users);
         });
 
         return ListView.separated(
           padding: const EdgeInsets.all(AppDimensions.spacing16),
-          itemCount: users.length,
+          itemCount: users.length + (hasMore ? 1 : 0),
           separatorBuilder: (context, index) =>
               const SizedBox(height: AppDimensions.spacing8),
           itemBuilder: (context, index) {
+            if (index == users.length) {
+              return LoadMoreFooter(onLoadMore: notifier.loadMore);
+            }
             final user = users[index];
             final isMe = user.id == ref.watch(currentUserProvider)?.id;
             return UserTile(

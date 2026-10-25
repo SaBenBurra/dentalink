@@ -245,5 +245,6 @@
   "pickFromGallery": "Choose from Gallery",
   "pickFromCamera": "Take Photo",
   "changePhoto": "Change photo",
-  "validationExperience": "Enter a number between 0 and 70."
+  "validationExperience": "Enter a number between 0 and 70.",
+  "showMore": "Show more"
 }

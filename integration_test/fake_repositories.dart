@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dentlink/core/utils/paging.dart';
 import 'package:dentlink/core/error/app_failures.dart';
 import 'package:dentlink/data/models/badge_model.dart';
 import 'package:dentlink/data/models/conversation_model.dart';
@@ -72,18 +73,21 @@ List<Override> fakeRepositoryOverrides() {
 
 class _FakePostRepository implements PostRepository {
   @override
-  Future<List<PostModel>> getFeed({bool chronological = true}) async => [seedCase];
+  Future<PageResult<PostModel>> getFeed({PageCursor? before}) async =>
+      (items: [seedCase], next: null);
 
   @override
   Future<PostModel> getPostById(String id) async =>
       id == seedCase.id ? seedCase : throw const NotFoundFailure();
 
   @override
-  Future<List<PostModel>> getPostsByUser(String userId) async =>
-      userId == otherUser.id ? [seedCase] : [];
+  Future<PageResult<PostModel>> getPostsByUser(String userId,
+          {PageCursor? before}) async =>
+      (items: userId == otherUser.id ? [seedCase] : <PostModel>[], next: null);
 
   @override
-  Future<List<PostModel>> getBookmarkedPosts() async => [];
+  Future<PageResult<PostModel>> getBookmarkedPosts({PageCursor? before}) async =>
+      (items: <PostModel>[], next: null);
 
   @override
   Future<void> incrementViewCount(String postId) async {}
@@ -94,9 +98,9 @@ class _FakePostRepository implements PostRepository {
 
 class _FakeCommentRepository implements CommentRepository {
   @override
-  Future<List<CommentEntity>> getComments(String postId,
-          {int limit = 50, int offset = 0}) async =>
-      [];
+  Future<PageResult<CommentEntity>> getComments(String postId,
+          {PageCursor? after}) async =>
+      (items: <CommentEntity>[], next: null);
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -107,7 +111,9 @@ class _FakeMessageRepository implements MessageRepository {
   Future<List<ConversationModel>> getConversations() async => [_conversation];
 
   @override
-  Future<List<MessageModel>> getMessages(String conversationId) async => [
+  Future<PageResult<MessageModel>> getMessages(String conversationId,
+          {PageCursor? before}) async =>
+      (items: [
         MessageModel(
           id: 'm1',
           senderId: otherUser.id,
@@ -116,7 +122,7 @@ class _FakeMessageRepository implements MessageRepository {
           isRead: true,
           createdAt: DateTime(2024),
         ),
-      ];
+      ], next: null);
 
   @override
   Stream<MessageModel> watchMessages(String conversationId) => const Stream.empty();
@@ -181,11 +187,18 @@ class _FakeFollowRepository implements FollowRepository {
   Future<Set<String>> getFollowedUserIds(List<String> userIds) async => {};
 
   @override
-  Future<List<UserModel>> getFollowers(String userId) async =>
+  Future<PageResult<UserModel>> getFollowers(String userId,
+          {PageCursor? before}) async =>
+      (items: userId == otherUser.id ? <UserModel>[] : [otherUser], next: null);
+
+  @override
+  Future<List<UserModel>> getAllFollowers(String userId) async =>
       userId == otherUser.id ? [] : [otherUser];
 
   @override
-  Future<List<UserModel>> getFollowing(String userId) async => [];
+  Future<PageResult<UserModel>> getFollowing(String userId,
+          {PageCursor? before}) async =>
+      (items: <UserModel>[], next: null);
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../providers/comment_provider.dart';
+import '../../../../shared/widgets/load_more_footer.dart';
 import '../comments/comment_card.dart';
 
 class CaseDetailComments extends ConsumerWidget {
@@ -29,15 +30,20 @@ class CaseDetailComments extends ConsumerWidget {
         const SizedBox(height: AppDimensions.spacing16),
         commentsAsync.when(
           data: (comments) {
-            if (comments.isEmpty) {
+            final notifier = ref.read(commentsProvider(postId).notifier);
+            final hasMore = notifier.hasMore;
+            if (comments.isEmpty && !hasMore) {
               return const CommentEmptyState(isCase: true);
             }
 
             return ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: comments.length,
+              itemCount: comments.length + (hasMore ? 1 : 0),
               itemBuilder: (context, index) {
+                if (index == comments.length) {
+                  return LoadMoreFooter(onLoadMore: notifier.loadMore, auto: false);
+                }
                 return CommentCard(
                   comment: comments[index],
                   postId: postId,

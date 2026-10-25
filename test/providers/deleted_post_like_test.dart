@@ -1,3 +1,4 @@
+import 'package:dentlink/core/utils/paging.dart';
 import 'package:dentlink/core/error/app_failures.dart';
 import 'package:dentlink/data/models/post_model.dart';
 import 'package:dentlink/data/models/user_model.dart';
@@ -28,7 +29,8 @@ final _post = QuestionPostModel(
 /// Post ekranda açıkken başka cihazda silinmiş: okuma çalışır, beğeni NotFound.
 class _DeletedPostRepo implements PostRepository {
   @override
-  Future<List<PostModel>> getFeed({bool chronological = true}) async => [_post];
+  Future<PageResult<PostModel>> getFeed({PageCursor? before}) async =>
+      (items: [_post], next: null);
   @override
   Future<PostModel> getPostById(String id) async => _post;
   @override

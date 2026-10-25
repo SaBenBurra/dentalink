@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/error/app_failures.dart';
+import '../../core/utils/paging.dart';
 import '../../core/utils/supabase_error_mapper.dart';
 import '../models/conversation_model.dart';
 import '../models/message_model.dart';
 import '../models/user_model.dart';
+import 'keyset.dart';
 import 'message_repository.dart';
 
 class SupabaseMessageRepository implements MessageRepository {
@@ -70,16 +72,21 @@ class SupabaseMessageRepository implements MessageRepository {
   });
 
   @override
-  Future<List<MessageModel>> getMessages(String conversationId) => guardSupabase(() async {
-    final response = await _client
+  Future<PageResult<MessageModel>> getMessages(
+    String conversationId, {
+    PageCursor? before,
+  }) => guardSupabase(() async {
+    // Sayfa en yeniden geriye çekilir, ekran için eski → yeni çevrilir.
+    final rows = await _client
         .from('messages')
         .select('*')
         .eq('conversation_id', conversationId)
-        .order('created_at', ascending: true);
+        .pageBefore(before);
 
-    return (response as List<dynamic>)
-        .map((e) => _mapMessage(e as Map<String, dynamic>))
-        .toList();
+    return (
+      items: rows.reversed.map(_mapMessage).toList(),
+      next: nextCursor(rows),
+    );
   });
 
   @override

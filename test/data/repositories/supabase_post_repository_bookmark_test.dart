@@ -286,7 +286,8 @@ void main() {
       when(mockAuthClient.currentUser).thenReturn(mockUser);
 
       final result = await repository.searchPosts('');
-      expect(result, isEmpty);
+      expect(result.items, isEmpty);
+      expect(result.next, isNull);
     });
 
     test('searchPosts with whitespace-only query returns empty list', () async {
@@ -295,7 +296,8 @@ void main() {
       when(mockAuthClient.currentUser).thenReturn(mockUser);
 
       final result = await repository.searchPosts('   ');
-      expect(result, isEmpty);
+      expect(result.items, isEmpty);
+      expect(result.next, isNull);
     });
   });
 }

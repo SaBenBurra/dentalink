@@ -8,6 +8,7 @@ import '../../../domain/enums/enums.dart';
 import '../../../providers/bookmark_provider.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_widget.dart';
+import '../../../shared/widgets/load_more_footer.dart';
 import '../../../shared/widgets/post_card_factory.dart';
 
 /// Kullanıcının kaydettiği gönderileri listeleyen ekran.
@@ -35,7 +36,9 @@ class BookmarksScreen extends ConsumerWidget {
       ),
       body: bookmarksState.when(
         data: (posts) {
-          if (posts.isEmpty) {
+          final notifier = ref.read(bookmarkProvider.notifier);
+          final hasMore = notifier.hasMore;
+          if (posts.isEmpty && !hasMore) {
             return const DentLinkEmptyState(
               icon: Icons.bookmark_border_rounded,
               title: 'Kaydedilen gönderi yok',
@@ -51,10 +54,13 @@ class BookmarksScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(
                 vertical: AppDimensions.spacing8,
               ),
-              itemCount: posts.length,
+              itemCount: posts.length + (hasMore ? 1 : 0),
               separatorBuilder: (_, _) =>
                   const SizedBox(height: AppDimensions.spacing8),
               itemBuilder: (context, index) {
+                if (index == posts.length) {
+                  return LoadMoreFooter(onLoadMore: notifier.loadMore);
+                }
                 final post = posts[index];
                 return Dismissible(
                   key: ValueKey(post.id),

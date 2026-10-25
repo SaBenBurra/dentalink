@@ -8,12 +8,24 @@ import '../../providers/feed_provider.dart';
 import '../../providers/post_provider.dart';
 import 'error_messages.dart';
 
-/// Kullanıcının kendi gönderi listeleri değişince (oluştur/sil) yenilenmesi
-/// gereken her şey: feed, profil sekmesi ve post sayısı (authProvider).
+/// Yeni post oluşunca yenilenmesi gereken her şey: feed, profil sekmesi ve
+/// post sayısı (authProvider). Yeni post ilk sayfada görünür.
 void invalidateMyPosts(WidgetRef ref) {
   ref.invalidate(feedProvider);
   final uid = ref.read(currentUserProvider)?.id;
   if (uid != null) ref.invalidate(userPostsProvider(uid));
+  ref.invalidate(authProvider);
+}
+
+/// Silinen post listelerden çıkar; yüklenen sayfalar yeniden çekilmez.
+void _removeMyPost(WidgetRef ref, String postId) {
+  if (ref.exists(feedProvider)) {
+    ref.read(feedProvider.notifier).removePost(postId);
+  }
+  final uid = ref.read(currentUserProvider)?.id;
+  if (uid != null && ref.exists(userPostsProvider(uid))) {
+    ref.read(userPostsProvider(uid).notifier).removePost(postId);
+  }
   ref.invalidate(authProvider);
 }
 
@@ -54,7 +66,7 @@ Future<bool> confirmAndDeletePost(
     messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
     return false;
   }
-  invalidateMyPosts(ref);
+  _removeMyPost(ref, postId);
   messenger.showSnackBar(SnackBar(content: Text(l10n.postDeleted)));
   return true;
 }

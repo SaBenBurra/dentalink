@@ -1,3 +1,4 @@
+import '../../core/utils/paging.dart';
 import '../models/user_model.dart';
 
 /// Takip sistemi arayüzü.
@@ -27,9 +28,12 @@ abstract class FollowRepository {
   /// Boş liste verilirse boş set döner.
   Future<Set<String>> getFollowedUserIds(List<String> userIds);
 
-  /// Kullanıcının takipçi listesini getirir.
-  Future<List<UserModel>> getFollowers(String userId);
+  /// Kullanıcının takipçileri, en son takip eden önce; [before] ile sonraki sayfa.
+  Future<PageResult<UserModel>> getFollowers(String userId, {PageCursor? before});
 
-  /// Kullanıcının takip ettiği kişi listesini getirir.
-  Future<List<UserModel>> getFollowing(String userId);
+  /// Sayfasız tüm takipçiler; yalnızca ortak takipçi hesabı için.
+  Future<List<UserModel>> getAllFollowers(String userId);
+
+  /// Kullanıcının takip ettikleri, en son takip edilen önce; [before] ile sonraki sayfa.
+  Future<PageResult<UserModel>> getFollowing(String userId, {PageCursor? before});
 }

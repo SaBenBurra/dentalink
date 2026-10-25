@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/enums/enums.dart';
 import '../core/error/app_failures.dart';
+import '../core/utils/paging.dart';
 import '../data/models/post_model.dart';
 import '../data/models/user_model.dart';
 import '../data/providers/repository_providers.dart';
@@ -56,12 +57,16 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
   /// Yalnızca en son isteğin sonucu yazılır; yavaş eski bir yanıt yenisini ezmez.
   int _requestId = 0;
   final _pending = PostToggleQueue();
+  final _pager = Pager<PostModel>();
+
+  bool get hasMore => _pager.hasMore;
 
   @override
   SearchState build() => const SearchState();
 
   Future<void> search(String query) async {
     final requestId = ++_requestId;
+    _pager.reset();
     if (query.trim().isEmpty) {
       state = SearchState(
         branchFilter: state.branchFilter,
@@ -90,7 +95,10 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
     final users = await usersFuture;
 
     if (requestId != _requestId) return;
-    state = state.copyWith(postResults: posts, userResults: users);
+    state = state.copyWith(
+      postResults: posts.whenData(_pager.first),
+      userResults: users,
+    );
   }
 
   void setBranchFilter(DentalBranch? branch) {
@@ -110,6 +118,7 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
 
   void clear() {
     _requestId++;
+    _pager.reset();
     state = const SearchState();
   }
 
@@ -117,6 +126,24 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
 
   Future<void> toggleBookmark(String postId) =>
       _toggle(postId, PostToggle.bookmark);
+
+  /// Aynı sorgu ve filtrelerle sonraki sonuç sayfasını ekler.
+  Future<void> loadMore() {
+    final query = state.query;
+    final branch = state.branchFilter;
+    final type = state.typeFilter;
+    return _pager.loadMore(
+      (before) => ref.read(searchRepositoryProvider).searchPosts(
+            query,
+            branch: branch,
+            type: type,
+            before: before,
+          ),
+      (items) => state = state.copyWith(
+        postResults: AsyncData([...?state.postResults.valueOrNull, ...items]),
+      ),
+    );
+  }
 
   /// Sonuçlardaki tek postu günceller (detay ekranından senkronizasyon dahil).
   void patchPost(String postId, PostModel Function(PostModel) update) {

@@ -1,14 +1,17 @@
+import '../../core/utils/paging.dart';
 import '../models/conversation_model.dart';
 import '../models/message_model.dart';
 
 /// Mesajlaşma repository arayüzü.
 abstract class MessageRepository {
-  /// Mevcut kullanıcının tüm konuşmalarını getirir.
+  /// Mevcut kullanıcının tüm konuşmalarını getirir (sayfasız: sohbet ekranı
+  /// karşı kullanıcının konuşmasını ve okunmamış toplamını bu listeden bulur).
   /// Son mesaj zamanına göre sıralanır (en yeni önce).
   Future<List<ConversationModel>> getConversations();
 
-  /// Bir konuşmanın mesajlarını getirir (eski → yeni).
-  Future<List<MessageModel>> getMessages(String conversationId);
+  /// Bir konuşmanın en yeni mesaj sayfası, eski → yeni sıralı; [before]
+  /// verilirse ondan önceki (daha eski) sayfa.
+  Future<PageResult<MessageModel>> getMessages(String conversationId, {PageCursor? before});
 
   /// Belirtilen alıcıya mesaj gönderir.
   /// Konuşma yoksa otomatik oluşturulur.

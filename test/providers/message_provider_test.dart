@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dentlink/core/utils/paging.dart';
 import 'package:dentlink/data/models/conversation_model.dart';
 import 'package:dentlink/data/models/message_model.dart';
 import 'package:dentlink/data/models/user_model.dart';
@@ -42,6 +43,8 @@ class _FakeMessageRepo implements MessageRepository {
   final msgLive = StreamController<MessageModel>.broadcast();
   List<ConversationModel> conversations = [];
   Completer<List<MessageModel>> messagesLoad = Completer();
+  PageCursor? firstPageNext;
+  final befores = <PageCursor?>[];
   int getConversationsCalls = 0;
 
   @override
@@ -51,7 +54,12 @@ class _FakeMessageRepo implements MessageRepository {
   }
 
   @override
-  Future<List<MessageModel>> getMessages(String conversationId) => messagesLoad.future;
+  Future<PageResult<MessageModel>> getMessages(String conversationId,
+      {PageCursor? before}) async {
+    befores.add(before);
+    if (before != null) return (items: [_msg('m0', 0)], next: null);
+    return (items: await messagesLoad.future, next: firstPageNext);
+  }
 
   @override
   Future<MessageModel> sendMessage(String receiverId, String content) async {
@@ -133,5 +141,24 @@ void main() {
     final state = await container.read(activeChatProvider('peer').future);
     expect(state.conversationId, 'new');
     expect(state.messages.map((m) => m.content), ['merhaba']);
+  });
+
+  test('yukarı kaydırınca daha eski sayfa başa eklenir, realtime kopya korunur', () async {
+    repo.conversations = [_conv('a', 'peer', minute: 1)];
+    repo.firstPageNext = (createdAt: DateTime.utc(2026), id: 'm1');
+    container.listen(conversationsProvider, (_, _) {});
+    await container.read(conversationsProvider.future);
+    container.listen(activeChatProvider('peer'), (_, _) {});
+    repo.messagesLoad.complete([_msg('m1', 1), _msg('m2', 2)]);
+    await container.read(activeChatProvider('peer').future);
+    final notifier = container.read(activeChatProvider('peer').notifier);
+    expect(notifier.hasMore, isTrue);
+
+    await notifier.loadMore();
+
+    expect(repo.befores, [null, repo.firstPageNext]);
+    final messages = container.read(activeChatProvider('peer')).requireValue.messages;
+    expect(messages.map((m) => m.id), ['m0', 'm1', 'm2']);
+    expect(notifier.hasMore, isFalse);
   });
 }

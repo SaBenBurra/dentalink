@@ -6,6 +6,7 @@ import 'package:dentlink/providers/feed_provider.dart';
 import 'package:dentlink/shared/widgets/post_card_factory.dart';
 import 'package:dentlink/shared/widgets/empty_state.dart';
 import 'package:dentlink/shared/widgets/error_widget.dart';
+import 'package:dentlink/shared/widgets/load_more_footer.dart';
 import 'package:dentlink/shared/utils/error_messages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,7 +41,10 @@ class FeedList extends StatelessWidget {
               ? posts
               : posts.where((post) => post.type == filterType).toList();
 
-          if (filteredPosts.isEmpty) {
+          final notifier = ref.read(feedProvider.notifier);
+          final hasMore = notifier.hasMore;
+
+          if (filteredPosts.isEmpty && !hasMore) {
             return CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
@@ -67,10 +71,13 @@ class FeedList extends StatelessWidget {
               AppDimensions.spacing16,
               AppDimensions.spacing12 + MediaQuery.paddingOf(context).bottom,
             ),
-            itemCount: filteredPosts.length,
+            itemCount: filteredPosts.length + (hasMore ? 1 : 0),
             separatorBuilder: (context, index) =>
                 const SizedBox(height: AppDimensions.spacing16),
             itemBuilder: (context, index) {
+              if (index == filteredPosts.length) {
+                return LoadMoreFooter(onLoadMore: notifier.loadMore);
+              }
               final post = filteredPosts[index];
 
               final routePath = post.type == PostType.casePost

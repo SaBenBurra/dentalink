@@ -583,4 +583,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get validationExperience => '0 ile 70 arasında bir sayı girin.';
+
+  @override
+  String get showMore => 'Daha fazla göster';
 }

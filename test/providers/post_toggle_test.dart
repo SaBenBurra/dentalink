@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dentlink/core/utils/paging.dart';
 import 'package:dentlink/core/error/app_failures.dart';
 import 'package:dentlink/data/models/post_model.dart';
 import 'package:dentlink/data/models/user_model.dart';
@@ -35,9 +36,9 @@ class _Repo implements PostRepository {
   Completer<PostModel> likeCompleter = Completer();
 
   @override
-  Future<List<PostModel>> getFeed({bool chronological = true}) async {
+  Future<PageResult<PostModel>> getFeed({PageCursor? before}) async {
     feedCalls++;
-    return [_post];
+    return (items: [_post], next: null);
   }
 
   @override

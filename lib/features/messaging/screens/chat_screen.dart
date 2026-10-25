@@ -8,6 +8,7 @@ import '../widgets/chat_input.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import '../../../providers/message_provider.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../shared/widgets/load_more_footer.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/error_widget.dart';
 import '../../../data/models/conversation_model.dart';
@@ -163,14 +164,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 // reversed.toList() yerine index matematiği ile ters sıralama.
                 // Her build'de yeni liste tahsisini (allocation) önler.
                 final messageCount = messages.length;
+                final notifier =
+                    ref.read(activeChatProvider(widget.userId).notifier);
+                final hasMore = notifier.hasMore;
 
                 return ListView.builder(
                   reverse: true, // Listeyi alttan üste doğru dizer.
                   padding: const EdgeInsets.symmetric(
                     vertical: AppDimensions.spacing16,
                   ),
-                  itemCount: messageCount,
+                  itemCount: messageCount + (hasMore ? 1 : 0),
                   itemBuilder: (context, index) {
+                    // En üstte: yukarı kaydırınca daha eski mesajlar gelir.
+                    if (index == messageCount) {
+                      return LoadMoreFooter(onLoadMore: notifier.loadMore);
+                    }
                     // reverse: true ile index 0 = en alttaki eleman.
                     // Kronolojik listeyi (eski→yeni) ters okuyarak
                     // en yeni mesajı alta yerleştiriyoruz.

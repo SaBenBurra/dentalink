@@ -78,7 +78,11 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
             tags: _tags,
           );
       ref.read(feedProvider.notifier).replacePost(updated);
-      ref.invalidate(userPostsProvider(updated.userId));
+      if (ref.exists(userPostsProvider(updated.userId))) {
+        ref
+            .read(userPostsProvider(updated.userId).notifier)
+            .patchPost(updated.id, (_) => updated);
+      }
       ref.invalidate(postDetailProvider(updated.id));
       messenger.showSnackBar(SnackBar(content: Text(l10n.postUpdated)));
       if (mounted) context.pop();

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../core/utils/paging.dart';
 import '../data/models/conversation_model.dart';
 import '../data/models/message_model.dart';
 import '../data/providers/repository_providers.dart';
@@ -94,6 +95,11 @@ List<MessageModel> _merge(List<MessageModel> a, Iterable<MessageModel> b) =>
 
 class ActiveChatNotifier
     extends AutoDisposeFamilyAsyncNotifier<ActiveChatState, String> {
+  final _pager = Pager<MessageModel>();
+
+  /// Yüklenenden daha eski mesaj var mı.
+  bool get hasMore => _pager.hasMore;
+
   @override
   Future<ActiveChatState> build(String peerUserId) async {
     // 9. Sohbet ekranından kısa süreli çıkıp girmelerde yeniden yüklemeyi (flicker) önler
@@ -107,6 +113,7 @@ class ActiveChatNotifier
     );
 
     if (conversationId == null) {
+      _pager.reset();
       return const ActiveChatState(conversationId: null, messages: []);
     }
 
@@ -120,8 +127,7 @@ class ActiveChatNotifier
     );
     ref.onDispose(sub.cancel);
 
-    // TODO: Sayfalama/lazy loading eklenebilir (cursor/limit)
-    final messages = await repo.getMessages(conversationId);
+    final messages = _pager.first(await repo.getMessages(conversationId));
     loaded = true;
 
     return ActiveChatState(
@@ -134,6 +140,23 @@ class ActiveChatNotifier
     final current = state.valueOrNull;
     if (current == null) return;
     state = AsyncData(current.copyWith(messages: _merge(current.messages, [m])));
+  }
+
+  /// Daha eski mesaj sayfasını başa ekler; ekrandaki (realtime ile güncellenmiş)
+  /// kopyalar korunur.
+  Future<void> loadMore() {
+    final conversationId = state.valueOrNull?.conversationId;
+    if (conversationId == null) return Future.value();
+    return _pager.loadMore(
+      (before) => ref
+          .read(messageRepositoryProvider)
+          .getMessages(conversationId, before: before),
+      (older) {
+        final current = state.valueOrNull;
+        if (current == null) return;
+        state = AsyncData(current.copyWith(messages: _merge(older, current.messages)));
+      },
+    );
   }
 
   /// Mesajları okundu olarak işaretler. UI katmanından (ör. ekran açılışı) tetiklenir.

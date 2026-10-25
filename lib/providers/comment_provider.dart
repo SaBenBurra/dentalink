@@ -3,6 +3,7 @@ import '../domain/entities/comment_entity.dart';
 import '../domain/repositories/comment_repository.dart';
 import '../data/providers/repository_providers.dart';
 import '../core/error/app_failures.dart';
+import '../core/utils/paging.dart';
 import '../data/models/post_model.dart';
 import 'feed_provider.dart';
 import 'post_provider.dart';
@@ -10,13 +11,31 @@ import 'search_provider.dart';
 
 class CommentsNotifier extends AutoDisposeFamilyAsyncNotifier<List<CommentEntity>, String> {
   final _pendingLikes = <String>{};
+  final _pager = Pager<CommentEntity>();
 
   CommentRepository get _repo => ref.read(commentRepositoryProvider);
 
+  bool get hasMore => _pager.hasMore;
+
   @override
-  Future<List<CommentEntity>> build(String postId) {
-    return ref.watch(commentRepositoryProvider).getComments(postId);
+  Future<List<CommentEntity>> build(String postId) async {
+    return _pager.first(await ref.watch(commentRepositoryProvider).getComments(postId));
   }
+
+  /// Sonraki yorum sayfasını ekler. Bu ekranda eklenen yorum kendi sayfası
+  /// gelince listeden çıkıp sayfadaki yerine geçer (çift görünmez).
+  Future<void> loadMore() => _pager.loadMore(
+        (after) => _repo.getComments(arg, after: after),
+        (items) {
+          final current = state.valueOrNull;
+          if (current == null) return;
+          final ids = {for (final c in items) c.id};
+          state = AsyncData([
+            for (final c in current) if (!ids.contains(c.id)) c,
+            ...items,
+          ]);
+        },
+      );
 
   Future<T> _keepingAlive<T>(Future<T> Function() action) async {
     final link = ref.keepAlive();
@@ -105,8 +124,8 @@ class CommentsNotifier extends AutoDisposeFamilyAsyncNotifier<List<CommentEntity
     try {
       // Listeyi arka planda yenile, mevcut liste (AsyncData) ekranda kalmaya devam eder,
       // böylece loading spinner (AsyncLoading) ile ekran sıfırlanmaz.
-      final newList = await _repo.getComments(arg);
-      state = AsyncData(newList);
+      final firstPage = await _repo.getComments(arg);
+      state = AsyncData(_pager.first(firstPage));
     } catch (_) {
       // İşlem başarılı; listeyi çekme başarısızsa eski liste ekranda kalsın, hata fırlatma.
     }

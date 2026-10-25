@@ -1,27 +1,30 @@
 import 'dart:io';
 
+import '../../core/utils/paging.dart';
 import '../../domain/enums/enums.dart';
 import '../models/post_model.dart';
 
 /// Feed odaklı işlemler (Listeleme)
 abstract class IFeedRepository {
-  Future<List<PostModel>> getFeed({bool chronological = true});
+  /// Kronolojik, en yeni önce; [before] verilirse sonraki sayfa.
+  Future<PageResult<PostModel>> getFeed({PageCursor? before});
   Future<PostModel> getPostById(String id);
-  Future<List<PostModel>> getPostsByUser(String userId);
+  Future<PageResult<PostModel>> getPostsByUser(String userId, {PageCursor? before});
 }
 
 /// Arama işlemleri
 abstract class ISearchRepository {
-  Future<List<PostModel>> searchPosts(
+  Future<PageResult<PostModel>> searchPosts(
     String query, {
     DentalBranch? branch,
     PostType? type,
+    PageCursor? before,
   });
 }
 
 /// Kaydedilenler işlemleri
 abstract class IBookmarkRepository {
-  Future<List<PostModel>> getBookmarkedPosts();
+  Future<PageResult<PostModel>> getBookmarkedPosts({PageCursor? before});
   Future<PostModel> bookmarkPost(String postId);
   Future<PostModel> unbookmarkPost(String postId);
 }

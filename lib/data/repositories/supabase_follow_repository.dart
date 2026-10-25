@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/utils/paging.dart';
 import '../models/user_model.dart';
+import 'keyset.dart';
 import 'follow_repository.dart';
 
 /// Supabase tabanlı takip repository implementasyonu.
@@ -70,23 +72,44 @@ class SupabaseFollowRepository implements FollowRepository {
   }
 
   @override
-  Future<List<UserModel>> getFollowers(String userId) async {
+  Future<PageResult<UserModel>> getFollowers(
+    String userId, {
+    PageCursor? before,
+  }) => _page('users!follows_follower_id_fkey(*)', 'following_id', userId, before);
+
+  @override
+  Future<PageResult<UserModel>> getFollowing(
+    String userId, {
+    PageCursor? before,
+  }) => _page('users!follows_following_id_fkey(*)', 'follower_id', userId, before);
+
+  /// Takip satırları en yeni önce; imleç `follows` satırıdır.
+  Future<PageResult<UserModel>> _page(
+    String userEmbed,
+    String column,
+    String userId,
+    PageCursor? before,
+  ) async {
+    final rows = await client
+        .from('follows')
+        .select('id, created_at, $userEmbed')
+        .eq(column, userId)
+        .pageBefore(before);
+
+    return (
+      items: [for (final row in rows) UserModel.fromJson(row['users'])],
+      next: nextCursor(rows),
+    );
+  }
+
+  // shortcut: tüm takipçileri tek sorguda çeker (yalnızca ortak takipçiler
+  // için); büyük hesaplarda yavaşlarsa DB'de kesişim alan RPC'ye geç.
+  @override
+  Future<List<UserModel>> getAllFollowers(String userId) async {
     final response = await client
         .from('follows')
         .select('users!follows_follower_id_fkey(*)')
         .eq('following_id', userId);
-
-    return (response as List<dynamic>)
-        .map((e) => UserModel.fromJson(e['users']))
-        .toList();
-  }
-
-  @override
-  Future<List<UserModel>> getFollowing(String userId) async {
-    final response = await client
-        .from('follows')
-        .select('users!follows_following_id_fkey(*)')
-        .eq('follower_id', userId);
 
     return (response as List<dynamic>)
         .map((e) => UserModel.fromJson(e['users']))

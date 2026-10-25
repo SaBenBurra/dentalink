@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/error/app_failures.dart';
+import '../core/utils/paging.dart';
 import '../data/models/post_model.dart';
 import '../data/providers/repository_providers.dart';
 import 'post_toggle.dart';
@@ -8,35 +9,32 @@ import 'post_toggle.dart';
 // Feed Notifier
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// Feed mod: kronolojik veya algoritmik.
-enum FeedMode { chronological, algorithmic }
-
+/// Kronolojik feed; sayfalar [loadMore] ile eklenir.
 class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
-  FeedMode _mode = FeedMode.chronological;
   final _pending = PostToggleQueue();
+  final _pager = Pager<PostModel>();
 
-  FeedMode get mode => _mode;
+  bool get hasMore => _pager.hasMore;
 
   @override
   Future<List<PostModel>> build() async {
-    return _fetchFeed();
+    return _fetchFirst();
   }
 
-  Future<List<PostModel>> _fetchFeed() {
-    return ref
-        .read(feedRepositoryProvider)
-        .getFeed(chronological: _mode == FeedMode.chronological);
-  }
-
-  Future<void> switchMode(FeedMode mode) async {
-    _mode = mode;
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(_fetchFeed);
-  }
+  Future<List<PostModel>> _fetchFirst() async =>
+      _pager.first(await ref.read(feedRepositoryProvider).getFeed());
 
   Future<void> refresh() async {
-    state = await AsyncValue.guard(_fetchFeed);
+    state = await AsyncValue.guard(_fetchFirst);
   }
+
+  Future<void> loadMore() => _pager.loadMore(
+        (before) => ref.read(feedRepositoryProvider).getFeed(before: before),
+        (items) {
+          final posts = state.valueOrNull;
+          if (posts != null) state = AsyncData([...posts, ...items]);
+        },
+      );
 
   /// Beğeniyi iyimser olarak çevirir; hata olursa geri alır.
   Future<void> toggleLike(String postId) => _toggle(postId, PostToggle.like);

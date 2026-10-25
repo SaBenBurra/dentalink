@@ -1171,6 +1171,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'0 ile 70 arasında bir sayı girin.'**
   String get validationExperience;
+
+  /// Sayfalı listede sonraki sayfayı elle yükleyen buton
+  ///
+  /// In tr, this message translates to:
+  /// **'Daha fazla göster'**
+  String get showMore;
 }
 
 class _AppLocalizationsDelegate

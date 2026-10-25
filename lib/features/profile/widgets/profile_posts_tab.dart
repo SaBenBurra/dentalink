@@ -10,6 +10,7 @@ import '../../../domain/enums/enums.dart';
 import '../../../shared/utils/error_messages.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_widget.dart';
+import '../../../shared/widgets/load_more_footer.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class ProfilePostsTab extends ConsumerWidget {
@@ -19,15 +20,17 @@ class ProfilePostsTab extends ConsumerWidget {
   const ProfilePostsTab({super.key, required this.userId, required this.type});
 
   /// Profil listesi feedProvider'dan bağımsızdır; işlem repository'ye gider ve
-  /// bu kullanıcının listesi yenilenir (AUDIT BUG-5).
+  /// listedeki post sunucunun döndüğüyle değişir (AUDIT BUG-5); yüklenen
+  /// sayfalar korunur.
   Future<void> _run(
     BuildContext context,
     WidgetRef ref,
     Future<PostModel> Function() action,
   ) async {
+    final notifier = ref.read(userPostsProvider(userId).notifier);
     try {
-      await action();
-      ref.invalidate(userPostsProvider(userId));
+      final updated = await action();
+      notifier.patchPost(updated.id, (_) => updated);
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context)
@@ -44,7 +47,10 @@ class ProfilePostsTab extends ConsumerWidget {
       data: (allPosts) {
         final posts = allPosts.where((p) => p.type == type).toList();
 
-        if (posts.isEmpty) {
+        final notifier = ref.read(userPostsProvider(userId).notifier);
+        final hasMore = notifier.hasMore;
+
+        if (posts.isEmpty && !hasMore) {
           return DentLinkEmptyState(
             icon: Icons.article_outlined,
             title: AppLocalizations.of(context)!.profileNoPosts,
@@ -56,9 +62,12 @@ class ProfilePostsTab extends ConsumerWidget {
             top: AppDimensions.spacing8,
             bottom: AppDimensions.spacing8 + MediaQuery.paddingOf(context).bottom,
           ),
-          itemCount: posts.length,
+          itemCount: posts.length + (hasMore ? 1 : 0),
           separatorBuilder: (context, index) => const Divider(),
           itemBuilder: (context, index) {
+            if (index == posts.length) {
+              return LoadMoreFooter(onLoadMore: notifier.loadMore);
+            }
             final post = posts[index];
 
             final routePath = post.type == PostType.casePost

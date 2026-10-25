@@ -530,5 +530,7 @@
   "pickFromGallery": "Galeriden Seç",
   "pickFromCamera": "Kameradan Çek",
   "changePhoto": "Fotoğrafı değiştir",
-  "validationExperience": "0 ile 70 arasında bir sayı girin."
+  "validationExperience": "0 ile 70 arasında bir sayı girin.",
+  "showMore": "Daha fazla göster",
+  "@showMore": { "description": "Sayfalı listede sonraki sayfayı elle yükleyen buton" }
 }

@@ -1,3 +1,4 @@
+import 'package:dentlink/core/utils/paging.dart';
 import 'package:dentlink/data/models/post_model.dart';
 import 'package:dentlink/data/models/user_model.dart';
 import 'package:dentlink/data/providers/repository_providers.dart';
@@ -32,9 +33,9 @@ class _PostRepo implements PostRepository {
   int feedCalls = 0;
 
   @override
-  Future<List<PostModel>> getFeed({bool chronological = true}) async {
+  Future<PageResult<PostModel>> getFeed({PageCursor? before}) async {
     feedCalls++;
-    return [_post];
+    return (items: [_post], next: null);
   }
 
   @override
@@ -51,9 +52,9 @@ class _CommentRepo implements CommentRepository {
   Future<void> unmarkBestAnswer(String commentId) async => unmarked.add(commentId);
 
   @override
-  Future<List<CommentEntity>> getComments(String postId,
-          {int limit = 50, int offset = 0}) async =>
-      [];
+  Future<PageResult<CommentEntity>> getComments(String postId,
+          {PageCursor? after}) async =>
+      (items: <CommentEntity>[], next: null);
 
   @override
   Future<CommentEntity> addComment(String postId, String content) async =>

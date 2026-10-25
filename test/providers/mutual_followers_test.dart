@@ -22,7 +22,7 @@ UserModel _user(String id) => UserModel(
 /// 'p' profilini x, y, z takip ediyor; oturumdaki kullanıcı yalnızca y'yi takip ediyor.
 class _FollowRepo implements FollowRepository {
   @override
-  Future<List<UserModel>> getFollowers(String userId) async =>
+  Future<List<UserModel>> getAllFollowers(String userId) async =>
       [_user('x'), _user('y'), _user('z')];
 
   @override

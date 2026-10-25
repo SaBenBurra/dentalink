@@ -8,6 +8,7 @@ import '../../../shared/utils/error_messages.dart';
 import '../../../shared/widgets/user_tile.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/load_more_footer.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/shared/widgets/post_card_factory.dart';
 
@@ -20,7 +21,9 @@ class PostSearchResults extends ConsumerWidget {
 
     return state.postResults.when(
       data: (posts) {
-        if (posts.isEmpty) {
+        final notifier = ref.read(searchProvider.notifier);
+        final hasMore = notifier.hasMore;
+        if (posts.isEmpty && !hasMore) {
           return const SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.only(top: AppDimensions.spacing64),
@@ -37,10 +40,13 @@ class PostSearchResults extends ConsumerWidget {
             top: AppDimensions.spacing8,
             bottom: AppDimensions.spacing8 + MediaQuery.paddingOf(context).bottom,
           ),
-          itemCount: posts.length,
+          itemCount: posts.length + (hasMore ? 1 : 0),
           separatorBuilder: (_, _) =>
               const SizedBox(height: AppDimensions.spacing8),
           itemBuilder: (context, index) {
+            if (index == posts.length) {
+              return LoadMoreFooter(onLoadMore: notifier.loadMore);
+            }
             final post = posts[index];
             final routePath = post.type == PostType.casePost
                 ? '/feed/case/${post.id}'

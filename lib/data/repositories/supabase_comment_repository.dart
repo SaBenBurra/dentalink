@@ -1,9 +1,11 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/error/app_failures.dart';
+import '../../core/utils/paging.dart';
 import '../../core/utils/supabase_error_mapper.dart';
 import '../../domain/repositories/comment_repository.dart';
 import '../../domain/entities/comment_entity.dart';
 import '../mappers/comment_mapper.dart';
+import 'keyset.dart';
 
 /// Supabase tabanlı yorum repository implementasyonu.
 class SupabaseCommentRepository implements CommentRepository {
@@ -27,24 +29,28 @@ class SupabaseCommentRepository implements CommentRepository {
 
 
   @override
-  Future<List<CommentEntity>> getComments(String postId, {int limit = 50, int offset = 0}) => guardSupabase(() async {
-    final safeLimit = limit.clamp(1, 100);
-    final safeOffset = offset < 0 ? 0 : offset;
+  Future<PageResult<CommentEntity>> getComments(String postId, {PageCursor? after}) => guardSupabase(() async {
     final uid = _uid;
-    
-    final response = await _client
+
+    var query = _client
         .from('comments')
         .select(_fullCommentSelect)
         .eq('post_id', postId)
-        .eq('my_likes.user_id', uid)
+        .eq('my_likes.user_id', uid);
+    // En iyi cevap ilk sayfanın başında; sonraki sayfalarda tekrar gelmez.
+    if (after != null) {
+      query = query
+          .eq('is_best_answer', false)
+          .or(keysetFilter(after, ascending: true));
+    }
+
+    final rows = await query
         .order('is_best_answer', ascending: false)
         .order('created_at', ascending: true)
-        .order('id', ascending: true) // Tiebreaker: Aynı milisaniyede atılan yorumlarda stabil sayfalama sağlar
-        .range(safeOffset, safeOffset + safeLimit - 1);
-        
-    return (response as List<dynamic>)
-        .map((e) => CommentMapper.fromRow(e as Map<String, dynamic>))
-        .toList();
+        .order('id', ascending: true)
+        .limit(pageSize);
+
+    return (items: rows.map(CommentMapper.fromRow).toList(), next: nextCursor(rows));
   });
 
   @override
