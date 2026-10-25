@@ -8,6 +8,7 @@ import 'package:dentlink/shared/widgets/post_body.dart';
 import 'package:dentlink/shared/widgets/post_glass_container.dart';
 import 'package:dentlink/shared/widgets/post_header.dart';
 import 'package:dentlink/shared/utils/post_actions.dart';
+import 'package:dentlink/shared/utils/moderation_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -50,7 +51,9 @@ class QuestionCard extends ConsumerWidget {
             onMenuSelected: (action) => switch (action) {
               PostMenuAction.edit => context.push('/edit-post/${post.id}'),
               PostMenuAction.delete => confirmAndDeletePost(context, ref, post.id),
-              PostMenuAction.report => null,
+              PostMenuAction.report =>
+                showReportSheet(context, ReportTarget.post, post.id),
+              PostMenuAction.block => confirmAndBlockUser(context, ref, post.userId),
             },
           ),
 

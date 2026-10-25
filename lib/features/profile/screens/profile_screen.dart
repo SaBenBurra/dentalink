@@ -13,6 +13,7 @@ import '../../../data/models/enums.dart';
 import '../../../data/models/user_model.dart';
 import '../../../shared/widgets/error_widget.dart';
 import '../../../shared/utils/error_messages.dart';
+import '../../../shared/utils/moderation_actions.dart';
 
 class ProfileScreen extends ConsumerWidget {
   final String? userId;
@@ -60,7 +61,14 @@ class ProfileScreen extends ConsumerWidget {
                   tooltip: AppLocalizations.of(context)!.settingsTitle,
                 ),
               ]
-            : null,
+            : [
+                ModerationMenuButton(
+                  target: ReportTarget.user,
+                  targetId: targetUserId,
+                  userId: targetUserId,
+                  onBlocked: () => context.canPop() ? context.pop() : context.go('/feed'),
+                ),
+              ],
       ),
       body: userState.when(
         data: (user) {

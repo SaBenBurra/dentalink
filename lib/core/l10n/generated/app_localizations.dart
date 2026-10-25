@@ -227,7 +227,7 @@ abstract class AppLocalizations {
   /// Şikayet et seçeneği
   ///
   /// In tr, this message translates to:
-  /// **'Şikayet Et'**
+  /// **'Raporla'**
   String get report;
 
   /// Daha fazla seçenek tooltip
@@ -1904,12 +1904,6 @@ abstract class AppLocalizations {
   /// **'Dil Seçin'**
   String get settingsChooseLanguage;
 
-  /// No description provided for @settingsPrivacy.
-  ///
-  /// In tr, this message translates to:
-  /// **'Gizlilik'**
-  String get settingsPrivacy;
-
   /// No description provided for @comingSoon.
   ///
   /// In tr, this message translates to:
@@ -1999,6 +1993,108 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'{n} hafta önce'**
   String timeWeeksAgo(int n);
+
+  /// No description provided for @reportTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Neden raporluyorsun?'**
+  String get reportTitle;
+
+  /// No description provided for @reportReasonSpam.
+  ///
+  /// In tr, this message translates to:
+  /// **'Spam veya reklam'**
+  String get reportReasonSpam;
+
+  /// No description provided for @reportReasonHarassment.
+  ///
+  /// In tr, this message translates to:
+  /// **'Taciz veya zorbalık'**
+  String get reportReasonHarassment;
+
+  /// No description provided for @reportReasonPatientPrivacy.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hasta mahremiyeti ihlali (yüz, isim, kimlik)'**
+  String get reportReasonPatientPrivacy;
+
+  /// No description provided for @reportReasonMisinformation.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yanlış veya tehlikeli bilgi'**
+  String get reportReasonMisinformation;
+
+  /// No description provided for @reportReasonInappropriate.
+  ///
+  /// In tr, this message translates to:
+  /// **'Uygunsuz içerik'**
+  String get reportReasonInappropriate;
+
+  /// No description provided for @reportReasonOther.
+  ///
+  /// In tr, this message translates to:
+  /// **'Diğer'**
+  String get reportReasonOther;
+
+  /// No description provided for @reportNoteHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ek açıklama (isteğe bağlı)'**
+  String get reportNoteHint;
+
+  /// No description provided for @reportSubmit.
+  ///
+  /// In tr, this message translates to:
+  /// **'Raporu Gönder'**
+  String get reportSubmit;
+
+  /// No description provided for @reportSent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Raporun alındı, inceleyeceğiz. Teşekkürler.'**
+  String get reportSent;
+
+  /// No description provided for @blockUser.
+  ///
+  /// In tr, this message translates to:
+  /// **'Engelle'**
+  String get blockUser;
+
+  /// No description provided for @blockConfirmTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanıcı engellensin mi?'**
+  String get blockConfirmTitle;
+
+  /// No description provided for @blockConfirmBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Birbirinizin gönderilerini ve yorumlarını görmeyeceksiniz, birbirinize mesaj atamayacaksınız. Takipler kaldırılır. Engeli Ayarlar → Engellenenler\'den kaldırabilirsin.'**
+  String get blockConfirmBody;
+
+  /// No description provided for @userBlocked.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanıcı engellendi'**
+  String get userBlocked;
+
+  /// No description provided for @unblock.
+  ///
+  /// In tr, this message translates to:
+  /// **'Engeli Kaldır'**
+  String get unblock;
+
+  /// No description provided for @userUnblocked.
+  ///
+  /// In tr, this message translates to:
+  /// **'Engel kaldırıldı'**
+  String get userUnblocked;
+
+  /// No description provided for @blockedEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Engellediğin kimse yok'**
+  String get blockedEmpty;
 }
 
 class _AppLocalizationsDelegate

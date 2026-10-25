@@ -987,9 +987,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsChooseLanguage => 'Choose Language';
 
   @override
-  String get settingsPrivacy => 'Privacy';
-
-  @override
   String get comingSoon => 'Coming soon';
 
   @override
@@ -1044,4 +1041,57 @@ class AppLocalizationsEn extends AppLocalizations {
   String timeWeeksAgo(int n) {
     return '${n}w ago';
   }
+
+  @override
+  String get reportTitle => 'Why are you reporting this?';
+
+  @override
+  String get reportReasonSpam => 'Spam or advertising';
+
+  @override
+  String get reportReasonHarassment => 'Harassment or bullying';
+
+  @override
+  String get reportReasonPatientPrivacy =>
+      'Patient privacy violation (face, name, ID)';
+
+  @override
+  String get reportReasonMisinformation => 'False or dangerous information';
+
+  @override
+  String get reportReasonInappropriate => 'Inappropriate content';
+
+  @override
+  String get reportReasonOther => 'Other';
+
+  @override
+  String get reportNoteHint => 'Additional details (optional)';
+
+  @override
+  String get reportSubmit => 'Send Report';
+
+  @override
+  String get reportSent => 'Report received, we\'ll review it. Thank you.';
+
+  @override
+  String get blockUser => 'Block';
+
+  @override
+  String get blockConfirmTitle => 'Block this user?';
+
+  @override
+  String get blockConfirmBody =>
+      'You won\'t see each other\'s posts or comments and can\'t message each other. Follows are removed. You can unblock from Settings → Blocked Users.';
+
+  @override
+  String get userBlocked => 'User blocked';
+
+  @override
+  String get unblock => 'Unblock';
+
+  @override
+  String get userUnblocked => 'User unblocked';
+
+  @override
+  String get blockedEmpty => 'You haven\'t blocked anyone';
 }

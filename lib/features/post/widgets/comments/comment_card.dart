@@ -10,6 +10,9 @@ import '../../../../../providers/comment_provider.dart';
 import '../../../../../shared/widgets/user_avatar.dart';
 import '../../../../../shared/widgets/relative_time_text.dart';
 import '../../../../../shared/utils/error_messages.dart';
+import '../../../../../shared/utils/moderation_actions.dart';
+import '../../../../../providers/auth_provider.dart';
+import '../../../../../data/models/enums.dart';
 
 class CommentLikeButton extends StatelessWidget {
   const CommentLikeButton({super.key, required this.comment, required this.onTap});
@@ -182,6 +185,7 @@ class CommentCard extends ConsumerWidget {
     final authorName = comment.author?.fullName ?? AppLocalizations.of(context)!.deletedUser;
     final avatarUrl = comment.author?.avatarUrl;
     final titleName = comment.author?.title.displayName(context) ?? '';
+    final isMine = ref.watch(currentUserProvider)?.id == comment.userId;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppDimensions.spacing16),
@@ -277,6 +281,13 @@ class CommentCard extends ConsumerWidget {
                       ],
                     ),
                   ),
+                  if (!isMine)
+                    ModerationMenuButton(
+                      target: ReportTarget.comment,
+                      targetId: comment.id,
+                      userId: comment.userId,
+                      postId: postId,
+                    ),
                 ],
               ),
               const SizedBox(height: AppDimensions.spacing12),

@@ -14,6 +14,9 @@ import '../../../shared/widgets/error_widget.dart';
 import '../../../data/models/conversation_model.dart';
 import '../../../providers/user_provider.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
+import '../../../shared/utils/moderation_actions.dart';
+import '../../../data/models/enums.dart';
+import 'package:go_router/go_router.dart';
 /// Saat formatı — her build/itemBuilder çağrısında yeniden oluşturulmasını
 /// önlemek için modül seviyesinde tanımlanır.
 final _timeFormatter = DateFormat('HH:mm');
@@ -139,7 +142,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
           ],
         ),
-        // ⋮ menüsü (şikayet/engelle) Faz 4'te eklenecek.
+        actions: [
+          ModerationMenuButton(
+            target: ReportTarget.user,
+            targetId: widget.userId,
+            userId: widget.userId,
+            onBlocked: () => context.canPop() ? context.pop() : context.go('/messages'),
+          ),
+        ],
       ),
       body: Column(
         children: [

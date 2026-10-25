@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Mevcut dosyalar `001_…`–`012_…` biçiminde. Yeni dosyalar da aynı sırayla devam eder (son: `022_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `023_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -202,11 +202,70 @@ rollback;
 begin;
 update public.posts set like_count = -1 where id = (select id from public.posts limit 1);
 rollback;
+
+-- 15) Rapor (023) → BEKLENEN: ilk insert INSERT 0 1; başkası adına insert
+--     row-level security hatası; select permission denied
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+insert into public.reports (reporter_id, target_type, target_id, reason)
+values ('<A>', 'user', '<B>', 'spam');
+insert into public.reports (reporter_id, target_type, target_id, reason)
+values ('<B>', 'user', '<C>', 'spam');
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select * from public.reports;
+rollback;
+
+-- 16) Engel iki yönlü gizler (023) → BEKLENEN: B, A'nın postlarını görmez (0), iki yönde takip yok (0)
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+insert into public.blocks (blocker_id, blocked_id) values ('<A>', '<B>');
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select count(*) as a_posts_seen_by_b from public.posts where user_id = '<A>';
+select count(*) as follows_ab from public.follows
+ where (follower_id, following_id) in (('<A>','<B>'), ('<B>','<A>'));
+rollback;
+
+-- 17) Engelliyken mesaj (023) → BEKLENEN: blocked (42501)
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+insert into public.blocks (blocker_id, blocked_id) values ('<A>', '<B>');
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select public.send_message('<A>', 'merhaba');
+rollback;
 ```
 
 ---
 
-## 6. Canlı durumu salt-okunur inceleme
+## 6. Moderasyon kuyruğu (023)
+
+Raporlar istemciye okunmaz; kuyruk Dashboard → SQL Editor'dan yönetilir.
+
+```sql
+-- açık raporlar, hedef başına sayı
+select target_type, target_id, count(*) as reports, array_agg(distinct reason) as reasons,
+       min(created_at) as first_at
+from public.reports where status = 'open'
+group by target_type, target_id order by reports desc, first_at;
+
+-- içeriği kaldır (post/yorum) ve raporu kapat
+delete from public.posts where id = '<POST>';
+update public.reports set status = 'actioned' where target_id = '<POST>';
+
+-- asılsız rapor
+update public.reports set status = 'dismissed' where target_id = '<ID>';
+```
+
+Kullanıcıyı kapatmak için Dashboard → Authentication → kullanıcı → Ban user. Hesap silindiğinde public verisi cascade ile silinir.
+
+---
+
+## 7. Canlı durumu salt-okunur inceleme
 
 ```sql
 -- tablo yetkileri

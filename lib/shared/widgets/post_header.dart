@@ -6,6 +6,7 @@ import '../../../data/models/enums.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../../../shared/widgets/relative_time_text.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
+import '../utils/moderation_actions.dart';
 
 class PostHeader extends StatelessWidget {
   const PostHeader({
@@ -91,9 +92,7 @@ class PostHeader extends StatelessWidget {
             children: [
               badge,
               const SizedBox(width: AppDimensions.spacing16),
-              // shortcut: Raporla (Faz 4) hazır olana kadar menü yalnızca sahibine
-              // görünür (ölü buton yok).
-              if (onMenuSelected != null && isOwner)
+              if (onMenuSelected != null)
                 PopupMenuButton<PostMenuAction>(
                   padding: EdgeInsets.zero,
                   icon: Icon(
@@ -102,7 +101,9 @@ class PostHeader extends StatelessWidget {
                   ),
                   tooltip: l10n.moreOptions,
                   onSelected: onMenuSelected,
-                  itemBuilder: (context) => [
+                  itemBuilder: (context) => !isOwner
+                      ? moderationMenuItems(context)
+                      : [
                     PopupMenuItem(
                       value: PostMenuAction.edit,
                       child: Row(

@@ -1,14 +1,19 @@
 import 'package:dentlink/shared/extensions/dental_branch_ui.dart';
 import 'package:dentlink/shared/extensions/user_title_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../data/models/post_model.dart';
 import '../../../../shared/widgets/user_avatar.dart';
 import '../../../../shared/widgets/relative_time_text.dart';
+import '../../../../data/models/enums.dart';
+import '../../../../providers/auth_provider.dart';
+import '../../../../shared/utils/moderation_actions.dart';
+import 'detail_states.dart';
 
-class PostDetailAuthorInfo extends StatelessWidget {
+class PostDetailAuthorInfo extends ConsumerWidget {
   final PostModel post;
   final Widget? trailing;
   
@@ -19,7 +24,8 @@ class PostDetailAuthorInfo extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isOwner = ref.watch(currentUserProvider)?.id == post.userId;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
@@ -71,6 +77,13 @@ class PostDetailAuthorInfo extends StatelessWidget {
           ),
         ),
         trailing ?? const SizedBox.shrink(),
+        if (!isOwner)
+          ModerationMenuButton(
+            target: ReportTarget.post,
+            targetId: post.id,
+            userId: post.userId,
+            onBlocked: () => popOrGoFeed(context),
+          ),
       ],
     );
   }

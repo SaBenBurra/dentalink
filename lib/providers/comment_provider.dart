@@ -69,6 +69,13 @@ class CommentsNotifier extends AutoDisposeFamilyAsyncNotifier<List<CommentModel>
     if (ref.exists(searchProvider)) ref.read(searchProvider.notifier).patchPost(arg, bump);
   }
 
+  /// Engellenen kullanıcının yorumları listeden düşer (sayaç DB'de değişmez).
+  void removeAuthor(String userId) {
+    final current = state.valueOrNull;
+    if (current == null) return;
+    state = AsyncData([for (final c in current) if (c.userId != userId) c]);
+  }
+
   /// Her zaman GÜNCEL state üzerinden id ile değiştirir (eski liste kopyası yok).
   void _replace(CommentModel updated) {
     final current = state.valueOrNull;

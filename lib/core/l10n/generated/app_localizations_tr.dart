@@ -72,7 +72,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get sharePost => 'Gönderiyi Paylaş';
 
   @override
-  String get report => 'Şikayet Et';
+  String get report => 'Raporla';
 
   @override
   String get moreOptions => 'Daha Fazla Seçenek';
@@ -986,9 +986,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsChooseLanguage => 'Dil Seçin';
 
   @override
-  String get settingsPrivacy => 'Gizlilik';
-
-  @override
   String get comingSoon => 'Yakında';
 
   @override
@@ -1043,4 +1040,57 @@ class AppLocalizationsTr extends AppLocalizations {
   String timeWeeksAgo(int n) {
     return '$n hafta önce';
   }
+
+  @override
+  String get reportTitle => 'Neden raporluyorsun?';
+
+  @override
+  String get reportReasonSpam => 'Spam veya reklam';
+
+  @override
+  String get reportReasonHarassment => 'Taciz veya zorbalık';
+
+  @override
+  String get reportReasonPatientPrivacy =>
+      'Hasta mahremiyeti ihlali (yüz, isim, kimlik)';
+
+  @override
+  String get reportReasonMisinformation => 'Yanlış veya tehlikeli bilgi';
+
+  @override
+  String get reportReasonInappropriate => 'Uygunsuz içerik';
+
+  @override
+  String get reportReasonOther => 'Diğer';
+
+  @override
+  String get reportNoteHint => 'Ek açıklama (isteğe bağlı)';
+
+  @override
+  String get reportSubmit => 'Raporu Gönder';
+
+  @override
+  String get reportSent => 'Raporun alındı, inceleyeceğiz. Teşekkürler.';
+
+  @override
+  String get blockUser => 'Engelle';
+
+  @override
+  String get blockConfirmTitle => 'Kullanıcı engellensin mi?';
+
+  @override
+  String get blockConfirmBody =>
+      'Birbirinizin gönderilerini ve yorumlarını görmeyeceksiniz, birbirinize mesaj atamayacaksınız. Takipler kaldırılır. Engeli Ayarlar → Engellenenler\'den kaldırabilirsin.';
+
+  @override
+  String get userBlocked => 'Kullanıcı engellendi';
+
+  @override
+  String get unblock => 'Engeli Kaldır';
+
+  @override
+  String get userUnblocked => 'Engel kaldırıldı';
+
+  @override
+  String get blockedEmpty => 'Engellediğin kimse yok';
 }

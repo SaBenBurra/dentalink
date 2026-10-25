@@ -63,6 +63,13 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
     state = AsyncData([for (final p in posts) if (p.id != postId) p]);
   }
 
+  /// Engellenen kullanıcının postları yüklenen sayfalardan düşer.
+  void removeAuthor(String userId) {
+    final posts = state.valueOrNull;
+    if (posts == null) return;
+    state = AsyncData([for (final p in posts) if (p.userId != userId) p]);
+  }
+
   /// Başka cihazda silinmiş post (NotFound) listeden düşer; hata yine
   /// fırlatılır ki UI kullanıcıya bildirsin.
   Future<void> _toggle(String postId, PostToggle toggle) async {

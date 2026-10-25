@@ -16,6 +16,8 @@ import '../repositories/user_repository.dart';
 import '../repositories/supabase_user_repository.dart';
 import '../repositories/follow_repository.dart';
 import '../repositories/supabase_follow_repository.dart';
+import '../repositories/moderation_repository.dart';
+import '../repositories/supabase_moderation_repository.dart';
 
 // ─── Supabase ───
 final supabaseClientProvider = Provider<SupabaseClient>((ref) {
@@ -61,4 +63,9 @@ final userRepositoryProvider = Provider<UserRepository>((ref) {
 // ─── Follow ───
 final followRepositoryProvider = Provider<FollowRepository>((ref) {
   return SupabaseFollowRepository(client: ref.watch(supabaseClientProvider));
+});
+
+// ─── Moderation ───
+final moderationRepositoryProvider = Provider<ModerationRepository>((ref) {
+  return SupabaseModerationRepository(client: ref.watch(supabaseClientProvider));
 });

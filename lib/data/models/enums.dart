@@ -134,7 +134,34 @@ enum PostType {
 enum PostMenuAction {
   edit,
   delete,
-  report;
+  report,
+  block;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Raporlama (reports tablosu CHECK değerleriyle eşleşir, migration 023)
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum ReportTarget {
+  post,
+  comment,
+  user;
+
+  String get dbValue => name;
+}
+
+enum ReportReason {
+  spam,
+  harassment,
+  patientPrivacy,
+  misinformation,
+  inappropriate,
+  other;
+
+  String get dbValue => switch (this) {
+    ReportReason.patientPrivacy => 'patient_privacy',
+    _ => name,
+  };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

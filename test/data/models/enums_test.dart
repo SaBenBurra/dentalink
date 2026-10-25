@@ -323,8 +323,17 @@ void main() {
           PostMenuAction.edit,
           PostMenuAction.delete,
           PostMenuAction.report,
+          PostMenuAction.block,
         ]),
       );
     });
+  });
+
+  test('ReportReason dbValue reports CHECK değerleriyle eşleşir (023)', () {
+    expect(ReportReason.values.map((r) => r.dbValue), [
+      'spam', 'harassment', 'patient_privacy',
+      'misinformation', 'inappropriate', 'other',
+    ]);
+    expect(ReportTarget.values.map((t) => t.dbValue), ['post', 'comment', 'user']);
   });
 }

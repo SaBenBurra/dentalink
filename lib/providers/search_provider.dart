@@ -162,6 +162,20 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
     ]));
   }
 
+  /// Engellenen kullanıcının postları ve kendisi sonuçlardan düşer.
+  void removeAuthor(String userId) {
+    final posts = state.postResults.valueOrNull;
+    final users = state.userResults.valueOrNull;
+    state = state.copyWith(
+      postResults: posts == null
+          ? null
+          : AsyncData([for (final p in posts) if (p.userId != userId) p]),
+      userResults: users == null
+          ? null
+          : AsyncData([for (final u in users) if (u.id != userId) u]),
+    );
+  }
+
   /// Başka cihazda silinmiş post (NotFound) sonuçlardan düşer; hata yine
   /// fırlatılır ki UI kullanıcıya bildirsin.
   Future<void> _toggle(String postId, PostToggle toggle) async {

@@ -21,6 +21,7 @@ import '../../features/profile/screens/followers_screen.dart';
 import '../../features/messaging/screens/chat_screen.dart';
 import '../../features/notifications/screens/notifications_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
+import '../../features/settings/screens/blocked_users_screen.dart';
 import '../../features/bookmarks/screens/bookmarks_screen.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import '../../providers/auth_provider.dart';
@@ -197,6 +198,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/settings',
         name: 'settings',
         builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/blocked',
+        builder: (context, state) => const BlockedUsersScreen(),
       ),
       GoRoute(
         path: '/bookmarks',

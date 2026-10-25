@@ -308,18 +308,9 @@ class SettingsScreen extends ConsumerWidget {
           onTap: () => context.push('/edit-profile'),
         ),
         SettingsTile(
-          icon: Icons.lock_outline_rounded,
-          title: AppLocalizations.of(context)!.settingsPrivacy,
-          subtitle: AppLocalizations.of(context)!.comingSoon,
-          enabled: false,
-          onTap: () {},
-        ),
-        SettingsTile(
           icon: Icons.block_outlined,
           title: AppLocalizations.of(context)!.settingsBlocked,
-          subtitle: AppLocalizations.of(context)!.comingSoon,
-          enabled: false,
-          onTap: () {},
+          onTap: () => context.push('/settings/blocked'),
         ),
       ],
     );
