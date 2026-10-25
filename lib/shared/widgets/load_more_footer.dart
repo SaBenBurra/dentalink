@@ -70,7 +70,7 @@ class _LoadMoreFooterState extends State<LoadMoreFooter> {
           ? Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(getErrorMessage(error), textAlign: TextAlign.center),
+                Text(getErrorMessage(l10n, error), textAlign: TextAlign.center),
                 TextButton(onPressed: _start, child: Text(l10n.retry)),
               ],
             )

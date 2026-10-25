@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../shared/utils/error_messages.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,7 +30,7 @@ class BookmarksScreen extends ConsumerWidget {
           ? AppColors.darkBackground
           : AppColors.lightBackground,
       appBar: AppBar(
-        title: const Text('Kaydedilenler'),
+        title: Text(AppLocalizations.of(context)!.bookmarksTitle),
         leading: IconButton(
           tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -41,11 +42,11 @@ class BookmarksScreen extends ConsumerWidget {
           final notifier = ref.read(bookmarkProvider.notifier);
           final hasMore = notifier.hasMore;
           if (posts.isEmpty && !hasMore) {
-            return const DentLinkEmptyState(
+            return DentLinkEmptyState(
               icon: Icons.bookmark_border_rounded,
-              title: 'Kaydedilen gönderi yok',
+              title: AppLocalizations.of(context)!.bookmarksEmptyTitle,
               subtitle:
-                  'Beğendiğiniz vakaları ve soruları kaydedin,\nburadan kolayca erişin.',
+                  AppLocalizations.of(context)!.bookmarksEmptySubtitle,
             );
           }
 
@@ -102,7 +103,7 @@ class BookmarksScreen extends ConsumerWidget {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(
           child: DentLinkErrorWidget(
-            message: 'Kaydedilenler yüklenemedi.',
+            message: AppLocalizations.of(context)!.bookmarksLoadError,
             onRetry: () => ref.refresh(bookmarkProvider),
           ),
         ),
@@ -119,9 +120,10 @@ class BookmarksScreen extends ConsumerWidget {
     int index,
   ) async {
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(bookmarkProvider.notifier);
     void showError(Object e) =>
-        messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
+        messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(l10n, e))));
 
     messenger.hideCurrentSnackBar();
     try {
@@ -132,10 +134,10 @@ class BookmarksScreen extends ConsumerWidget {
     }
     messenger.showSnackBar(
       SnackBar(
-        content: const Text('Kaydedilenlerden kaldırıldı'),
+        content: Text(l10n.bookmarkRemoved),
         behavior: SnackBarBehavior.floating,
         action: SnackBarAction(
-          label: 'Geri Al',
+          label: l10n.undo,
           onPressed: () async {
             try {
               await notifier.restoreBookmark(post, index);

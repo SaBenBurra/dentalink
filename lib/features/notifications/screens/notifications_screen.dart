@@ -41,12 +41,13 @@ class _NotificationListView extends ConsumerWidget {
   ) async {
     final localizations = AppLocalizations.of(context)!;
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
     // Gezinmeyi bekletme; hata olursa notifier geri alır, burada yalnızca bildir.
     ref
         .read(notificationsProvider.notifier)
         .markRead(notification.id)
         .catchError((Object e) => messenger.showSnackBar(
-              SnackBar(content: Text(getErrorMessage(e))),
+              SnackBar(content: Text(getErrorMessage(l10n, e))),
             ));
 
     final type = notification.type;

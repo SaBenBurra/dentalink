@@ -1,4 +1,6 @@
 
+import 'package:dentlink/shared/extensions/dental_branch_ui.dart';
+import 'package:dentlink/shared/extensions/user_title_ui.dart';
 import 'package:dentlink/data/models/enums.dart';
 import 'package:dentlink/providers/auth_provider.dart';
 import 'package:dentlink/shared/widgets/post_action_bar.dart';
@@ -44,7 +46,7 @@ class CaseCard extends ConsumerWidget {
           // <-- 1. Header
           PostHeader(
             post: post,
-            subtitle: post.branch?.displayName ?? post.author.title.displayName,
+            subtitle: post.branch?.displayName(context) ?? post.author.title.displayName(context),
             isOwner: isOwner,
             badge: PostBadge(postType: PostType.casePost),
             onMenuSelected: (action) => switch (action) {

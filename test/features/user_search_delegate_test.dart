@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:dentlink/data/models/user_model.dart';
 import 'package:dentlink/data/providers/repository_providers.dart';
 import 'package:dentlink/data/repositories/user_repository.dart';
@@ -26,6 +27,8 @@ void main() {
     await tester.pumpWidget(ProviderScope(
       overrides: [userRepositoryProvider.overrideWithValue(repo)],
       child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Consumer(
           builder: (context, ref, _) => Scaffold(
             body: TextButton(

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/models/enums.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/locale_provider.dart';
 
 class RegisterState {
   final int currentStep;
@@ -51,12 +52,12 @@ class RegisterController extends AutoDisposeNotifier<RegisterState> {
 
   void nextStep(String name) {
     if (state.currentStep == 0) {
-      final error = name.trim().isEmpty ? 'Ad Soyad alanı zorunludur' : null;
+      final error = name.trim().isEmpty ? ref.read(l10nProvider).validationNameRequired : null;
       state = state.copyWith(nameError: () => error);
       
       if (error != null) return;
       if (state.selectedTitle == null) {
-        throw Exception('Lütfen bir unvan seçin');
+        throw StateError('title not selected');
       }
     }
     

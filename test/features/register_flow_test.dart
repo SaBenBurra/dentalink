@@ -44,7 +44,7 @@ void main() {
     await pumpDentLink(tester, auth: _NewUserAuth());
 
     await tester.enterText(find.byType(TextField).first, 'Ayşe Yılmaz');
-    await tester.tap(find.text(UserTitle.ogrenci.displayName));
+    await tester.tap(find.text('Öğrenci'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Devam Et'));
     await tester.pumpAndSettle();

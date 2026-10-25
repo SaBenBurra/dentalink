@@ -3,6 +3,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/l10n/generated/app_localizations.dart';
+
 /// Desteklenen dillerin listesi.
 const List<Locale> appSupportedLocales = [
   Locale('tr'), // Türkçe
@@ -70,3 +72,8 @@ class LocaleModeNotifier extends Notifier<Locale> {
   /// Mevcut dilin İngilizce olup olmadığını döner.
   bool get isEnglish => state.languageCode == 'en';
 }
+
+/// Context'i olmayan controller'lar için aktif dilin metinleri.
+final l10nProvider = Provider<AppLocalizations>(
+  (ref) => lookupAppLocalizations(ref.watch(localeModeProvider)),
+);

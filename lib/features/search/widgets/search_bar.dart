@@ -6,7 +6,7 @@ class CustomSearchBar extends StatefulWidget {
     super.key,
     required this.controller,
     required this.onChanged,
-    this.hintText = 'Ara...',
+    required this.hintText,
   });
 
   final TextEditingController controller;

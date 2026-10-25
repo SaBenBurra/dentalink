@@ -63,7 +63,7 @@ Future<bool> confirmAndDeletePost(
   try {
     await ref.read(createPostRepositoryProvider).deletePost(postId);
   } catch (e) {
-    messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
+    messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(l10n, e))));
     return false;
   }
   _removeMyPost(ref, postId);

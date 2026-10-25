@@ -32,7 +32,7 @@ class _FollowButtonState extends ConsumerState<FollowButton> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
+            .showSnackBar(SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, e))));
       }
     } finally {
       if (mounted) setState(() => _busy = false);

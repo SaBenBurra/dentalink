@@ -92,7 +92,7 @@ class BranchChip extends StatelessWidget {
                   const SizedBox(width: AppDimensions.spacing6),
                 ],
                 Text(
-                  branch.displayName,
+                  branch.displayName(context),
                   style: textTheme.labelMedium?.copyWith(
                     color: foregroundColor,
                   ),

@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../shared/utils/error_messages.dart';
 import '../../../shared/utils/post_actions.dart';
@@ -42,12 +43,12 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
       final state = ref.read(createQuestionProvider);
       if (state.hasError) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(getErrorMessage(state.error!))),
+          SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, state.error!))),
         );
       } else {
         invalidateMyPosts(ref);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Sorunuz başarıyla paylaşıldı!')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.questionShared)),
         );
         context.pop();
       }
@@ -66,7 +67,7 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
           actionsPadding: EdgeInsets.symmetric(
             horizontal: AppDimensions.spacing10,
           ),
-          title: const Text('Soru Sor'),
+          title: Text(AppLocalizations.of(context)!.createQuestion),
           actions: [
             Consumer(
               builder: (context, ref, child) {
@@ -80,7 +81,7 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : Text(
-                          'Paylaş',
+                          AppLocalizations.of(context)!.share,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: colorScheme.primary,
@@ -103,16 +104,16 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
               TextFormField(
                 controller: _titleController,
                 maxLength: 150, // DB: posts_title_length (017)
-                decoration: const InputDecoration(
-                  labelText: 'Soru Başlığı',
-                  hintText: 'Örn: Zirkonyum kaplama sonrası hassasiyet',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.questionTitleLabel,
+                  hintText: AppLocalizations.of(context)!.questionTitleHint,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Başlık boş bırakılamaz';
+                    return AppLocalizations.of(context)!.validationTitleEmpty;
                   }
                   return null;
                 },
@@ -124,10 +125,10 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
                 controller: _contentController,
                 maxLength: 5000, // DB: posts_content_length (017)
                 maxLines: 8,
-                decoration: const InputDecoration(
-                  labelText: 'Sorunun Detayları',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.questionContentLabel,
                   hintText:
-                      'Karşılaştığınız problemi veya merak ettiğiniz konuyu detaylıca açıklayın...',
+                      AppLocalizations.of(context)!.questionContentHint,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
@@ -135,7 +136,7 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'İçerik boş bırakılamaz';
+                    return AppLocalizations.of(context)!.validationContentEmpty;
                   }
                   return null;
                 },

@@ -1,3 +1,5 @@
+import 'package:dentlink/shared/extensions/dental_branch_ui.dart';
+import 'package:dentlink/shared/extensions/user_title_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
@@ -50,8 +52,8 @@ class PostDetailAuthorInfo extends StatelessWidget {
                 children: [
                   Flexible(
                     child: Text(
-                      (post is CasePostModel ? (post as CasePostModel).branch?.displayName : null) ??
-                          post.author.title.displayName,
+                      (post is CasePostModel ? (post as CasePostModel).branch?.displayName(context) : null) ??
+                          post.author.title.displayName(context),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.bodySmall?.copyWith(

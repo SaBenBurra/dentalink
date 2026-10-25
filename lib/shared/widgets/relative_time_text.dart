@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../core/l10n/generated/app_localizations.dart';
 
 /// Bir [DateTime] değerini göreli zaman metni olarak gösteren widget.
 ///
 /// Örneğin "5 dk önce", "2 saat önce", "3 gün önce" gibi metinler üretir.
-/// Türkçe ve İngilizce dil desteği sunar ve `intl` paketine bağımlı
-/// olmadan tarih formatlama yapar.
+/// Metinler aktif dile göre ARB'den gelir.
 ///
 /// Statik [format] metodu, widget dışında da kullanılabilir.
 ///
@@ -38,84 +38,40 @@ class RelativeTimeText extends StatelessWidget {
   /// Metnin başına eklenen isteğe bağlı ön ek.
   final String? prefix;
 
-  /// Türkçe ay isimleri.
-  static const List<String> _monthNamesTr = [
-    'Oca',
-    'Şub',
-    'Mar',
-    'Nis',
-    'May',
-    'Haz',
-    'Tem',
-    'Ağu',
-    'Eyl',
-    'Eki',
-    'Kas',
-    'Ara',
-  ];
-
-  /// İngilizce ay isimleri.
-  static const List<String> _monthNamesEn = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-
   /// Verilen [dateTime] değerini göreli zaman metnine dönüştürür.
   ///
-  /// [l10n] yerelleştirme nesnesi dil tespiti için kullanılır.
-  /// ARB dosyalarında bu metinler bulunmadığından, locale kontrolüyle
-  /// satır içi ele alınır.
+  /// Metinler ARB'den; 30+ gün için ay adı intl ile aktif dilde yazılır.
   static String format(DateTime dateTime, AppLocalizations l10n) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    final isTurkish = l10n.localeName.startsWith('tr');
 
     // < 1 dakika
     if (difference.inMinutes < 1) {
-      return isTurkish ? 'Az önce' : 'Just now';
+      return l10n.timeJustNow;
     }
 
     // < 60 dakika
     if (difference.inMinutes < 60) {
-      final n = difference.inMinutes;
-      return isTurkish ? '$n dk önce' : '$n min ago';
+      return l10n.timeMinutesAgo(difference.inMinutes);
     }
 
     // < 24 saat
     if (difference.inHours < 24) {
-      final n = difference.inHours;
-      return isTurkish ? '$n saat önce' : '${n}h ago';
+      return l10n.timeHoursAgo(difference.inHours);
     }
 
     // < 7 gün
     if (difference.inDays < 7) {
-      final n = difference.inDays;
-      return isTurkish ? '$n gün önce' : '${n}d ago';
+      return l10n.timeDaysAgo(difference.inDays);
     }
 
     // < 30 gün
     if (difference.inDays < 30) {
-      final n = difference.inDays ~/ 7;
-      return isTurkish ? '$n hafta önce' : '${n}w ago';
+      return l10n.timeWeeksAgo(difference.inDays ~/ 7);
     }
 
     // 30+ gün — 'dd MMM yyyy' formatı
-    final day = dateTime.day.toString().padLeft(2, '0');
-    final monthNames = isTurkish ? _monthNamesTr : _monthNamesEn;
-    final month = monthNames[dateTime.month - 1];
-    final year = dateTime.year;
-
-    return '$day $month $year';
+    return DateFormat('dd MMM yyyy', l10n.localeName).format(dateTime);
   }
 
   @override

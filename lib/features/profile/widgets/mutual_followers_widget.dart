@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/user_provider.dart';
@@ -53,22 +54,10 @@ class MutualFollowersWidget extends ConsumerWidget {
               ),
               const SizedBox(width: AppDimensions.spacing12),
               Expanded(
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: displayUsers.first.fullName,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      if (mutual.total > 1) ...[
-                        const TextSpan(text: ' ve '),
-                        TextSpan(
-                          text: '${mutual.total - 1} diğer kişi',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                      const TextSpan(text: ' takip ediyor'),
-                    ],
+                child: Text(
+                  AppLocalizations.of(context)!.mutualFollowedBy(
+                    displayUsers.first.fullName,
+                    mutual.total - 1,
                   ),
                   style: theme.textTheme.bodySmall,
                   maxLines: 2,

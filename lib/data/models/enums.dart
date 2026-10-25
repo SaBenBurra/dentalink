@@ -15,21 +15,6 @@ enum UserTitle {
   restoratifDisTedavisi,
   oralDiagnoz;
 
-  String get displayName => switch (this) {
-    UserTitle.unknown => 'Bilinmiyor',
-    UserTitle.ogrenci => 'Öğrenci',
-    UserTitle.disHekimi => 'Genel Diş Hekimi',
-    UserTitle.endodontist => 'Endodontist',
-    UserTitle.ortodontist => 'Ortodontist',
-    UserTitle.periodontolog => 'Periodontolog',
-    UserTitle.protezUzmani => 'Protez Uzmanı',
-    UserTitle.pedodontist => 'Pedodontist',
-    UserTitle.agizDisCeneCerrahisi => 'Ağız, Diş ve Çene Cerrahı',
-    UserTitle.agizDisCeneRadyoloji => 'Ağız, Diş ve Çene Radyoloğu',
-    UserTitle.restoratifDisTedavisi => 'Restoratif Diş Tedavisi Uzmanı',
-    UserTitle.oralDiagnoz => 'Oral Diagnoz Uzmanı',
-  };
-
   String get dbValue => switch (this) {
     UserTitle.unknown => 'unknown',
     UserTitle.ogrenci => 'ogrenci',
@@ -76,18 +61,6 @@ enum DentalBranch {
   agizDisCeneRadyolojisi,
   oralDiagnoz,
   restoratifDisTedavisi;
-
-  String get displayName => switch (this) {
-    DentalBranch.pedodonti => 'Pedodonti',
-    DentalBranch.endodonti => 'Endodonti',
-    DentalBranch.ortodonti => 'Ortodonti',
-    DentalBranch.periodontoloji => 'Periodontoloji',
-    DentalBranch.protetikDisTedavisi => 'Protetik Diş Tedavisi',
-    DentalBranch.agizDisCeneCerrahisi => 'Ağız, Diş ve Çene Cerrahisi',
-    DentalBranch.agizDisCeneRadyolojisi => 'Ağız, Diş ve Çene Radyolojisi',
-    DentalBranch.oralDiagnoz => 'Oral Diagnoz',
-    DentalBranch.restoratifDisTedavisi => 'Restoratif Diş Tedavisi',
-  };
 
   /// Supabase'deki PostgreSQL ENUM değeriyle eşleşir.
   String get dbValue => switch (this) {

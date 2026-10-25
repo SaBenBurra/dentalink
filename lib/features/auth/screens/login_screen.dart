@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -348,7 +349,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       otpFocusNodes: _otpFocusNodes,
       isLoading: state.isLoading,
       isSuccess: state.isSuccess,
-      successMessage: state.successMessage ?? 'Başarılı',
+      successMessage: state.successMessage ?? AppLocalizations.of(context)!.success,
       canResend: state.canResend,
       resendCountdown: state.resendCountdown,
       errorText: state.errorText,

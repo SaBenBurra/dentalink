@@ -88,7 +88,7 @@ class LoginEmailPhoneInput extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
               decoration: InputDecoration(
-                hintText: 'E-posta veya telefon numarası',
+                hintText: AppLocalizations.of(context)!.loginInputHint,
                 hintStyle: AppTextStyles.bodyMedium.copyWith(
                   color: AppColors.lightIcon.withValues(alpha: 0.7),
                   fontWeight: FontWeight.w500,

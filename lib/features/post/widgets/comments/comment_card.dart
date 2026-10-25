@@ -1,3 +1,5 @@
+import 'package:dentlink/shared/extensions/user_title_ui.dart';
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,7 +22,7 @@ class CommentLikeButton extends StatelessWidget {
     final color = comment.isLiked ? AppColors.like : cs.onSurfaceVariant;
     return Semantics(
       button: true,
-      label: comment.isLiked ? 'Beğeniyi geri al' : 'Beğen',
+      label: comment.isLiked ? AppLocalizations.of(context)!.unlike : AppLocalizations.of(context)!.like,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
@@ -80,7 +82,7 @@ class _BestAnswerBadge extends StatelessWidget {
           ),
           const SizedBox(width: AppDimensions.spacing4),
           Text(
-            'En İyi Cevap',
+            AppLocalizations.of(context)!.bestAnswer,
             style: textTheme.labelSmall?.copyWith(
               color: AppColors.success,
               fontWeight: FontWeight.bold,
@@ -105,7 +107,7 @@ class CommentEmptyState extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing32),
       alignment: Alignment.center,
       child: Text(
-        isCase ? 'Henüz yorum yapılmamış. İlk yorumu siz ekleyin!' : 'Henüz cevap yazılmamış. İlk siz cevaplayın!',
+        isCase ? AppLocalizations.of(context)!.noCommentsYet : AppLocalizations.of(context)!.noAnswersYet,
         style: textTheme.bodyMedium?.copyWith(
           color: colorScheme.onSurfaceVariant,
         ),
@@ -130,6 +132,7 @@ class CommentCard extends ConsumerWidget {
 
   Future<void> _handleMarkBest(BuildContext context, WidgetRef ref) async {
     final scaffold = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(commentsProvider(postId).notifier);
     final unmark = comment.isBestAnswer;
     try {
@@ -141,13 +144,13 @@ class CommentCard extends ConsumerWidget {
       scaffold.showSnackBar(
         SnackBar(
           content: Text(unmark
-              ? 'En iyi cevap seçimi kaldırıldı.'
-              : 'En iyi cevap başarıyla seçildi! 🎉'),
+              ? l10n.bestAnswerUnmarked
+              : l10n.bestAnswerMarked),
           duration: const Duration(seconds: 2),
         ),
       );
     } catch (e) {
-      scaffold.showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
+      scaffold.showSnackBar(SnackBar(content: Text(getErrorMessage(l10n, e))));
     }
   }
   
@@ -156,7 +159,7 @@ class CommentCard extends ConsumerWidget {
       await ref.read(commentsProvider(postId).notifier).toggleLike(comment.id);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, e))));
       }
     }
   }
@@ -176,9 +179,9 @@ class CommentCard extends ConsumerWidget {
         ? Colors.white.withValues(alpha: 0.12)
         : Colors.white.withValues(alpha: 0.8);
         
-    final authorName = comment.author?.fullName ?? '[Silinmiş Kullanıcı]';
+    final authorName = comment.author?.fullName ?? AppLocalizations.of(context)!.deletedUser;
     final avatarUrl = comment.author?.avatarUrl;
-    final titleName = comment.author?.title.displayName ?? '';
+    final titleName = comment.author?.title.displayName(context) ?? '';
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppDimensions.spacing16),
@@ -300,7 +303,7 @@ class CommentCard extends ConsumerWidget {
                         size: 14,
                       ),
                       label: Text(
-                        showBest ? 'Seçimi Kaldır' : 'En İyi Cevap Seç',
+                        showBest ? AppLocalizations.of(context)!.unmarkSelection : AppLocalizations.of(context)!.markAsBestAnswer,
                         style: const TextStyle(fontSize: 11),
                       ),
                       style: TextButton.styleFrom(

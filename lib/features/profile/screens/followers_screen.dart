@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -51,12 +52,12 @@ class _FollowersScreenState extends ConsumerState<FollowersScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ağ'),
+        title: Text(AppLocalizations.of(context)!.networkTitle),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(text: 'Takipçiler'),
-            Tab(text: 'Takip Edilenler'),
+          tabs: [
+            Tab(text: AppLocalizations.of(context)!.followersTab),
+            Tab(text: AppLocalizations.of(context)!.followingTab),
           ],
         ),
       ),
@@ -65,11 +66,11 @@ class _FollowersScreenState extends ConsumerState<FollowersScreen>
         children: [
           _UserListTab(
             provider: followersProvider(widget.userId),
-            emptyMessage: 'Henüz takipçisi yok.',
+            emptyMessage: AppLocalizations.of(context)!.noFollowersYet,
           ),
           _UserListTab(
             provider: followingProvider(widget.userId),
-            emptyMessage: 'Henüz kimseyi takip etmiyor.',
+            emptyMessage: AppLocalizations.of(context)!.noFollowingYet,
           ),
         ],
       ),
@@ -126,7 +127,7 @@ class _UserListTabState extends ConsumerState<_UserListTab> {
         if (users.isEmpty && !hasMore) {
           return DentLinkEmptyState(
             icon: Icons.people_outline,
-            title: 'Kullanıcı Bulunamadı',
+            title: AppLocalizations.of(context)!.userNotFound,
             subtitle: widget.emptyMessage,
           );
         }
@@ -165,7 +166,7 @@ class _UserListTabState extends ConsumerState<_UserListTab> {
       },
       loading: () => const Center(child: DentLinkLoadingSpinner()),
       error: (error, stack) => DentLinkErrorWidget(
-        message: 'Kullanıcılar yüklenirken bir hata oluştu.',
+        message: AppLocalizations.of(context)!.usersLoadError,
         onRetry: () => ref.invalidate(widget.provider),
       ),
     );
@@ -211,8 +212,8 @@ class _FollowButtonState extends ConsumerState<_FollowButton> {
       debugPrint('Follow action error: $e');
       if (mounted) {
         scaffoldMessenger.showSnackBar(
-          const SnackBar(
-            content: Text('İşlem başarısız oldu, tekrar deneyin.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.errorServer),
           ),
         );
       }
@@ -243,7 +244,7 @@ class _FollowButtonState extends ConsumerState<_FollowButton> {
               height: 16,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : Text(isFollowing ? 'Takibi Bırak' : 'Takip Et'),
+          : Text(isFollowing ? AppLocalizations.of(context)!.unfollowButton : AppLocalizations.of(context)!.followButton),
     );
   }
 }

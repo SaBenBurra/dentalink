@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:dentlink/core/constants/app_colors.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/constants/app_text_styles.dart';
@@ -44,7 +45,7 @@ class RegisterHeader extends StatelessWidget {
                 onPressed: () => prevStep,
               ),
               Text(
-                'Kayıt Ol',
+                AppLocalizations.of(context)!.registerButton,
                 style: AppTextStyles.titleMedium.copyWith(
                   fontWeight: FontWeight.bold,
                   color: textPrimaryColor,
@@ -55,7 +56,7 @@ class RegisterHeader extends StatelessWidget {
                 child: TextButton(
                   onPressed: currentStep > 0 ? () => nextStep : null,
                   child: Text(
-                    'Geç',
+                    AppLocalizations.of(context)!.skip,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.w600,
@@ -107,7 +108,7 @@ class RegisterHeader extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                getStepTitle(),
+                getStepTitle(AppLocalizations.of(context)!),
                 style: AppTextStyles.bodySmall.copyWith(
                   color: isDark
                       ? AppColors.darkTextSecondary
@@ -116,7 +117,7 @@ class RegisterHeader extends StatelessWidget {
                 ),
               ),
               Text(
-                'Adım ${currentStep + 1} / $totalSteps',
+                AppLocalizations.of(context)!.stepOf(currentStep + 1, totalSteps),
                 style: AppTextStyles.bodySmall.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
@@ -129,14 +130,14 @@ class RegisterHeader extends StatelessWidget {
     );
   }
 
-  String getStepTitle() {
+  String getStepTitle(AppLocalizations l10n) {
     switch (currentStep) {
       case 0:
-        return 'Temel Bilgiler';
+        return l10n.registerStepBasic;
       case 1:
-        return 'Mesleki Bilgiler';
+        return l10n.registerStepProfessional;
       case 2:
-        return 'Profil Detayları';
+        return l10n.registerStepDetails;
       default:
         return '';
     }

@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'dart:io';
 import 'package:dentlink/features/auth/widgets/register_bottom_actions.dart';
 import 'package:dentlink/features/auth/widgets/register_dialog.dart';
@@ -85,8 +86,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (state.currentStep == 0 && state.selectedTitle == null) {
       // Validate first step title
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Lütfen bir unvan seçin'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.validationTitleRequired),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -163,7 +164,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(getErrorMessage(e)),
+          content: Text(getErrorMessage(AppLocalizations.of(context)!, e)),
           behavior: SnackBarBehavior.floating,
           backgroundColor: AppColors.error,
         ),
@@ -310,7 +311,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         ),
                         const SizedBox(height: AppDimensions.spacing16),
                         Text(
-                          'Profil oluşturuluyor...',
+                          AppLocalizations.of(context)!.registerCreatingProfile,
                           style: AppTextStyles.bodyMedium.copyWith(
                             color: textPrimaryColor,
                             fontWeight: FontWeight.w600,

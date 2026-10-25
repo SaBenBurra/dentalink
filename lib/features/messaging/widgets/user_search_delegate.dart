@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/error/app_failures.dart';
+import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/providers/repository_providers.dart';
+import '../../../shared/utils/error_messages.dart';
 
 class UserSearchDelegate extends SearchDelegate<UserModel?> {
   final WidgetRef ref;
   
-  UserSearchDelegate(this.ref) : super(searchFieldLabel: 'Kullanıcı ara...');
+  // searchFieldLabel verilmez: MaterialLocalizations'ın yerelleştirilmiş "Ara" etiketi kullanılır.
+  UserSearchDelegate(this.ref);
 
   Future<List<UserModel>>? _future;
   String _lastQuery = '';
@@ -35,17 +37,18 @@ class UserSearchDelegate extends SearchDelegate<UserModel?> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return _buildSearchResults();
+    return _buildSearchResults(context);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return _buildSearchResults();
+    return _buildSearchResults(context);
   }
 
-  Widget _buildSearchResults() {
+  Widget _buildSearchResults(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (query.trim().length < 2) {
-      return const Center(child: Text('Aramak için en az 2 karakter girin.'));
+      return Center(child: Text(l10n.searchMinChars));
     }
 
     if (query != _lastQuery) {
@@ -64,13 +67,7 @@ class UserSearchDelegate extends SearchDelegate<UserModel?> {
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          final error = snapshot.error;
-          final msg = switch (error) {
-            ValidationFailure(:final message) => message,
-            ServerFailure(:final message) => message ?? 'Arama sırasında bir hata oluştu.',
-            NetworkFailure() => 'İnternet bağlantınızı kontrol edin.',
-            _ => 'Arama sırasında bir hata oluştu.',
-          };
+          final msg = getErrorMessage(l10n, snapshot.error!);
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -81,7 +78,7 @@ class UserSearchDelegate extends SearchDelegate<UserModel?> {
                     _lastQuery = ''; // force retry
                     query = query; // trigger rebuild
                   },
-                  child: const Text('Tekrar Dene'),
+                  child: Text(l10n.retry),
                 )
               ],
             ),
@@ -91,7 +88,7 @@ class UserSearchDelegate extends SearchDelegate<UserModel?> {
         final users = snapshot.data ?? [];
         
         if (users.isEmpty) {
-          return const Center(child: Text('Kullanıcı bulunamadı.'));
+          return Center(child: Text(l10n.userNotFound));
         }
 
         return ListView.builder(

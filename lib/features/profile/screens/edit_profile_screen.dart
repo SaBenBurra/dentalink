@@ -1,3 +1,4 @@
+import 'package:dentlink/shared/extensions/user_title_ui.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -81,12 +82,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       final state = ref.read(editProfileProvider);
       if (state.hasError) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(getErrorMessage(state.error!))),
+          SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, state.error!))),
         );
       } else {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Profil güncellendi')));
+        ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.profileUpdated)));
         context.pop();
       }
     }
@@ -131,7 +132,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
+          .showSnackBar(SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, e))));
     }
   }
 
@@ -143,8 +144,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
     if (user == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Profili Düzenle')),
-        body: const Center(child: Text('Kullanıcı bilgisi bulunamadı')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.editProfile)),
+        body: Center(child: Text(AppLocalizations.of(context)!.userInfoNotFound)),
       );
     }
 
@@ -153,7 +154,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       busy: ref.watch(editProfileProvider).isLoading,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Profili Düzenle'),
+          title: Text(AppLocalizations.of(context)!.editProfile),
           actions: [
             Consumer(
               builder: (context, ref, child) {
@@ -166,7 +167,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text('Kaydet'),
+                      : Text(AppLocalizations.of(context)!.save),
                 );
               },
             ),
@@ -230,37 +231,37 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               TextFormField(
                 controller: _nameController,
                 maxLength: ProfileLimits.fullName,
-                decoration: const InputDecoration(
-                  labelText: 'Ad - Soyad *',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.fullNameRequiredLabel,
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) =>
-                    (value ?? '').trim().isEmpty ? 'Ad Soyad zorunludur' : null,
+                    (value ?? '').trim().isEmpty ? AppLocalizations.of(context)!.validationNameRequired : null,
               ),
               const SizedBox(height: AppDimensions.spacing16),
               DropdownButtonFormField<UserTitle>(
                 initialValue: _selectedTitle,
-                decoration: const InputDecoration(
-                  labelText: 'Unvan *',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.titleRequiredLabel,
                   border: OutlineInputBorder(),
                 ),
                 items: UserTitle.values.map((title) {
                   return DropdownMenuItem(
                     value: title,
-                    child: Text(title.displayName),
+                    child: Text(title.displayName(context)),
                   );
                 }).toList(),
                 onChanged: (val) {
                   setState(() => _selectedTitle = val);
                 },
-                validator: (value) => value == null ? 'Unvan zorunludur' : null,
+                validator: (value) => value == null ? AppLocalizations.of(context)!.validationTitleRequired : null,
               ),
               const SizedBox(height: AppDimensions.spacing16),
               TextFormField(
                 controller: _bioController,
                 maxLength: ProfileLimits.bio,
-                decoration: const InputDecoration(
-                  labelText: 'Biyografi',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.bio,
                   border: OutlineInputBorder(),
                 ),
                 maxLines: 3,
@@ -269,8 +270,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               TextFormField(
                 controller: _universityController,
                 maxLength: ProfileLimits.text,
-                decoration: const InputDecoration(
-                  labelText: 'Üniversite',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.university,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -278,16 +279,16 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               TextFormField(
                 controller: _cityController,
                 maxLength: ProfileLimits.text,
-                decoration: const InputDecoration(
-                  labelText: 'Şehir',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.city,
                   border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: AppDimensions.spacing16),
               TextFormField(
                 controller: _experienceController,
-                decoration: const InputDecoration(
-                  labelText: 'Deneyim Yılı',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.experienceYears,
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
@@ -308,8 +309,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               TextFormField(
                 controller: _workplaceController,
                 maxLength: ProfileLimits.text,
-                decoration: const InputDecoration(
-                  labelText: 'Çalıştığı Klinik/Hastane',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.workplace,
                   border: OutlineInputBorder(),
                 ),
               ),

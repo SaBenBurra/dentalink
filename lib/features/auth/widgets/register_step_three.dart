@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'dart:io';
 import 'package:dentlink/core/constants/app_colors.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
@@ -29,6 +30,7 @@ class RegisterStepThree extends StatelessWidget {
 
   Future<void> _pickImage(BuildContext context, ImageSource source) async {
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context)!;
     try {
       final image = await ImagePicker().pickImage(
         source: source,
@@ -38,7 +40,7 @@ class RegisterStepThree extends StatelessWidget {
       );
       if (image != null) onImageFilePicked(File(image.path));
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
+      messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(l10n, e))));
     }
   }
 
@@ -68,7 +70,7 @@ class RegisterStepThree extends StatelessWidget {
         children: [
           const SizedBox(height: AppDimensions.spacing12),
           Text(
-            'Profil Detayları',
+            AppLocalizations.of(context)!.registerStepDetails,
             style: AppTextStyles.headlineSmall.copyWith(
               color: textPrimaryColor,
               fontWeight: FontWeight.bold,
@@ -76,7 +78,7 @@ class RegisterStepThree extends StatelessWidget {
           ),
           const SizedBox(height: AppDimensions.spacing8),
           Text(
-            'Profil fotoğrafınızı seçin ve kısa bir biyografi ekleyin (İsteğe bağlı).',
+            AppLocalizations.of(context)!.registerStepThreeSubtitle,
             style: AppTextStyles.bodyMedium.copyWith(color: textSecondaryColor),
           ),
           const SizedBox(height: AppDimensions.spacing24),
@@ -133,7 +135,7 @@ class RegisterStepThree extends StatelessWidget {
                   children: [
                     _ActionButton(
                       icon: Icons.camera_alt_outlined,
-                      label: 'Fotoğraf Çek',
+                      label: AppLocalizations.of(context)!.pickFromCamera,
                       onTap: () => _pickImage(context, ImageSource.camera),
                       isDark: isDark,
                       glassBgColor: glassBgColor,
@@ -143,7 +145,7 @@ class RegisterStepThree extends StatelessWidget {
                     const SizedBox(width: AppDimensions.spacing12),
                     _ActionButton(
                       icon: Icons.photo_library_outlined,
-                      label: 'Galeriden Seç',
+                      label: AppLocalizations.of(context)!.pickFromGallery,
                       onTap: () => _pickImage(context, ImageSource.gallery),
                       isDark: isDark,
                       glassBgColor: glassBgColor,
@@ -160,7 +162,7 @@ class RegisterStepThree extends StatelessWidget {
                   TextButton.icon(
                     onPressed: () => onImageFilePicked(null),
                     icon: const Icon(Icons.close_rounded, size: 16),
-                    label: const Text('Fotoğrafı Kaldır'),
+                    label: Text(AppLocalizations.of(context)!.removePhoto),
                     style: TextButton.styleFrom(
                       foregroundColor: AppColors.error,
                       textStyle: AppTextStyles.bodySmall.copyWith(
@@ -178,7 +180,7 @@ class RegisterStepThree extends StatelessWidget {
           GlassField(
             controller: bioController,
             focusNode: bioFocusNode,
-            hintText: 'Biyografi (Kendinizden kısaca bahsedin)',
+            hintText: AppLocalizations.of(context)!.bioHint,
             icon: Icons.description_outlined,
             inputFormatters: [LengthLimitingTextInputFormatter(ProfileLimits.bio)],
             maxLines: 4,

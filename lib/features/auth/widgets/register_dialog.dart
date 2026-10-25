@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'dart:ui';
 
 import 'package:dentlink/core/constants/app_colors.dart';
@@ -30,7 +31,7 @@ class RegisterDialog extends StatelessWidget {
               ),
               const SizedBox(height: AppDimensions.spacing20),
               Text(
-                'Kaydınız Tamamlandı!',
+                AppLocalizations.of(context)!.registerDoneTitle,
                 style: AppTextStyles.headlineSmall.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).brightness == Brightness.dark
@@ -41,7 +42,7 @@ class RegisterDialog extends StatelessWidget {
               ),
               const SizedBox(height: AppDimensions.spacing8),
               Text(
-                'DentLink dünyasına hoş geldiniz. Profiliniz oluşturuldu.',
+                AppLocalizations.of(context)!.registerDoneMessage,
                 style: AppTextStyles.bodyMedium.copyWith(
                   color: Theme.of(context).brightness == Brightness.dark
                       ? AppColors.darkTextSecondary

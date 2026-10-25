@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:dentlink/features/post/widgets/tag_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,6 +15,8 @@ void main() {
     Future<void> pump(WidgetTester tester) async {
       emitted = [];
       await tester.pumpWidget(MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(body: TagInput(onTagsChanged: (t) => emitted = t)),
       ));
     }

@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -26,7 +27,7 @@ class SettingsScreen extends ConsumerWidget {
           ? AppColors.darkBackground
           : AppColors.lightBackground,
       appBar: AppBar(
-        title: const Text('Ayarlar'),
+        title: Text(AppLocalizations.of(context)!.settingsTitle),
         leading: IconButton(
           tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
@@ -64,24 +65,24 @@ class SettingsScreen extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
 
     return SettingsSection(
-      title: 'Görünüm',
+      title: AppLocalizations.of(context)!.settingsAppearance,
       icon: Icons.palette_outlined,
       children: [
         SettingsTile(
           icon: Icons.dark_mode_outlined,
-          title: 'Tema',
-          subtitle: _themeModeLabel(themeMode),
+          title: AppLocalizations.of(context)!.settingsTheme,
+          subtitle: _themeModeLabel(AppLocalizations.of(context)!, themeMode),
           onTap: () => _showThemePicker(context, ref, themeMode),
         ),
       ],
     );
   }
 
-  String _themeModeLabel(ThemeMode mode) {
+  String _themeModeLabel(AppLocalizations l10n, ThemeMode mode) {
     return switch (mode) {
-      ThemeMode.system => 'Sistem',
-      ThemeMode.light => 'Aydınlık',
-      ThemeMode.dark => 'Karanlık',
+      ThemeMode.system => l10n.settingsThemeSystem,
+      ThemeMode.light => l10n.settingsThemeLight,
+      ThemeMode.dark => l10n.settingsThemeDark,
     };
   }
 
@@ -112,7 +113,7 @@ class SettingsScreen extends ConsumerWidget {
                     vertical: AppDimensions.spacing8,
                   ),
                   child: Text(
-                    'Tema Seçin',
+                    AppLocalizations.of(context)!.settingsChooseTheme,
                     style: AppTextStyles.titleMedium.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -123,7 +124,7 @@ class SettingsScreen extends ConsumerWidget {
                   context,
                   ref,
                   icon: Icons.brightness_auto_outlined,
-                  label: 'Sistem',
+                  label: AppLocalizations.of(context)!.settingsThemeSystem,
                   mode: ThemeMode.system,
                   current: current,
                 ),
@@ -131,7 +132,7 @@ class SettingsScreen extends ConsumerWidget {
                   context,
                   ref,
                   icon: Icons.light_mode_outlined,
-                  label: 'Aydınlık',
+                  label: AppLocalizations.of(context)!.settingsThemeLight,
                   mode: ThemeMode.light,
                   current: current,
                 ),
@@ -139,7 +140,7 @@ class SettingsScreen extends ConsumerWidget {
                   context,
                   ref,
                   icon: Icons.dark_mode_outlined,
-                  label: 'Karanlık',
+                  label: AppLocalizations.of(context)!.settingsThemeDark,
                   mode: ThemeMode.dark,
                   current: current,
                 ),
@@ -190,12 +191,13 @@ class SettingsScreen extends ConsumerWidget {
     final isTurkish = locale.languageCode == 'tr';
 
     return SettingsSection(
-      title: 'Dil',
+      title: AppLocalizations.of(context)!.settingsLanguage,
       icon: Icons.language_outlined,
       children: [
         SettingsTile(
           icon: Icons.translate_outlined,
-          title: 'Uygulama Dili',
+          title: AppLocalizations.of(context)!.settingsAppLanguage,
+          // Dil adları her dilde kendi yazımıyla gösterilir (çevrilmez).
           subtitle: isTurkish ? 'Türkçe' : 'English',
           onTap: () => _showLanguagePicker(context, ref, locale),
         ),
@@ -230,7 +232,7 @@ class SettingsScreen extends ConsumerWidget {
                     vertical: AppDimensions.spacing8,
                   ),
                   child: Text(
-                    'Dil Seçin',
+                    AppLocalizations.of(context)!.settingsChooseLanguage,
                     style: AppTextStyles.titleMedium.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -297,25 +299,25 @@ class SettingsScreen extends ConsumerWidget {
     bool isDark,
   ) {
     return SettingsSection(
-      title: 'Hesap',
+      title: AppLocalizations.of(context)!.settingsAccount,
       icon: Icons.person_outline_rounded,
       children: [
         SettingsTile(
           icon: Icons.edit_outlined,
-          title: 'Profili Düzenle',
+          title: AppLocalizations.of(context)!.editProfile,
           onTap: () => context.push('/edit-profile'),
         ),
         SettingsTile(
           icon: Icons.lock_outline_rounded,
-          title: 'Gizlilik',
-          subtitle: 'Yakında',
+          title: AppLocalizations.of(context)!.settingsPrivacy,
+          subtitle: AppLocalizations.of(context)!.comingSoon,
           enabled: false,
           onTap: () {},
         ),
         SettingsTile(
           icon: Icons.block_outlined,
-          title: 'Engellenenler',
-          subtitle: 'Yakında',
+          title: AppLocalizations.of(context)!.settingsBlocked,
+          subtitle: AppLocalizations.of(context)!.comingSoon,
           enabled: false,
           onTap: () {},
         ),
@@ -327,26 +329,26 @@ class SettingsScreen extends ConsumerWidget {
 
   Widget _buildAboutSection(BuildContext context, WidgetRef ref, bool isDark) {
     return SettingsSection(
-      title: 'Hakkında',
+      title: AppLocalizations.of(context)!.settingsAbout,
       icon: Icons.info_outline_rounded,
       children: [
         SettingsTile(
           icon: Icons.description_outlined,
-          title: 'Kullanım Koşulları',
-          subtitle: 'Yakında',
+          title: AppLocalizations.of(context)!.settingsTerms,
+          subtitle: AppLocalizations.of(context)!.comingSoon,
           enabled: false,
           onTap: () {},
         ),
         SettingsTile(
           icon: Icons.privacy_tip_outlined,
-          title: 'Gizlilik Politikası',
-          subtitle: 'Yakında',
+          title: AppLocalizations.of(context)!.settingsPrivacyPolicy,
+          subtitle: AppLocalizations.of(context)!.comingSoon,
           enabled: false,
           onTap: () {},
         ),
         SettingsTile(
           icon: Icons.info_outline_rounded,
-          title: 'Uygulama Sürümü',
+          title: AppLocalizations.of(context)!.settingsAppVersion,
           subtitle: 'v0.1.0 (Demo)',
           onTap: () {},
         ),
@@ -362,7 +364,7 @@ class SettingsScreen extends ConsumerWidget {
             },
             icon: const Icon(Icons.logout_rounded, color: AppColors.error),
             label: Text(
-              'Çıkış Yap',
+              AppLocalizations.of(context)!.settingsLogout,
               style: AppTextStyles.button.copyWith(color: AppColors.error),
             ),
             style: OutlinedButton.styleFrom(

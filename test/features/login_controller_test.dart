@@ -1,6 +1,9 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:dentlink/data/models/user_model.dart';
 import 'package:dentlink/data/providers/repository_providers.dart';
 import 'package:dentlink/features/auth/providers/login_controller.dart';
+import 'package:dentlink/providers/locale_provider.dart';
+import 'package:flutter/material.dart' show Locale;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'
@@ -25,7 +28,10 @@ class _ThrowingAuth extends MockAuthForTest {
 
 ProviderContainer _container(_ThrowingAuth auth) {
   final c = ProviderContainer(
-      overrides: [authRepositoryProvider.overrideWithValue(auth)]);
+      overrides: [
+    authRepositoryProvider.overrideWithValue(auth),
+    l10nProvider.overrideWithValue(lookupAppLocalizations(const Locale('tr'))),
+  ]);
   addTearDown(c.dispose);
   c.listen(loginControllerProvider, (_, _) {});
   return c;

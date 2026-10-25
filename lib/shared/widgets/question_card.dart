@@ -1,4 +1,5 @@
 
+import 'package:dentlink/shared/extensions/user_title_ui.dart';
 import 'package:dentlink/data/models/enums.dart';
 import 'package:dentlink/providers/auth_provider.dart';
 import 'package:dentlink/shared/widgets/post_action_bar.dart';
@@ -43,7 +44,7 @@ class QuestionCard extends ConsumerWidget {
           // <-- 1. Header
           PostHeader(
             post: post,
-            subtitle: post.author.title.displayName,
+            subtitle: post.author.title.displayName(context),
             isOwner: isOwner,
             badge: PostBadge(postType: PostType.question),
             onMenuSelected: (action) => switch (action) {

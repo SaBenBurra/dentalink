@@ -136,7 +136,7 @@
 
 ## Faz 3 — UX cilası & yerelleştirme 🟡
 
-- [ ] Tüm sabit metinleri ARB'ye taşı (enum `displayName` dahil) — `UX-12`
+- [x] Sabit metinler ARB'ye taşındı (~130 yeni anahtar, TR+EN). Enum adları `displayName(context)` extension'ında (`user_title_ui`, `dental_branch_ui`), modelde metin kalmadı. `getErrorMessage(l10n, e)`; context'i olmayan controller'lar `l10nProvider` kullanır. Arama ekranlarındaki ham `ValidationFailure.message` gösterimi kaldırıldı. Göreli zaman ARB'den, 30+ gün tarihi `intl` ile. `test/core/no_hardcoded_text_test.dart` Türkçe karakterli sabitleri yakalar. Metin değişiklikleri: tema seçenekleri "Açık/Koyu/Sistem Varsayılanı", kullanıcı arama alanı "Ara", ortak takipçi satırında kalın vurgu yok. _(2026-10-25; cihazda bakılmadı)_ — `UX-12`
 - [x] Boş, hata ve yenileme durumları: sohbet listesine `DentLinkEmptyState`; bildirimler, sohbetler, takipçi/takip edilen ve profil gönderi sekmelerine çekerek yenileme (feed ve kaydedilenlerde zaten vardı). Yenilenirken mevcut liste ekranda kalır. _(2026-10-25; yalnızca UI bağlantısı, test yok)_ — `UX-7`
 - [x] `PopScope`: ortak `UnsavedChangesScope` (vaka/soru oluşturma, post ve profil düzenleme). Gönderirken geri tuşu çalışmaz; form dokunulmuşsa onay diyaloğu (TR+EN); kaydedip çıkış etkilenmez. _(2026-10-25; testli)_ — `UX-2`
 - [x] Uzunluk ve taşma: profil alanlarına sınır (ad 60, biyografi 300, üniversite/şehir/klinik 100; kayıt ve profil düzenleme, `ProfileLimits`), kayıtta da deneyim yalnızca rakam; migration 022 DB CHECK'leri (**henüz canlıya gönderilmedi**). Feed kartı başlığı `maxLines: 2`; post başlığındaki ve yorumdaki uzun isimler tek satır + ellipsis. Profil düzenleme: alanlar trim, deneyim yalnızca rakam (UX-10). _(2026-10-25; testli)_ — `UX-8`, `UX-9`, `UX-10`

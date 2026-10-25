@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -266,8 +267,8 @@ class _LoginOtpInputState extends State<LoginOtpInput>
               onPressed: widget.canResend ? widget.onResend : null,
               child: Text(
                 widget.canResend
-                    ? 'Kodu Tekrar Gönder'
-                    : 'Kodu Tekrar Gönder (${widget.resendCountdown}s)',
+                    ? AppLocalizations.of(context)!.resendCode
+                    : AppLocalizations.of(context)!.resendCodeIn(widget.resendCountdown),
                 style: TextStyle(
                   color: widget.canResend ? Theme.of(context).colorScheme.primary : Colors.grey,
                   fontWeight: FontWeight.bold,
@@ -278,7 +279,7 @@ class _LoginOtpInputState extends State<LoginOtpInput>
           TextButton.icon(
             onPressed: widget.onGoBack,
             icon: const Icon(Icons.arrow_back_rounded, size: 16),
-            label: const Text('E-posta/Telefon Değiştir'),
+            label: Text(AppLocalizations.of(context)!.changeEmailOrPhone),
             style: TextButton.styleFrom(
               foregroundColor: isDark ? Colors.white60 : Colors.black54,
             ),

@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,7 +48,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Keşfet'),
+        title: Text(AppLocalizations.of(context)!.exploreTitle),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(164),
           child: Column(
@@ -55,14 +56,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
               CustomSearchBar(
                 controller: _searchController,
                 onChanged: _onSearchChanged,
-                hintText: 'Vaka, soru veya kullanıcı ara...',
+                hintText: AppLocalizations.of(context)!.searchHint,
               ),
               const SearchFilterChips(),
               TabBar(
                 controller: _tabController,
-                tabs: const [
-                  Tab(text: 'Gönderiler'),
-                  Tab(text: 'Kullanıcılar'),
+                tabs: [
+                  Tab(text: AppLocalizations.of(context)!.searchPostsTab),
+                  Tab(text: AppLocalizations.of(context)!.searchUsersTab),
                 ],
               ),
             ],
@@ -70,13 +71,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
         ),
       ),
       body: state.isEmpty
-          ? const Center(
+          ? Center(
               child: SingleChildScrollView(
                 child: DentLinkEmptyState(
                   icon: Icons.travel_explore_rounded,
-                  title: 'Arama Yapın',
+                  title: AppLocalizations.of(context)!.searchEmptyTitle,
                   subtitle:
-                      'Diş hekimliği dünyasında vaka, soru veya meslektaş arayın.',
+                      AppLocalizations.of(context)!.searchEmptySubtitle,
                 ),
               ),
             )

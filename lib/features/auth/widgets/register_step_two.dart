@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:dentlink/core/constants/app_colors.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/constants/app_text_styles.dart';
@@ -45,7 +46,7 @@ class RegisterStepTwo extends StatelessWidget {
         children: [
           const SizedBox(height: AppDimensions.spacing12),
           Text(
-            'Mesleki Bilgiler',
+            AppLocalizations.of(context)!.registerStepProfessional,
             style: AppTextStyles.headlineSmall.copyWith(
               color: textPrimaryColor,
               fontWeight: FontWeight.bold,
@@ -53,7 +54,7 @@ class RegisterStepTwo extends StatelessWidget {
           ),
           const SizedBox(height: AppDimensions.spacing8),
           Text(
-            'Profesyonel geçmişinizi doldurarak diş hekimleri ağı ile daha iyi etkileşim kurun (İsteğe bağlı).',
+            AppLocalizations.of(context)!.registerStepTwoSubtitle,
             style: AppTextStyles.bodyMedium.copyWith(color: textSecondaryColor),
           ),
           const SizedBox(height: AppDimensions.spacing24),
@@ -62,7 +63,7 @@ class RegisterStepTwo extends StatelessWidget {
           GlassField(
             controller: uniController,
             focusNode: uniFocusNode,
-            hintText: 'Üniversite',
+            hintText: AppLocalizations.of(context)!.university,
             icon: Icons.school_outlined,
             inputFormatters: [LengthLimitingTextInputFormatter(ProfileLimits.text)],
           ),
@@ -72,7 +73,7 @@ class RegisterStepTwo extends StatelessWidget {
           GlassField(
             controller: cityController,
             focusNode: cityFocusNode,
-            hintText: 'Şehir',
+            hintText: AppLocalizations.of(context)!.city,
             icon: Icons.location_on_outlined,
             inputFormatters: [LengthLimitingTextInputFormatter(ProfileLimits.text)],
           ),
@@ -82,7 +83,7 @@ class RegisterStepTwo extends StatelessWidget {
           GlassField(
             controller: clinicController,
             focusNode: clinicFocusNode,
-            hintText: 'Çalıştığı Klinik/Hastane',
+            hintText: AppLocalizations.of(context)!.workplace,
             icon: Icons.business_outlined,
             inputFormatters: [LengthLimitingTextInputFormatter(ProfileLimits.text)],
           ),
@@ -92,7 +93,7 @@ class RegisterStepTwo extends StatelessWidget {
           GlassField(
             controller: expController,
             focusNode: expFocusNode,
-            hintText: 'Deneyim Yılı',
+            hintText: AppLocalizations.of(context)!.experienceYears,
             icon: Icons.trending_up_outlined,
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,

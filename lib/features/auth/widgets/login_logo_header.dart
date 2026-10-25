@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -108,7 +109,7 @@ class LoginLogoHeader extends StatelessWidget {
                     key: const ValueKey('email_phone_header'),
                     children: [
                       Text(
-                        'DentLink',
+                        AppLocalizations.of(context)!.appName,
                         style: AppTextStyles.headlineMedium.copyWith(
                           color: textPrimaryColor,
                           fontWeight: FontWeight.bold,
@@ -116,7 +117,7 @@ class LoginLogoHeader extends StatelessWidget {
                       ),
                       const SizedBox(height: AppDimensions.spacing8),
                       Text(
-                        'E-posta veya telefon numaranızla giriş yapın',
+                        AppLocalizations.of(context)!.loginHeaderSubtitle,
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: textSecondaryColor,
                           fontWeight: FontWeight.w500,
@@ -129,7 +130,7 @@ class LoginLogoHeader extends StatelessWidget {
                     key: const ValueKey('otp_header'),
                     children: [
                       Text(
-                        'Doğrulama Kodu',
+                        AppLocalizations.of(context)!.verificationCode,
                         style: AppTextStyles.headlineMedium.copyWith(
                           color: textPrimaryColor,
                           fontWeight: FontWeight.bold,
@@ -137,7 +138,7 @@ class LoginLogoHeader extends StatelessWidget {
                       ),
                       const SizedBox(height: AppDimensions.spacing8),
                       Text(
-                        '$inputText adresine gönderilen kodu girin',
+                        AppLocalizations.of(context)!.otpSentTo(inputText),
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: textSecondaryColor,
                           fontWeight: FontWeight.w500,

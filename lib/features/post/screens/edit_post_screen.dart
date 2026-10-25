@@ -29,7 +29,7 @@ class EditPostScreen extends ConsumerWidget {
           data: (post) => _EditPostForm(post: post),
           loading: () => const PostDetailLoading(),
           error: (e, _) => PostDetailError(
-            message: getErrorMessage(e),
+            message: getErrorMessage(AppLocalizations.of(context)!, e),
             onRetry: () => ref.invalidate(postDetailProvider(postId)),
           ),
         );
@@ -92,7 +92,7 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
       messenger.showSnackBar(SnackBar(content: Text(l10n.postUpdated)));
       if (mounted) context.pop();
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
+      messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(l10n, e))));
       if (mounted) setState(() => _saving = false);
     }
   }
@@ -108,7 +108,7 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
     // Yalnızca sahibi düzenleyebilir (RPC de kontrol eder).
     final isOwner = ref.watch(currentUserProvider)?.id == widget.post.userId;
     if (!isOwner) {
-      return PostDetailError(message: getErrorMessage(const NotFoundFailure()));
+      return PostDetailError(message: getErrorMessage(l10n, const NotFoundFailure()));
     }
 
     return UnsavedChangesScope(

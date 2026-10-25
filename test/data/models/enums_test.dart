@@ -76,18 +76,6 @@ void main() {
         expect(result, isNull);
       });
     });
-
-    group('displayName', () {
-      for (final title in UserTitle.values) {
-        test('displayName is non-empty string for ${title.name}', () {
-          // Act
-          final displayName = title.displayName;
-
-          // Assert
-          expect(displayName, isNotEmpty);
-        });
-      }
-    });
   });
 
   group('DentalBranch', () {
@@ -155,18 +143,6 @@ void main() {
         // Assert
         expect(result, isNull);
       });
-    });
-
-    group('displayName', () {
-      for (final branch in DentalBranch.values) {
-        test('displayName is non-empty string for ${branch.name}', () {
-          // Act
-          final displayName = branch.displayName;
-
-          // Assert
-          expect(displayName, isNotEmpty);
-        });
-      }
     });
   });
 

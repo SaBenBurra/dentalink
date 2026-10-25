@@ -48,7 +48,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get error => 'Error';
 
   @override
-  String get unknownError => 'An unknown error occurred.';
+  String get unknownError => 'An unexpected error occurred.';
 
   @override
   String get networkError => 'Please check your internet connection.';
@@ -286,7 +286,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addImages => 'Add Images';
 
   @override
-  String get maxImagesReached => 'You can add up to 10 images.';
+  String maxImagesReached(int count) {
+    return 'You can add up to $count images.';
+  }
 
   @override
   String get publish => 'Publish';
@@ -606,4 +608,440 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get like => 'Like';
+
+  @override
+  String get titleUnknown => 'Unknown';
+
+  @override
+  String get errorAuthRequired =>
+      'Your session has expired. Please sign in again.';
+
+  @override
+  String get errorPermissionDenied => 'You are not allowed to do this.';
+
+  @override
+  String get errorNotFound => 'Content not found or deleted.';
+
+  @override
+  String get errorValidation => 'The content you entered is not valid.';
+
+  @override
+  String get errorConflict => 'This record already exists.';
+
+  @override
+  String get errorServer => 'Something went wrong, please try again.';
+
+  @override
+  String get errorMediaPermission =>
+      'Access was denied. You can grant permission in your phone settings.';
+
+  @override
+  String otpTooManyAttempts(int seconds) {
+    return 'Too many attempts. Try again in $seconds seconds.';
+  }
+
+  @override
+  String get loginSuccess => 'Signed in!';
+
+  @override
+  String get success => 'Success';
+
+  @override
+  String get otpInvalid => 'The code is wrong or has expired';
+
+  @override
+  String get otpSendFailed => 'Could not send the code. Please try again.';
+
+  @override
+  String get validationNameRequired => 'Full name is required';
+
+  @override
+  String get validationTitleRequired => 'Please select a title';
+
+  @override
+  String get registerCreatingProfile => 'Creating profile...';
+
+  @override
+  String get loginInputHint => 'Email or phone number';
+
+  @override
+  String get loginHeaderSubtitle => 'Sign in with your email or phone number';
+
+  @override
+  String otpSentTo(String destination) {
+    return 'Enter the code sent to $destination';
+  }
+
+  @override
+  String get resendCode => 'Resend Code';
+
+  @override
+  String resendCodeIn(int seconds) {
+    return 'Resend Code (${seconds}s)';
+  }
+
+  @override
+  String get changeEmailOrPhone => 'Change Email/Phone';
+
+  @override
+  String get backToLogin => 'Back to Sign In';
+
+  @override
+  String get backShort => 'Back';
+
+  @override
+  String get completeProfile => 'Complete My Profile';
+
+  @override
+  String get continueAction => 'Continue';
+
+  @override
+  String get registerDoneTitle => 'Registration Complete!';
+
+  @override
+  String get registerDoneMessage =>
+      'Welcome to DentLink. Your profile has been created.';
+
+  @override
+  String get skip => 'Skip';
+
+  @override
+  String stepOf(int current, int total) {
+    return 'Step $current / $total';
+  }
+
+  @override
+  String get registerStepBasic => 'Basic Info';
+
+  @override
+  String get registerStepProfessional => 'Professional Info';
+
+  @override
+  String get registerStepDetails => 'Profile Details';
+
+  @override
+  String get registerStepOneTitle => 'Let\'s Get to Know You';
+
+  @override
+  String get registerStepOneSubtitle =>
+      'Please enter your name and choose your specialty.';
+
+  @override
+  String get fullName => 'Full Name';
+
+  @override
+  String get yourTitle => 'Your Title';
+
+  @override
+  String get registerStepTwoSubtitle =>
+      'Fill in your professional background to connect better with the dentist network (optional).';
+
+  @override
+  String get registerStepThreeSubtitle =>
+      'Choose a profile photo and add a short bio (optional).';
+
+  @override
+  String get removePhoto => 'Remove Photo';
+
+  @override
+  String get bioHint => 'Bio (tell us briefly about yourself)';
+
+  @override
+  String pageNotFound(String uri) {
+    return 'Page not found: $uri';
+  }
+
+  @override
+  String get backToLoginPage => 'Back to sign in';
+
+  @override
+  String get bookmarksEmptyTitle => 'No saved posts';
+
+  @override
+  String get bookmarksEmptySubtitle =>
+      'Save the cases and questions you like\nand find them here easily.';
+
+  @override
+  String get bookmarksLoadError => 'Could not load saved posts.';
+
+  @override
+  String get bookmarkRemoved => 'Removed from saved';
+
+  @override
+  String get undo => 'Undo';
+
+  @override
+  String get feedEmptyFiltered => 'No posts match the selected filter.';
+
+  @override
+  String get feedEmptyAll => 'Nothing has been shared in the feed yet.';
+
+  @override
+  String get feedLoadError => 'Could not load the feed.';
+
+  @override
+  String get searchMinChars => 'Enter at least 2 characters to search.';
+
+  @override
+  String get userNotFound => 'User not found.';
+
+  @override
+  String get messagesSearchHint => 'Search messages...';
+
+  @override
+  String get conversationsLoadError => 'Could not load conversations';
+
+  @override
+  String get markAllRead => 'Mark All as Read';
+
+  @override
+  String get joinDiscussionHint => 'Join the professional discussion...';
+
+  @override
+  String get validationBranchRequired => 'Please select a branch.';
+
+  @override
+  String get caseImageRequired => 'Add at least one image for the case.';
+
+  @override
+  String get caseShared => 'Case shared successfully!';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get caseTitleLabel => 'Case Title';
+
+  @override
+  String get caseTitleHint =>
+      'E.g. Endodontic Treatment of Mandibular First Molar';
+
+  @override
+  String get validationTitleEmpty => 'Title cannot be empty';
+
+  @override
+  String get caseContentHint =>
+      'Case history, diagnosis, treatment plan and procedures...';
+
+  @override
+  String get validationDescriptionEmpty => 'Description cannot be empty';
+
+  @override
+  String get questionShared => 'Your question was shared successfully!';
+
+  @override
+  String get questionTitleLabel => 'Question Title';
+
+  @override
+  String get questionTitleHint => 'E.g. Sensitivity after zirconia crown';
+
+  @override
+  String get questionContentLabel => 'Question Details';
+
+  @override
+  String get questionContentHint =>
+      'Describe the problem you face or the topic you are curious about in detail...';
+
+  @override
+  String get validationContentEmpty => 'Content cannot be empty';
+
+  @override
+  String get selectBranch => 'Select Branch';
+
+  @override
+  String get unlike => 'Unlike';
+
+  @override
+  String get noCommentsYet => 'No comments yet. Be the first to comment!';
+
+  @override
+  String get noAnswersYet => 'No answers yet. Be the first to answer!';
+
+  @override
+  String get bestAnswerUnmarked => 'Best answer selection removed.';
+
+  @override
+  String get bestAnswerMarked => 'Best answer selected! 🎉';
+
+  @override
+  String get deletedUser => '[Deleted User]';
+
+  @override
+  String get unmarkSelection => 'Remove Selection';
+
+  @override
+  String get professionalDiscussion => 'Professional Discussion';
+
+  @override
+  String get commentsLoadError => 'Could not load comments.';
+
+  @override
+  String answersWithCount(int count) {
+    return 'Answers ($count)';
+  }
+
+  @override
+  String get answersTitle => 'Answers';
+
+  @override
+  String get answersLoadError => 'Could not load answers.';
+
+  @override
+  String get images => 'Images';
+
+  @override
+  String get addPhoto => 'Add Photo';
+
+  @override
+  String get addTagHint => 'Add tag (press Enter)';
+
+  @override
+  String get profileUpdated => 'Profile updated';
+
+  @override
+  String get userInfoNotFound => 'User information not found';
+
+  @override
+  String get fullNameRequiredLabel => 'Full Name *';
+
+  @override
+  String get titleRequiredLabel => 'Title *';
+
+  @override
+  String get networkTitle => 'Network';
+
+  @override
+  String get followersTab => 'Followers';
+
+  @override
+  String get followingTab => 'Following';
+
+  @override
+  String get noFollowersYet => 'No followers yet.';
+
+  @override
+  String get noFollowingYet => 'Not following anyone yet.';
+
+  @override
+  String get usersLoadError => 'Could not load users.';
+
+  @override
+  String mutualFollowedBy(String name, int others) {
+    String _temp0 = intl.Intl.pluralLogic(
+      others,
+      locale: localeName,
+      other: 'Followed by $name and $others others',
+      one: 'Followed by $name and 1 other',
+      zero: 'Followed by $name',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get badgesTitle => 'Badges';
+
+  @override
+  String get statFollowing => 'Following';
+
+  @override
+  String get searchNoResultsTitle => 'No Results Found';
+
+  @override
+  String get searchNoPosts => 'No posts match your search.';
+
+  @override
+  String get searchNoUsers => 'No users match your search.';
+
+  @override
+  String get searchUsersTab => 'Users';
+
+  @override
+  String get searchEmptyTitle => 'Start Searching';
+
+  @override
+  String get searchEmptySubtitle =>
+      'Search for cases, questions or colleagues in the dental world.';
+
+  @override
+  String get searchPostsTab => 'Posts';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get contentType => 'Content Type';
+
+  @override
+  String get allBranches => 'All Branches';
+
+  @override
+  String get settingsAppearance => 'Appearance';
+
+  @override
+  String get settingsChooseTheme => 'Choose Theme';
+
+  @override
+  String get settingsAppLanguage => 'App Language';
+
+  @override
+  String get settingsChooseLanguage => 'Choose Language';
+
+  @override
+  String get settingsPrivacy => 'Privacy';
+
+  @override
+  String get comingSoon => 'Coming soon';
+
+  @override
+  String get settingsBlocked => 'Blocked Users';
+
+  @override
+  String get settingsAbout => 'About';
+
+  @override
+  String get settingsTerms => 'Terms of Use';
+
+  @override
+  String get settingsPrivacyPolicy => 'Privacy Policy';
+
+  @override
+  String get settingsAppVersion => 'App Version';
+
+  @override
+  String get createSheetTitle => 'What would you like to share?';
+
+  @override
+  String get createSheetSubtitle =>
+      'Contribute to the community by sharing your clinical cases and questions.';
+
+  @override
+  String get createCaseSubtitle =>
+      'Share your clinical cases with images and get feedback from colleagues.';
+
+  @override
+  String get createQuestionSubtitle =>
+      'Share your professional questions with the community and find the best answer.';
+
+  @override
+  String get timeJustNow => 'Just now';
+
+  @override
+  String timeMinutesAgo(int n) {
+    return '$n min ago';
+  }
+
+  @override
+  String timeHoursAgo(int n) {
+    return '${n}h ago';
+  }
+
+  @override
+  String timeDaysAgo(int n) {
+    return '${n}d ago';
+  }
+
+  @override
+  String timeWeeksAgo(int n) {
+    return '${n}w ago';
+  }
 }

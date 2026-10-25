@@ -34,7 +34,7 @@ class ProfilePostsTab extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
+            .showSnackBar(SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, e))));
       }
     }
   }
@@ -97,7 +97,7 @@ class ProfilePostsTab extends ConsumerWidget {
       },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stackTrace) => DentLinkErrorWidget(
-        message: getErrorMessage(error),
+        message: getErrorMessage(AppLocalizations.of(context)!, error),
         onRetry: () => ref.invalidate(userPostsProvider(userId)),
       ),
     );

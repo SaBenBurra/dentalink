@@ -1,3 +1,5 @@
+import 'package:dentlink/shared/extensions/dental_branch_ui.dart';
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import '../../../data/models/enums.dart';
@@ -42,7 +44,7 @@ class BranchSelector extends StatelessWidget {
                 ),
                 const SizedBox(height: AppDimensions.spacing16),
                 Text(
-                  'Branş Seç',
+                  AppLocalizations.of(context)!.selectBranch,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: AppDimensions.spacing8),
@@ -63,7 +65,7 @@ class BranchSelector extends StatelessWidget {
                               : colorScheme.onSurfaceVariant,
                         ),
                         title: Text(
-                          branch.displayName,
+                          branch.displayName(context),
                           style: TextStyle(
                             fontWeight: isSelected
                                 ? FontWeight.bold
@@ -102,7 +104,7 @@ class BranchSelector extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Branş',
+          AppLocalizations.of(context)!.postBranch,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -126,8 +128,8 @@ class BranchSelector extends StatelessWidget {
               children: [
                 Text(
                   selectedBranch != null
-                      ? selectedBranch!.displayName
-                      : 'Lütfen bir branş seçin',
+                      ? selectedBranch!.displayName(context)
+                      : AppLocalizations.of(context)!.validationBranchRequired,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: selectedBranch != null
                         ? colorScheme.onSurface

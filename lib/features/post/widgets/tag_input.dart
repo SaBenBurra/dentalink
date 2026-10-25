@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 
@@ -94,7 +95,7 @@ class _TagInputState extends State<TagInput> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Etiketler',
+          AppLocalizations.of(context)!.postTags,
           style: Theme.of(
             context,
           ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
@@ -135,7 +136,7 @@ class _TagInputState extends State<TagInput> {
                   maxLength: TagInput.maxTagLength,
                   focusNode: _focusNode,
                   decoration: InputDecoration(
-                    hintText: 'Etiket ekle (Enter\'a bas)',
+                    hintText: AppLocalizations.of(context)!.addTagHint,
                     counterText: '',
                     border: InputBorder.none,
                     isDense: true,

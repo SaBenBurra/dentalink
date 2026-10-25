@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../shared/utils/error_messages.dart';
@@ -39,15 +40,15 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
     if (_formKey.currentState!.validate()) {
       if (_selectedBranch == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Lütfen bir branş seçin.')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.validationBranchRequired)),
         );
         return;
       }
 
       if (_images.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Vaka için en az bir görsel eklemelisiniz.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.caseImageRequired),
           ),
         );
         return;
@@ -66,12 +67,12 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
       final state = ref.read(createCaseProvider);
       if (state.hasError) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(getErrorMessage(state.error!))),
+          SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, state.error!))),
         );
       } else {
         invalidateMyPosts(ref);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Vaka başarıyla paylaşıldı!')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.caseShared)),
         );
         context.pop();
       }
@@ -90,7 +91,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
           actionsPadding: EdgeInsets.symmetric(
             horizontal: AppDimensions.spacing10,
           ),
-          title: const Text('Vaka Paylaş'),
+          title: Text(AppLocalizations.of(context)!.createCase),
           actions: [
             Consumer(
               builder: (context, ref, child) {
@@ -104,7 +105,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : Text(
-                          'Paylaş',
+                          AppLocalizations.of(context)!.share,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: colorScheme.primary,
@@ -127,16 +128,16 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
               TextFormField(
                 controller: _titleController,
                 maxLength: 150, // DB: posts_title_length (017)
-                decoration: const InputDecoration(
-                  labelText: 'Vaka Başlığı',
-                  hintText: 'Örn: Mandibular 1. Molar Endodontik Tedavi',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.caseTitleLabel,
+                  hintText: AppLocalizations.of(context)!.caseTitleHint,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Başlık boş bırakılamaz';
+                    return AppLocalizations.of(context)!.validationTitleEmpty;
                   }
                   return null;
                 },
@@ -148,10 +149,10 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
                 controller: _contentController,
                 maxLength: 5000, // DB: posts_content_length (017)
                 maxLines: 5,
-                decoration: const InputDecoration(
-                  labelText: 'Açıklama',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.postContent,
                   hintText:
-                      'Vakanın hikayesi, teşhis, tedavi planı ve uygulanan işlemler...',
+                      AppLocalizations.of(context)!.caseContentHint,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
@@ -159,7 +160,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Açıklama boş bırakılamaz';
+                    return AppLocalizations.of(context)!.validationDescriptionEmpty;
                   }
                   return null;
                 },

@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:dentlink/shared/extensions/post_type_l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,22 +12,12 @@ import '../widgets/profile_posts_tab.dart';
 import '../../../data/models/enums.dart';
 import '../../../data/models/user_model.dart';
 import '../../../shared/widgets/error_widget.dart';
+import '../../../shared/utils/error_messages.dart';
 
 class ProfileScreen extends ConsumerWidget {
   final String? userId;
 
   const ProfileScreen({super.key, this.userId});
-
-  String _getLocalizedErrorMessage(Object error) {
-    final msg = error.toString().toLowerCase();
-    if (msg.contains('socket') || msg.contains('network') || msg.contains('connection')) {
-      return 'İnternet bağlantınızı kontrol edip tekrar deneyin.';
-    }
-    if (msg.contains('postgrest') || msg.contains('supabase') || msg.contains('timeout')) {
-      return 'Sunucuyla iletişim kurulurken bir sorun oluştu.';
-    }
-    return 'Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin.';
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,8 +31,8 @@ class ProfileScreen extends ConsumerWidget {
 
     if (targetUserId == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Profil')),
-        body: const Center(child: Text('Kullanıcı bulunamadı.')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.profileTitle)),
+        body: Center(child: Text(AppLocalizations.of(context)!.userNotFound)),
       );
     }
 
@@ -55,18 +46,18 @@ class ProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profil'),
+        title: Text(AppLocalizations.of(context)!.profileTitle),
         actions: isCurrentUser
             ? [
                 IconButton(
                   icon: const Icon(Icons.bookmark_border_rounded),
                   onPressed: () => context.push('/bookmarks'),
-                  tooltip: 'Kaydedilenler',
+                  tooltip: AppLocalizations.of(context)!.bookmarksTitle,
                 ),
                 IconButton(
                   icon: const Icon(Icons.settings_outlined),
                   onPressed: () => context.push('/settings'),
-                  tooltip: 'Ayarlar',
+                  tooltip: AppLocalizations.of(context)!.settingsTitle,
                 ),
               ]
             : null,
@@ -74,7 +65,7 @@ class ProfileScreen extends ConsumerWidget {
       body: userState.when(
         data: (user) {
           if (user == null) {
-            return const Center(child: Text('Kullanıcı bulunamadı.'));
+            return Center(child: Text(AppLocalizations.of(context)!.userNotFound));
           }
 
           return DefaultTabController(
@@ -118,7 +109,7 @@ class ProfileScreen extends ConsumerWidget {
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => DentLinkErrorWidget(
-          message: _getLocalizedErrorMessage(error),
+          message: getErrorMessage(AppLocalizations.of(context)!, error),
           onRetry: () {
             if (isCurrentUser) {
               ref.invalidate(authProvider);

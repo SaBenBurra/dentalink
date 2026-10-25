@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
@@ -21,7 +22,7 @@ class CaseDetailComments extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Mesleki Tartışma',
+          AppLocalizations.of(context)!.professionalDiscussion,
           style: textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
             color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
@@ -62,10 +63,10 @@ class CaseDetailComments extends ConsumerWidget {
           error: (err, stack) => Center(
             child: Column(
               children: [
-                Text('Yorumlar yüklenemedi.', style: textTheme.bodyMedium),
+                Text(AppLocalizations.of(context)!.commentsLoadError, style: textTheme.bodyMedium),
                 TextButton(
                   onPressed: () => ref.invalidate(commentsProvider(postId)),
-                  child: const Text('Tekrar Dene'),
+                  child: Text(AppLocalizations.of(context)!.retry),
                 ),
               ],
             ),

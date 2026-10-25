@@ -1,3 +1,4 @@
+import 'package:dentlink/shared/extensions/user_title_ui.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_dimensions.dart';
@@ -69,7 +70,7 @@ class UserTile extends StatelessWidget {
 
     // Alt başlık metnini belirle
     final subtitleText =
-        subtitle ?? (showTitle ? user.title.displayName : null);
+        subtitle ?? (showTitle ? user.title.displayName(context) : null);
 
     final content = Padding(
       padding: EdgeInsets.symmetric(vertical: verticalPadding),

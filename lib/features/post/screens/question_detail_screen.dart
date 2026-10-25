@@ -58,7 +58,7 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(getErrorMessage(e))),
+          SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, e))),
         );
       }
     } finally {
@@ -91,7 +91,7 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
       body: postAsync.when(
         data: (postModel) {
           if (postModel is! QuestionPostModel) {
-            return PostDetailError(message: getErrorMessage(const NotFoundFailure()));
+            return PostDetailError(message: getErrorMessage(AppLocalizations.of(context)!, const NotFoundFailure()));
           }
           final post = postModel;
           final isPostOwner = currentUser?.id == post.userId;
@@ -183,7 +183,7 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                   ),
                                 ),
                                 child: Text(
-                                  'Soru ❓',
+                                  '${AppLocalizations.of(context)!.questionPost} ❓',
                                   style: textTheme.labelSmall?.copyWith(
                                     color: colorScheme.secondary,
                                     fontWeight: FontWeight.bold,
@@ -307,7 +307,7 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                   child: Row(
                     children: [
                       UserAvatar(
-                        name: currentUser?.fullName ?? 'Hekim',
+                        name: currentUser?.fullName ?? '',
                         imageUrl: currentUser?.avatarUrl,
                         size: AvatarSize.small,
                       ),
@@ -342,9 +342,9 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                         ? AppColors.darkTextPrimary
                                         : AppColors.lightTextPrimary,
                                   ),
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     counterText: '',
-                                    hintText: 'Cevabınızı yazın...',
+                                    hintText: AppLocalizations.of(context)!.writeAnswer,
                                     border: InputBorder.none,
                                     // Renk temadan (Colors.grey beyazda 2.7:1 idi, UX-15).
                                     hintStyle: TextStyle(fontSize: 13),
@@ -373,7 +373,7 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
         },
         loading: () => const PostDetailLoading(),
         error: (err, stack) => PostDetailError(
-          message: getErrorMessage(err),
+          message: getErrorMessage(AppLocalizations.of(context)!, err),
           onRetry: () => ref.invalidate(postDetailProvider(widget.postId)),
         ),
       ),

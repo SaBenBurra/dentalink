@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthApiException;
 import '../../../data/repositories/otp_cooldown_exception.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/locale_provider.dart';
 import '../../../shared/utils/error_messages.dart';
 import '../models/login_step.dart';
 
@@ -92,14 +93,14 @@ class LoginController extends AutoDisposeNotifier<LoginState> {
         state = state.copyWith(
           isLoading: false,
           errorText: () =>
-              'Çok sık deneme yaptınız. ${e.remainingSeconds} saniye sonra tekrar deneyin.',
+              ref.read(l10nProvider).otpTooManyAttempts(e.remainingSeconds),
         );
       }
     } catch (e) {
       if (_disposed) return;
       state = state.copyWith(
         isLoading: false,
-        errorText: () => getErrorMessage(e),
+        errorText: () => getErrorMessage(ref.read(l10nProvider), e),
       );
     }
   }
@@ -133,7 +134,9 @@ class LoginController extends AutoDisposeNotifier<LoginState> {
       state = state.copyWith(
         isLoading: false,
         isSuccess: true,
-        successMessage: () => user != null ? 'Giriş Yapıldı!' : 'Başarılı',
+        successMessage: () => user != null
+            ? ref.read(l10nProvider).loginSuccess
+            : ref.read(l10nProvider).success,
       );
       return user != null; // returns true if registered user, false if new
     } catch (e) {
@@ -142,8 +145,8 @@ class LoginController extends AutoDisposeNotifier<LoginState> {
         isLoading: false,
         // Yalnızca sunucunun reddettiği kod "hatalı"; ağ ve profil hataları kendi mesajıyla.
         errorText: () => e is AuthApiException
-            ? 'Kod hatalı veya süresi dolmuş'
-            : getErrorMessage(e),
+            ? ref.read(l10nProvider).otpInvalid
+            : getErrorMessage(ref.read(l10nProvider), e),
         shouldShake: true,
       );
       // Reset shouldShake so it can shake again on next error
@@ -173,7 +176,7 @@ class LoginController extends AutoDisposeNotifier<LoginState> {
       if (_disposed) return;
       state = state.copyWith(
         isLoading: false,
-        errorText: () => 'Kod gönderilemedi. Lütfen tekrar deneyin.',
+        errorText: () => ref.read(l10nProvider).otpSendFailed,
       );
     }
   }

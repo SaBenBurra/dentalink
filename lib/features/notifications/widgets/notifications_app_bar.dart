@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:dentlink/core/constants/app_colors.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/providers/notification_provider.dart';
@@ -39,7 +40,7 @@ class NotificationsAppBar extends ConsumerWidget
         onPressed: () => context.pop(),
       ),
       title: Text(
-        'Bildirimler',
+        AppLocalizations.of(context)!.notificationsTitle,
         style: textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.bold,
           color: isDark
@@ -51,15 +52,16 @@ class NotificationsAppBar extends ConsumerWidget
         TextButton(
           onPressed: () {
             final messenger = ScaffoldMessenger.of(context);
+            final l10n = AppLocalizations.of(context)!;
             ref
                 .read(notificationsProvider.notifier)
                 .markAllRead()
                 .catchError((Object e) => messenger.showSnackBar(
-                      SnackBar(content: Text(getErrorMessage(e))),
+                      SnackBar(content: Text(getErrorMessage(l10n, e))),
                     ));
           },
           child: Text(
-            'Tümünü Okundu İşaretle',
+            AppLocalizations.of(context)!.markAllRead,
             style: textTheme.labelLarge?.copyWith(
               color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w600,

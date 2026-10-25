@@ -179,13 +179,13 @@ abstract class AppLocalizations {
   /// Bilinmeyen hata mesajı
   ///
   /// In tr, this message translates to:
-  /// **'Bilinmeyen bir hata oluştu.'**
+  /// **'Beklenmeyen bir hata oluştu.'**
   String get unknownError;
 
   /// Ağ hatası mesajı
   ///
   /// In tr, this message translates to:
-  /// **'İnternet bağlantısı kontrol edin.'**
+  /// **'İnternet bağlantınızı kontrol edin.'**
   String get networkError;
 
   /// Boş sonuç mesajı
@@ -653,8 +653,8 @@ abstract class AppLocalizations {
   /// Maksimum görsel uyarısı
   ///
   /// In tr, this message translates to:
-  /// **'En fazla 10 görsel ekleyebilirsiniz.'**
-  String get maxImagesReached;
+  /// **'En fazla {count} görsel ekleyebilirsiniz.'**
+  String maxImagesReached(int count);
 
   /// Yayınla butonu
   ///
@@ -1213,6 +1213,792 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Beğen'**
   String get like;
+
+  /// No description provided for @titleUnknown.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bilinmiyor'**
+  String get titleUnknown;
+
+  /// No description provided for @errorAuthRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Oturumunuz sona erdi. Lütfen tekrar giriş yapın.'**
+  String get errorAuthRequired;
+
+  /// No description provided for @errorPermissionDenied.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu işlem için yetkiniz yok.'**
+  String get errorPermissionDenied;
+
+  /// No description provided for @errorNotFound.
+  ///
+  /// In tr, this message translates to:
+  /// **'İçerik bulunamadı veya silinmiş.'**
+  String get errorNotFound;
+
+  /// No description provided for @errorValidation.
+  ///
+  /// In tr, this message translates to:
+  /// **'Girdiğiniz içerik geçerli değil.'**
+  String get errorValidation;
+
+  /// No description provided for @errorConflict.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu kayıt zaten var.'**
+  String get errorConflict;
+
+  /// No description provided for @errorServer.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bir sorun oluştu, lütfen tekrar deneyin.'**
+  String get errorServer;
+
+  /// No description provided for @errorMediaPermission.
+  ///
+  /// In tr, this message translates to:
+  /// **'Erişim izni verilmedi. Telefon ayarlarından izin verebilirsiniz.'**
+  String get errorMediaPermission;
+
+  /// No description provided for @otpTooManyAttempts.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çok sık deneme yaptınız. {seconds} saniye sonra tekrar deneyin.'**
+  String otpTooManyAttempts(int seconds);
+
+  /// No description provided for @loginSuccess.
+  ///
+  /// In tr, this message translates to:
+  /// **'Giriş Yapıldı!'**
+  String get loginSuccess;
+
+  /// No description provided for @success.
+  ///
+  /// In tr, this message translates to:
+  /// **'Başarılı'**
+  String get success;
+
+  /// No description provided for @otpInvalid.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kod hatalı veya süresi dolmuş'**
+  String get otpInvalid;
+
+  /// No description provided for @otpSendFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kod gönderilemedi. Lütfen tekrar deneyin.'**
+  String get otpSendFailed;
+
+  /// No description provided for @validationNameRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ad Soyad alanı zorunludur'**
+  String get validationNameRequired;
+
+  /// No description provided for @validationTitleRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Lütfen bir unvan seçin'**
+  String get validationTitleRequired;
+
+  /// No description provided for @registerCreatingProfile.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profil oluşturuluyor...'**
+  String get registerCreatingProfile;
+
+  /// No description provided for @loginInputHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-posta veya telefon numarası'**
+  String get loginInputHint;
+
+  /// No description provided for @loginHeaderSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-posta veya telefon numaranızla giriş yapın'**
+  String get loginHeaderSubtitle;
+
+  /// No description provided for @otpSentTo.
+  ///
+  /// In tr, this message translates to:
+  /// **'{destination} adresine gönderilen kodu girin'**
+  String otpSentTo(String destination);
+
+  /// No description provided for @resendCode.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kodu Tekrar Gönder'**
+  String get resendCode;
+
+  /// No description provided for @resendCodeIn.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kodu Tekrar Gönder ({seconds}s)'**
+  String resendCodeIn(int seconds);
+
+  /// No description provided for @changeEmailOrPhone.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-posta/Telefon Değiştir'**
+  String get changeEmailOrPhone;
+
+  /// No description provided for @backToLogin.
+  ///
+  /// In tr, this message translates to:
+  /// **'Girişe Dön'**
+  String get backToLogin;
+
+  /// No description provided for @backShort.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geri'**
+  String get backShort;
+
+  /// No description provided for @completeProfile.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profilimi Tamamla'**
+  String get completeProfile;
+
+  /// No description provided for @continueAction.
+  ///
+  /// In tr, this message translates to:
+  /// **'Devam Et'**
+  String get continueAction;
+
+  /// No description provided for @registerDoneTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaydınız Tamamlandı!'**
+  String get registerDoneTitle;
+
+  /// No description provided for @registerDoneMessage.
+  ///
+  /// In tr, this message translates to:
+  /// **'DentLink dünyasına hoş geldiniz. Profiliniz oluşturuldu.'**
+  String get registerDoneMessage;
+
+  /// No description provided for @skip.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geç'**
+  String get skip;
+
+  /// No description provided for @stepOf.
+  ///
+  /// In tr, this message translates to:
+  /// **'Adım {current} / {total}'**
+  String stepOf(int current, int total);
+
+  /// No description provided for @registerStepBasic.
+  ///
+  /// In tr, this message translates to:
+  /// **'Temel Bilgiler'**
+  String get registerStepBasic;
+
+  /// No description provided for @registerStepProfessional.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mesleki Bilgiler'**
+  String get registerStepProfessional;
+
+  /// No description provided for @registerStepDetails.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profil Detayları'**
+  String get registerStepDetails;
+
+  /// No description provided for @registerStepOneTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sizi Tanıyalım'**
+  String get registerStepOneTitle;
+
+  /// No description provided for @registerStepOneSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Lütfen adınızı girin ve uzmanlık alanınızı seçin.'**
+  String get registerStepOneSubtitle;
+
+  /// No description provided for @fullName.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ad Soyad'**
+  String get fullName;
+
+  /// No description provided for @yourTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Unvanınız'**
+  String get yourTitle;
+
+  /// No description provided for @registerStepTwoSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profesyonel geçmişinizi doldurarak diş hekimleri ağı ile daha iyi etkileşim kurun (İsteğe bağlı).'**
+  String get registerStepTwoSubtitle;
+
+  /// No description provided for @registerStepThreeSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profil fotoğrafınızı seçin ve kısa bir biyografi ekleyin (İsteğe bağlı).'**
+  String get registerStepThreeSubtitle;
+
+  /// No description provided for @removePhoto.
+  ///
+  /// In tr, this message translates to:
+  /// **'Fotoğrafı Kaldır'**
+  String get removePhoto;
+
+  /// No description provided for @bioHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Biyografi (Kendinizden kısaca bahsedin)'**
+  String get bioHint;
+
+  /// No description provided for @pageNotFound.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sayfa bulunamadı: {uri}'**
+  String pageNotFound(String uri);
+
+  /// No description provided for @backToLoginPage.
+  ///
+  /// In tr, this message translates to:
+  /// **'Giriş sayfasına dön'**
+  String get backToLoginPage;
+
+  /// No description provided for @bookmarksEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaydedilen gönderi yok'**
+  String get bookmarksEmptyTitle;
+
+  /// No description provided for @bookmarksEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Beğendiğiniz vakaları ve soruları kaydedin,\nburadan kolayca erişin.'**
+  String get bookmarksEmptySubtitle;
+
+  /// No description provided for @bookmarksLoadError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaydedilenler yüklenemedi.'**
+  String get bookmarksLoadError;
+
+  /// No description provided for @bookmarkRemoved.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaydedilenlerden kaldırıldı'**
+  String get bookmarkRemoved;
+
+  /// No description provided for @undo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geri Al'**
+  String get undo;
+
+  /// No description provided for @feedEmptyFiltered.
+  ///
+  /// In tr, this message translates to:
+  /// **'Seçili filtreye uygun gönderi bulunamadı.'**
+  String get feedEmptyFiltered;
+
+  /// No description provided for @feedEmptyAll.
+  ///
+  /// In tr, this message translates to:
+  /// **'Akışta henüz hiç paylaşım yapılmamış.'**
+  String get feedEmptyAll;
+
+  /// No description provided for @feedLoadError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Akış yüklenirken bir hata oluştu.'**
+  String get feedLoadError;
+
+  /// No description provided for @searchMinChars.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aramak için en az 2 karakter girin.'**
+  String get searchMinChars;
+
+  /// No description provided for @userNotFound.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanıcı bulunamadı.'**
+  String get userNotFound;
+
+  /// No description provided for @messagesSearchHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mesajlarda ara...'**
+  String get messagesSearchHint;
+
+  /// No description provided for @conversationsLoadError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Konuşmalar yüklenemedi'**
+  String get conversationsLoadError;
+
+  /// No description provided for @markAllRead.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tümünü Okundu İşaretle'**
+  String get markAllRead;
+
+  /// No description provided for @joinDiscussionHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mesleki tartışmaya katılın...'**
+  String get joinDiscussionHint;
+
+  /// No description provided for @validationBranchRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Lütfen bir branş seçin.'**
+  String get validationBranchRequired;
+
+  /// No description provided for @caseImageRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Vaka için en az bir görsel eklemelisiniz.'**
+  String get caseImageRequired;
+
+  /// No description provided for @caseShared.
+  ///
+  /// In tr, this message translates to:
+  /// **'Vaka başarıyla paylaşıldı!'**
+  String get caseShared;
+
+  /// No description provided for @share.
+  ///
+  /// In tr, this message translates to:
+  /// **'Paylaş'**
+  String get share;
+
+  /// No description provided for @caseTitleLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Vaka Başlığı'**
+  String get caseTitleLabel;
+
+  /// No description provided for @caseTitleHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Örn: Mandibular 1. Molar Endodontik Tedavi'**
+  String get caseTitleHint;
+
+  /// No description provided for @validationTitleEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Başlık boş bırakılamaz'**
+  String get validationTitleEmpty;
+
+  /// No description provided for @caseContentHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Vakanın hikayesi, teşhis, tedavi planı ve uygulanan işlemler...'**
+  String get caseContentHint;
+
+  /// No description provided for @validationDescriptionEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Açıklama boş bırakılamaz'**
+  String get validationDescriptionEmpty;
+
+  /// No description provided for @questionShared.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sorunuz başarıyla paylaşıldı!'**
+  String get questionShared;
+
+  /// No description provided for @questionTitleLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Soru Başlığı'**
+  String get questionTitleLabel;
+
+  /// No description provided for @questionTitleHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Örn: Zirkonyum kaplama sonrası hassasiyet'**
+  String get questionTitleHint;
+
+  /// No description provided for @questionContentLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sorunun Detayları'**
+  String get questionContentLabel;
+
+  /// No description provided for @questionContentHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Karşılaştığınız problemi veya merak ettiğiniz konuyu detaylıca açıklayın...'**
+  String get questionContentHint;
+
+  /// No description provided for @validationContentEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'İçerik boş bırakılamaz'**
+  String get validationContentEmpty;
+
+  /// No description provided for @selectBranch.
+  ///
+  /// In tr, this message translates to:
+  /// **'Branş Seç'**
+  String get selectBranch;
+
+  /// No description provided for @unlike.
+  ///
+  /// In tr, this message translates to:
+  /// **'Beğeniyi geri al'**
+  String get unlike;
+
+  /// No description provided for @noCommentsYet.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz yorum yapılmamış. İlk yorumu siz ekleyin!'**
+  String get noCommentsYet;
+
+  /// No description provided for @noAnswersYet.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz cevap yazılmamış. İlk siz cevaplayın!'**
+  String get noAnswersYet;
+
+  /// No description provided for @bestAnswerUnmarked.
+  ///
+  /// In tr, this message translates to:
+  /// **'En iyi cevap seçimi kaldırıldı.'**
+  String get bestAnswerUnmarked;
+
+  /// No description provided for @bestAnswerMarked.
+  ///
+  /// In tr, this message translates to:
+  /// **'En iyi cevap başarıyla seçildi! 🎉'**
+  String get bestAnswerMarked;
+
+  /// No description provided for @deletedUser.
+  ///
+  /// In tr, this message translates to:
+  /// **'[Silinmiş Kullanıcı]'**
+  String get deletedUser;
+
+  /// No description provided for @unmarkSelection.
+  ///
+  /// In tr, this message translates to:
+  /// **'Seçimi Kaldır'**
+  String get unmarkSelection;
+
+  /// No description provided for @professionalDiscussion.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mesleki Tartışma'**
+  String get professionalDiscussion;
+
+  /// No description provided for @commentsLoadError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yorumlar yüklenemedi.'**
+  String get commentsLoadError;
+
+  /// No description provided for @answersWithCount.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cevaplar ({count})'**
+  String answersWithCount(int count);
+
+  /// No description provided for @answersTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cevaplar'**
+  String get answersTitle;
+
+  /// No description provided for @answersLoadError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cevaplar yüklenemedi.'**
+  String get answersLoadError;
+
+  /// No description provided for @images.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görseller'**
+  String get images;
+
+  /// No description provided for @addPhoto.
+  ///
+  /// In tr, this message translates to:
+  /// **'Fotoğraf Ekle'**
+  String get addPhoto;
+
+  /// No description provided for @addTagHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Etiket ekle (Enter\'a bas)'**
+  String get addTagHint;
+
+  /// No description provided for @profileUpdated.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profil güncellendi'**
+  String get profileUpdated;
+
+  /// No description provided for @userInfoNotFound.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanıcı bilgisi bulunamadı'**
+  String get userInfoNotFound;
+
+  /// No description provided for @fullNameRequiredLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ad - Soyad *'**
+  String get fullNameRequiredLabel;
+
+  /// No description provided for @titleRequiredLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Unvan *'**
+  String get titleRequiredLabel;
+
+  /// No description provided for @networkTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ağ'**
+  String get networkTitle;
+
+  /// No description provided for @followersTab.
+  ///
+  /// In tr, this message translates to:
+  /// **'Takipçiler'**
+  String get followersTab;
+
+  /// No description provided for @followingTab.
+  ///
+  /// In tr, this message translates to:
+  /// **'Takip Edilenler'**
+  String get followingTab;
+
+  /// No description provided for @noFollowersYet.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz takipçisi yok.'**
+  String get noFollowersYet;
+
+  /// No description provided for @noFollowingYet.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz kimseyi takip etmiyor.'**
+  String get noFollowingYet;
+
+  /// No description provided for @usersLoadError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanıcılar yüklenirken bir hata oluştu.'**
+  String get usersLoadError;
+
+  /// No description provided for @mutualFollowedBy.
+  ///
+  /// In tr, this message translates to:
+  /// **'{others, plural, =0{{name} takip ediyor} other{{name} ve {others} diğer kişi takip ediyor}}'**
+  String mutualFollowedBy(String name, int others);
+
+  /// No description provided for @badgesTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Rozetler'**
+  String get badgesTitle;
+
+  /// No description provided for @statFollowing.
+  ///
+  /// In tr, this message translates to:
+  /// **'Takip Edilen'**
+  String get statFollowing;
+
+  /// No description provided for @searchNoResultsTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sonuç Bulunamadı'**
+  String get searchNoResultsTitle;
+
+  /// No description provided for @searchNoPosts.
+  ///
+  /// In tr, this message translates to:
+  /// **'Arama kriterlerinize uygun gönderi bulunamadı.'**
+  String get searchNoPosts;
+
+  /// No description provided for @searchNoUsers.
+  ///
+  /// In tr, this message translates to:
+  /// **'Arama kriterlerinize uygun kullanıcı bulunamadı.'**
+  String get searchNoUsers;
+
+  /// No description provided for @searchUsersTab.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanıcılar'**
+  String get searchUsersTab;
+
+  /// No description provided for @searchEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Arama Yapın'**
+  String get searchEmptyTitle;
+
+  /// No description provided for @searchEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Diş hekimliği dünyasında vaka, soru veya meslektaş arayın.'**
+  String get searchEmptySubtitle;
+
+  /// No description provided for @searchPostsTab.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gönderiler'**
+  String get searchPostsTab;
+
+  /// No description provided for @clear.
+  ///
+  /// In tr, this message translates to:
+  /// **'Temizle'**
+  String get clear;
+
+  /// No description provided for @contentType.
+  ///
+  /// In tr, this message translates to:
+  /// **'İçerik Türü'**
+  String get contentType;
+
+  /// No description provided for @allBranches.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tüm Branşlar'**
+  String get allBranches;
+
+  /// No description provided for @settingsAppearance.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görünüm'**
+  String get settingsAppearance;
+
+  /// No description provided for @settingsChooseTheme.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tema Seçin'**
+  String get settingsChooseTheme;
+
+  /// No description provided for @settingsAppLanguage.
+  ///
+  /// In tr, this message translates to:
+  /// **'Uygulama Dili'**
+  String get settingsAppLanguage;
+
+  /// No description provided for @settingsChooseLanguage.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dil Seçin'**
+  String get settingsChooseLanguage;
+
+  /// No description provided for @settingsPrivacy.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gizlilik'**
+  String get settingsPrivacy;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yakında'**
+  String get comingSoon;
+
+  /// No description provided for @settingsBlocked.
+  ///
+  /// In tr, this message translates to:
+  /// **'Engellenenler'**
+  String get settingsBlocked;
+
+  /// No description provided for @settingsAbout.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hakkında'**
+  String get settingsAbout;
+
+  /// No description provided for @settingsTerms.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanım Koşulları'**
+  String get settingsTerms;
+
+  /// No description provided for @settingsPrivacyPolicy.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gizlilik Politikası'**
+  String get settingsPrivacyPolicy;
+
+  /// No description provided for @settingsAppVersion.
+  ///
+  /// In tr, this message translates to:
+  /// **'Uygulama Sürümü'**
+  String get settingsAppVersion;
+
+  /// No description provided for @createSheetTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ne paylaşmak istersin?'**
+  String get createSheetTitle;
+
+  /// No description provided for @createSheetSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Klinik vakalarını ve sorularını paylaşarak topluluğa katkı sağla.'**
+  String get createSheetSubtitle;
+
+  /// No description provided for @createCaseSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Klinik vakalarını görsellerle paylaş, meslektaşlarından görüş al.'**
+  String get createCaseSubtitle;
+
+  /// No description provided for @createQuestionSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mesleki sorularını toplulukla paylaş, en iyi cevabı bul.'**
+  String get createQuestionSubtitle;
+
+  /// No description provided for @timeJustNow.
+  ///
+  /// In tr, this message translates to:
+  /// **'Az önce'**
+  String get timeJustNow;
+
+  /// No description provided for @timeMinutesAgo.
+  ///
+  /// In tr, this message translates to:
+  /// **'{n} dk önce'**
+  String timeMinutesAgo(int n);
+
+  /// No description provided for @timeHoursAgo.
+  ///
+  /// In tr, this message translates to:
+  /// **'{n} saat önce'**
+  String timeHoursAgo(int n);
+
+  /// No description provided for @timeDaysAgo.
+  ///
+  /// In tr, this message translates to:
+  /// **'{n} gün önce'**
+  String timeDaysAgo(int n);
+
+  /// No description provided for @timeWeeksAgo.
+  ///
+  /// In tr, this message translates to:
+  /// **'{n} hafta önce'**
+  String timeWeeksAgo(int n);
 }
 
 class _AppLocalizationsDelegate

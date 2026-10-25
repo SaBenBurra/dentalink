@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/constants/app_text_styles.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +49,7 @@ class RegisterBottomActions extends StatelessWidget {
                 ),
               ),
               child: Text(
-                currentStep == 0 ? 'Girişe Dön' : 'Geri',
+                currentStep == 0 ? AppLocalizations.of(context)!.backToLogin : AppLocalizations.of(context)!.backShort,
                 style: TextStyle(
                   color: isDark ? Colors.white70 : Colors.black87,
                   fontWeight: FontWeight.bold,
@@ -81,7 +82,7 @@ class RegisterBottomActions extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      isLastStep ? 'Profilimi Tamamla' : 'Devam Et',
+                      isLastStep ? AppLocalizations.of(context)!.completeProfile : AppLocalizations.of(context)!.continueAction,
                       style: AppTextStyles.button.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

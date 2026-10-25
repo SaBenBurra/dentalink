@@ -48,10 +48,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get error => 'Hata';
 
   @override
-  String get unknownError => 'Bilinmeyen bir hata oluştu.';
+  String get unknownError => 'Beklenmeyen bir hata oluştu.';
 
   @override
-  String get networkError => 'İnternet bağlantısı kontrol edin.';
+  String get networkError => 'İnternet bağlantınızı kontrol edin.';
 
   @override
   String get noResults => 'Sonuç bulunamadı.';
@@ -286,7 +286,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get addImages => 'Görsel Ekle';
 
   @override
-  String get maxImagesReached => 'En fazla 10 görsel ekleyebilirsiniz.';
+  String maxImagesReached(int count) {
+    return 'En fazla $count görsel ekleyebilirsiniz.';
+  }
 
   @override
   String get publish => 'Yayınla';
@@ -605,4 +607,440 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get like => 'Beğen';
+
+  @override
+  String get titleUnknown => 'Bilinmiyor';
+
+  @override
+  String get errorAuthRequired =>
+      'Oturumunuz sona erdi. Lütfen tekrar giriş yapın.';
+
+  @override
+  String get errorPermissionDenied => 'Bu işlem için yetkiniz yok.';
+
+  @override
+  String get errorNotFound => 'İçerik bulunamadı veya silinmiş.';
+
+  @override
+  String get errorValidation => 'Girdiğiniz içerik geçerli değil.';
+
+  @override
+  String get errorConflict => 'Bu kayıt zaten var.';
+
+  @override
+  String get errorServer => 'Bir sorun oluştu, lütfen tekrar deneyin.';
+
+  @override
+  String get errorMediaPermission =>
+      'Erişim izni verilmedi. Telefon ayarlarından izin verebilirsiniz.';
+
+  @override
+  String otpTooManyAttempts(int seconds) {
+    return 'Çok sık deneme yaptınız. $seconds saniye sonra tekrar deneyin.';
+  }
+
+  @override
+  String get loginSuccess => 'Giriş Yapıldı!';
+
+  @override
+  String get success => 'Başarılı';
+
+  @override
+  String get otpInvalid => 'Kod hatalı veya süresi dolmuş';
+
+  @override
+  String get otpSendFailed => 'Kod gönderilemedi. Lütfen tekrar deneyin.';
+
+  @override
+  String get validationNameRequired => 'Ad Soyad alanı zorunludur';
+
+  @override
+  String get validationTitleRequired => 'Lütfen bir unvan seçin';
+
+  @override
+  String get registerCreatingProfile => 'Profil oluşturuluyor...';
+
+  @override
+  String get loginInputHint => 'E-posta veya telefon numarası';
+
+  @override
+  String get loginHeaderSubtitle =>
+      'E-posta veya telefon numaranızla giriş yapın';
+
+  @override
+  String otpSentTo(String destination) {
+    return '$destination adresine gönderilen kodu girin';
+  }
+
+  @override
+  String get resendCode => 'Kodu Tekrar Gönder';
+
+  @override
+  String resendCodeIn(int seconds) {
+    return 'Kodu Tekrar Gönder (${seconds}s)';
+  }
+
+  @override
+  String get changeEmailOrPhone => 'E-posta/Telefon Değiştir';
+
+  @override
+  String get backToLogin => 'Girişe Dön';
+
+  @override
+  String get backShort => 'Geri';
+
+  @override
+  String get completeProfile => 'Profilimi Tamamla';
+
+  @override
+  String get continueAction => 'Devam Et';
+
+  @override
+  String get registerDoneTitle => 'Kaydınız Tamamlandı!';
+
+  @override
+  String get registerDoneMessage =>
+      'DentLink dünyasına hoş geldiniz. Profiliniz oluşturuldu.';
+
+  @override
+  String get skip => 'Geç';
+
+  @override
+  String stepOf(int current, int total) {
+    return 'Adım $current / $total';
+  }
+
+  @override
+  String get registerStepBasic => 'Temel Bilgiler';
+
+  @override
+  String get registerStepProfessional => 'Mesleki Bilgiler';
+
+  @override
+  String get registerStepDetails => 'Profil Detayları';
+
+  @override
+  String get registerStepOneTitle => 'Sizi Tanıyalım';
+
+  @override
+  String get registerStepOneSubtitle =>
+      'Lütfen adınızı girin ve uzmanlık alanınızı seçin.';
+
+  @override
+  String get fullName => 'Ad Soyad';
+
+  @override
+  String get yourTitle => 'Unvanınız';
+
+  @override
+  String get registerStepTwoSubtitle =>
+      'Profesyonel geçmişinizi doldurarak diş hekimleri ağı ile daha iyi etkileşim kurun (İsteğe bağlı).';
+
+  @override
+  String get registerStepThreeSubtitle =>
+      'Profil fotoğrafınızı seçin ve kısa bir biyografi ekleyin (İsteğe bağlı).';
+
+  @override
+  String get removePhoto => 'Fotoğrafı Kaldır';
+
+  @override
+  String get bioHint => 'Biyografi (Kendinizden kısaca bahsedin)';
+
+  @override
+  String pageNotFound(String uri) {
+    return 'Sayfa bulunamadı: $uri';
+  }
+
+  @override
+  String get backToLoginPage => 'Giriş sayfasına dön';
+
+  @override
+  String get bookmarksEmptyTitle => 'Kaydedilen gönderi yok';
+
+  @override
+  String get bookmarksEmptySubtitle =>
+      'Beğendiğiniz vakaları ve soruları kaydedin,\nburadan kolayca erişin.';
+
+  @override
+  String get bookmarksLoadError => 'Kaydedilenler yüklenemedi.';
+
+  @override
+  String get bookmarkRemoved => 'Kaydedilenlerden kaldırıldı';
+
+  @override
+  String get undo => 'Geri Al';
+
+  @override
+  String get feedEmptyFiltered => 'Seçili filtreye uygun gönderi bulunamadı.';
+
+  @override
+  String get feedEmptyAll => 'Akışta henüz hiç paylaşım yapılmamış.';
+
+  @override
+  String get feedLoadError => 'Akış yüklenirken bir hata oluştu.';
+
+  @override
+  String get searchMinChars => 'Aramak için en az 2 karakter girin.';
+
+  @override
+  String get userNotFound => 'Kullanıcı bulunamadı.';
+
+  @override
+  String get messagesSearchHint => 'Mesajlarda ara...';
+
+  @override
+  String get conversationsLoadError => 'Konuşmalar yüklenemedi';
+
+  @override
+  String get markAllRead => 'Tümünü Okundu İşaretle';
+
+  @override
+  String get joinDiscussionHint => 'Mesleki tartışmaya katılın...';
+
+  @override
+  String get validationBranchRequired => 'Lütfen bir branş seçin.';
+
+  @override
+  String get caseImageRequired => 'Vaka için en az bir görsel eklemelisiniz.';
+
+  @override
+  String get caseShared => 'Vaka başarıyla paylaşıldı!';
+
+  @override
+  String get share => 'Paylaş';
+
+  @override
+  String get caseTitleLabel => 'Vaka Başlığı';
+
+  @override
+  String get caseTitleHint => 'Örn: Mandibular 1. Molar Endodontik Tedavi';
+
+  @override
+  String get validationTitleEmpty => 'Başlık boş bırakılamaz';
+
+  @override
+  String get caseContentHint =>
+      'Vakanın hikayesi, teşhis, tedavi planı ve uygulanan işlemler...';
+
+  @override
+  String get validationDescriptionEmpty => 'Açıklama boş bırakılamaz';
+
+  @override
+  String get questionShared => 'Sorunuz başarıyla paylaşıldı!';
+
+  @override
+  String get questionTitleLabel => 'Soru Başlığı';
+
+  @override
+  String get questionTitleHint => 'Örn: Zirkonyum kaplama sonrası hassasiyet';
+
+  @override
+  String get questionContentLabel => 'Sorunun Detayları';
+
+  @override
+  String get questionContentHint =>
+      'Karşılaştığınız problemi veya merak ettiğiniz konuyu detaylıca açıklayın...';
+
+  @override
+  String get validationContentEmpty => 'İçerik boş bırakılamaz';
+
+  @override
+  String get selectBranch => 'Branş Seç';
+
+  @override
+  String get unlike => 'Beğeniyi geri al';
+
+  @override
+  String get noCommentsYet => 'Henüz yorum yapılmamış. İlk yorumu siz ekleyin!';
+
+  @override
+  String get noAnswersYet => 'Henüz cevap yazılmamış. İlk siz cevaplayın!';
+
+  @override
+  String get bestAnswerUnmarked => 'En iyi cevap seçimi kaldırıldı.';
+
+  @override
+  String get bestAnswerMarked => 'En iyi cevap başarıyla seçildi! 🎉';
+
+  @override
+  String get deletedUser => '[Silinmiş Kullanıcı]';
+
+  @override
+  String get unmarkSelection => 'Seçimi Kaldır';
+
+  @override
+  String get professionalDiscussion => 'Mesleki Tartışma';
+
+  @override
+  String get commentsLoadError => 'Yorumlar yüklenemedi.';
+
+  @override
+  String answersWithCount(int count) {
+    return 'Cevaplar ($count)';
+  }
+
+  @override
+  String get answersTitle => 'Cevaplar';
+
+  @override
+  String get answersLoadError => 'Cevaplar yüklenemedi.';
+
+  @override
+  String get images => 'Görseller';
+
+  @override
+  String get addPhoto => 'Fotoğraf Ekle';
+
+  @override
+  String get addTagHint => 'Etiket ekle (Enter\'a bas)';
+
+  @override
+  String get profileUpdated => 'Profil güncellendi';
+
+  @override
+  String get userInfoNotFound => 'Kullanıcı bilgisi bulunamadı';
+
+  @override
+  String get fullNameRequiredLabel => 'Ad - Soyad *';
+
+  @override
+  String get titleRequiredLabel => 'Unvan *';
+
+  @override
+  String get networkTitle => 'Ağ';
+
+  @override
+  String get followersTab => 'Takipçiler';
+
+  @override
+  String get followingTab => 'Takip Edilenler';
+
+  @override
+  String get noFollowersYet => 'Henüz takipçisi yok.';
+
+  @override
+  String get noFollowingYet => 'Henüz kimseyi takip etmiyor.';
+
+  @override
+  String get usersLoadError => 'Kullanıcılar yüklenirken bir hata oluştu.';
+
+  @override
+  String mutualFollowedBy(String name, int others) {
+    String _temp0 = intl.Intl.pluralLogic(
+      others,
+      locale: localeName,
+      other: '$name ve $others diğer kişi takip ediyor',
+      zero: '$name takip ediyor',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get badgesTitle => 'Rozetler';
+
+  @override
+  String get statFollowing => 'Takip Edilen';
+
+  @override
+  String get searchNoResultsTitle => 'Sonuç Bulunamadı';
+
+  @override
+  String get searchNoPosts => 'Arama kriterlerinize uygun gönderi bulunamadı.';
+
+  @override
+  String get searchNoUsers =>
+      'Arama kriterlerinize uygun kullanıcı bulunamadı.';
+
+  @override
+  String get searchUsersTab => 'Kullanıcılar';
+
+  @override
+  String get searchEmptyTitle => 'Arama Yapın';
+
+  @override
+  String get searchEmptySubtitle =>
+      'Diş hekimliği dünyasında vaka, soru veya meslektaş arayın.';
+
+  @override
+  String get searchPostsTab => 'Gönderiler';
+
+  @override
+  String get clear => 'Temizle';
+
+  @override
+  String get contentType => 'İçerik Türü';
+
+  @override
+  String get allBranches => 'Tüm Branşlar';
+
+  @override
+  String get settingsAppearance => 'Görünüm';
+
+  @override
+  String get settingsChooseTheme => 'Tema Seçin';
+
+  @override
+  String get settingsAppLanguage => 'Uygulama Dili';
+
+  @override
+  String get settingsChooseLanguage => 'Dil Seçin';
+
+  @override
+  String get settingsPrivacy => 'Gizlilik';
+
+  @override
+  String get comingSoon => 'Yakında';
+
+  @override
+  String get settingsBlocked => 'Engellenenler';
+
+  @override
+  String get settingsAbout => 'Hakkında';
+
+  @override
+  String get settingsTerms => 'Kullanım Koşulları';
+
+  @override
+  String get settingsPrivacyPolicy => 'Gizlilik Politikası';
+
+  @override
+  String get settingsAppVersion => 'Uygulama Sürümü';
+
+  @override
+  String get createSheetTitle => 'Ne paylaşmak istersin?';
+
+  @override
+  String get createSheetSubtitle =>
+      'Klinik vakalarını ve sorularını paylaşarak topluluğa katkı sağla.';
+
+  @override
+  String get createCaseSubtitle =>
+      'Klinik vakalarını görsellerle paylaş, meslektaşlarından görüş al.';
+
+  @override
+  String get createQuestionSubtitle =>
+      'Mesleki sorularını toplulukla paylaş, en iyi cevabı bul.';
+
+  @override
+  String get timeJustNow => 'Az önce';
+
+  @override
+  String timeMinutesAgo(int n) {
+    return '$n dk önce';
+  }
+
+  @override
+  String timeHoursAgo(int n) {
+    return '$n saat önce';
+  }
+
+  @override
+  String timeDaysAgo(int n) {
+    return '$n gün önce';
+  }
+
+  @override
+  String timeWeeksAgo(int n) {
+    return '$n hafta önce';
+  }
 }

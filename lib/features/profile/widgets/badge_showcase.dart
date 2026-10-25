@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/user_provider.dart';
@@ -29,7 +30,7 @@ class BadgeShowcase extends ConsumerWidget {
                   horizontal: AppDimensions.spacing16,
                 ),
                 child: Text(
-                  'Rozetler',
+                  AppLocalizations.of(context)!.badgesTitle,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),

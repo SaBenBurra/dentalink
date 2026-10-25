@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../data/models/user_model.dart';
@@ -21,7 +22,7 @@ class ProfileStats extends StatelessWidget {
         children: [
           StatCount(
             icon: Icons.article_outlined,
-            label: 'Gönderi',
+            label: AppLocalizations.of(context)!.posts,
             count: user.postsCount,
           ),
           InkWell(
@@ -31,7 +32,7 @@ class ProfileStats extends StatelessWidget {
               padding: const EdgeInsets.all(AppDimensions.spacing8),
               child: StatCount(
                 icon: Icons.people_outline,
-                label: 'Takipçi',
+                label: AppLocalizations.of(context)!.followers,
                 count: user.followersCount,
               ),
             ),
@@ -43,7 +44,7 @@ class ProfileStats extends StatelessWidget {
               padding: const EdgeInsets.all(AppDimensions.spacing8),
               child: StatCount(
                 icon: Icons.person_add_outlined,
-                label: 'Takip Edilen',
+                label: AppLocalizations.of(context)!.statFollowing,
                 count: user.followingCount,
               ),
             ),

@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:dentlink/core/constants/app_colors.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/constants/app_text_styles.dart';
@@ -48,7 +49,7 @@ class RegisterStepOne extends StatelessWidget {
         children: [
           const SizedBox(height: AppDimensions.spacing12),
           Text(
-            'Sizi Tanıyalım',
+            AppLocalizations.of(context)!.registerStepOneTitle,
             style: AppTextStyles.headlineSmall.copyWith(
               color: textPrimaryColor,
               fontWeight: FontWeight.bold,
@@ -56,7 +57,7 @@ class RegisterStepOne extends StatelessWidget {
           ),
           const SizedBox(height: AppDimensions.spacing8),
           Text(
-            'Lütfen adınızı girin ve uzmanlık alanınızı seçin.',
+            AppLocalizations.of(context)!.registerStepOneSubtitle,
             style: AppTextStyles.bodyMedium.copyWith(color: textSecondaryColor),
           ),
           const SizedBox(height: AppDimensions.spacing24),
@@ -65,7 +66,7 @@ class RegisterStepOne extends StatelessWidget {
           GlassField(
             controller: nameController,
             focusNode: nameFocusNode,
-            hintText: 'Ad Soyad',
+            hintText: AppLocalizations.of(context)!.fullName,
             icon: Icons.person_outline_rounded,
             inputFormatters: [LengthLimitingTextInputFormatter(ProfileLimits.fullName)],
             errorText: nameError,
@@ -74,7 +75,7 @@ class RegisterStepOne extends StatelessWidget {
 
           const SizedBox(height: AppDimensions.spacing32),
           Text(
-            'Unvanınız',
+            AppLocalizations.of(context)!.yourTitle,
             style: AppTextStyles.titleMedium.copyWith(
               color: textPrimaryColor,
               fontWeight: FontWeight.bold,
@@ -147,7 +148,7 @@ class RegisterStepOne extends StatelessWidget {
                         const SizedBox(width: AppDimensions.spacing8),
                         Expanded(
                           child: Text(
-                            title.displayName,
+                            title.displayName(context),
                             style: AppTextStyles.bodySmall.copyWith(
                               fontWeight: isSelected
                                   ? FontWeight.bold

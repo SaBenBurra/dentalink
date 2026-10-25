@@ -47,7 +47,7 @@ class AppBottomNavBar extends StatelessWidget {
         _NavItem(
           icon: Icons.home_outlined,
           selectedIcon: Icons.home_rounded,
-          label: 'Ana Sayfa',
+          label: AppLocalizations.of(context)!.navFeed,
           selected: currentIndex == 0,
           color: isDark ? Colors.white60 : Colors.black54,
           selectedColor: colorScheme.primary,
@@ -58,7 +58,7 @@ class AppBottomNavBar extends StatelessWidget {
         _NavItem(
           icon: Icons.explore_outlined,
           selectedIcon: Icons.explore_rounded,
-          label: 'Keşfet',
+          label: AppLocalizations.of(context)!.navExplore,
           selected: currentIndex == 1,
           color: isDark ? Colors.white60 : Colors.black54,
           selectedColor: colorScheme.primary,
@@ -75,7 +75,7 @@ class AppBottomNavBar extends StatelessWidget {
         _NavItem(
           icon: Icons.chat_bubble_outline_rounded,
           selectedIcon: Icons.chat_bubble_rounded,
-          label: 'Mesajlar',
+          label: AppLocalizations.of(context)!.navMessages,
           selected: currentIndex == 3,
           color: isDark ? Colors.white60 : Colors.black54,
           selectedColor: colorScheme.primary,
@@ -87,7 +87,7 @@ class AppBottomNavBar extends StatelessWidget {
         _NavItem(
           icon: Icons.person_outline_rounded,
           selectedIcon: Icons.person_rounded,
-          label: 'Profil',
+          label: AppLocalizations.of(context)!.navProfile,
           selected: currentIndex == 4,
           color: isDark ? Colors.white60 : Colors.black54,
           selectedColor: colorScheme.primary,
@@ -246,10 +246,10 @@ class _CreatePostSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppDimensions.spacing20),
-          Text('Ne paylaşmak istersin?', style: textTheme.titleLarge),
+          Text(AppLocalizations.of(context)!.createSheetTitle, style: textTheme.titleLarge),
           const SizedBox(height: AppDimensions.spacing8),
           Text(
-            'Klinik vakalarını ve sorularını paylaşarak topluluğa katkı sağla.',
+            AppLocalizations.of(context)!.createSheetSubtitle,
             style: textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurfaceVariant,
             ),
@@ -261,9 +261,9 @@ class _CreatePostSheet extends StatelessWidget {
             icon: Icons.medical_information_outlined,
             iconColor: colorScheme.primary,
             iconBg: colorScheme.primaryContainer.withValues(alpha: 0.3),
-            title: 'Vaka Paylaş',
+            title: AppLocalizations.of(context)!.createCase,
             subtitle:
-                'Klinik vakalarını görsellerle paylaş, meslektaşlarından görüş al.',
+                AppLocalizations.of(context)!.createCaseSubtitle,
             onTap: () {
               Navigator.pop(context);
               context.push('/create-case');
@@ -276,9 +276,9 @@ class _CreatePostSheet extends StatelessWidget {
             icon: Icons.help_outline_rounded,
             iconColor: colorScheme.secondary,
             iconBg: colorScheme.secondaryContainer.withValues(alpha: 0.3),
-            title: 'Soru Sor',
+            title: AppLocalizations.of(context)!.createQuestion,
             subtitle:
-                'Mesleki sorularını toplulukla paylaş, en iyi cevabı bul.',
+                AppLocalizations.of(context)!.createQuestionSubtitle,
             onTap: () {
               Navigator.pop(context);
               context.push('/create-question');

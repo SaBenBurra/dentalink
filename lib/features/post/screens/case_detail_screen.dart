@@ -1,3 +1,4 @@
+import 'package:dentlink/shared/extensions/dental_branch_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -62,7 +63,7 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(getErrorMessage(e))),
+          SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, e))),
         );
       }
     } finally {
@@ -95,7 +96,7 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
       body: postAsync.when(
         data: (postModel) {
           if (postModel is! CasePostModel) {
-            return PostDetailError(message: getErrorMessage(const NotFoundFailure()));
+            return PostDetailError(message: getErrorMessage(AppLocalizations.of(context)!, const NotFoundFailure()));
           }
           final post = postModel;
           // Görselsiz vakada başka bir görsel gösterilmez (yanıltıcı tıbbi içerik).
@@ -303,7 +304,7 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                         ),
                                       ),
                                       child: Text(
-                                        post.branch!.displayName,
+                                        post.branch!.displayName(context),
                                         style: textTheme.labelSmall?.copyWith(
                                           color: colorScheme.primary,
                                           fontWeight: FontWeight.bold,
@@ -421,7 +422,7 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                   child: Row(
                     children: [
                       UserAvatar(
-                        name: currentUser?.fullName ?? 'Hekim',
+                        name: currentUser?.fullName ?? '',
                         imageUrl: currentUser?.avatarUrl,
                         size: AvatarSize.small,
                       ),
@@ -456,9 +457,9 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                         ? AppColors.darkTextPrimary
                                         : AppColors.lightTextPrimary,
                                   ),
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     counterText: '',
-                                    hintText: 'Mesleki tartışmaya katılın...',
+                                    hintText: AppLocalizations.of(context)!.joinDiscussionHint,
                                     border: InputBorder.none,
                                     // Renk temadan (Colors.grey beyazda 2.7:1 idi, UX-15).
                                     hintStyle: TextStyle(fontSize: 13),
@@ -487,7 +488,7 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
         },
         loading: () => const PostDetailLoading(),
         error: (err, stack) => PostDetailError(
-          message: getErrorMessage(err),
+          message: getErrorMessage(AppLocalizations.of(context)!, err),
           onRetry: () => ref.invalidate(postDetailProvider(widget.postId)),
         ),
       ),

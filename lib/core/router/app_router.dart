@@ -1,3 +1,4 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -243,11 +244,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           children: [
             const Icon(Icons.error_outline, size: 48),
             const SizedBox(height: AppDimensions.spacing16),
-            Text('Sayfa bulunamadı: ${state.uri}'),
+            Text(AppLocalizations.of(context)!.pageNotFound(state.uri.toString())),
             const SizedBox(height: AppDimensions.spacing16),
             TextButton(
               onPressed: () => context.go('/login'),
-              child: const Text('Giriş sayfasına dön'),
+              child: Text(AppLocalizations.of(context)!.backToLoginPage),
             ),
           ],
         ),

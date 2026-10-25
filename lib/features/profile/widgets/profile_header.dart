@@ -1,3 +1,4 @@
+import 'package:dentlink/shared/extensions/user_title_ui.dart';
 import 'package:flutter/material.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../data/models/user_model.dart';
@@ -48,7 +49,7 @@ class ProfileHeader extends StatelessWidget {
                     ),
                     const SizedBox(height: AppDimensions.spacing4),
                     Text(
-                      user.title.displayName,
+                      user.title.displayName(context),
                       style: textTheme.bodyLarge?.copyWith(
                         color: colorScheme.primary,
                         fontWeight: FontWeight.w500,
@@ -65,7 +66,7 @@ class ProfileHeader extends StatelessWidget {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () => context.push('/edit-profile'),
-                child: const Text('Profili Düzenle'),
+                child: Text(AppLocalizations.of(context)!.editProfile),
               ),
             ),
             const SizedBox(height: AppDimensions.spacing16),

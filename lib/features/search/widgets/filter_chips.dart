@@ -1,3 +1,5 @@
+import 'package:dentlink/shared/extensions/dental_branch_ui.dart';
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/models/enums.dart';
@@ -24,7 +26,7 @@ class SearchFilterChips extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.only(right: AppDimensions.spacing8),
               child: ActionChip(
-                label: const Text('Temizle'),
+                label: Text(AppLocalizations.of(context)!.clear),
                 avatar: const Icon(Icons.clear_rounded, size: 16),
                 onPressed: () => notifier.clearFilters(),
               ),
@@ -39,13 +41,13 @@ class SearchFilterChips extends ConsumerWidget {
                 // value: null seçimi menüde "iptal" sayılır ve onSelected tetiklenmez.
                 PopupMenuItem(
                   onTap: () => notifier.setTypeFilter(null),
-                  child: const Text('Tümü'),
+                  child: Text(AppLocalizations.of(context)!.feedFilterAll),
                 ),
                 ...PostType.values.map(
                   (type) => PopupMenuItem(
                     value: type,
                     child: Text(
-                      type == PostType.casePost ? 'Vakalar' : 'Sorular',
+                      type == PostType.casePost ? AppLocalizations.of(context)!.feedFilterCases : AppLocalizations.of(context)!.feedFilterQuestions,
                     ),
                   ),
                 ),
@@ -53,10 +55,10 @@ class SearchFilterChips extends ConsumerWidget {
               child: Chip(
                 label: Text(
                   state.typeFilter == null
-                      ? 'İçerik Türü'
+                      ? AppLocalizations.of(context)!.contentType
                       : (state.typeFilter == PostType.casePost
-                            ? 'Vaka'
-                            : 'Soru'),
+                            ? AppLocalizations.of(context)!.casePost
+                            : AppLocalizations.of(context)!.questionPost),
                 ),
                 deleteIcon: state.typeFilter != null
                     ? const Icon(Icons.clear_rounded, size: 16)
@@ -76,17 +78,17 @@ class SearchFilterChips extends ConsumerWidget {
               itemBuilder: (context) => [
                 PopupMenuItem(
                   onTap: () => notifier.setBranchFilter(null),
-                  child: const Text('Tüm Branşlar'),
+                  child: Text(AppLocalizations.of(context)!.allBranches),
                 ),
                 ...DentalBranch.values.map(
                   (branch) => PopupMenuItem(
                     value: branch,
-                    child: Text(branch.displayName),
+                    child: Text(branch.displayName(context)),
                   ),
                 ),
               ],
               child: Chip(
-                label: Text(state.branchFilter?.displayName ?? 'Branş'),
+                label: Text(state.branchFilter?.displayName(context) ?? AppLocalizations.of(context)!.postBranch),
                 deleteIcon: state.branchFilter != null
                     ? const Icon(Icons.clear_rounded, size: 16)
                     : null,

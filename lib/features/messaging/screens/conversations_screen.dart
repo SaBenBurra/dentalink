@@ -37,7 +37,7 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mesajlar', style: textTheme.titleLarge),
+        title: Text(l10n.messagesTitle, style: textTheme.titleLarge),
         actions: [
           IconButton(
             tooltip: AppLocalizations.of(context)!.newMessage,
@@ -70,7 +70,7 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
             ),
             child: SearchBar(
               controller: _searchController,
-              hintText: 'Mesajlarda ara...',
+              hintText: l10n.messagesSearchHint,
               leading: const Icon(Icons.search),
               elevation: WidgetStateProperty.all(0),
               backgroundColor: WidgetStateProperty.all(
@@ -88,7 +88,7 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
             child: conversationsAsync.when(
               loading: () => const DentLinkLoadingSpinner(),
               error: (err, st) => DentLinkErrorWidget(
-                message: 'Konuşmalar yüklenemedi',
+                message: l10n.conversationsLoadError,
                 onRetry: () => ref.read(conversationsProvider.notifier).refresh(),
               ),
               data: (conversations) {
@@ -110,7 +110,7 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
                 }).toList();
                 
                 if (filteredConversations.isEmpty) {
-                  return const Center(child: Text('Sonuç bulunamadı.'));
+                  return Center(child: Text(l10n.noResults));
                 }
 
                 return RefreshIndicator(

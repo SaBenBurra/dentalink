@@ -1,7 +1,7 @@
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/error/app_failures.dart';
 import '../../../data/models/enums.dart';
 import '../../../providers/search_provider.dart';
 import '../../../shared/utils/error_messages.dart';
@@ -24,13 +24,13 @@ class PostSearchResults extends ConsumerWidget {
         final notifier = ref.read(searchProvider.notifier);
         final hasMore = notifier.hasMore;
         if (posts.isEmpty && !hasMore) {
-          return const SingleChildScrollView(
+          return SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.only(top: AppDimensions.spacing64),
               child: DentLinkEmptyState(
                 icon: Icons.article_outlined,
-                title: 'Sonuç Bulunamadı',
-                subtitle: 'Arama kriterlerinize uygun gönderi bulunamadı.',
+                title: AppLocalizations.of(context)!.searchNoResultsTitle,
+                subtitle: AppLocalizations.of(context)!.searchNoPosts,
               ),
             ),
           );
@@ -70,12 +70,7 @@ class PostSearchResults extends ConsumerWidget {
       },
       loading: () => const DentLinkLoadingSpinner(),
       error: (err, stack) {
-        final msg = switch (err) {
-          ValidationFailure(:final message) => message,
-          ServerFailure(:final message) => message ?? 'Sonuçlar yüklenemedi.',
-          NetworkFailure() => 'İnternet bağlantınızı kontrol edin.',
-          _ => 'Sonuçlar yüklenemedi.',
-        };
+        final msg = getErrorMessage(AppLocalizations.of(context)!, err);
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -83,7 +78,7 @@ class PostSearchResults extends ConsumerWidget {
               Text(msg),
               TextButton(
                 onPressed: () => ref.read(searchProvider.notifier).search(ref.read(searchProvider).query),
-                child: const Text('Tekrar Dene'),
+                child: Text(AppLocalizations.of(context)!.retry),
               )
             ],
           ),
@@ -103,13 +98,13 @@ class UserSearchResults extends ConsumerWidget {
     return state.userResults.when(
       data: (users) {
         if (users.isEmpty) {
-          return const SingleChildScrollView(
+          return SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.only(top: AppDimensions.spacing64),
               child: DentLinkEmptyState(
                 icon: Icons.people_outline,
-                title: 'Sonuç Bulunamadı',
-                subtitle: 'Arama kriterlerinize uygun kullanıcı bulunamadı.',
+                title: AppLocalizations.of(context)!.searchNoResultsTitle,
+                subtitle: AppLocalizations.of(context)!.searchNoUsers,
               ),
             ),
           );
@@ -132,12 +127,7 @@ class UserSearchResults extends ConsumerWidget {
       },
       loading: () => const DentLinkLoadingSpinner(),
       error: (err, stack) {
-        final msg = switch (err) {
-          ValidationFailure(:final message) => message,
-          ServerFailure(:final message) => message ?? 'Sonuçlar yüklenemedi.',
-          NetworkFailure() => 'İnternet bağlantınızı kontrol edin.',
-          _ => 'Sonuçlar yüklenemedi.',
-        };
+        final msg = getErrorMessage(AppLocalizations.of(context)!, err);
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -145,7 +135,7 @@ class UserSearchResults extends ConsumerWidget {
               Text(msg),
               TextButton(
                 onPressed: () => ref.read(searchProvider.notifier).search(ref.read(searchProvider).query),
-                child: const Text('Tekrar Dene'),
+                child: Text(AppLocalizations.of(context)!.retry),
               )
             ],
           ),

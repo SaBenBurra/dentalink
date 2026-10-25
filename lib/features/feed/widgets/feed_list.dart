@@ -54,8 +54,8 @@ class FeedList extends StatelessWidget {
                       icon: Icons.dynamic_feed_outlined,
                       title: l10n.emptyFeed,
                       subtitle: filterType != null
-                          ? 'Seçili filtreye uygun gönderi bulunamadı.'
-                          : 'Akışta henüz hiç paylaşım yapılmamış.',
+                          ? l10n.feedEmptyFiltered
+                          : l10n.feedEmptyAll,
                     ),
                   ),
                 ),
@@ -109,7 +109,7 @@ class FeedList extends StatelessWidget {
           slivers: [
             SliverFillRemaining(
               child: DentLinkErrorWidget(
-                message: 'Akış yüklenirken bir hata oluştu.',
+                message: AppLocalizations.of(context)!.feedLoadError,
                 onRetry: () => ref.read(feedProvider.notifier).refresh(),
               ),
             ),

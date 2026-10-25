@@ -32,7 +32,7 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'En fazla ${widget.maxImages} görsel ekleyebilirsiniz.',
+            AppLocalizations.of(context)!.maxImagesReached(widget.maxImages),
           ),
         ),
       );
@@ -50,7 +50,7 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
             children: [
               ListTile(
                 leading: const Icon(Icons.photo_library),
-                title: const Text('Galeriden Seç'),
+                title: Text(AppLocalizations.of(context)!.pickFromGallery),
                 onTap: () {
                   Navigator.pop(ctx);
                   _pickImages(ImageSource.gallery);
@@ -58,7 +58,7 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
               ),
               ListTile(
                 leading: const Icon(Icons.camera_alt),
-                title: const Text('Kameradan Çek'),
+                title: Text(AppLocalizations.of(context)!.pickFromCamera),
                 onTap: () {
                   Navigator.pop(ctx);
                   _pickImages(ImageSource.camera);
@@ -97,7 +97,7 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
+          .showSnackBar(SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, e))));
       return;
     }
     if (!mounted || picked.isEmpty) return;
@@ -110,7 +110,7 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
     if (picked.length > remaining) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('En fazla ${widget.maxImages} görsel ekleyebilirsiniz.'),
+          content: Text(AppLocalizations.of(context)!.maxImagesReached(widget.maxImages)),
         ),
       );
     }
@@ -134,7 +134,7 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Görseller',
+              AppLocalizations.of(context)!.images,
               style: Theme.of(
                 context,
               ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
@@ -186,7 +186,7 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
                           ),
                           const SizedBox(height: AppDimensions.spacing8),
                           Text(
-                            'Fotoğraf Ekle',
+                            AppLocalizations.of(context)!.addPhoto,
                             style: Theme.of(context).textTheme.labelSmall
                                 ?.copyWith(color: colorScheme.primary),
                           ),
