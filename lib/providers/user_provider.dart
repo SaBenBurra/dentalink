@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/badge_model.dart';
 import '../data/models/user_model.dart';
 import '../data/providers/repository_providers.dart';
+import 'auth_provider.dart';
 import 'following_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -76,6 +77,21 @@ final followingProvider =
     AutoDisposeFutureProvider.family<List<UserModel>, String>(
       (ref, userId) => ref.read(followRepositoryProvider).getFollowing(userId),
     );
+
+/// Profili takip edenlerden oturumdaki kullanıcının takip ettikleri.
+/// Kendi profilinde ve oturumsuzken boş.
+/// shortcut: tüm takipçi listesini çekip istemcide keser; takipçi sayfalaması
+/// (Faz 2, DATA-12) gelince RPC ile DB'de kesişim al.
+final mutualFollowersProvider =
+    AutoDisposeFutureProvider.family<List<UserModel>, String>((ref, userId) async {
+  final me = ref.watch(authProvider.select((a) => a.value?.id));
+  if (me == null || me == userId) return const [];
+  final followers = await ref.watch(followersProvider(userId).future);
+  final followed = await ref
+      .read(followRepositoryProvider)
+      .getFollowedUserIds([for (final u in followers) u.id]);
+  return [for (final u in followers) if (followed.contains(u.id)) u];
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // User Badges Provider

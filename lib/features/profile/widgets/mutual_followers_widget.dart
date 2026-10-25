@@ -11,8 +11,7 @@ class MutualFollowersWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Ortak takipçileri simüle etmek için şimdilik followersProvider kullanıyoruz.
-    final followersAsync = ref.watch(followersProvider(userId));
+    final followersAsync = ref.watch(mutualFollowersProvider(userId));
     final theme = Theme.of(context);
 
     return followersAsync.when(
