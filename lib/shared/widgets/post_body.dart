@@ -38,6 +38,8 @@ class PostBody extends StatelessWidget {
               fontWeight: FontWeight.w700,
               color: colorScheme.onSurface,
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: AppDimensions.spacing8),
           Text(

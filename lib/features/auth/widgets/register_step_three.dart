@@ -4,6 +4,8 @@ import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/constants/app_text_styles.dart';
 import 'package:dentlink/shared/widgets/glass_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:dentlink/core/constants/profile_limits.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dentlink/shared/utils/error_messages.dart';
 
@@ -178,6 +180,7 @@ class RegisterStepThree extends StatelessWidget {
             focusNode: bioFocusNode,
             hintText: 'Biyografi (Kendinizden kısaca bahsedin)',
             icon: Icons.description_outlined,
+            inputFormatters: [LengthLimitingTextInputFormatter(ProfileLimits.bio)],
             maxLines: 4,
           ),
           const SizedBox(height: AppDimensions.spacing32),

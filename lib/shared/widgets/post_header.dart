@@ -47,6 +47,8 @@ class PostHeader extends StatelessWidget {
               children: [
                 Text(
                   post.author.fullName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: colorScheme.onSurface,

@@ -13,6 +13,7 @@ import '../providers/edit_profile_controller.dart';
 import '../../../shared/widgets/unsaved_changes_scope.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
+import 'package:dentlink/core/constants/profile_limits.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -228,6 +229,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               const SizedBox(height: AppDimensions.spacing24),
               TextFormField(
                 controller: _nameController,
+                maxLength: ProfileLimits.fullName,
                 decoration: const InputDecoration(
                   labelText: 'Ad - Soyad *',
                   border: OutlineInputBorder(),
@@ -256,6 +258,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               const SizedBox(height: AppDimensions.spacing16),
               TextFormField(
                 controller: _bioController,
+                maxLength: ProfileLimits.bio,
                 decoration: const InputDecoration(
                   labelText: 'Biyografi',
                   border: OutlineInputBorder(),
@@ -265,6 +268,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               const SizedBox(height: AppDimensions.spacing16),
               TextFormField(
                 controller: _universityController,
+                maxLength: ProfileLimits.text,
                 decoration: const InputDecoration(
                   labelText: 'Üniversite',
                   border: OutlineInputBorder(),
@@ -273,6 +277,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               const SizedBox(height: AppDimensions.spacing16),
               TextFormField(
                 controller: _cityController,
+                maxLength: ProfileLimits.text,
                 decoration: const InputDecoration(
                   labelText: 'Şehir',
                   border: OutlineInputBorder(),
@@ -288,7 +293,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(2),
+                  LengthLimitingTextInputFormatter(ProfileLimits.experienceDigits),
                 ],
                 validator: (value) {
                   final v = value?.trim() ?? '';
@@ -302,6 +307,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               const SizedBox(height: AppDimensions.spacing16),
               TextFormField(
                 controller: _workplaceController,
+                maxLength: ProfileLimits.text,
                 decoration: const InputDecoration(
                   labelText: 'Çalıştığı Klinik/Hastane',
                   border: OutlineInputBorder(),

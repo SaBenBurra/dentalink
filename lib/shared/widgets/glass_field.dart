@@ -2,6 +2,7 @@ import 'package:dentlink/core/constants/app_colors.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/constants/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class GlassField extends StatelessWidget {
   const GlassField({
@@ -14,6 +15,7 @@ class GlassField extends StatelessWidget {
     this.keyboardType,
     this.maxLines = 1,
     this.onChanged,
+    this.inputFormatters,
   });
 
   final TextEditingController controller;
@@ -24,6 +26,7 @@ class GlassField extends StatelessWidget {
   final TextInputType? keyboardType;
   final int maxLines;
   final ValueChanged<String>? onChanged;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +73,7 @@ class GlassField extends StatelessWidget {
         keyboardType: keyboardType,
         maxLines: maxLines,
         onChanged: onChanged,
+        inputFormatters: inputFormatters,
         style: AppTextStyles.bodyLarge.copyWith(
           color: isDark
               ? AppColors.darkTextPrimary

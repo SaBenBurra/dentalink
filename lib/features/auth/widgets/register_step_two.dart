@@ -3,6 +3,8 @@ import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/constants/app_text_styles.dart';
 import 'package:dentlink/shared/widgets/glass_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:dentlink/core/constants/profile_limits.dart';
 
 class RegisterStepTwo extends StatelessWidget {
   const RegisterStepTwo({
@@ -62,6 +64,7 @@ class RegisterStepTwo extends StatelessWidget {
             focusNode: uniFocusNode,
             hintText: 'Üniversite',
             icon: Icons.school_outlined,
+            inputFormatters: [LengthLimitingTextInputFormatter(ProfileLimits.text)],
           ),
           const SizedBox(height: AppDimensions.spacing16),
 
@@ -71,6 +74,7 @@ class RegisterStepTwo extends StatelessWidget {
             focusNode: cityFocusNode,
             hintText: 'Şehir',
             icon: Icons.location_on_outlined,
+            inputFormatters: [LengthLimitingTextInputFormatter(ProfileLimits.text)],
           ),
           const SizedBox(height: AppDimensions.spacing16),
 
@@ -80,6 +84,7 @@ class RegisterStepTwo extends StatelessWidget {
             focusNode: clinicFocusNode,
             hintText: 'Çalıştığı Klinik/Hastane',
             icon: Icons.business_outlined,
+            inputFormatters: [LengthLimitingTextInputFormatter(ProfileLimits.text)],
           ),
           const SizedBox(height: AppDimensions.spacing16),
 
@@ -89,6 +94,10 @@ class RegisterStepTwo extends StatelessWidget {
             focusNode: expFocusNode,
             hintText: 'Deneyim Yılı',
             icon: Icons.trending_up_outlined,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(ProfileLimits.experienceDigits),
+            ],
             keyboardType: TextInputType.number,
           ),
           const SizedBox(height: AppDimensions.spacing32),

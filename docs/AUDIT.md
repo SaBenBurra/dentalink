@@ -140,8 +140,8 @@
 | UX-5 | 🟠 | `settings_screen.dart:353-404` | Gizlilik, Engellenenler, Koşullar ve Politika `enabled:false`; **hesap silme yok** (mağaza zorunluluğu); sürüm sabit "v0.1.0 (Demo)"; çıkışta onay yok. | Faz 4 (hukuk) + `package_info_plus` + onay diyaloğu. | ⬜ |
 | UX-6 | 🟠 | menüler, profil, chat | Raporlama ve engelleme yok. | Faz 4. | ⬜ |
 | UX-7 | 🟡 | `profile_posts_tab.dart` ve diğerleri | Boş durum yok; profil, bildirim, sohbet ve takipçi ekranlarında pull-to-refresh yok. | `EmptyState` widget'ı + `RefreshIndicator`. *(Faz 3)* | ⬜ |
-| UX-8 | 🟡 | tüm girişler; `post_body.dart:35` | `maxLength` yok; feed kartındaki başlıkta `maxLines` yok. | Başlık 150, gövde 5000, yorum 2000 karakter; kartta `maxLines: 2`. *(Faz 3)* | ⬜ |
-| UX-9 | 🟡 | `comment_card.dart:216-233`, `post_header.dart:173` | Uzun isimler taşıyor. | `Expanded` + ellipsis. *(Faz 3)* | ⬜ |
+| UX-8 | 🟡 | tüm girişler; `post_body.dart:35` | `maxLength` yok; feed kartındaki başlıkta `maxLines` yok. | Başlık 150, gövde 5000, yorum 2000 karakter; kartta `maxLines: 2`. *(Faz 3)* | ✅ |
+| UX-9 | 🟡 | `comment_card.dart:216-233`, `post_header.dart:173` | Uzun isimler taşıyor. | `Expanded` + ellipsis. *(Faz 3)* | ✅ |
 | UX-10 | 🟡 | `edit_profile_screen.dart:166` | İsim doğrulaması `trim` yapmıyor; deneyim alanında sayı filtresi yok. | `trim()`, `digitsOnly`. | ✅ |
 | UX-11 | 🟡 | `theme_provider.dart:19` | Tema tercihi kaydedilmiyor (dokümanda kaydediliyor yazıyordu). | `SharedPreferences`. *(Faz 3)* | ✅ |
 | UX-12 | 🟡 | `lib/features/**`, `enums.dart:18,80` | l10n yalnızca 89 dosyanın 11'inde kullanılıyor; ~155 sabit Türkçe metin var; enum `displayName` değerleri yalnızca Türkçe. TR ve EN arb anahtarları eşit. | Ekran ekran ARB'ye taşı. *(Faz 3)* | ⬜ |

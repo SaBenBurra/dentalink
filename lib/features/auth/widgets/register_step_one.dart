@@ -5,6 +5,8 @@ import 'package:dentlink/domain/enums/enums.dart';
 import 'package:dentlink/shared/extensions/user_title_ui.dart';
 import 'package:dentlink/shared/widgets/glass_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:dentlink/core/constants/profile_limits.dart';
 
 class RegisterStepOne extends StatelessWidget {
   const RegisterStepOne({
@@ -65,6 +67,7 @@ class RegisterStepOne extends StatelessWidget {
             focusNode: nameFocusNode,
             hintText: 'Ad Soyad',
             icon: Icons.person_outline_rounded,
+            inputFormatters: [LengthLimitingTextInputFormatter(ProfileLimits.fullName)],
             errorText: nameError,
             onChanged: onNameChanged,
           ),

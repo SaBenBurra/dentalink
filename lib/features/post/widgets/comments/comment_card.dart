@@ -228,11 +228,15 @@ class CommentCard extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              authorName,
-                              style: textTheme.labelMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: colorScheme.onSurface,
+                            Flexible(
+                              child: Text(
+                                authorName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: textTheme.labelMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: colorScheme.onSurface,
+                                ),
                               ),
                             ),
                             if (isCase) 
@@ -247,11 +251,15 @@ class CommentCard extends ConsumerWidget {
                         if (!isCase)
                           Row(
                             children: [
-                              Text(
-                                titleName,
-                                style: textTheme.bodySmall?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
-                                  fontSize: 11,
+                              Flexible(
+                                child: Text(
+                                  titleName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                    fontSize: 11,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: AppDimensions.spacing6),
