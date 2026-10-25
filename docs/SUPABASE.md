@@ -245,6 +245,19 @@ begin;
 set local role anon;
 select public.delete_account();
 rollback;
+
+-- 19) Etiket önerisi (025) → BEKLENEN: 'imp' ve 'cene' (ASCII) sonuç döner, 'implant'
+--     ilk sırada; 1 karakter boş; anon için permission denied
+begin;
+set local role authenticated;
+select public.suggest_tags('imp');
+select public.suggest_tags('cene');
+select count(*) as one_char from public.suggest_tags('i');
+rollback;
+begin;
+set local role anon;
+select public.suggest_tags('imp');
+rollback;
 ```
 
 ---

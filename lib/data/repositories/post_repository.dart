@@ -70,6 +70,9 @@ abstract class ICreatePostRepository {
 
   /// Gönderiyi siler (cascade: images, tags, likes, bookmarks, comments).
   Future<void> deletePost(String postId);
+
+  /// [query] ile eşleşen tanımlı etiketler (en fazla 8; 2 karakterden kısaysa boş).
+  Future<List<String>> suggestTags(String query);
 }
 
 /// Tüm gönderi işlemlerini birleştiren arayüz (Supabase implementasyonu tek sınıfta).

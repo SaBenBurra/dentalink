@@ -1,5 +1,6 @@
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
+import '../../../data/providers/repository_providers.dart';
 import '../../../shared/utils/error_messages.dart';
 import '../../../shared/utils/post_actions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -146,6 +147,7 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
 
               // Etiketler
               TagInput(
+                suggest: ref.read(createPostRepositoryProvider).suggestTags,
                 onTagsChanged: (tags) {
                   setState(() {
                     _dirty = true;

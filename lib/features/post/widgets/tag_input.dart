@@ -7,8 +7,13 @@ class TagInput extends StatefulWidget {
   final List<String> initialTags;
   final ValueChanged<List<String>> onTagsChanged;
 
+  /// Tanımlı etiket önerileri (normalize edilmiş sorguyla çağrılır). Null ise öneri yok.
+  final Future<List<String>> Function(String query)? suggest;
+
   static const maxTags = 5;
   static const maxTagLength = 30;
+  static const minSuggestLength = 2;
+  static const suggestDebounce = Duration(milliseconds: 300);
 
   /// `#` ve boşluk atılır; Türkçe I/İ doğru küçültülür.
   static String normalize(String value) => value
@@ -22,6 +27,7 @@ class TagInput extends StatefulWidget {
     super.key,
     this.initialTags = const [],
     required this.onTagsChanged,
+    this.suggest,
   });
 
   @override
@@ -82,6 +88,25 @@ class _TagInputState extends State<TagInput> {
     _emit();
   }
 
+  /// RawAutocomplete eski isteklerin sonucunu kendisi atar; debounce yalnızca
+  /// her harfte istek gitmesin diye.
+  Future<Iterable<String>> _suggestions(TextEditingValue value) async {
+    final suggest = widget.suggest;
+    final query = TagInput.normalize(value.text);
+    if (suggest == null || query.length < TagInput.minSuggestLength) {
+      return const [];
+    }
+    await Future<void>.delayed(TagInput.suggestDebounce);
+    if (!mounted || TagInput.normalize(_controller.text) != query) {
+      return const [];
+    }
+    try {
+      return (await suggest(query)).where((t) => !_tags.contains(t));
+    } catch (_) {
+      return const []; // Öneri yardımcı bir özellik; hata etiket yazmayı engellemesin.
+    }
+  }
+
   void _removeTag(String tag) {
     setState(() => _tags.remove(tag));
     _emit();
@@ -131,21 +156,54 @@ class _TagInputState extends State<TagInput> {
                 const SizedBox(height: AppDimensions.spacing8),
               ],
               if (!_isFull)
-                TextField(
-                  controller: _controller,
-                  maxLength: TagInput.maxTagLength,
+                RawAutocomplete<String>(
+                  textEditingController: _controller,
                   focusNode: _focusNode,
-                  decoration: InputDecoration(
-                    hintText: AppLocalizations.of(context)!.addTagHint,
-                    counterText: '',
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                    hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+                  optionsBuilder: _suggestions,
+                  onSelected: _onSubmitted,
+                  optionsViewBuilder: (context, onSelected, options) => Align(
+                    alignment: AlignmentDirectional.topStart,
+                    child: Material(
+                      elevation: 4,
+                      borderRadius: BorderRadius.circular(12),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxHeight: 240,
+                          maxWidth: 320,
+                        ),
+                        child: ListView(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          children: [
+                            for (final tag in options)
+                              ListTile(
+                                title: Text('#$tag'),
+                                onTap: () => onSelected(tag),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: _onSubmitted,
-                  onChanged: _onChanged,
+                  fieldViewBuilder: (context, controller, focusNode, _) =>
+                      TextField(
+                        controller: controller,
+                        maxLength: TagInput.maxTagLength,
+                        focusNode: focusNode,
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(context)!.addTagHint,
+                          counterText: '',
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: EdgeInsets.zero,
+                          hintStyle: TextStyle(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: _onSubmitted,
+                        onChanged: _onChanged,
+                      ),
                 ),
             ],
           ),

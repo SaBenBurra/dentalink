@@ -363,6 +363,12 @@ class SupabasePostRepository implements PostRepository {
   });
 
   @override
+  Future<List<String>> suggestTags(String query) => guardSupabase(() async {
+        final rows = await _client.rpc('suggest_tags', params: {'p_query': query});
+        return (rows as List).cast<String>();
+      });
+
+  @override
   Future<PostModel> createQuestion({
     required String title,
     required String content,

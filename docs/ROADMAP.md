@@ -148,6 +148,7 @@
 - [x] Login küçük UX düzeltmeleri: geri sayım 60 sn (limiter ile aynı), yalnızca sunucunun reddettiği kod "Kod hatalı", ağ ve diğer hatalar `getErrorMessage` ile; dispose sonrası state yazılmaz. _(2026-10-25; testli)_ — `AUTH-10`
 - [x] Domain katmanı kaldırıldı (karar 2026-10-25): `enums.dart` → `lib/data/models/`, `CommentEntity` → `CommentModel` (yazar `UserModel`, satır parse `CommentModel.fromRow`), `CommentRepository` arayüzü `lib/data/repositories/`; kullanılmayan `UserEntity`, `UserSummary`, `UserMapper`, `CommentMapper` silindi. Tek unvan varsayılanı `UserModel.fromJson`. — `DATA-19`
 - [x] Ölü kod: ~~`FeedMode`~~ (DATA-12 ile kaldırıldı, `BUG-26` ✅); sohbet kullanıcı aramasında gerçek debounce: 300 ms içinde yeni harf gelirse önceki sorgu istek atmaz. _(2026-10-25; testli)_ — `BUG-22`
+- [x] Etiket önerisi: migration 025 `tags.is_curated` + ~80 tanımlı branş etiketi (tek kelime ya da tireli) ve `suggest_tags` RPC (ad ya da ASCII slug içinde arar, başı eşleşen önce, en fazla 8). `TagInput` 2 karakterden sonra 300 ms debounce ile öneri listesi açar (vaka/soru oluşturma, düzenleme); eklenmiş etiket önerilmez, serbest etiket yine eklenebilir, öneri hatası sessizce boş liste. Başarılı paylaşım artık postun detayını açar (form kapanır). _(2026-10-25; testli, 025 canlıda, smoke 19 geçti (80 etiket; "imp", "cene" sonuç veriyor, anon kapalı), cihazda denenmedi)_
 
 **Bitti tanımı:** Uygulama dili İngilizce'ye alınınca hiçbir Türkçe metin görünmüyor; en büyük yazı boyutunda ekranlar taşmıyor.
 
@@ -155,10 +156,10 @@
 
 ## Faz 4 — Moderasyon & hukuk 🛡️ (MVP için zorunlu)
 
-- [x] İçerik ve kullanıcı **raporlama**: migration 023 `reports` (istemci yalnızca ekler, okuyamaz; aynı hedef bir kez, tekrarı sessizce yok sayılır). Post kartı menüsü sahibine Düzenle/Sil, başkasına Raporla/Engelle; post detayı, yorum, profil ve sohbette ⋮ menüsü. Rapor sheet'i: 6 sebep (hasta mahremiyeti dahil), 500 karakter not, gönderirken kilitli. _(2026-10-25; testli, **023 canlıya gönderilmedi**, cihazda denenmedi)_ — `UX-6`
-- [x] Kullanıcı **engelleme**: migration 023 `blocks` + `is_blocked_between` (iki yönlü). `posts` ve `comments` SELECT policy'leri engelli çifti gizler, `send_message` 42501 döner, takip edilemez; engellenince iki yöndeki takip silinir. Eski mesaj geçmişi görünür kalır. İstemci yazarın postlarını feed'den, aramadan ve açık yorum listesinden yerelde çıkarır. Ayarlar → Engellenenler (iyimser engel kaldırma + rollback). Arkasında özellik olmayan "Gizlilik" satırı kaldırıldı. _(2026-10-25; testli, **023 canlıya gönderilmedi**)_ — `UX-6`
+- [x] İçerik ve kullanıcı **raporlama**: migration 023 `reports` (istemci yalnızca ekler, okuyamaz; aynı hedef bir kez, tekrarı sessizce yok sayılır). Post kartı menüsü sahibine Düzenle/Sil, başkasına Raporla/Engelle; post detayı, yorum, profil ve sohbette ⋮ menüsü. Rapor sheet'i: 6 sebep (hasta mahremiyeti dahil), 500 karakter not, gönderirken kilitli. _(2026-10-25; testli, 023 canlıda, smoke 15–17 iki hesapla geçti (2026-10-25), cihazda denenmedi)_ — `UX-6`
+- [x] Kullanıcı **engelleme**: migration 023 `blocks` + `is_blocked_between` (iki yönlü). `posts` ve `comments` SELECT policy'leri engelli çifti gizler, `send_message` 42501 döner, takip edilemez; engellenince iki yöndeki takip silinir. Eski mesaj geçmişi görünür kalır. İstemci yazarın postlarını feed'den, aramadan ve açık yorum listesinden yerelde çıkarır. Ayarlar → Engellenenler (iyimser engel kaldırma + rollback). Arkasında özellik olmayan "Gizlilik" satırı kaldırıldı. _(2026-10-25; testli, 023 canlıda, smoke 15–17 iki hesapla geçti (2026-10-25))_ — `UX-6`
 - [x] Moderasyon kuyruğu: Dashboard SQL Editor, sorgular [`SUPABASE.md`](./SUPABASE.md) §6. Smoke 15–17 eklendi.
-- [x] **Hesap silme** (karar 2026-10-25: Edge Function yerine SQL RPC): migration 024 `delete_account()` `auth.users` satırını siler, veriler cascade ile gider (karşı taraftaki sohbet dahil). İstemci önce `avatars/{uid}` ve `post-images/{uid}` klasörlerini sayfa sayfa boşaltır; dosyalar silinemezse RPC çağrılmaz. Ayarlar → Hesabı Sil: onay kelimesi (SİL/DELETE) yazılmadan buton kapalı, silerken kilitli. _(2026-10-25; testli, **024 canlıya gönderilmedi**, cihazda denenmedi)_ — `UX-5`
+- [x] **Hesap silme** (karar 2026-10-25: Edge Function yerine SQL RPC): migration 024 `delete_account()` `auth.users` satırını siler, veriler cascade ile gider (karşı taraftaki sohbet dahil). İstemci önce `avatars/{uid}` ve `post-images/{uid}` klasörlerini sayfa sayfa boşaltır; dosyalar silinemezse RPC çağrılmaz. Ayarlar → Hesabı Sil: onay kelimesi (SİL/DELETE) yazılmadan buton kapalı, silerken kilitli. _(2026-10-25; testli, 024 canlıda, smoke 18 geçti (2026-10-25), cihazda denenmedi)_ — `UX-5`
 - [x] KVKK aydınlatma metni, gizlilik politikası, kullanım koşulları: **taslak** TR+EN metinler `assets/legal/*.txt` (başlarında "hukukçu onayı bekleniyor"; şirket unvanı, adres, e-posta, yurt dışı aktarım dayanağı `[…]` yer tutucusu). `/legal/:doc` ekranı (oturumsuz da açılır), Ayarlar → Hakkında'da üç satır. Kayıt adım 1'de koşul onayı zorunlu (DB'ye yazılmıyor; hukukçu isterse `terms_accepted_at`). **Web sürümü Faz 5'e kaldı** (mağaza listelemesi gizlilik linki ister). _(2026-10-25; testli)_
 - [x] Hasta mahremiyeti: vaka oluşturmada "yüz ve kimlik bilgisi içermiyor" onay kutusu zorunlu (işaretlenmezse SnackBar). Soru ekranında görsel yükleme olmadığından orada yok. _(2026-10-25; widget testli, cihazda denenmedi)_
 - [ ] Kullanıcı doğrulama (diploma veya oda kaydı yükleme + admin onayı → `is_verified`). **Bekliyor:** resmi gereklilik ve belge türü araştırılıyor (karar 2026-10-25)
@@ -186,7 +187,7 @@
 ## Yayın sonrası (backlog)
 
 - Algoritmik feed (etkileşim skoru, `post_views`)
-- Etiket önerisi ve otomatik tamamlama, etikete tıklayınca filtre
+- ~~Etiket önerisi ve otomatik tamamlama~~ (Faz 3, 025), etikete tıklayınca filtre
 - Rozet ve başarım sistemi (`BadgeShowcase` zaten var)
 - İş ilanları (`JobPostModel`), pazar yeri (`MarketplacePostModel`)
 - Google ve Apple ile giriş (iOS'ta Google varsa Apple zorunlu)

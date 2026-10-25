@@ -171,6 +171,7 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
               ],
               const SizedBox(height: AppDimensions.spacing24),
               TagInput(
+                suggest: ref.read(createPostRepositoryProvider).suggestTags,
                 initialTags: _tags,
                 onTagsChanged: (tags) => setState(() {
                   _tags = tags;
