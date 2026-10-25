@@ -127,6 +127,8 @@
 
 **Bitti tanımı:** Seed ile 1.000+ post ve 200+ mesaj varken feed ve chat akıcı kayıyor; uçak modunda uygulama çökmüyor, anlamlı bir mesaj gösteriyor.
 
+**Yük testi (2026-10-25):** `supabase/scripts/load_test_seed.sql` canlı dev projesine uygulandı (1.000 post + 200 mesaj, hepsi `[seed]` önekli; geri almak için `load_test_cleanup.sql`). `EXPLAIN ANALYZE` (authenticated, RLS açık): 30. feed sayfası 0,57 ms, sohbet sayfası 0,39 ms, ikisi de indeksli. Feed planında imleç `or`'u indeks koşulu olmadığı için derin sayfa baştan taranıyordu (601 satır atlandı); `keyset.dart` artık `created_at` sınırını da gönderiyor, 0,23 ms / 1 satır. Cihazda kaydırma ve uçak modu: henüz denenmedi.
+
 ---
 
 ## Faz 3 — UX cilası & yerelleştirme 🟡

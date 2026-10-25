@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:dentlink/core/utils/paging.dart';
 import 'package:dentlink/data/repositories/keyset.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final _c1 = (createdAt: DateTime.utc(2026, 10, 25, 10, 0, 0, 0, 123), id: 'b');
 
@@ -86,6 +89,27 @@ void main() {
         'created_at.gt."2026-10-25T10:00:00.000123Z",'
         'and(created_at.eq."2026-10-25T10:00:00.000123Z",id.gt.b)',
       );
+    });
+
+
+    test('imleçli sayfa indeks için created_at sınırını da gönderir', () async {
+      final sent = <Uri>[];
+      final client = SupabaseClient(
+        'http://localhost',
+        'anon',
+        httpClient: MockClient((req) async {
+          sent.add(req.url);
+          return http.Response('[]', 200, request: req, headers: {'content-type': 'application/json'});
+        }),
+      );
+      await client.from('posts').select('id').pageBefore(_c1);
+      await client.from('comments').select('id').after(_c1, ascending: true);
+
+      final [desc, asc] = [for (final u in sent) u.queryParameters];
+      expect(desc['created_at'], 'lte.2026-10-25T10:00:00.000123Z');
+      expect(desc['or'], '(${keysetFilter(_c1)})');
+      expect(asc['created_at'], 'gte.2026-10-25T10:00:00.000123Z');
+      expect(asc['or'], '(${keysetFilter(_c1, ascending: true)})');
     });
 
     test('eksik sayfada imleç yok; dolu sayfada son satır imleçtir', () {

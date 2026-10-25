@@ -41,7 +41,7 @@ class SupabaseCommentRepository implements CommentRepository {
     if (after != null) {
       query = query
           .eq('is_best_answer', false)
-          .or(keysetFilter(after, ascending: true));
+          .after(after, ascending: true);
     }
 
     final rows = await query
