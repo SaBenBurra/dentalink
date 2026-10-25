@@ -7,6 +7,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'providers/locale_provider.dart';
 import 'providers/theme_provider.dart';
+import 'shared/widgets/offline_banner.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,7 @@ class MainApp extends ConsumerWidget {
 
       // Router
       routerConfig: router,
+      builder: (context, child) => OfflineBanner(child: child!),
 
       // Tema
       theme: AppTheme.light,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/notification_model.dart';
 import '../data/providers/repository_providers.dart';
 import 'auth_provider.dart';
+import 'connectivity_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Notifications Notifier
@@ -15,6 +16,7 @@ class NotificationsNotifier
     // Hesap değişince yeniden kurulur; eski kullanıcının bildirimleri ve kanalı kalmaz.
     final uid = ref.watch(authProvider.select((s) => s.valueOrNull?.id));
     if (uid == null) return const [];
+    listenReconnect(ref, ref.invalidateSelf);
 
     final repo = ref.watch(notificationRepositoryProvider);
     final sub = repo.watchNew(uid).listen(

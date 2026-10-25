@@ -7,6 +7,7 @@ import '../data/models/conversation_model.dart';
 import '../data/models/message_model.dart';
 import '../data/providers/repository_providers.dart';
 import 'auth_provider.dart';
+import 'connectivity_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Conversations Notifier
@@ -19,6 +20,7 @@ class ConversationsNotifier
     // Hesap değişince yeniden kurulur; eski kullanıcının sohbetleri ve kanalı kalmaz.
     final uid = ref.watch(authProvider.select((s) => s.valueOrNull?.id));
     if (uid == null) return const [];
+    listenReconnect(ref, ref.invalidateSelf);
 
     final repo = ref.watch(messageRepositoryProvider);
     final sub = repo.watchConversations(uid).listen(
@@ -116,6 +118,8 @@ class ActiveChatNotifier
       _pager.reset();
       return const ActiveChatState(conversationId: null, messages: []);
     }
+
+    listenReconnect(ref, ref.invalidateSelf);
 
     final repo = ref.watch(messageRepositoryProvider);
     // İlk yükleme sürerken gelen olaylar kaybolmasın diye tamponlanır.

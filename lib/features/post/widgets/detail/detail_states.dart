@@ -29,8 +29,9 @@ class PostDetailLoading extends StatelessWidget {
 /// Detay yüklenemedi / yanlış tipte post: kullanıcı ekranda sıkışmaz.
 class PostDetailError extends StatelessWidget {
   final String message;
+  final VoidCallback? onRetry;
 
-  const PostDetailError({super.key, required this.message});
+  const PostDetailError({super.key, required this.message, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +50,8 @@ class PostDetailError extends StatelessWidget {
               const SizedBox(height: AppDimensions.spacing16),
               Text(message, textAlign: TextAlign.center),
               const SizedBox(height: AppDimensions.spacing16),
+              if (onRetry != null)
+                FilledButton.tonal(onPressed: onRetry, child: Text(l10n.retry)),
               TextButton(
                 onPressed: () => popOrGoFeed(context),
                 child: Text(l10n.back),

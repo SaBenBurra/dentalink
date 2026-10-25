@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dentlink/core/utils/paging.dart';
 import 'package:dentlink/core/error/app_failures.dart';
 import 'package:dentlink/data/models/badge_model.dart';
@@ -17,6 +18,7 @@ import 'package:dentlink/data/repositories/user_repository.dart';
 import 'package:dentlink/domain/entities/comment_entity.dart';
 import 'package:dentlink/domain/enums/enums.dart';
 import 'package:dentlink/domain/repositories/comment_repository.dart';
+import 'package:dentlink/providers/connectivity_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'mock_auth_for_test.dart';
@@ -68,6 +70,7 @@ List<Override> fakeRepositoryOverrides() {
     notificationRepositoryProvider.overrideWithValue(_FakeNotificationRepository()),
     userRepositoryProvider.overrideWithValue(_FakeUserRepository()),
     followRepositoryProvider.overrideWithValue(_FakeFollowRepository()),
+    connectivityProvider.overrideWith((_) => Stream.value([ConnectivityResult.wifi])),
   ];
 }
 

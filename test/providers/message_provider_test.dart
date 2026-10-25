@@ -8,7 +8,9 @@ import 'package:dentlink/data/providers/repository_providers.dart';
 import 'package:dentlink/data/repositories/message_repository.dart';
 import 'package:dentlink/domain/enums/enums.dart';
 import 'package:dentlink/providers/auth_provider.dart';
+import 'package:dentlink/providers/connectivity_provider.dart';
 import 'package:dentlink/providers/message_provider.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -81,12 +83,16 @@ class _FakeMessageRepo implements MessageRepository {
 void main() {
   late _FakeMessageRepo repo;
   late ProviderContainer container;
+  late StreamController<List<ConnectivityResult>> net;
 
   setUp(() async {
     repo = _FakeMessageRepo();
+    net = StreamController();
+    addTearDown(net.close);
     container = ProviderContainer(overrides: [
       authRepositoryProvider.overrideWithValue(MockAuthForTest()),
       messageRepositoryProvider.overrideWithValue(repo),
+      connectivityProvider.overrideWith((_) => net.stream),
     ]);
     addTearDown(container.dispose);
     await container.read(authProvider.future);
@@ -160,5 +166,19 @@ void main() {
     final messages = container.read(activeChatProvider('peer')).requireValue.messages;
     expect(messages.map((m) => m.id), ['m0', 'm1', 'm2']);
     expect(notifier.hasMore, isFalse);
+  });
+  test('bağlantı geri gelince sohbetler yeniden çekilir (kopukken kaçan olaylar)', () async {
+    container.listen(conversationsProvider, (_, _) {});
+    await container.read(conversationsProvider.future);
+    net.add([ConnectivityResult.none]);
+    await pumpEventQueue();
+    expect(repo.getConversationsCalls, 1); // çevrimdışı olmak tetiklemez
+
+    repo.conversations = [_conv('a', 'p1', minute: 5)];
+    net.add([ConnectivityResult.wifi]);
+    await pumpEventQueue();
+
+    expect(repo.getConversationsCalls, 2);
+    expect(container.read(conversationsProvider).requireValue.map((c) => c.id), ['a']);
   });
 }

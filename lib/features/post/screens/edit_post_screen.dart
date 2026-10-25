@@ -27,7 +27,10 @@ class EditPostScreen extends ConsumerWidget {
     return ref.watch(postDetailProvider(postId)).when(
           data: (post) => _EditPostForm(post: post),
           loading: () => const PostDetailLoading(),
-          error: (e, _) => PostDetailError(message: getErrorMessage(e)),
+          error: (e, _) => PostDetailError(
+            message: getErrorMessage(e),
+            onRetry: () => ref.invalidate(postDetailProvider(postId)),
+          ),
         );
   }
 }

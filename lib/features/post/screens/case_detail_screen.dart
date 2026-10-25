@@ -495,7 +495,10 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
           );
         },
         loading: () => const PostDetailLoading(),
-        error: (err, stack) => PostDetailError(message: getErrorMessage(err)),
+        error: (err, stack) => PostDetailError(
+          message: getErrorMessage(err),
+          onRetry: () => ref.invalidate(postDetailProvider(widget.postId)),
+        ),
       ),
     );
   }

@@ -3,6 +3,7 @@ import '../core/error/app_failures.dart';
 import '../core/utils/paging.dart';
 import '../data/models/post_model.dart';
 import '../data/providers/repository_providers.dart';
+import 'connectivity_provider.dart';
 import 'post_toggle.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -18,6 +19,9 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
 
   @override
   Future<List<PostModel>> build() async {
+    listenReconnect(ref, () {
+      if (state.hasError) ref.invalidateSelf();
+    });
     return _fetchFirst();
   }
 

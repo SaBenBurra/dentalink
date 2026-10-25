@@ -13,6 +13,9 @@
   "retry": "Tekrar Dene",
   "@retry": { "description": "Yeniden deneme butonu etiketi" },
 
+  "offlineBanner": "İnternet bağlantısı yok",
+  "@offlineBanner": { "description": "Cihaz çevrimdışıyken üstte görünen şerit" },
+
   "cancel": "İptal",
   "@cancel": { "description": "İptal butonu etiketi" },
 

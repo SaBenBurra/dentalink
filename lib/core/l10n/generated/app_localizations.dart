@@ -122,6 +122,12 @@ abstract class AppLocalizations {
   /// **'Tekrar Dene'**
   String get retry;
 
+  /// Cihaz çevrimdışıyken üstte görünen şerit
+  ///
+  /// In tr, this message translates to:
+  /// **'İnternet bağlantısı yok'**
+  String get offlineBanner;
+
   /// İptal butonu etiketi
   ///
   /// In tr, this message translates to:

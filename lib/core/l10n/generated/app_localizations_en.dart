@@ -21,6 +21,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retry => 'Retry';
 
   @override
+  String get offlineBanner => 'No internet connection';
+
+  @override
   String get cancel => 'Cancel';
 
   @override

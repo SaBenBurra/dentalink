@@ -21,6 +21,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get retry => 'Tekrar Dene';
 
   @override
+  String get offlineBanner => 'İnternet bağlantısı yok';
+
+  @override
   String get cancel => 'İptal';
 
   @override

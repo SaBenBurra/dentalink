@@ -5,6 +5,7 @@
   "appTagline": "Social Platform for Dentists",
   "loading": "Loading...",
   "retry": "Retry",
+  "offlineBanner": "No internet connection",
   "cancel": "Cancel",
   "save": "Save",
   "delete": "Delete",
