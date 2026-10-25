@@ -45,6 +45,11 @@ class _PostRepo implements PostRepository {
 }
 
 class _CommentRepo implements CommentRepository {
+  final unmarked = <String>[];
+
+  @override
+  Future<void> unmarkBestAnswer(String commentId) async => unmarked.add(commentId);
+
   @override
   Future<List<CommentEntity>> getComments(String postId,
           {int limit = 50, int offset = 0}) async =>
@@ -86,5 +91,21 @@ void main() {
     expect(container.read(postDetailProvider('p1')).value!.commentCount, 3);
     expect(container.read(feedProvider).value!.single.commentCount, 3);
     expect(repo.feedCalls, 1);
+  });
+
+  test('en iyi cevap seçimini kaldırma RPC çağırır', () async {
+    final comments = _CommentRepo();
+    final repo = _PostRepo();
+    final container = ProviderContainer(overrides: [
+      feedRepositoryProvider.overrideWithValue(repo),
+      commentRepositoryProvider.overrideWithValue(comments),
+    ]);
+    addTearDown(container.dispose);
+    container.listen(commentsProvider('p1'), (_, _) {});
+    await container.read(commentsProvider('p1').future);
+
+    await container.read(commentsProvider('p1').notifier).unmarkBestAnswer('c1');
+
+    expect(comments.unmarked, ['c1']);
   });
 }

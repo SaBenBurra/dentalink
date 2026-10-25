@@ -118,6 +118,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
             // Başlık
             TextFormField(
               controller: _titleController,
+              maxLength: 150, // DB: posts_title_length (017)
               decoration: const InputDecoration(
                 labelText: 'Vaka Başlığı',
                 hintText: 'Örn: Mandibular 1. Molar Endodontik Tedavi',
@@ -137,6 +138,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
             // Açıklama
             TextFormField(
               controller: _contentController,
+              maxLength: 5000, // DB: posts_content_length (017)
               maxLines: 5,
               decoration: const InputDecoration(
                 labelText: 'Açıklama',

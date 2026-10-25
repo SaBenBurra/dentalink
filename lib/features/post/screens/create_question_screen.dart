@@ -94,6 +94,7 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
             // Başlık
             TextFormField(
               controller: _titleController,
+              maxLength: 150, // DB: posts_title_length (017)
               decoration: const InputDecoration(
                 labelText: 'Soru Başlığı',
                 hintText: 'Örn: Zirkonyum kaplama sonrası hassasiyet',
@@ -113,6 +114,7 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
             // İçerik
             TextFormField(
               controller: _contentController,
+              maxLength: 5000, // DB: posts_content_length (017)
               maxLines: 8,
               decoration: const InputDecoration(
                 labelText: 'Sorunun Detayları',

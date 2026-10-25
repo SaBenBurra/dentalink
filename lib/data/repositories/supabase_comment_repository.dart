@@ -70,6 +70,11 @@ class SupabaseCommentRepository implements CommentRepository {
   });
 
   @override
+  Future<void> unmarkBestAnswer(String commentId) => guardSupabase(() async {
+    await _client.rpc('unmark_best_answer', params: {'p_comment_id': commentId});
+  });
+
+  @override
   Future<void> likeComment(String commentId) => guardSupabase(() async {
     final uid = _uid;
 

@@ -33,6 +33,7 @@ AppFailure _mapPostgrest(PostgrestException e) {
     case 'PGRST301':
       return const AuthRequiredFailure();
     case '23514': // check violation
+    case '22023': // RPC doğrulaması (invalid_parameter_value)
       return ValidationFailure(e.message);
     // 23502 (not null) bir programlama/veri hatası olduğundan ServerFailure olarak döner.
     default:

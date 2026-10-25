@@ -130,12 +130,20 @@ class CommentCard extends ConsumerWidget {
 
   Future<void> _handleMarkBest(BuildContext context, WidgetRef ref) async {
     final scaffold = ScaffoldMessenger.of(context);
+    final notifier = ref.read(commentsProvider(postId).notifier);
+    final unmark = comment.isBestAnswer;
     try {
-      await ref.read(commentsProvider(postId).notifier).markBestAnswer(comment.id);
+      if (unmark) {
+        await notifier.unmarkBestAnswer(comment.id);
+      } else {
+        await notifier.markBestAnswer(comment.id);
+      }
       scaffold.showSnackBar(
-        const SnackBar(
-          content: Text('En iyi cevap başarıyla seçildi! 🎉'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(unmark
+              ? 'En iyi cevap seçimi kaldırıldı.'
+              : 'En iyi cevap başarıyla seçildi! 🎉'),
+          duration: const Duration(seconds: 2),
         ),
       );
     } catch (e) {
@@ -276,13 +284,20 @@ class CommentCard extends ConsumerWidget {
                     comment: comment,
                     onTap: () => _handleToggleLike(context, ref),
                   ),
-                  if (isPostOwner && !showBest && !isCase)
+                  if (isPostOwner && !isCase)
                     TextButton.icon(
                       onPressed: () => _handleMarkBest(context, ref),
-                      icon: const Icon(Icons.verified_rounded, size: 14),
-                      label: const Text('En İyi Cevap Seç', style: TextStyle(fontSize: 11)),
+                      icon: Icon(
+                        showBest ? Icons.close_rounded : Icons.verified_rounded,
+                        size: 14,
+                      ),
+                      label: Text(
+                        showBest ? 'Seçimi Kaldır' : 'En İyi Cevap Seç',
+                        style: const TextStyle(fontSize: 11),
+                      ),
                       style: TextButton.styleFrom(
-                        foregroundColor: AppColors.success,
+                        foregroundColor:
+                            showBest ? colorScheme.onSurfaceVariant : AppColors.success,
                         padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing12),
                         minimumSize: const Size(40, 40), // 40px touch target
                       ),

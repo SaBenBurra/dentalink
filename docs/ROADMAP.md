@@ -95,8 +95,8 @@
 - [x] **Çift gönderim korumaları** (yorum, cevap): gönderirken buton kilitli, `maxLength` 2000; yorum sayacı detay, feed ve aramada yeniden çekmeden +1. _(2026-10-25; testli, cihazda doğrulandı)_ — `BUG-13`
 - [x] **Image picker** izin ve hata yönetimi: izin reddi ve picker hataları SnackBar ile anlatılır (vaka/soru ızgarası, kayıt avatarı), `limit:` ile seçim sınırlı, fazlası atılırsa uyarı. Ayarlara yönlendirme butonu yok (yeni paket gerekirdi), mesaj ayarları işaret eder. Android kamera ve galeri için sistem uygulamasını kullandığından izin istemez. _(2026-10-25; testli, Android cihazda limit doğrulandı)_ — `BUG-15`
 - [x] **Etiket girişi:** `#` ve boşluk temizlenir, Türkçe küçültme, en fazla 5 etiket × 30 karakter, yapıştırılan metin bölünür; yazılmakta olan etiket de kaydedilir; `onTagTap` yokken etiket tıklanabilir görünmez. _(2026-10-25; testli, cihazda doğrulandı)_ — `BUG-25`
-- [ ] `mark_best_answer`: tip kontrolü, geri alma, silme trigger'ı — `DATA-16`
-- [ ] İçerik uzunluk CHECK'leri (DB); RPC'lerde etiket sayısı ve uzunluğu (istemcideki 5 × 30 ile aynı) — `DATA-17`
+- [x] `mark_best_answer`: tip kontrolü, `unmark_best_answer` RPC + kartta "Seçimi Kaldır", en iyi cevap silinince `is_solved = false` (migration 017). _(2026-10-25; canlıda, smoke 12–13 geçti, cihazda doğrulanmadı)_ — `DATA-16`
+- [x] Uzunluk CHECK'leri (migration 017): post başlığı 150, içerik 5000, yorum ve mesaj 2000, etiket 30 karakter, post başına 5 etiket (trigger); oluşturma ekranlarına `maxLength`; RPC `22023` → `ValidationFailure`. Profil alanları UX-8'de. _(2026-10-25; canlıda, smoke 13 geçti)_ — `DATA-17`
 - [x] Paylaş butonu kaldırıldı — `BUG-11`
 - [ ] Ortak takipçiler widget'ı: düzelt ya da kaldır — `BUG-19`
 - [ ] Bildirim ayarları toggle'ları (bağla ya da gizle) — `UX-4`

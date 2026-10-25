@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Mevcut dosyalar `001_…`–`012_…` biçiminde. Yeni dosyalar da aynı sırayla devam eder: `013_…`, `014_…`.
+- **Dosya adı:** Mevcut dosyalar `001_…`–`012_…` biçiminde. Yeni dosyalar da aynı sırayla devam eder (son: `017_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -161,6 +161,35 @@ select set_config('t.id', public.create_post('question', 'Eski', 'içerik', null
 select public.update_post(current_setting('t.id')::uuid, 'Yeni', 'içerik', null, '[{"name":"b","slug":"b"}]');
 select title, (select count(*) from public.post_tags where post_id = p.id) n_tags
 from public.posts p where id = current_setting('t.id')::uuid;
+rollback;
+
+-- 12) mark/unmark_best_answer (017) → BEKLENEN: after_mark = true, after_unmark = false
+--     SQL Editor yalnızca son sorgunun sonucunu gösterir; ikisi tek satırda döner.
+--     Vaka postunda mark → best answer only for questions; en iyi cevabı silmek de is_solved'u false yapar
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select set_config('t.id', public.create_post('question', 'Soru', 'içerik')::text, true);
+with c as (
+  insert into public.comments (post_id, user_id, content)
+  values (current_setting('t.id')::uuid, '<A>', 'cevap') returning id
+) select set_config('t.c', id::text, true) from c;
+select public.mark_best_answer(current_setting('t.c')::uuid);
+select set_config('t.after_mark',
+  (select is_solved::text from public.posts where id = current_setting('t.id')::uuid), true);
+select public.unmark_best_answer(current_setting('t.c')::uuid);
+select current_setting('t.after_mark') after_mark, is_solved after_unmark
+from public.posts where id = current_setting('t.id')::uuid;
+rollback;
+
+-- 13) Uzunluk ve etiket sınırları (017) → BEKLENEN: too many tags (23514)
+--     2001 karakterlik yorum → comments_content_length; 31 karakterlik etiket → tags_name_length
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select public.create_post('question', 'Soru', 'içerik', null, null,
+  '[{"name":"a","slug":"a"},{"name":"b","slug":"b"},{"name":"c","slug":"c"},
+    {"name":"d","slug":"d"},{"name":"e","slug":"e"},{"name":"f","slug":"f"}]');
 rollback;
 ```
 

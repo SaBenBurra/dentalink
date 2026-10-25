@@ -15,6 +15,9 @@ abstract class CommentRepository {
   /// yenilemekle yükümlüdür.
   Future<void> markBestAnswer(String commentId);
 
+  /// En iyi cevap seçimini geri alır; soru çözülmemiş olur.
+  Future<void> unmarkBestAnswer(String commentId);
+
   /// Bir yorumu beğenir.
   Future<void> likeComment(String commentId);
 

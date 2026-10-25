@@ -90,9 +90,15 @@ class CommentsNotifier extends AutoDisposeFamilyAsyncNotifier<List<CommentEntity
     }
   });
 
-  Future<void> markBestAnswer(String commentId) => _keepingAlive(() async {
-    await _repo.markBestAnswer(commentId);
-    
+  Future<void> markBestAnswer(String commentId) =>
+      _setBestAnswer(() => _repo.markBestAnswer(commentId));
+
+  Future<void> unmarkBestAnswer(String commentId) =>
+      _setBestAnswer(() => _repo.unmarkBestAnswer(commentId));
+
+  Future<void> _setBestAnswer(Future<void> Function() rpc) => _keepingAlive(() async {
+    await rpc();
+
     // İşlem başarılı, sorunun "çözüldü" (is_solved) state'ini yenile
     ref.invalidate(postDetailProvider(arg));
     
