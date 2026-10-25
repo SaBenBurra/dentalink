@@ -23,4 +23,22 @@ void main() {
 
     expect(container.read(followingStateProvider), isEmpty);
   });
+
+  test('sunucu oturumu düşürünce auth null olur, state temizlenir (AUTH-5)', () async {
+    final auth = MockAuthForTest();
+    final container = ProviderContainer(overrides: [
+      authRepositoryProvider.overrideWithValue(auth),
+    ]);
+    addTearDown(container.dispose);
+
+    expect(await container.read(authProvider.future), isNotNull);
+    container.listen(followingStateProvider, (_, _) {});
+    container.read(followingStateProvider.notifier).setFollowStatus('other', true);
+
+    auth.expireSession();
+    await Future<void>.delayed(Duration.zero);
+
+    expect(container.read(authProvider).value, isNull);
+    expect(container.read(followingStateProvider), isEmpty);
+  });
 }

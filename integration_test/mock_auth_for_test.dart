@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:dentlink/domain/enums/enums.dart';
 import 'package:dentlink/data/models/user_model.dart';
@@ -38,6 +39,17 @@ class MockAuthForTest implements AuthRepository {
 
   @override
   bool get hasSession => _currentUser != null;
+
+  final _signedOut = StreamController<void>.broadcast();
+
+  /// Sunucunun oturumu düşürmesini taklit eder (AUTH-5).
+  void expireSession() {
+    _currentUser = null;
+    _signedOut.add(null);
+  }
+
+  @override
+  Stream<void> get signedOut => _signedOut.stream;
 
   @override
   Future<UserModel> completeRegistration({

@@ -148,6 +148,11 @@ class SupabaseAuthRepository implements AuthRepository {
   @override
   bool get hasSession => _client.auth.currentSession != null;
 
+  @override
+  Stream<void> get signedOut => _client.auth.onAuthStateChange
+      .where((s) => s.event == AuthChangeEvent.signedOut)
+      .map((_) {});
+
   // ── Yardımcı: public.users'tan profil çek ─────────────────────────────
 
   /// Auth user ID ile public.users tablosundan profil çeker.

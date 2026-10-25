@@ -120,9 +120,9 @@
 - [x] `post-images` private (migration 020): okuma yalnızca oturumlu kullanıcı; repository sayfadaki tüm görselleri tek `createSignedUrlsResult` isteğiyle 1 günlük imzalar, imzalanamayan (silinmiş) dosya atlanır; `CachedNetworkImage` önbelleği dosya yoluna bağlı (token değişse de yeniden indirmez). _(2026-10-25; testli, canlıda: public endpoint "Bucket not found" dönüyor; cihazda doğrulanmadı)_ — `SEC-9`
 - [x] Tutarlı hata yönetimi: feed, arama, bookmark, takip, görüntülenme ve kayıt/oturum metotları da `guardSupabase` ile sarıldı; "oturum yok" artık `AuthRequiredFailure`. `23505` → `ConflictFailure` (kayıttaki kullanıcı adı yeniden denemesi buna bağlı), `StorageException` durum koduna göre (413 → `ValidationFailure`, 401/403/404). Kapsam dışı: `sendOtp`/`verifyOtp` (giriş ekranının kendi mesajları var, AUTH-10) ve realtime stream'ler. _(2026-10-25; testli)_
 - [ ] Offline banner + yeniden deneme
-- [ ] `onAuthStateChange` ile oturum düşmesini yakala — `AUTH-5`
+- [x] Oturum düşmesi: `AuthRepository.signedOut` (`onAuthStateChange` → `signedOut`) dinlenir, auth state null olur; router login'e yönlendirir, kullanıcıya özel provider'lar temizlenir. Bilinen sınır: kayıt ekranındayken (profil yok) oturum düşerse kullanıcı bir sonraki gezinmede login'e gider. _(2026-10-25; testli, cihazda doğrulanmadı)_ — `AUTH-5`
 - [ ] Sayaç CHECK'leri + uzlaştırma fonksiyonu — `DATA-18`
-- [ ] `searchUsers` oturumsuz durumda çalışsın — `DATA-20`
+- [x] `searchUsers` oturumsuzken kendini dışlama filtresini atlar — `DATA-20`
 
 **Bitti tanımı:** Seed ile 1.000+ post ve 200+ mesaj varken feed ve chat akıcı kayıyor; uçak modunda uygulama çökmüyor, anlamlı bir mesaj gösteriyor.
 

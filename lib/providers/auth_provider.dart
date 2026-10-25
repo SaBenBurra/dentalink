@@ -14,8 +14,14 @@ import '../data/providers/repository_providers.dart';
 class AuthNotifier extends AsyncNotifier<UserModel?> {
   @override
   Future<UserModel?> build() async {
+    final repo = ref.read(authRepositoryProvider);
+    // Token iptal edilir ya da süresi dolarsa: state null → router login'e,
+    // kullanıcıya özel provider'lar temizlenir (AUTH-5).
+    final sub = repo.signedOut.listen((_) => state = const AsyncData(null));
+    ref.onDispose(sub.cancel);
+
     // Uygulama başlatıldığında mevcut oturumu kontrol et
-    return ref.read(authRepositoryProvider).getCurrentUser();
+    return repo.getCurrentUser();
   }
 
   /// OTP kodu gönderir.

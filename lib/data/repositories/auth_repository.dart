@@ -29,6 +29,10 @@ abstract class AuthRepository {
   /// Oturumun açık olup olmadığını kontrol eder (profil olmasa bile).
   bool get hasSession;
 
+  /// Oturum kapandığında olay yayar: çıkış, iptal edilen ya da süresi dolan
+  /// refresh token (AUTH-5).
+  Stream<void> get signedOut;
+
   /// Kayıt bilgilerini veritabanına yazar ve profili oluşturur.
   Future<UserModel> completeRegistration({
     required String fullName,

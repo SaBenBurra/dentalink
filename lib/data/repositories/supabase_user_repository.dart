@@ -32,12 +32,12 @@ class SupabaseUserRepository implements UserRepository {
     final q = query.trim();
     if (q.isEmpty) return [];
 
-    final currentUserId = client.auth.currentUser?.id ?? '';
+    var request = client.from('users').select();
+    // Oturum yokken '' uuid'e cast edilemez (DATA-20); kendini dışlama yalnızca oturumla.
+    final currentUserId = client.auth.currentUser?.id;
+    if (currentUserId != null) request = request.neq('id', currentUserId);
 
-    final response = await client
-        .from('users')
-        .select()
-        .neq('id', currentUserId)
+    final response = await request
         .textSearch('search_vector', q, type: TextSearchType.plain, config: 'turkish')
         .limit(50);
 
