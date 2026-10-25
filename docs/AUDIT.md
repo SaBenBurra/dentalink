@@ -89,7 +89,7 @@
 | AUTH-7 | 🟡 | `supabase_auth_repository.dart:109,116,37` | `verifyOtp` e-postayı küçük harfe çevirmiyor; e-posta olmayan her girdi telefon sayılıyor; TLD regex'i `{2,4}`. | `.health`, `.dental` gibi uzantılar reddediliyor; büyük harfli e-posta doğrulanamıyor. | `_normalizeDestination`'ı yeniden kullan; `{2,}`. | ✅ |
 | AUTH-8 | 🟡 | `register_controller.dart:116`, `register_screen.dart:44` | Hazır avatar seçimi (`selectedAvatarIndex`) kaydedilmiyor; 4 Unsplash URL'sinden 3'ü aynı. | Kullanıcının seçimi kayboluyor. | Hazır avatarları kaldır ya da URL'yi kaydet. | ⬜ |
 | AUTH-9 | 🟡 | `supabase/config.toml:160-164,260` | `site_url=127.0.0.1`; e-posta şablonu repoda değil. | Hosted şablon `{{ .Token }}` yerine magic link gönderirse e-postayla giriş kırılır. | `config.toml`'u commit et; şablonun OTP kodu içerdiğini doğrula. | ⬜ |
-| AUTH-10 | ⚪ | `login_controller.dart:55,90,125,132-136` | Geri sayım 59 sn, limiter 60 sn; ağ hatası "Kod hatalı" diye gösteriliyor; ham `Exception:` metni; dispose sonrası state yazımı. | Küçük UX ve kararlılık sorunları. | 60 sn; hata eşleyici; `ref.mounted` kontrolü. | ⬜ |
+| AUTH-10 | ⚪ | `login_controller.dart:55,90,125,132-136` | Geri sayım 59 sn, limiter 60 sn; ağ hatası "Kod hatalı" diye gösteriliyor; ham `Exception:` metni; dispose sonrası state yazımı. | Küçük UX ve kararlılık sorunları. | 60 sn; hata eşleyici; `ref.mounted` kontrolü. | ✅ |
 | AUTH-11 | ⚪ | `app_router.dart:53` | Oturum varken `initialLocation: '/login'`, profil yüklenirken login formu bir an görünüyor. | Göz kırpma. | Splash/yükleme ekranı. | ⬜ |
 
 ---

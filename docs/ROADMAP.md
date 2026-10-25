@@ -145,7 +145,7 @@
 - [ ] Tema tercihini kalıcı yap — `UX-11`
 - [ ] Bookmarks ekranındaki tutarsızlıklar — `BUG-24`
 - [ ] Kayıt başarı diyaloğu yarışı; hazır avatar kararı — `BUG-21`, `AUTH-8`
-- [ ] Login küçük UX düzeltmeleri — `AUTH-10`
+- [x] Login küçük UX düzeltmeleri: geri sayım 60 sn (limiter ile aynı), yalnızca sunucunun reddettiği kod "Kod hatalı", ağ ve diğer hatalar `getErrorMessage` ile; dispose sonrası state yazılmaz. _(2026-10-25; testli)_ — `AUTH-10`
 - [ ] Domain katmanı kararı (tamamla ya da kaldır) — `DATA-19`
 - [x] Ölü kod: ~~`FeedMode`~~ (DATA-12 ile kaldırıldı, `BUG-26` ✅); sohbet kullanıcı aramasında gerçek debounce: 300 ms içinde yeni harf gelirse önceki sorgu istek atmaz. _(2026-10-25; testli)_ — `BUG-22`
 

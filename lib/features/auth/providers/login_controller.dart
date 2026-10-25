@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthApiException;
 import '../../../data/repositories/otp_cooldown_exception.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../shared/utils/error_messages.dart';
 import '../models/login_step.dart';
 
 class LoginState {
@@ -20,7 +22,7 @@ class LoginState {
     this.isSuccess = false,
     this.successMessage,
     this.errorText,
-    this.resendCountdown = 59,
+    this.resendCountdown = 60,
     this.canResend = false,
     this.shouldShake = false,
   });
@@ -52,11 +54,16 @@ class LoginState {
 
 class LoginController extends AutoDisposeNotifier<LoginState> {
   Timer? _resendTimer;
-  static const _otpCooldownSeconds = 59;
+  // OtpSendLimiter'ın cooldown'uyla (60 sn) aynı olmalı.
+  static const _otpCooldownSeconds = 60;
+  // shortcut: Riverpod 2'de ref.mounted yok; Riverpod 3'e geçişte (REL-7) onunla değiştir.
+  bool _disposed = false;
 
   @override
   LoginState build() {
+    _disposed = false;
     ref.onDispose(() {
+      _disposed = true;
       _resendTimer?.cancel();
     });
     return const LoginState();
@@ -75,8 +82,10 @@ class LoginController extends AutoDisposeNotifier<LoginState> {
 
     try {
       await ref.read(authProvider.notifier).sendOtp(inputVal);
+      if (_disposed) return;
       _enterOtpStep(countdownSeconds: _otpCooldownSeconds);
     } on OtpCooldownException catch (e) {
+      if (_disposed) return;
       if (e.sameDestination) {
         _enterOtpStep(countdownSeconds: e.remainingSeconds);
       } else {
@@ -87,7 +96,11 @@ class LoginController extends AutoDisposeNotifier<LoginState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorText: () => e.toString());
+      if (_disposed) return;
+      state = state.copyWith(
+        isLoading: false,
+        errorText: () => getErrorMessage(e),
+      );
     }
   }
 
@@ -116,21 +129,26 @@ class LoginController extends AutoDisposeNotifier<LoginState> {
       final user = await ref
           .read(authProvider.notifier)
           .verifyOtp(inputVal, otp);
+      if (_disposed) return false;
       state = state.copyWith(
         isLoading: false,
         isSuccess: true,
         successMessage: () => user != null ? 'Giriş Yapıldı!' : 'Başarılı',
       );
       return user != null; // returns true if registered user, false if new
-    } catch (_) {
+    } catch (e) {
+      if (_disposed) return false;
       state = state.copyWith(
         isLoading: false,
-        errorText: () => 'Kod hatalı veya süresi dolmuş',
+        // Yalnızca sunucunun reddettiği kod "hatalı"; ağ ve profil hataları kendi mesajıyla.
+        errorText: () => e is AuthApiException
+            ? 'Kod hatalı veya süresi dolmuş'
+            : getErrorMessage(e),
         shouldShake: true,
       );
       // Reset shouldShake so it can shake again on next error
       Future.delayed(const Duration(milliseconds: 500), () {
-        if (state.errorText != null) {
+        if (!_disposed && state.errorText != null) {
           state = state.copyWith(shouldShake: false);
         }
       });
@@ -144,12 +162,15 @@ class LoginController extends AutoDisposeNotifier<LoginState> {
     state = state.copyWith(isLoading: true);
     try {
       await ref.read(authProvider.notifier).sendOtp(inputVal);
+      if (_disposed) return;
       state = state.copyWith(isLoading: false);
       _startResendTimer(fromSeconds: _otpCooldownSeconds);
     } on OtpCooldownException catch (e) {
+      if (_disposed) return;
       state = state.copyWith(isLoading: false);
       _startResendTimer(fromSeconds: e.remainingSeconds);
     } catch (_) {
+      if (_disposed) return;
       state = state.copyWith(
         isLoading: false,
         errorText: () => 'Kod gönderilemedi. Lütfen tekrar deneyin.',
