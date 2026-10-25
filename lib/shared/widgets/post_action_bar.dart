@@ -87,10 +87,9 @@ class PostActionBar extends StatelessWidget {
               .iconMedium // 20
         : AppDimensions.iconDefault; // 24
     final gap = compact ? AppDimensions.spacing12 : AppDimensions.spacing16;
-    final height = compact ? 32.0 : 40.0;
-
     return SizedBox(
-      height: height,
+      // Butonların dokunma alanı 48dp (UX-14).
+      height: AppDimensions.spacing48,
       child: Row(
         children: [
           LikeButton(

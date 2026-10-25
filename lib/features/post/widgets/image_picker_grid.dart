@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/shared/utils/error_messages.dart';
@@ -219,12 +220,14 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
                           fit: BoxFit.cover,
                         ),
                       ),
+                      // Görünen daire küçük, dokunma alanı 48dp (UX-14).
                       Positioned(
-                        top: -8,
-                        right: -8,
-                        child: InkWell(
-                          onTap: () => _removeImage(imageIndex),
-                          child: Container(
+                        top: 0,
+                        right: 0,
+                        child: IconButton(
+                          tooltip: AppLocalizations.of(context)!.delete,
+                          onPressed: () => _removeImage(imageIndex),
+                          icon: Container(
                             padding: const EdgeInsets.all(
                               AppDimensions.spacing4,
                             ),

@@ -15,6 +15,7 @@ class AnimatedActionButton extends StatefulWidget {
     required this.activeIcon,
     required this.inactiveIcon,
     required this.activeColor,
+    required this.tooltip,
     this.onToggle,
     this.size = AppDimensions.iconDefault,
     this.showCount = false,
@@ -25,6 +26,8 @@ class AnimatedActionButton extends StatefulWidget {
   final IconData activeIcon;
   final IconData inactiveIcon;
   final Color activeColor;
+  /// Ekran okuyucu etiketi ve uzun basma ipucu (UX-13).
+  final String tooltip;
   final VoidCallback? onToggle;
   final double size;
   final bool showCount;
@@ -73,23 +76,32 @@ class _AnimatedActionButtonState extends State<AnimatedActionButton>
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        InkWell(
-          customBorder: const CircleBorder(),
-          onTap: _handleTap,
-          child: AnimatedBuilder(
-            animation: _scaleAnimation,
-            builder: (context, child) {
-              return Transform.scale(
-                scale: _scaleAnimation.value,
-                child: child,
-              );
-            },
-            child: Icon(
-              widget.isActive ? widget.activeIcon : widget.inactiveIcon,
-              color: widget.isActive
-                  ? widget.activeColor
-                  : colorScheme.onSurfaceVariant,
-              size: widget.size,
+        Tooltip(
+          message: widget.tooltip,
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: _handleTap,
+            // Dokunma alanı en az 48dp (UX-14).
+            child: Padding(
+              padding: EdgeInsets.all(
+                ((AppDimensions.spacing48 - widget.size) / 2).clamp(0, double.infinity),
+              ),
+              child: AnimatedBuilder(
+                animation: _scaleAnimation,
+                builder: (context, child) {
+                  return Transform.scale(
+                    scale: _scaleAnimation.value,
+                    child: child,
+                  );
+                },
+                child: Icon(
+                  widget.isActive ? widget.activeIcon : widget.inactiveIcon,
+                  color: widget.isActive
+                      ? widget.activeColor
+                      : colorScheme.onSurfaceVariant,
+                  size: widget.size,
+                ),
+              ),
             ),
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_dimensions.dart';
@@ -51,6 +52,7 @@ class LikeButton extends StatelessWidget {
       activeIcon: Icons.favorite_rounded,
       inactiveIcon: Icons.favorite_border_rounded,
       activeColor: AppColors.like,
+      tooltip: AppLocalizations.of(context)!.like,
       onToggle: onToggle,
       size: size,
       showCount: showCount,

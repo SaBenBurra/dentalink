@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_dimensions.dart';
@@ -50,6 +51,7 @@ class BookmarkButton extends StatelessWidget {
       activeIcon: Icons.bookmark_rounded,
       inactiveIcon: Icons.bookmark_border_rounded,
       activeColor: AppColors.bookmark,
+      tooltip: AppLocalizations.of(context)!.save,
       onToggle: onToggle,
       size: size,
       showCount: showCount,

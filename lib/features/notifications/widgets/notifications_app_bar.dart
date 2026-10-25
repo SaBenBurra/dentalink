@@ -29,6 +29,7 @@ class NotificationsAppBar extends ConsumerWidget
       elevation: 0,
       surfaceTintColor: Colors.transparent,
       leading: IconButton(
+        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
         icon: Icon(
           Icons.arrow_back_ios_new_rounded,
           color: isDark

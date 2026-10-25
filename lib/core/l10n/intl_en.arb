@@ -250,5 +250,7 @@
   "showMore": "Show more",
   "discardChangesTitle": "Discard changes?",
   "discardChangesMessage": "Are you sure you want to leave without saving?",
-  "discardChangesConfirm": "Discard"
+  "discardChangesConfirm": "Discard",
+  "newMessage": "New message",
+  "like": "Like"
 }

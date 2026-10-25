@@ -1201,6 +1201,18 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Çık'**
   String get discardChangesConfirm;
+
+  /// No description provided for @newMessage.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni mesaj'**
+  String get newMessage;
+
+  /// No description provided for @like.
+  ///
+  /// In tr, this message translates to:
+  /// **'Beğen'**
+  String get like;
 }
 
 class _AppLocalizationsDelegate

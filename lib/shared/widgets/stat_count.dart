@@ -107,7 +107,14 @@ class StatCount extends StatelessWidget {
       return InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-        child: content,
+        // Dokunma alanı en az 48dp (UX-14).
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            minWidth: AppDimensions.spacing48,
+            minHeight: AppDimensions.spacing48,
+          ),
+          child: Center(widthFactor: 1, child: content),
+        ),
       );
     }
 

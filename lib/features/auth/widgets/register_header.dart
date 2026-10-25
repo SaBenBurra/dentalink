@@ -35,6 +35,7 @@ class RegisterHeader extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
+                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
                 icon: Icon(
                   Icons.arrow_back_ios_new_rounded,
                   color: textPrimaryColor,

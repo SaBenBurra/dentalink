@@ -539,5 +539,7 @@
   "discardChangesTitle": "Değişiklikler kaybolacak",
   "discardChangesMessage": "Kaydetmeden çıkmak istediğinize emin misiniz?",
   "discardChangesConfirm": "Çık",
+  "newMessage": "Yeni mesaj",
+  "like": "Beğen",
   "@discardChangesConfirm": { "description": "Kaydedilmemiş formdan çıkışı onaylayan buton" }
 }

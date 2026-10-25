@@ -600,4 +600,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get discardChangesConfirm => 'Discard';
+
+  @override
+  String get newMessage => 'New message';
+
+  @override
+  String get like => 'Like';
 }

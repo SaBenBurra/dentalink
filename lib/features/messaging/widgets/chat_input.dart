@@ -65,6 +65,7 @@ class ChatInput extends StatelessWidget {
             ),
             const SizedBox(width: AppDimensions.spacing8),
             IconButton(
+              tooltip: AppLocalizations.of(context)!.sendMessage,
               icon: isSending
                   ? const SizedBox(
                       width: 24,

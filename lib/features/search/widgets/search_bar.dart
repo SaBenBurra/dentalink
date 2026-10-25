@@ -51,6 +51,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
           prefixIcon: const Icon(Icons.search_rounded),
           suffixIcon: widget.controller.text.isNotEmpty
               ? IconButton(
+                tooltip: MaterialLocalizations.of(context).clearButtonTooltip,
                   icon: const Icon(Icons.clear_rounded),
                   onPressed: () {
                     widget.controller.clear();

@@ -40,6 +40,7 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
         title: Text('Mesajlar', style: textTheme.titleLarge),
         actions: [
           IconButton(
+            tooltip: AppLocalizations.of(context)!.newMessage,
             icon: const Icon(Icons.add),
             onPressed: () async {
               final selectedUser = await showSearch(

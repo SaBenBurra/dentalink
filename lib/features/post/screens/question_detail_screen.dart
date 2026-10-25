@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -264,26 +265,22 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      GestureDetector(
-                        onTap: () => popOrGoFeed(context),
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: glassBgColor,
-                            border: Border.all(color: glassBorderColor),
-                          ),
-                          child: Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            size: 18,
-                            color: isDark
-                                ? AppColors.darkTextPrimary
-                                : AppColors.lightTextPrimary,
-                          ),
+                      IconButton(
+                        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                        onPressed: () => popOrGoFeed(context),
+                        style: IconButton.styleFrom(
+                          backgroundColor: glassBgColor,
+                          side: BorderSide(color: glassBorderColor),
+                        ),
+                        icon: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: 18,
+                          color: isDark
+                              ? AppColors.darkTextPrimary
+                              : AppColors.lightTextPrimary,
                         ),
                       ),
-                      const SizedBox(width: 40),
+                      const SizedBox(width: AppDimensions.spacing48), // geri butonuyla simetri
                     ],
                   ),
                 ),
@@ -349,17 +346,15 @@ class _QuestionDetailScreenState extends ConsumerState<QuestionDetailScreen> {
                                     counterText: '',
                                     hintText: 'Cevabınızı yazın...',
                                     border: InputBorder.none,
-                                    isDense: true,
-                                    hintStyle: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 13,
-                                    ),
+                                    // Renk temadan (Colors.grey beyazda 2.7:1 idi, UX-15).
+                                    hintStyle: TextStyle(fontSize: 13),
                                   ),
                                   textInputAction: TextInputAction.send,
                                   onSubmitted: (_) => _submitAnswer(),
                                 ),
                               ),
                               IconButton(
+                                tooltip: AppLocalizations.of(context)!.sendMessage,
                                 icon: const Icon(Icons.send_rounded),
                                 color: colorScheme.primary,
                                 iconSize: 20,

@@ -145,9 +145,9 @@
 | UX-10 | 🟡 | `edit_profile_screen.dart:166` | İsim doğrulaması `trim` yapmıyor; deneyim alanında sayı filtresi yok. | `trim()`, `digitsOnly`. | ✅ |
 | UX-11 | 🟡 | `theme_provider.dart:19` | Tema tercihi kaydedilmiyor (dokümanda kaydediliyor yazıyordu). | `SharedPreferences`. *(Faz 3)* | ✅ |
 | UX-12 | 🟡 | `lib/features/**`, `enums.dart:18,80` | l10n yalnızca 89 dosyanın 11'inde kullanılıyor; ~155 sabit Türkçe metin var; enum `displayName` değerleri yalnızca Türkçe. TR ve EN arb anahtarları eşit. | Ekran ekran ARB'ye taşı. *(Faz 3)* | ⬜ |
-| UX-13 | ⚪ | `app_bottom_nav_bar.dart:163`, detail geri/bookmark daireleri, gönder butonları vb. | Yalnızca ikon içeren butonlarda tooltip ve semantics yok. | `tooltip:` / `Semantics`. *(Faz 3)* | ⬜ |
-| UX-14 | ⚪ | `image_picker_grid.dart:364` (~22px), create butonu (~38px), `animated_action_button.dart:76` | Dokunma alanları küçük. | Minimum 48×48. *(Faz 3)* | ⬜ |
-| UX-15 | ⚪ | `case_detail_screen.dart:484`, `question_detail_screen.dart:343`; `darkTextTertiary` | Düşük kontrast (2.7:1, 3.6:1); alt menü etiketleri 10px. | 4.5:1 hedefi. *(Faz 3)* | ⬜ |
+| UX-13 | ⚪ | `app_bottom_nav_bar.dart:163`, detail geri/bookmark daireleri, gönder butonları vb. | Yalnızca ikon içeren butonlarda tooltip ve semantics yok. | `tooltip:` / `Semantics`. *(Faz 3)* | ✅ |
+| UX-14 | ⚪ | `image_picker_grid.dart:364` (~22px), create butonu (~38px), `animated_action_button.dart:76` | Dokunma alanları küçük. | Minimum 48×48. *(Faz 3)* | ✅ |
+| UX-15 | ⚪ | `case_detail_screen.dart:484`, `question_detail_screen.dart:343`; `darkTextTertiary` | Düşük kontrast (2.7:1, 3.6:1); alt menü etiketleri 10px. | 4.5:1 hedefi. *(Faz 3)* | ✅ |
 | UX-16 | ⚪ | birçok ekran | `Color(0xFF11211F)` ve `Color(0xFF13B9A5)` sabit yazılmış, tema kullanılmıyor. | `Theme.of(context).colorScheme`. *(Faz 3)* | ✅ |
 | UX-17 | ⚪ | — | Oturum açıkken önce login formu görünüyor (bkz. AUTH-11); splash yok. | Faz 5. | ⬜ |
 

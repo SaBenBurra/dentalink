@@ -31,6 +31,7 @@ class BookmarksScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Kaydedilenler'),
         leading: IconButton(
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => context.pop(),
         ),

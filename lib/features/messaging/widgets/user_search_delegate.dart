@@ -17,6 +17,7 @@ class UserSearchDelegate extends SearchDelegate<UserModel?> {
     return [
       if (query.isNotEmpty)
         IconButton(
+          tooltip: MaterialLocalizations.of(context).clearButtonTooltip,
           icon: const Icon(Icons.clear),
           onPressed: () => query = '',
         ),
@@ -26,6 +27,7 @@ class UserSearchDelegate extends SearchDelegate<UserModel?> {
   @override
   Widget? buildLeading(BuildContext context) {
     return IconButton(
+      tooltip: MaterialLocalizations.of(context).backButtonTooltip,
       icon: const Icon(Icons.arrow_back),
       onPressed: () => close(context, null),
     );

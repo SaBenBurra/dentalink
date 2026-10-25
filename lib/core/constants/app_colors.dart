@@ -107,7 +107,7 @@ abstract final class AppColors {
   static const Color darkDivider = Color(0xFF3E4946); // on-surface-variant
   static const Color darkTextPrimary = Color(0xFFEEF1EF); // inverse-on-surface
   static const Color darkTextSecondary = Color(0xFFBEC9C5); // outline-variant
-  static const Color darkTextTertiary = Color(0xFF6E7976); // outline
+  static const Color darkTextTertiary = Color(0xFF8A9592); // koyu zeminde ≥4.5:1 (UX-15)
   static const Color darkTextOnPrimary = Color(0xFFFFFFFF);
   static const Color darkIcon = Color(0xFFBEC9C5); // outline-variant
   static const Color darkIconActive = Color(0xFF83D5C6); // inverse-primary

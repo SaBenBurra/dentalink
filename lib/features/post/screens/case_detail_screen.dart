@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/constants/app_colors.dart';
@@ -358,48 +359,40 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      GestureDetector(
-                        onTap: () => popOrGoFeed(context),
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: glassBgColor,
-                            border: Border.all(color: glassBorderColor),
-                          ),
-                          child: Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            size: 18,
-                            color: isDark
-                                ? AppColors.darkTextPrimary
-                                : AppColors.lightTextPrimary,
-                          ),
+                      IconButton(
+                        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                        onPressed: () => popOrGoFeed(context),
+                        style: IconButton.styleFrom(
+                          backgroundColor: glassBgColor,
+                          side: BorderSide(color: glassBorderColor),
+                        ),
+                        icon: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: 18,
+                          color: isDark
+                              ? AppColors.darkTextPrimary
+                              : AppColors.lightTextPrimary,
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () => runOrShowError(context, () => ref
+                      IconButton(
+                        tooltip: AppLocalizations.of(context)!.save,
+                        onPressed: () => runOrShowError(context, () => ref
                             .read(postDetailProvider(widget.postId).notifier)
                             .toggleBookmark()),
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: glassBgColor,
-                            border: Border.all(color: glassBorderColor),
-                          ),
-                          child: Icon(
-                            post.isBookmarked
-                                ? Icons.bookmark_rounded
-                                : Icons.bookmark_border_rounded,
-                            size: 20,
-                            color: post.isBookmarked
-                                ? AppColors.bookmark
-                                : (isDark
-                                      ? AppColors.darkTextPrimary
-                                      : AppColors.lightTextPrimary),
-                          ),
+                        style: IconButton.styleFrom(
+                          backgroundColor: glassBgColor,
+                          side: BorderSide(color: glassBorderColor),
+                        ),
+                        icon: Icon(
+                          post.isBookmarked
+                              ? Icons.bookmark_rounded
+                              : Icons.bookmark_border_rounded,
+                          size: 20,
+                          color: post.isBookmarked
+                              ? AppColors.bookmark
+                              : (isDark
+                                    ? AppColors.darkTextPrimary
+                                    : AppColors.lightTextPrimary),
                         ),
                       ),
                     ],
@@ -467,17 +460,15 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                     counterText: '',
                                     hintText: 'Mesleki tartışmaya katılın...',
                                     border: InputBorder.none,
-                                    isDense: true,
-                                    hintStyle: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 13,
-                                    ),
+                                    // Renk temadan (Colors.grey beyazda 2.7:1 idi, UX-15).
+                                    hintStyle: TextStyle(fontSize: 13),
                                   ),
                                   textInputAction: TextInputAction.send,
                                   onSubmitted: (_) => _submitComment(),
                                 ),
                               ),
                               IconButton(
+                                tooltip: AppLocalizations.of(context)!.sendMessage,
                                 icon: const Icon(Icons.send_rounded),
                                 color: colorScheme.primary,
                                 iconSize: 20,

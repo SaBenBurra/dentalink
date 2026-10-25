@@ -174,7 +174,14 @@ class UserAvatar extends StatelessWidget {
       return InkWell(
         onTap: onTap,
         customBorder: const CircleBorder(),
-        child: avatar,
+        // Küçük avatarlarda da dokunma alanı en az 48dp (UX-14).
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            minWidth: AppDimensions.spacing48,
+            minHeight: AppDimensions.spacing48,
+          ),
+          child: Center(widthFactor: 1, heightFactor: 1, child: avatar),
+        ),
       );
     }
 

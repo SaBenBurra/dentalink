@@ -599,4 +599,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get discardChangesConfirm => 'Çık';
+
+  @override
+  String get newMessage => 'Yeni mesaj';
+
+  @override
+  String get like => 'Beğen';
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 
@@ -146,7 +147,7 @@ class _NavItem extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 10,
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: effectiveColor,
                 ),
@@ -171,29 +172,39 @@ class _CreateButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(AppDimensions.spacing8),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              colorScheme.primary,
-              colorScheme.primary.withValues(alpha: 0.8),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
-          boxShadow: [
-            BoxShadow(
-              color: colorScheme.primary.withValues(alpha: 0.35),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
+    // Görünen kare ~38px, dokunma alanı 48dp; Tooltip ekran okuyucuya etiket verir (UX-13/14).
+    return Tooltip(
+      message: AppLocalizations.of(context)!.navCreate,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: SizedBox.square(
+          dimension: AppDimensions.spacing48,
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.all(AppDimensions.spacing8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    colorScheme.primary,
+                    colorScheme.primary.withValues(alpha: 0.8),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.primary.withValues(alpha: 0.35),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Icon(Icons.add_rounded, color: colorScheme.onPrimary, size: 22),
             ),
-          ],
+          ),
         ),
-        child: Icon(Icons.add_rounded, color: colorScheme.onPrimary, size: 22),
       ),
     );
   }

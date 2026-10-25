@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -165,6 +166,7 @@ class LoginEmailPhoneInput extends StatelessWidget {
             color: Theme.of(context).colorScheme.primary,
             shape: const CircleBorder(),
             child: IconButton(
+              tooltip: AppLocalizations.of(context)!.loginButton,
               icon: const Icon(
                 Icons.arrow_forward_rounded,
                 color: Colors.white,
