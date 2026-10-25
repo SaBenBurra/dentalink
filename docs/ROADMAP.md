@@ -20,6 +20,7 @@
 | 4.5 (kısmen) | `mark_best_answer` RPC | ✅ |
 | Yeni Faz 0 | Stabilizasyon & güvenlik: migration 012, auth/state, kritik UI akışları, hijyen | ✅ (2026-10-15) |
 | Faz 1 | Çekirdek akışlar: gerçek bildirimler, mesajlaşma, atomik post oluşturma/düzenleme, iyimser etkileşimler, migration 013–017, fake backend ile integration test + CI | ✅ (2026-10-25) |
+| Faz 2 | Ölçek & dayanıklılık: keyset sayfalama, görsel sıkıştırma, private `post-images`, tutarlı hata eşleme, offline banner, oturum düşmesi, sayaç uzlaştırma, migration 018–021, yük testi | ✅ (2026-10-25) |
 
 ---
 
@@ -113,7 +114,7 @@
 
 ---
 
-## Faz 2 — Ölçek & dayanıklılık 🟡
+## Faz 2 — Ölçek & dayanıklılık ✅
 
 - [x] Cursor (keyset) sayfalama + sonsuz kaydırma: feed, yorumlar, arama, mesajlar, takipçiler, bookmark'lar. Liste sonundaki `LoadMoreFooter` göründükçe sonraki sayfayı ister (sohbette yukarı kaydırınca eski mesajlar); yorumlarda "Daha fazla göster" butonu. Silme ve profil etkileşimi yüklenen sayfaları korur (tek öğe güncellenir). Sohbet listesi sayfasız. Ortak takipçiler migration 018 `get_mutual_followers` RPC'siyle DB'de kesişimden (ilk 3 kişi + toplam; canlıda, anon erişimi kapalı, cihazda doğrulandı). _(2026-10-25; testli, tüm listeler cihazda doğrulandı)_ — `DATA-12`
 - [x] Görsel sıkıştırma: picker uzun kenarı 2048px'e indirir, yükleme anında `compressToWebp` (`core/utils/image_compress.dart`, `flutter_image_compress`) WebP q80'e çevirir ve EXIF/konumu atar; kodlanamazsa orijinal yüklenir. Migration 019: `post-images` ve `avatars` için 2MB sunucu limiti (canlıda). _(2026-10-25; testli, cihazda doğrulandı: Storage'da WebP, boyut ~yarıya indi, exiftool: EXIF yok)_
@@ -127,7 +128,9 @@
 
 **Bitti tanımı:** Seed ile 1.000+ post ve 200+ mesaj varken feed ve chat akıcı kayıyor; uçak modunda uygulama çökmüyor, anlamlı bir mesaj gösteriyor.
 
-**Yük testi (2026-10-25):** `supabase/scripts/load_test_seed.sql` canlı dev projesine uygulandı (1.000 post + 200 mesaj, hepsi `[seed]` önekli; geri almak için `load_test_cleanup.sql`). `EXPLAIN ANALYZE` (authenticated, RLS açık): 30. feed sayfası 0,57 ms, sohbet sayfası 0,39 ms, ikisi de indeksli. Feed planında imleç `or`'u indeks koşulu olmadığı için derin sayfa baştan taranıyordu (601 satır atlandı); `keyset.dart` artık `created_at` sınırını da gönderiyor, 0,23 ms / 1 satır. Cihazda kaydırma ve uçak modu: henüz denenmedi.
+**Yük testi (2026-10-25):** `supabase/scripts/load_test_seed.sql` canlı dev projesine uygulandı (1.000 post + 200 mesaj, hepsi `[seed]` önekli; geri almak için `load_test_cleanup.sql`). `EXPLAIN ANALYZE` (authenticated, RLS açık): 30. feed sayfası 0,57 ms, sohbet sayfası 0,39 ms, ikisi de indeksli. Feed planında imleç `or`'u indeks koşulu olmadığı için derin sayfa baştan taranıyordu (601 satır atlandı); `keyset.dart` artık `created_at` sınırını da gönderiyor, 0,23 ms / 1 satır. Cihazda feed ve sohbet kaydırma ile uçak modu doğrulandı.
+
+**Durum (2026-10-25):** Faz 2 kapandı. `flutter analyze` hatasız, `flutter test` 257/257, migration 001–021 local = remote, smoke 14 geçti; seed verisiyle feed ve sohbet cihazda akıcı kayıyor, uçak modunda uygulama çökmüyor ve şerit + Tekrar Dene görünüyor.
 
 ---
 
