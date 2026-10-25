@@ -49,7 +49,7 @@ class SupabasePostRepository implements PostRepository {
 
   /// Supabase'den dönen JSON haritasını uygun [PostModel] alt sınıfına
   /// (`CasePostModel` veya `QuestionPostModel`) dönüştürür.
-  PostModel _mapRowToPost(Map<String, dynamic> row) {
+  PostModel _mapRowToPost(Map<String, dynamic> row, Map<String, String> signedUrls) {
     final uid = _currentUserId;
 
     // --- Yazar ---
@@ -60,10 +60,9 @@ class SupabasePostRepository implements PostRepository {
     // sort_order'a göre sırala
     rawImages.sort((a, b) =>
         (a['sort_order'] as int? ?? 0).compareTo(b['sort_order'] as int? ?? 0));
-    // image_url bucket içi yol tutar (migration 015).
-    final bucket = rawImages.isEmpty ? null : _client.storage.from('post-images');
+    // image_url bucket içi yol tutar (migration 015); imzalanamayan (silinmiş) dosya atlanır.
     final imageUrls = [
-      for (final e in rawImages) bucket!.getPublicUrl(e['image_url'] as String),
+      for (final e in rawImages) ?signedUrls[e['image_url']],
     ];
 
     // --- Etiketler ---
@@ -131,6 +130,28 @@ class SupabasePostRepository implements PostRepository {
     }
   }
 
+  /// Satırları post'a çevirir. `post-images` private (migration 020, SEC-9):
+  /// sayfadaki tüm görseller tek istekle imzalanır.
+  Future<List<PostModel>> _mapRows(List<Map<String, dynamic>> rows) async {
+    final paths = [
+      for (final row in rows)
+        for (final e in row['post_images'] as List<dynamic>? ?? []) e['image_url'] as String,
+    ];
+    final signed = <String, String>{};
+    if (paths.isNotEmpty) {
+      final results = await _client.storage
+          .from('post-images')
+          .createSignedUrlsResult(paths, signedUrlTtl.inSeconds);
+      for (final r in results) {
+        if (r is SignedUrlSuccess) signed[r.path] = r.signedUrl;
+      }
+    }
+    return [for (final row in rows) _mapRowToPost(row, signed)];
+  }
+
+  /// Uzun süre açık kalan ekranda görseller düşmesin diye 1 gün; sızan link en geç o zaman ölür.
+  static const signedUrlTtl = Duration(days: 1);
+
   /// İçerisinde oturum açan kullanıcının like ve bookmark durumlarını filtreleyen,
   /// tekrarlayan (DRY) temel PostgREST sorgusunu döndürür.
   /// (Tüm Likes/Bookmarks'ları çekmeyerek N+1 performans sorununu çözer)
@@ -158,7 +179,7 @@ class SupabasePostRepository implements PostRepository {
         .eq('id', id)
         .single();
 
-    return _mapRowToPost(response);
+    return (await _mapRows([response])).single;
   });
 
   @override
@@ -171,8 +192,8 @@ class SupabasePostRepository implements PostRepository {
     );
   }
 
-  PageResult<PostModel> _toPage(List<Map<String, dynamic>> rows) =>
-      (items: rows.map(_mapRowToPost).toList(), next: nextCursor(rows));
+  Future<PageResult<PostModel>> _toPage(List<Map<String, dynamic>> rows) async =>
+      (items: await _mapRows(rows), next: nextCursor(rows));
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  ISearchRepository
@@ -228,7 +249,7 @@ class SupabasePostRepository implements PostRepository {
     final response = await _basePostQuery()
         .inFilter('id', postIds);
 
-    final posts = response.map(_mapRowToPost).toList();
+    final posts = await _mapRows(response);
 
     // Bookmark sırasını koru (en son kaydedilen üstte).
     final idOrder = {for (var i = 0; i < postIds.length; i++) postIds[i]: i};

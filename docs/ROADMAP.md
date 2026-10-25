@@ -117,7 +117,7 @@
 
 - [x] Cursor (keyset) sayfalama + sonsuz kaydırma: feed, yorumlar, arama, mesajlar, takipçiler, bookmark'lar. Liste sonundaki `LoadMoreFooter` göründükçe sonraki sayfayı ister (sohbette yukarı kaydırınca eski mesajlar); yorumlarda "Daha fazla göster" butonu. Silme ve profil etkileşimi yüklenen sayfaları korur (tek öğe güncellenir). Sohbet listesi sayfasız. Ortak takipçiler migration 018 `get_mutual_followers` RPC'siyle DB'de kesişimden (ilk 3 kişi + toplam; canlıda, anon erişimi kapalı, cihazda doğrulandı). _(2026-10-25; testli, tüm listeler cihazda doğrulandı)_ — `DATA-12`
 - [x] Görsel sıkıştırma: picker uzun kenarı 2048px'e indirir, yükleme anında `compressToWebp` (`core/utils/image_compress.dart`, `flutter_image_compress`) WebP q80'e çevirir ve EXIF/konumu atar; kodlanamazsa orijinal yüklenir. Migration 019: `post-images` ve `avatars` için 2MB sunucu limiti (canlıda). _(2026-10-25; testli, cihazda doğrulandı: Storage'da WebP, boyut ~yarıya indi, exiftool: EXIF yok)_
-- [ ] `post-images` bucket'ını private yap + signed URL (KVKK) — `SEC-9`
+- [x] `post-images` private (migration 020): okuma yalnızca oturumlu kullanıcı; repository sayfadaki tüm görselleri tek `createSignedUrlsResult` isteğiyle 1 günlük imzalar, imzalanamayan (silinmiş) dosya atlanır; `CachedNetworkImage` önbelleği dosya yoluna bağlı (token değişse de yeniden indirmez). _(2026-10-25; testli, canlıda: public endpoint "Bucket not found" dönüyor; cihazda doğrulanmadı)_ — `SEC-9`
 - [ ] Tutarlı hata yönetimi: tüm repository'ler `guardSupabase` kullansın; `23505` ve `StorageException` eşlemesi
 - [ ] Offline banner + yeniden deneme
 - [ ] `onAuthStateChange` ile oturum düşmesini yakala — `AUTH-5`

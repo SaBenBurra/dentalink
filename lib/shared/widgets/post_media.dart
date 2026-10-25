@@ -104,6 +104,8 @@ class _PostMediaState extends State<PostMedia> with TickerProviderStateMixin {
                 onDoubleTap: _handleDoubleTap,
                 child: CachedNetworkImage(
                   imageUrl: widget.imageUrls[index],
+                  // İmzalı URL her çekişte değişir; önbellek dosya yoluna bağlı (SEC-9).
+                  cacheKey: Uri.parse(widget.imageUrls[index]).path,
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(
                     color: isDark ? Colors.black26 : Colors.white24,

@@ -170,6 +170,8 @@ class _CaseDetailScreenState extends ConsumerState<CaseDetailScreen> {
                                 }
                                 return CachedNetworkImage(
                                   imageUrl: imageUrls[index],
+                                  // İmzalı URL her çekişte değişir; önbellek dosya yoluna bağlı (SEC-9).
+                                  cacheKey: Uri.parse(imageUrls[index]).path,
                                   fit: BoxFit.cover,
                                   placeholder: (context, url) => Container(
                                     color: isDark
