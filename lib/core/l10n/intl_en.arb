@@ -247,5 +247,8 @@
   "pickFromCamera": "Take Photo",
   "changePhoto": "Change photo",
   "validationExperience": "Enter a number between 0 and 70.",
-  "showMore": "Show more"
+  "showMore": "Show more",
+  "discardChangesTitle": "Discard changes?",
+  "discardChangesMessage": "Are you sure you want to leave without saving?",
+  "discardChangesConfirm": "Discard"
 }

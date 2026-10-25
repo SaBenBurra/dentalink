@@ -134,7 +134,7 @@
 | ID | Önem | Konum | Sorun | Çözüm | Durum |
 |---|---|---|---|---|---|
 | UX-1 | 🟠 | `app_bottom_nav_bar.dart:70`, `feed_screen_app_bar.dart:252` | Okunmamış mesaj ve bildirim rozeti yok (provider'lar var ama izlenmiyor). | `Badge` widget'ı. *(Faz 1)* | ✅ |
-| UX-2 | 🟠 | create/edit ekranları | `PopScope` yok; dolu form ve yükleme sırasında geri basılınca veri kayboluyor, retry'da duplicate oluşabiliyor. | `PopScope(canPop: !loading && !dirty)` + onay diyaloğu. *(Faz 3)* | ⬜ |
+| UX-2 | 🟠 | create/edit ekranları | `PopScope` yok; dolu form ve yükleme sırasında geri basılınca veri kayboluyor, retry'da duplicate oluşabiliyor. | `PopScope(canPop: !loading && !dirty)` + onay diyaloğu. *(Faz 3)* | ✅ |
 | UX-3 | 🟠 | `create_case_screen.dart:65`, `create_question_screen.dart:41`, `edit_profile_screen.dart:73`, `case_detail_screen.dart:58,517`, `question_detail_screen.dart:51,376`, `register_screen.dart:153`, `profile_posts_tab.dart:51` | Ham `Exception: ...` metni kullanıcıya gösteriliyor. | `getErrorMessage(e)` (`lib/shared/utils/error_messages.dart`). | ✅ |
 | UX-4 | 🟠 | `settings_screen.dart:303-332` | Bildirim toggle'ları `value: true` ile sabit; `onToggle` boş. | Gizle ya da bağla. *(Faz 1)* | ✅ |
 | UX-5 | 🟠 | `settings_screen.dart:353-404` | Gizlilik, Engellenenler, Koşullar ve Politika `enabled:false`; **hesap silme yok** (mağaza zorunluluğu); sürüm sabit "v0.1.0 (Demo)"; çıkışta onay yok. | Faz 4 (hukuk) + `package_info_plus` + onay diyaloğu. | ⬜ |

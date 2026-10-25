@@ -1183,6 +1183,24 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Daha fazla göster'**
   String get showMore;
+
+  /// No description provided for @discardChangesTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Değişiklikler kaybolacak'**
+  String get discardChangesTitle;
+
+  /// No description provided for @discardChangesMessage.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaydetmeden çıkmak istediğinize emin misiniz?'**
+  String get discardChangesMessage;
+
+  /// Kaydedilmemiş formdan çıkışı onaylayan buton
+  ///
+  /// In tr, this message translates to:
+  /// **'Çık'**
+  String get discardChangesConfirm;
 }
 
 class _AppLocalizationsDelegate

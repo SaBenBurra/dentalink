@@ -590,4 +590,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showMore => 'Show more';
+
+  @override
+  String get discardChangesTitle => 'Discard changes?';
+
+  @override
+  String get discardChangesMessage =>
+      'Are you sure you want to leave without saving?';
+
+  @override
+  String get discardChangesConfirm => 'Discard';
 }

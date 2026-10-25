@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import '../../../domain/enums/enums.dart';
 import '../../../providers/auth_provider.dart';
 import '../providers/edit_profile_controller.dart';
+import '../../../shared/widgets/unsaved_changes_scope.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 
@@ -32,6 +33,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   UserTitle? _selectedTitle;
   File? _avatarFile;
+  bool _dirty = false; // UX-2
 
   @override
   void initState() {
@@ -119,7 +121,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         maxHeight: 512,
         imageQuality: 85,
       );
-      if (image != null && mounted) setState(() => _avatarFile = File(image.path));
+      if (image != null && mounted) {
+        setState(() {
+          _avatarFile = File(image.path);
+          _dirty = true;
+        });
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
@@ -140,162 +147,169 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profili Düzenle'),
-        actions: [
-          Consumer(
-            builder: (context, ref, child) {
-              final isLoading = ref.watch(editProfileProvider).isLoading;
-              return TextButton(
-                onPressed: isLoading ? null : _saveProfile,
-                child: isLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Kaydet'),
-              );
-            },
-          ),
-        ],
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(AppDimensions.spacing16),
-          children: [
-            // Dokunma alanı avatarın tamamı; kamera yalnızca küçük bir rozet
-            // (IconButton'ın 48dp alanı küçük avatarı kapatıyordu).
-            Center(
-              child: Tooltip(
-                message: AppLocalizations.of(context)!.changePhoto,
-                child: InkWell(
-                  onTap: _pickAvatar,
-                  customBorder: const CircleBorder(),
-                  child: Stack(
-                    children: [
-                      if (_avatarFile != null)
-                        CircleAvatar(
-                          radius: AvatarSize.profile.value / 2,
-                          backgroundImage: FileImage(_avatarFile!),
+    return UnsavedChangesScope(
+      dirty: _dirty,
+      busy: ref.watch(editProfileProvider).isLoading,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Profili Düzenle'),
+          actions: [
+            Consumer(
+              builder: (context, ref, child) {
+                final isLoading = ref.watch(editProfileProvider).isLoading;
+                return TextButton(
+                  onPressed: isLoading ? null : _saveProfile,
+                  child: isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      else
-                        UserAvatar(
-                          name: user.fullName,
-                          imageUrl: user.avatarUrl,
-                          size: AvatarSize.profile,
-                        ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(AppDimensions.spacing6),
-                          decoration: BoxDecoration(
-                            color: colorScheme.primary,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: theme.scaffoldBackgroundColor,
-                              width: 2,
+                      : const Text('Kaydet'),
+                );
+              },
+            ),
+          ],
+        ),
+        body: Form(
+          key: _formKey,
+          onChanged: () {
+            if (!_dirty) setState(() => _dirty = true);
+          },
+          child: ListView(
+            padding: const EdgeInsets.all(AppDimensions.spacing16),
+            children: [
+              // Dokunma alanı avatarın tamamı; kamera yalnızca küçük bir rozet
+              // (IconButton'ın 48dp alanı küçük avatarı kapatıyordu).
+              Center(
+                child: Tooltip(
+                  message: AppLocalizations.of(context)!.changePhoto,
+                  child: InkWell(
+                    onTap: _pickAvatar,
+                    customBorder: const CircleBorder(),
+                    child: Stack(
+                      children: [
+                        if (_avatarFile != null)
+                          CircleAvatar(
+                            radius: AvatarSize.profile.value / 2,
+                            backgroundImage: FileImage(_avatarFile!),
+                          )
+                        else
+                          UserAvatar(
+                            name: user.fullName,
+                            imageUrl: user.avatarUrl,
+                            size: AvatarSize.profile,
+                          ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(AppDimensions.spacing6),
+                            decoration: BoxDecoration(
+                              color: colorScheme.primary,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: theme.scaffoldBackgroundColor,
+                                width: 2,
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.camera_alt,
+                              size: 16,
+                              color: colorScheme.onPrimary,
                             ),
                           ),
-                          child: Icon(
-                            Icons.camera_alt,
-                            size: 16,
-                            color: colorScheme.onPrimary,
-                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: AppDimensions.spacing24),
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Ad - Soyad *',
-                border: OutlineInputBorder(),
+              const SizedBox(height: AppDimensions.spacing24),
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Ad - Soyad *',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) =>
+                    (value ?? '').trim().isEmpty ? 'Ad Soyad zorunludur' : null,
               ),
-              validator: (value) =>
-                  (value ?? '').trim().isEmpty ? 'Ad Soyad zorunludur' : null,
-            ),
-            const SizedBox(height: AppDimensions.spacing16),
-            DropdownButtonFormField<UserTitle>(
-              initialValue: _selectedTitle,
-              decoration: const InputDecoration(
-                labelText: 'Unvan *',
-                border: OutlineInputBorder(),
+              const SizedBox(height: AppDimensions.spacing16),
+              DropdownButtonFormField<UserTitle>(
+                initialValue: _selectedTitle,
+                decoration: const InputDecoration(
+                  labelText: 'Unvan *',
+                  border: OutlineInputBorder(),
+                ),
+                items: UserTitle.values.map((title) {
+                  return DropdownMenuItem(
+                    value: title,
+                    child: Text(title.displayName),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  setState(() => _selectedTitle = val);
+                },
+                validator: (value) => value == null ? 'Unvan zorunludur' : null,
               ),
-              items: UserTitle.values.map((title) {
-                return DropdownMenuItem(
-                  value: title,
-                  child: Text(title.displayName),
-                );
-              }).toList(),
-              onChanged: (val) {
-                setState(() => _selectedTitle = val);
-              },
-              validator: (value) => value == null ? 'Unvan zorunludur' : null,
-            ),
-            const SizedBox(height: AppDimensions.spacing16),
-            TextFormField(
-              controller: _bioController,
-              decoration: const InputDecoration(
-                labelText: 'Biyografi',
-                border: OutlineInputBorder(),
+              const SizedBox(height: AppDimensions.spacing16),
+              TextFormField(
+                controller: _bioController,
+                decoration: const InputDecoration(
+                  labelText: 'Biyografi',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
               ),
-              maxLines: 3,
-            ),
-            const SizedBox(height: AppDimensions.spacing16),
-            TextFormField(
-              controller: _universityController,
-              decoration: const InputDecoration(
-                labelText: 'Üniversite',
-                border: OutlineInputBorder(),
+              const SizedBox(height: AppDimensions.spacing16),
+              TextFormField(
+                controller: _universityController,
+                decoration: const InputDecoration(
+                  labelText: 'Üniversite',
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
-            const SizedBox(height: AppDimensions.spacing16),
-            TextFormField(
-              controller: _cityController,
-              decoration: const InputDecoration(
-                labelText: 'Şehir',
-                border: OutlineInputBorder(),
+              const SizedBox(height: AppDimensions.spacing16),
+              TextFormField(
+                controller: _cityController,
+                decoration: const InputDecoration(
+                  labelText: 'Şehir',
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
-            const SizedBox(height: AppDimensions.spacing16),
-            TextFormField(
-              controller: _experienceController,
-              decoration: const InputDecoration(
-                labelText: 'Deneyim Yılı',
-                border: OutlineInputBorder(),
+              const SizedBox(height: AppDimensions.spacing16),
+              TextFormField(
+                controller: _experienceController,
+                decoration: const InputDecoration(
+                  labelText: 'Deneyim Yılı',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(2),
+                ],
+                validator: (value) {
+                  final v = value?.trim() ?? '';
+                  if (v.isEmpty) return null;
+                  final n = int.tryParse(v);
+                  return n == null || n < 0 || n > 70
+                      ? AppLocalizations.of(context)!.validationExperience
+                      : null;
+                },
               ),
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(2),
-              ],
-              validator: (value) {
-                final v = value?.trim() ?? '';
-                if (v.isEmpty) return null;
-                final n = int.tryParse(v);
-                return n == null || n < 0 || n > 70
-                    ? AppLocalizations.of(context)!.validationExperience
-                    : null;
-              },
-            ),
-            const SizedBox(height: AppDimensions.spacing16),
-            TextFormField(
-              controller: _workplaceController,
-              decoration: const InputDecoration(
-                labelText: 'Çalıştığı Klinik/Hastane',
-                border: OutlineInputBorder(),
+              const SizedBox(height: AppDimensions.spacing16),
+              TextFormField(
+                controller: _workplaceController,
+                decoration: const InputDecoration(
+                  labelText: 'Çalıştığı Klinik/Hastane',
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
-            const SizedBox(height: AppDimensions.spacing32),
-          ],
+              const SizedBox(height: AppDimensions.spacing32),
+            ],
+          ),
         ),
       ),
     );

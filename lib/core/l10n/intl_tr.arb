@@ -535,5 +535,9 @@
   "changePhoto": "Fotoğrafı değiştir",
   "validationExperience": "0 ile 70 arasında bir sayı girin.",
   "showMore": "Daha fazla göster",
-  "@showMore": { "description": "Sayfalı listede sonraki sayfayı elle yükleyen buton" }
+  "@showMore": { "description": "Sayfalı listede sonraki sayfayı elle yükleyen buton" },
+  "discardChangesTitle": "Değişiklikler kaybolacak",
+  "discardChangesMessage": "Kaydetmeden çıkmak istediğinize emin misiniz?",
+  "discardChangesConfirm": "Çık",
+  "@discardChangesConfirm": { "description": "Kaydedilmemiş formdan çıkışı onaylayan buton" }
 }

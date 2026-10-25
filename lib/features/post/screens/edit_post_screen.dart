@@ -15,6 +15,7 @@ import '../../../shared/utils/error_messages.dart';
 import '../widgets/branch_selector.dart';
 import '../widgets/detail/detail_states.dart';
 import '../widgets/tag_input.dart';
+import '../../../shared/widgets/unsaved_changes_scope.dart';
 
 /// Başlık, içerik, branş (vaka) ve etiket düzenleme. Görseller düzenlenmez.
 class EditPostScreen extends ConsumerWidget {
@@ -59,6 +60,7 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
     _ => null,
   };
   bool _saving = false;
+  bool _dirty = false; // UX-2
 
   @override
   void dispose() {
@@ -109,61 +111,74 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
       return PostDetailError(message: getErrorMessage(const NotFoundFailure()));
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.editPost),
-        actions: [
-          TextButton(
-            onPressed: _saving || (isCase && _branch == null) ? null : _save,
-            child: _saving
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Text(l10n.save),
-          ),
-        ],
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(AppDimensions.spacing16),
-          children: [
-            TextFormField(
-              controller: _titleController,
-              maxLength: _titleMax,
-              decoration: InputDecoration(
-                labelText: l10n.postTitle,
-                border: const OutlineInputBorder(),
-              ),
-              validator: _required,
-            ),
-            const SizedBox(height: AppDimensions.spacing16),
-            TextFormField(
-              controller: _contentController,
-              maxLength: _contentMax,
-              maxLines: 8,
-              decoration: InputDecoration(
-                labelText: l10n.postContent,
-                border: const OutlineInputBorder(),
-                alignLabelWithHint: true,
-              ),
-              validator: _required,
-            ),
-            if (isCase) ...[
-              const SizedBox(height: AppDimensions.spacing24),
-              BranchSelector(
-                selectedBranch: _branch,
-                onBranchSelected: (b) => setState(() => _branch = b),
-              ),
-            ],
-            const SizedBox(height: AppDimensions.spacing24),
-            TagInput(
-              initialTags: _tags,
-              onTagsChanged: (tags) => setState(() => _tags = tags),
+    return UnsavedChangesScope(
+      dirty: _dirty,
+      busy: _saving,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(l10n.editPost),
+          actions: [
+            TextButton(
+              onPressed: _saving || (isCase && _branch == null) ? null : _save,
+              child: _saving
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text(l10n.save),
             ),
           ],
+        ),
+        body: Form(
+          key: _formKey,
+          onChanged: () {
+            if (!_dirty) setState(() => _dirty = true);
+          },
+          child: ListView(
+            padding: const EdgeInsets.all(AppDimensions.spacing16),
+            children: [
+              TextFormField(
+                controller: _titleController,
+                maxLength: _titleMax,
+                decoration: InputDecoration(
+                  labelText: l10n.postTitle,
+                  border: const OutlineInputBorder(),
+                ),
+                validator: _required,
+              ),
+              const SizedBox(height: AppDimensions.spacing16),
+              TextFormField(
+                controller: _contentController,
+                maxLength: _contentMax,
+                maxLines: 8,
+                decoration: InputDecoration(
+                  labelText: l10n.postContent,
+                  border: const OutlineInputBorder(),
+                  alignLabelWithHint: true,
+                ),
+                validator: _required,
+              ),
+              if (isCase) ...[
+                const SizedBox(height: AppDimensions.spacing24),
+                BranchSelector(
+                  selectedBranch: _branch,
+                  onBranchSelected: (b) => setState(() {
+                    _branch = b;
+                    _dirty = true;
+                  }),
+                ),
+              ],
+              const SizedBox(height: AppDimensions.spacing24),
+              TagInput(
+                initialTags: _tags,
+                onTagsChanged: (tags) => setState(() {
+                  _tags = tags;
+                  _dirty = true;
+                }),
+              ),
+            ],
+          ),
         ),
       ),
     );

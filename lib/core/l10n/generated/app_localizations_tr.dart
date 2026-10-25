@@ -589,4 +589,14 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get showMore => 'Daha fazla göster';
+
+  @override
+  String get discardChangesTitle => 'Değişiklikler kaybolacak';
+
+  @override
+  String get discardChangesMessage =>
+      'Kaydetmeden çıkmak istediğinize emin misiniz?';
+
+  @override
+  String get discardChangesConfirm => 'Çık';
 }
