@@ -142,7 +142,7 @@
 - [ ] `maxLength`, `maxLines`, taşma düzeltmeleri, form doğrulamaları — `UX-8`, `UX-9`, `UX-10` ✅ (profil düzenleme: alanlar trim, deneyim yalnızca rakam, en fazla 2 hane; 2026-10-25, testli)
 - [ ] Erişilebilirlik: tooltip/semantics, 48dp dokunma alanı, kontrast — `UX-13`, `UX-14`, `UX-15`
 - [ ] Hardcoded renkleri temaya taşı — `UX-16`
-- [ ] Tema tercihini kalıcı yap — `UX-11`
+- [x] Tema tercihi kalıcı: `SharedPreferences` `main`'de önceden yüklenir (açılışta tema yanıp sönmez). _(2026-10-25; testli)_ — `UX-11`
 - [x] Bookmarks ekranı: beğeni çalışıyor (iyimser, feed ve aramaya yansır); kaydırma ve bookmark ikonu aynı akış: onaysız kaldırır, "Geri Al" postu eski sırasına koyar; kaldırma/geri alma feed ve aramadaki bookmark durumunu da günceller. _(2026-10-25; testli)_ — `BUG-24`
 - [x] Kayıt başarı diyaloğu yarışı: kayıt sürerken ve diyalog açıkken `authRedirectHoldProvider` tutulur. Hazır avatarlar kaldırıldı (karar 2026-10-25); fotoğraf seçilmezse ikon gösterilir. _(2026-10-25; widget testli)_ — `BUG-21`, `AUTH-8`
 - [x] Login küçük UX düzeltmeleri: geri sayım 60 sn (limiter ile aynı), yalnızca sunucunun reddettiği kod "Kod hatalı", ağ ve diğer hatalar `getErrorMessage` ile; dispose sonrası state yazılmaz. _(2026-10-25; testli)_ — `AUTH-10`

@@ -143,7 +143,7 @@
 | UX-8 | 🟡 | tüm girişler; `post_body.dart:35` | `maxLength` yok; feed kartındaki başlıkta `maxLines` yok. | Başlık 150, gövde 5000, yorum 2000 karakter; kartta `maxLines: 2`. *(Faz 3)* | ⬜ |
 | UX-9 | 🟡 | `comment_card.dart:216-233`, `post_header.dart:173` | Uzun isimler taşıyor. | `Expanded` + ellipsis. *(Faz 3)* | ⬜ |
 | UX-10 | 🟡 | `edit_profile_screen.dart:166` | İsim doğrulaması `trim` yapmıyor; deneyim alanında sayı filtresi yok. | `trim()`, `digitsOnly`. | ✅ |
-| UX-11 | 🟡 | `theme_provider.dart:19` | Tema tercihi kaydedilmiyor (dokümanda kaydediliyor yazıyordu). | `SharedPreferences`. *(Faz 3)* | ⬜ |
+| UX-11 | 🟡 | `theme_provider.dart:19` | Tema tercihi kaydedilmiyor (dokümanda kaydediliyor yazıyordu). | `SharedPreferences`. *(Faz 3)* | ✅ |
 | UX-12 | 🟡 | `lib/features/**`, `enums.dart:18,80` | l10n yalnızca 89 dosyanın 11'inde kullanılıyor; ~155 sabit Türkçe metin var; enum `displayName` değerleri yalnızca Türkçe. TR ve EN arb anahtarları eşit. | Ekran ekran ARB'ye taşı. *(Faz 3)* | ⬜ |
 | UX-13 | ⚪ | `app_bottom_nav_bar.dart:163`, detail geri/bookmark daireleri, gönder butonları vb. | Yalnızca ikon içeren butonlarda tooltip ve semantics yok. | `tooltip:` / `Semantics`. *(Faz 3)* | ⬜ |
 | UX-14 | ⚪ | `image_picker_grid.dart:364` (~22px), create butonu (~38px), `animated_action_button.dart:76` | Dokunma alanları küçük. | Minimum 48×48. *(Faz 3)* | ⬜ |
