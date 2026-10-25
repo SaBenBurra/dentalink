@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
+import '../../../data/models/post_model.dart';
 import '../../../domain/enums/enums.dart';
 import '../../../providers/bookmark_provider.dart';
 import '../../../shared/widgets/empty_state.dart';
@@ -14,7 +15,7 @@ import '../../../shared/widgets/post_card_factory.dart';
 /// Kullanıcının kaydettiği gönderileri listeleyen ekran.
 ///
 /// Profil → Kaydedilenler şeklinde erişilir.
-/// Swipe-to-dismiss ile bookmark kaldırılabilir.
+/// Kaydırarak ya da bookmark ikonuyla kaldırılır; SnackBar'dan geri alınır.
 class BookmarksScreen extends ConsumerWidget {
   const BookmarksScreen({super.key});
 
@@ -77,32 +78,14 @@ class BookmarksScreen extends ConsumerWidget {
                       size: AppDimensions.iconLarge,
                     ),
                   ),
-                  confirmDismiss: (_) => _showRemoveConfirmation(context),
-                  onDismissed: (_) {
-                    _remove(context, ref, post.id);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('Kaydedilenlerden kaldırıldı'),
-                        behavior: SnackBarBehavior.floating,
-                        action: SnackBarAction(
-                          label: 'Geri Al',
-                          textColor: const Color(0xFF13B9A5),
-                          onPressed: () {
-                            ref
-                                .read(bookmarkProvider.notifier)
-                                .toggleBookmark(post.id);
-                          },
-                        ),
-                      ),
-                    );
-                  },
+                  onDismissed: (_) => _remove(context, ref, post, index),
                   child: PostCardFactory.build(
                     post,
-                    onLikeToggle: () {
-                      // Bookmark ekranında like toggle feed ile senkronize
-                      // olacak. Şimdilik no-op.
-                    },
-                    onBookmarkToggle: () => _remove(context, ref, post.id),
+                    onLikeToggle: () => runOrShowError(
+                      context,
+                      () => notifier.toggleLike(post.id),
+                    ),
+                    onBookmarkToggle: () => _remove(context, ref, post, index),
                     onTap: () {
                       final route = post.type == PostType.casePost
                           ? '/feed/case/${post.id}'
@@ -126,34 +109,40 @@ class BookmarksScreen extends ConsumerWidget {
     );
   }
 
-  void _remove(BuildContext context, WidgetRef ref, String postId) {
+  /// Kaydırma ve bookmark ikonu aynı yoldan geçer: hemen listeden çıkar,
+  /// sunucu onaylayınca "Geri Al" sun (geri alma kaldırmayla yarışmasın).
+  Future<void> _remove(
+    BuildContext context,
+    WidgetRef ref,
+    PostModel post,
+    int index,
+  ) async {
     final messenger = ScaffoldMessenger.of(context);
-    ref.read(bookmarkProvider.notifier).removeBookmark(postId).catchError((Object e) {
-      messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
-    });
-  }
+    final notifier = ref.read(bookmarkProvider.notifier);
+    void showError(Object e) =>
+        messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
 
-  Future<bool?> _showRemoveConfirmation(BuildContext context) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Kayıttan Kaldır'),
-        content: const Text(
-          'Bu gönderiyi kaydedilenlerden kaldırmak istediğinize emin misiniz?',
+    messenger.hideCurrentSnackBar();
+    try {
+      await notifier.removeBookmark(post.id);
+    } catch (e) {
+      showError(e);
+      return;
+    }
+    messenger.showSnackBar(
+      SnackBar(
+        content: const Text('Kaydedilenlerden kaldırıldı'),
+        behavior: SnackBarBehavior.floating,
+        action: SnackBarAction(
+          label: 'Geri Al',
+          onPressed: () async {
+            try {
+              await notifier.restoreBookmark(post, index);
+            } catch (e) {
+              showError(e);
+            }
+          },
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('İptal'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text(
-              'Kaldır',
-              style: TextStyle(color: AppColors.error),
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -1,7 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/utils/paging.dart';
 import '../data/models/post_model.dart';
+import '../core/error/app_failures.dart';
 import '../data/providers/repository_providers.dart';
+import 'feed_provider.dart';
+import 'post_toggle.dart';
+import 'search_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Bookmark Provider
@@ -13,6 +17,7 @@ import '../data/providers/repository_providers.dart';
 /// Toggle ve kaldırma işlemleri yerel state'i optimistik olarak günceller.
 class BookmarkNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
   final _pager = Pager<PostModel>();
+  final _pending = PostToggleQueue();
 
   bool get hasMore => _pager.hasMore;
 
@@ -51,28 +56,53 @@ class BookmarkNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
     state = AsyncData(posts.where((p) => p.id != postId).toList());
 
     try {
-      await ref.read(bookmarkRepositoryProvider).unbookmarkPost(postId);
+      final server =
+          await ref.read(bookmarkRepositoryProvider).unbookmarkPost(postId);
+      _syncOthers(postId, (p) => PostToggle.bookmark.copyFields(p, server));
     } catch (_) {
       state = AsyncData(posts); // Rollback
       rethrow;
     }
   }
 
-  /// Bookmark toggle eder (feed'den gelen senkronizasyon için).
-  Future<void> toggleBookmark(String postId) async {
+  /// "Geri Al": kaydı geri ekler ve postu eski sırasına koyar.
+  Future<void> restoreBookmark(PostModel post, int index) async {
+    final server = await ref.read(bookmarkRepositoryProvider).bookmarkPost(post.id);
+    _syncOthers(post.id, (p) => PostToggle.bookmark.copyFields(p, server));
     final posts = state.valueOrNull;
-    if (posts == null) return;
+    if (posts == null || posts.any((p) => p.id == post.id)) return;
+    state = AsyncData([...posts]..insert(index.clamp(0, posts.length), server));
+  }
 
-    final repo = ref.read(bookmarkRepositoryProvider);
-    final isCurrentlyBookmarked = posts.any((p) => p.id == postId);
+  /// İyimser beğeni; feed ve aramadaki aynı post yeniden çekilmeden güncellenir.
+  Future<void> toggleLike(String postId) async {
+    try {
+      final server = await runPostToggle(
+        ref,
+        _pending,
+        PostToggle.like,
+        postId,
+        current: () => state.valueOrNull?.where((p) => p.id == postId).firstOrNull,
+        patch: (update) {
+          final posts = state.valueOrNull;
+          if (posts == null) return;
+          state = AsyncData([for (final p in posts) p.id == postId ? update(p) : p]);
+        },
+      );
+      if (server != null) {
+        _syncOthers(postId, (p) => PostToggle.like.copyFields(p, server));
+      }
+    } on NotFoundFailure {
+      final posts = state.valueOrNull;
+      if (posts != null) state = AsyncData(posts.where((p) => p.id != postId).toList());
+      rethrow;
+    }
+  }
 
-    if (isCurrentlyBookmarked) {
-      await repo.unbookmarkPost(postId);
-      final updated = posts.where((p) => p.id != postId).toList();
-      state = AsyncData(updated);
-    } else {
-      final updatedPost = await repo.bookmarkPost(postId);
-      state = AsyncData([updatedPost, ...posts]);
+  void _syncOthers(String postId, PostModel Function(PostModel) update) {
+    if (ref.exists(feedProvider)) ref.read(feedProvider.notifier).patchPost(postId, update);
+    if (ref.exists(searchProvider)) {
+      ref.read(searchProvider.notifier).patchPost(postId, update);
     }
   }
 }
