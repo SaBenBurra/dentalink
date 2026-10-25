@@ -20,6 +20,7 @@ String getErrorMessage(Object e) {
       NotFoundFailure()         => 'İçerik bulunamadı veya silinmiş.',
       NetworkFailure()          => 'İnternet bağlantınızı kontrol edin.',
       ValidationFailure()       => 'Girdiğiniz içerik geçerli değil.',
+      ConflictFailure()         => 'Bu kayıt zaten var.',
       ServerFailure()           => 'Bir sorun oluştu, lütfen tekrar deneyin.',
     };
   }

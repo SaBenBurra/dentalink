@@ -34,6 +34,18 @@ final class ValidationFailure extends AppFailure {
   String toString() => 'ValidationFailure(message: $message)';
 }
 
+/// Benzersizlik çakışması (23505); [message] hangi kısıtın çakıştığını söyler.
+final class ConflictFailure extends AppFailure {
+  final String message;
+  const ConflictFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
+
+  @override
+  String toString() => 'ConflictFailure(message: $message)';
+}
+
 final class ServerFailure extends AppFailure {
   final String? code;
   final String? message;

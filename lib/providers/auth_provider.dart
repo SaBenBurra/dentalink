@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
+import '../core/error/app_failures.dart';
 import '../core/utils/string_utils.dart';
 import '../domain/enums/enums.dart';
 import '../data/models/user_model.dart';
@@ -74,9 +74,9 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
           );
           state = AsyncData(user);
           return;
-        } on PostgrestException catch (e) {
+        } on ConflictFailure catch (e) {
           final usernameTaken =
-              e.code == '23505' && e.message.contains('username');
+              e.message.contains('username');
           if (!usernameTaken || attempt >= 3) rethrow;
         }
       }

@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/error/app_failures.dart';
 import '../../core/utils/paging.dart';
 import '../../core/utils/supabase_error_mapper.dart';
 import '../models/user_model.dart';
@@ -12,9 +13,9 @@ class SupabaseFollowRepository implements FollowRepository {
   SupabaseFollowRepository({required this.client});
 
   @override
-  Future<void> followUser(String userId) async {
+  Future<void> followUser(String userId) => guardSupabase(() async {
     final currentUserId = client.auth.currentUser?.id;
-    if (currentUserId == null) throw Exception('Oturum açılmamış.');
+    if (currentUserId == null) throw const AuthRequiredFailure();
 
     // Duplicate follow koruması: aynı çift tekrar eklenirse (23505) sessizce
     // yok sayılır. upsert kullanılmaz; ON CONFLICT DO UPDATE, follows üzerinde
@@ -27,22 +28,22 @@ class SupabaseFollowRepository implements FollowRepository {
     } on PostgrestException catch (e) {
       if (e.code != '23505') rethrow;
     }
-  }
+  });
 
   @override
-  Future<void> unfollowUser(String userId) async {
+  Future<void> unfollowUser(String userId) => guardSupabase(() async {
     final currentUserId = client.auth.currentUser?.id;
-    if (currentUserId == null) throw Exception('Oturum açılmamış.');
+    if (currentUserId == null) throw const AuthRequiredFailure();
 
     await client
         .from('follows')
         .delete()
         .eq('follower_id', currentUserId)
         .eq('following_id', userId);
-  }
+  });
 
   @override
-  Future<bool> isFollowingUser(String userId) async {
+  Future<bool> isFollowingUser(String userId) => guardSupabase(() async {
     final currentUserId = client.auth.currentUser?.id;
     if (currentUserId == null) return false;
 
@@ -54,10 +55,10 @@ class SupabaseFollowRepository implements FollowRepository {
         .maybeSingle();
 
     return response != null;
-  }
+  });
 
   @override
-  Future<Set<String>> getFollowedUserIds(List<String> userIds) async {
+  Future<Set<String>> getFollowedUserIds(List<String> userIds) => guardSupabase(() async {
     final currentUserId = client.auth.currentUser?.id;
     if (currentUserId == null || userIds.isEmpty) return {};
 
@@ -70,7 +71,7 @@ class SupabaseFollowRepository implements FollowRepository {
     return (response as List<dynamic>)
         .map((e) => e['following_id'] as String)
         .toSet();
-  }
+  });
 
   @override
   Future<PageResult<UserModel>> getFollowers(
@@ -90,7 +91,7 @@ class SupabaseFollowRepository implements FollowRepository {
     String column,
     String userId,
     PageCursor? before,
-  ) async {
+  ) => guardSupabase(() async {
     final rows = await client
         .from('follows')
         .select('id, created_at, $userEmbed')
@@ -101,7 +102,7 @@ class SupabaseFollowRepository implements FollowRepository {
       items: [for (final row in rows) UserModel.fromJson(row['users'])],
       next: nextCursor(rows),
     );
-  }
+  });
 
   /// Kesişim DB'de alınır (migration 018); oturumsuz ya da kendi profilinde boş.
   @override

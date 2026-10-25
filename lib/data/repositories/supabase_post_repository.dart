@@ -43,7 +43,7 @@ class SupabasePostRepository implements PostRepository {
   /// Mevcut oturumdaki kullanıcı kimliği.
   String get _currentUserId {
     final uid = _client.auth.currentUser?.id;
-    if (uid == null) throw Exception('Oturum açılmamış.');
+    if (uid == null) throw const AuthRequiredFailure();
     return uid;
   }
 
@@ -169,9 +169,9 @@ class SupabasePostRepository implements PostRepository {
   // ═══════════════════════════════════════════════════════════════════════════
 
   @override
-  Future<PageResult<PostModel>> getFeed({PageCursor? before}) async {
+  Future<PageResult<PostModel>> getFeed({PageCursor? before}) => guardSupabase(() async {
     return _toPage(await _basePostQuery().pageBefore(before));
-  }
+  });
 
   @override
   Future<PostModel> getPostById(String id) => guardSupabase(() async {
@@ -186,11 +186,11 @@ class SupabasePostRepository implements PostRepository {
   Future<PageResult<PostModel>> getPostsByUser(
     String userId, {
     PageCursor? before,
-  }) async {
+  }) => guardSupabase(() async {
     return _toPage(
       await _basePostQuery().eq('user_id', userId).pageBefore(before),
     );
-  }
+  });
 
   Future<PageResult<PostModel>> _toPage(List<Map<String, dynamic>> rows) async =>
       (items: await _mapRows(rows), next: nextCursor(rows));
@@ -205,7 +205,7 @@ class SupabasePostRepository implements PostRepository {
     DentalBranch? branch,
     PostType? type,
     PageCursor? before,
-  }) async {
+  }) => guardSupabase(() async {
     // Boş sorgu — boş sonuç döndür.
     final q = query.trim();
     if (q.isEmpty) return (items: <PostModel>[], next: null);
@@ -224,7 +224,7 @@ class SupabasePostRepository implements PostRepository {
     }
 
     return _toPage(await request.pageBefore(before));
-  }
+  });
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  IBookmarkRepository
@@ -232,7 +232,7 @@ class SupabasePostRepository implements PostRepository {
 
   /// Sayfa kaydedilme zamanına göre; imleç bookmark satırıdır.
   @override
-  Future<PageResult<PostModel>> getBookmarkedPosts({PageCursor? before}) async {
+  Future<PageResult<PostModel>> getBookmarkedPosts({PageCursor? before}) => guardSupabase(() async {
     final uid = _currentUserId;
 
     // Bookmark'lanmış post id'lerini çek, ardından postları getir.
@@ -256,7 +256,7 @@ class SupabasePostRepository implements PostRepository {
     posts.sort((a, b) => (idOrder[a.id] ?? 0).compareTo(idOrder[b.id] ?? 0));
 
     return (items: posts, next: next);
-  }
+  });
 
   @override
   Future<PostModel> bookmarkPost(String postId) => guardSupabase(() async {
@@ -327,10 +327,10 @@ class SupabasePostRepository implements PostRepository {
   });
 
   @override
-  Future<void> incrementViewCount(String postId) async {
+  Future<void> incrementViewCount(String postId) => guardSupabase(() async {
     // Race condition önlemek için RPC fonksiyonu kullanıyoruz.
     await _client.rpc('increment_view_count', params: {'p_post_id': postId});
-  }
+  });
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  ICreatePostRepository

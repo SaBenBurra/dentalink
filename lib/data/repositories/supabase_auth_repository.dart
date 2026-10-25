@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/error/app_failures.dart';
+import '../../core/utils/supabase_error_mapper.dart';
 import '../../domain/enums/enums.dart';
 import '../models/user_model.dart';
 import 'auth_repository.dart';
@@ -131,19 +133,17 @@ class SupabaseAuthRepository implements AuthRepository {
   // ── getCurrentUser ─────────────────────────────────────────────────────
 
   @override
-  Future<UserModel?> getCurrentUser() async {
+  Future<UserModel?> getCurrentUser() => guardSupabase(() async {
     final authUser = _client.auth.currentUser;
     if (authUser == null) return null;
 
     return _fetchUserProfile(authUser.id);
-  }
+  });
 
   // ── signOut ────────────────────────────────────────────────────────────
 
   @override
-  Future<void> signOut() async {
-    await _client.auth.signOut();
-  }
+  Future<void> signOut() => guardSupabase(() => _client.auth.signOut());
 
   @override
   bool get hasSession => _client.auth.currentSession != null;
@@ -201,10 +201,10 @@ class SupabaseAuthRepository implements AuthRepository {
     String? workplace,
     int? experienceYears,
     File? avatarFile,
-  }) async {
+  }) => guardSupabase(() async {
     final authUser = _client.auth.currentUser;
     if (authUser == null) {
-      throw Exception('Oturum bulunamadı. Lütfen tekrar giriş yapın.');
+      throw const AuthRequiredFailure();
     }
 
     String? avatarUrl;
@@ -246,7 +246,7 @@ class SupabaseAuthRepository implements AuthRepository {
       onboardingCompleted: true,
       createdAt: DateTime.now(),
     );
-  }
+  });
 
   Future<String> _uploadAvatar(String userId, File file) async {
     final fileExt = file.path.split('.').last.toLowerCase();

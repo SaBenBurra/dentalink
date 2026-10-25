@@ -15,6 +15,8 @@ Future<T> guardSupabase<T>(Future<T> Function() action) async {
     Error.throwWithStackTrace(const AuthRequiredFailure(), st);
   } on PostgrestException catch (e, st) {
     Error.throwWithStackTrace(_mapPostgrest(e), st);
+  } on StorageException catch (e, st) {
+    Error.throwWithStackTrace(_mapStorage(e), st);
   } on IOException catch (_, st) {
     Error.throwWithStackTrace(const NetworkFailure(), st);
   } on http.ClientException catch (_, st) {
@@ -32,11 +34,28 @@ AppFailure _mapPostgrest(PostgrestException e) {
       return const NotFoundFailure();
     case 'PGRST301':
       return const AuthRequiredFailure();
+    case '23505': // unique violation
+      return ConflictFailure(e.message);
     case '23514': // check violation
     case '22023': // RPC doğrulaması (invalid_parameter_value)
       return ValidationFailure(e.message);
     // 23502 (not null) bir programlama/veri hatası olduğundan ServerFailure olarak döner.
     default:
       return ServerFailure(code: e.code, message: e.message);
+  }
+}
+
+AppFailure _mapStorage(StorageException e) {
+  switch (e.statusCode) {
+    case '401':
+      return const AuthRequiredFailure();
+    case '403':
+      return const PermissionDeniedFailure();
+    case '404':
+      return const NotFoundFailure();
+    case '413': // bucket file_size_limit (019)
+      return ValidationFailure(e.message);
+    default:
+      return ServerFailure(code: e.statusCode, message: e.message);
   }
 }
