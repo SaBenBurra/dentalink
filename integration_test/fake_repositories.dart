@@ -10,6 +10,7 @@ import 'package:dentlink/data/models/notification_model.dart';
 import 'package:dentlink/data/models/post_model.dart';
 import 'package:dentlink/data/models/user_model.dart';
 import 'package:dentlink/data/providers/repository_providers.dart';
+import 'package:dentlink/data/repositories/auth_repository.dart';
 import 'package:dentlink/data/repositories/follow_repository.dart';
 import 'package:dentlink/data/repositories/message_repository.dart';
 import 'package:dentlink/data/repositories/notification_repository.dart';
@@ -53,13 +54,13 @@ final _conversation = ConversationModel(
 );
 
 /// ProviderScope'a verilecek override'ların tamamı.
-List<Override> fakeRepositoryOverrides() {
+List<Override> fakeRepositoryOverrides({AuthRepository? auth}) {
   final posts = _FakePostRepository();
   return [
     supabaseClientProvider.overrideWith(
       (_) => throw StateError('Testte gerçek Supabase istemcisi kullanılmamalı'),
     ),
-    authRepositoryProvider.overrideWithValue(MockAuthForTest()),
+    authRepositoryProvider.overrideWithValue(auth ?? MockAuthForTest()),
     feedRepositoryProvider.overrideWithValue(posts),
     bookmarkRepositoryProvider.overrideWithValue(posts),
     searchRepositoryProvider.overrideWithValue(posts),

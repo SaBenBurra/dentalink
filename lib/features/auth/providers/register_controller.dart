@@ -8,7 +8,6 @@ class RegisterState {
   final bool isCompleting;
   final String? nameError;
   final UserTitle? selectedTitle;
-  final int selectedAvatarIndex;
   final File? selectedImageFile;
 
   const RegisterState({
@@ -16,7 +15,6 @@ class RegisterState {
     this.isCompleting = false,
     this.nameError,
     this.selectedTitle,
-    this.selectedAvatarIndex = 0,
     this.selectedImageFile,
   });
 
@@ -25,7 +23,6 @@ class RegisterState {
     bool? isCompleting,
     String? Function()? nameError,
     UserTitle? Function()? selectedTitle,
-    int? selectedAvatarIndex,
     File? Function()? selectedImageFile,
   }) {
     return RegisterState(
@@ -33,7 +30,6 @@ class RegisterState {
       isCompleting: isCompleting ?? this.isCompleting,
       nameError: nameError != null ? nameError() : this.nameError,
       selectedTitle: selectedTitle != null ? selectedTitle() : this.selectedTitle,
-      selectedAvatarIndex: selectedAvatarIndex ?? this.selectedAvatarIndex,
       selectedImageFile: selectedImageFile != null ? selectedImageFile() : this.selectedImageFile,
     );
   }
@@ -85,11 +81,8 @@ class RegisterController extends AutoDisposeNotifier<RegisterState> {
     state = state.copyWith(selectedTitle: () => title);
   }
 
-  void setAvatar(int index, {File? file}) {
-    state = state.copyWith(
-      selectedAvatarIndex: index,
-      selectedImageFile: () => file,
-    );
+  void setImageFile(File? file) {
+    state = state.copyWith(selectedImageFile: () => file);
   }
 
   Future<void> completeRegistration({

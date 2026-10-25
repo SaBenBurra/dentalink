@@ -42,16 +42,25 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _expFocusNode = FocusNode();
   final _bioFocusNode = FocusNode();
 
-  // Mock avatars
-  final List<String> _mockAvatars = [
-    'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face',
-    'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&h=150&fit=crop&crop=face',
-    'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face',
-    'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=150&h=150&fit=crop&crop=face',
-  ];
+  // Başarı diyaloğu sürerken router'ın /feed'e atlaması bekletilir (BUG-21).
+  ProviderContainer? _container;
+  bool _holdsAuthRedirect = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _container = ProviderScope.containerOf(context);
+  }
+
+  void _setAuthRedirectHold(bool hold) {
+    if (_holdsAuthRedirect == hold) return;
+    _holdsAuthRedirect = hold;
+    _container?.read(authRedirectHoldProvider.notifier).state = hold;
+  }
 
   @override
   void dispose() {
+    _setAuthRedirectHold(false);
     _pageController.dispose();
     _nameController.dispose();
     _uniController.dispose();
@@ -118,6 +127,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Future<void> _completeRegistration() async {
+    _setAuthRedirectHold(true);
     try {
       await ref.read(registerControllerProvider.notifier).completeRegistration(
         fullName: _nameController.text.trim(),
@@ -158,6 +168,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           backgroundColor: AppColors.error,
         ),
       );
+    } finally {
+      _setAuthRedirectHold(false);
     }
   }
 
@@ -246,16 +258,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         expFocusNode: _expFocusNode,
                       ),
                       RegisterStepThree(
-                        mockAvatars: _mockAvatars,
-                        selectedAvatarIndex: state.selectedAvatarIndex,
                         selectedImageFile: state.selectedImageFile,
                         bioController: _bioController,
                         bioFocusNode: _bioFocusNode,
-                        onAvatarSelected: (int index) {
-                          ref.read(registerControllerProvider.notifier).setAvatar(index);
-                        },
                         onImageFilePicked: (File? file) {
-                          ref.read(registerControllerProvider.notifier).setAvatar(state.selectedAvatarIndex, file: file);
+                          ref.read(registerControllerProvider.notifier).setImageFile(file);
                         },
                       ),
                     ],

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dentlink/core/constants/app_colors.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/constants/app_text_styles.dart';
@@ -15,21 +14,15 @@ import 'package:dentlink/shared/utils/error_messages.dart';
 class RegisterStepThree extends StatelessWidget {
   const RegisterStepThree({
     super.key,
-    required this.mockAvatars,
-    required this.selectedAvatarIndex,
     required this.selectedImageFile,
     required this.bioController,
     required this.bioFocusNode,
-    required this.onAvatarSelected,
     required this.onImageFilePicked,
   });
 
-  final List<String> mockAvatars;
-  final int selectedAvatarIndex;
   final File? selectedImageFile;
   final TextEditingController bioController;
   final FocusNode bioFocusNode;
-  final ValueChanged<int> onAvatarSelected;
   final ValueChanged<File?> onImageFilePicked;
 
   Future<void> _pickImage(BuildContext context, ImageSource source) async {
@@ -99,11 +92,15 @@ class RegisterStepThree extends StatelessWidget {
                       backgroundColor: const Color(
                         0xFF13B9A5,
                       ).withValues(alpha: 0.2),
-                      backgroundImage: hasCustomImage
-                          ? FileImage(selectedImageFile!)
-                          : CachedNetworkImageProvider(
-                              mockAvatars[selectedAvatarIndex],
-                            ) as ImageProvider,
+                      backgroundImage:
+                          hasCustomImage ? FileImage(selectedImageFile!) : null,
+                      child: hasCustomImage
+                          ? null
+                          : Icon(
+                              Icons.person_rounded,
+                              size: 54,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                     ),
                     // Düzenleme ikonu
                     Container(
@@ -169,50 +166,6 @@ class RegisterStepThree extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                const SizedBox(height: AppDimensions.spacing8),
-
-                // ── Varsayılan Avatarlar ─────────────────────────────────
-                if (!hasCustomImage) ...[
-                  Text(
-                    'veya bir avatar seçin',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: textSecondaryColor,
-                    ),
-                  ),
-                  const SizedBox(height: AppDimensions.spacing12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(mockAvatars.length, (index) {
-                      final isSelected = selectedAvatarIndex == index;
-                      return InkWell(
-                        onTap: () => onAvatarSelected(index),
-                        borderRadius: BorderRadius.circular(24),
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: AppDimensions.spacing6,
-                          ),
-                          padding: const EdgeInsets.all(3),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: isSelected
-                                  ? const Color(0xFF13B9A5)
-                                  : Colors.transparent,
-                              width: 2,
-                            ),
-                          ),
-                          child: CircleAvatar(
-                            radius: 20,
-                            backgroundImage: CachedNetworkImageProvider(
-                              mockAvatars[index],
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                ],
               ],
             ),
           ),
