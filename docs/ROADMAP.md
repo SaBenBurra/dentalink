@@ -116,7 +116,7 @@
 ## Faz 2 — Ölçek & dayanıklılık 🟡
 
 - [x] Cursor (keyset) sayfalama + sonsuz kaydırma: feed, yorumlar, arama, mesajlar, takipçiler, bookmark'lar. Liste sonundaki `LoadMoreFooter` göründükçe sonraki sayfayı ister (sohbette yukarı kaydırınca eski mesajlar); yorumlarda "Daha fazla göster" butonu. Silme ve profil etkileşimi yüklenen sayfaları korur (tek öğe güncellenir). Sohbet listesi sayfasız. Ortak takipçiler migration 018 `get_mutual_followers` RPC'siyle DB'de kesişimden (ilk 3 kişi + toplam; canlıda, anon erişimi kapalı, cihazda doğrulandı). _(2026-10-25; testli, tüm listeler cihazda doğrulandı)_ — `DATA-12`
-- [ ] Görsel sıkıştırma (istemci tarafı) ve boyut limiti (ör. uzun kenar 2048px, ~1MB)
+- [x] Görsel sıkıştırma: picker uzun kenarı 2048px'e indirir, yükleme anında `compressToWebp` (`core/utils/image_compress.dart`, `flutter_image_compress`) WebP q80'e çevirir ve EXIF/konumu atar; kodlanamazsa orijinal yüklenir. Migration 019: `post-images` ve `avatars` için 2MB sunucu limiti (canlıda). _(2026-10-25; testli, cihazda doğrulandı: Storage'da WebP, boyut ~yarıya indi, exiftool: EXIF yok)_
 - [ ] `post-images` bucket'ını private yap + signed URL (KVKK) — `SEC-9`
 - [ ] Tutarlı hata yönetimi: tüm repository'ler `guardSupabase` kullansın; `23505` ve `StorageException` eşlemesi
 - [ ] Offline banner + yeniden deneme
@@ -197,6 +197,5 @@
 | Uygulama adı (DentLink placeholder) | Faz 5 öncesi |
 | Kayıtta hazır avatar seçeneği kalsın mı? | Faz 3 |
 | Domain katmanı: tamamla mı, kaldır mı? | Faz 3 |
-| Görsel sıkıştırma limitleri | Faz 2 |
 | Doğrulama belgesi türü (diploma / TDB oda kaydı) | Faz 4 |
 | İş ilanı ve pazar yeri: feed'de mi, ayrı sekmede mi? | Yayın sonrası |

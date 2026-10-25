@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Mevcut dosyalar `001_…`–`012_…` biçiminde. Yeni dosyalar da aynı sırayla devam eder (son: `018_…`).
+- **Dosya adı:** Mevcut dosyalar `001_…`–`012_…` biçiminde. Yeni dosyalar da aynı sırayla devam eder (son: `019_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -51,8 +51,8 @@ RLS **hangi satırlara** dokunulabileceğini belirler; GRANT **hangi kolonlara**
 
 | Bucket | Erişim | Path kuralı | Not |
 |---|---|---|---|
-| `avatars` | public read | `{auth.uid()}/…` | 012'de tanımlandı |
-| `post-images` | public read (geçici) | `{auth.uid()}/…` | Faz 2'de private + signed URL (AUDIT `SEC-9`) |
+| `avatars` | public read | `{auth.uid()}/…` | 012'de tanımlandı; 2MB limit (019) |
+| `post-images` | public read (geçici) | `{auth.uid()}/…` | 2MB limit (019), istemci WebP yükler; Faz 2'de private + signed URL (AUDIT `SEC-9`) |
 
 - Yazma ve silme policy'si: `(storage.foldername(name))[1] = auth.uid()::text`.
 - **Sıra:** önce yeni dosyayı yükle, DB'yi güncelle, **en son** eski dosyayı sil. Tersi veri kaybına yol açar (AUDIT `DATA-7`, `DATA-8`).

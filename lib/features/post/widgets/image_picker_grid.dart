@@ -73,8 +73,8 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
   Future<void> _pickImages(ImageSource source) async {
     final remaining = widget.maxImages - _images.length;
     if (remaining <= 0) return;
-    const quality = 85;
-    const maxSide = 1920.0;
+    // Kalite yüklemede WebP kodlamasında belirlenir (compressToWebp); burada yalnızca boyut.
+    const maxSide = 2048.0;
 
     final List<XFile> picked;
     try {
@@ -82,14 +82,12 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
         // pickMultiImage limit'i en az 2 ister; tek yer kaldıysa tekli seçim.
         final file = await _picker.pickImage(
           source: source,
-          imageQuality: quality,
           maxWidth: maxSide,
           maxHeight: maxSide,
         );
         picked = [?file];
       } else {
         picked = await _picker.pickMultiImage(
-          imageQuality: quality,
           maxWidth: maxSide,
           maxHeight: maxSide,
           limit: remaining,

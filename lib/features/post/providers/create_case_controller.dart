@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../domain/enums/enums.dart';
+import '../../../core/utils/image_compress.dart';
 import '../../../data/providers/repository_providers.dart';
 
 /// Vaka oluşturma ekranının durumunu ve mantığını yöneten kontrolcü.
@@ -38,7 +39,7 @@ class CreateCaseController extends AutoDisposeAsyncNotifier<void> {
         title: title,
         content: content,
         branch: branch,
-        imageFiles: imageFiles,
+        imageFiles: await compressToWebp(imageFiles),
         tags: tags,
       );
 
