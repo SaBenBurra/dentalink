@@ -76,13 +76,33 @@ List<Override> fakeRepositoryOverrides({AuthRepository? auth}) {
 }
 
 class _FakePostRepository implements PostRepository {
+  final _created = <String, PostModel>{};
+
+  @override
+  Future<PostModel> createQuestion({
+    required String title,
+    required String content,
+    required List<String> tags,
+  }) async {
+    final post = QuestionPostModel(
+      id: 'q${_created.length + 1}',
+      userId: 'mock_test_user_id',
+      title: title,
+      content: content,
+      createdAt: DateTime(2024),
+      updatedAt: DateTime(2024),
+      author: otherUser,
+    );
+    return _created[post.id] = post;
+  }
+
   @override
   Future<PageResult<PostModel>> getFeed({PageCursor? before}) async =>
       (items: [seedCase], next: null);
 
   @override
   Future<PostModel> getPostById(String id) async =>
-      id == seedCase.id ? seedCase : throw const NotFoundFailure();
+      id == seedCase.id ? seedCase : _created[id] ?? (throw const NotFoundFailure());
 
   @override
   Future<PageResult<PostModel>> getPostsByUser(String userId,

@@ -32,7 +32,7 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
 
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
-      await ref.read(createQuestionProvider.notifier).submit(
+      final post = await ref.read(createQuestionProvider.notifier).submit(
         title: _titleController.text,
         content: _contentController.text,
         tags: _tags,
@@ -50,7 +50,8 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.questionShared)),
         );
-        context.pop();
+        // Paylaşılan postu aç; form yığından çıkar (geri → önceki ekran).
+        context.pushReplacement('/feed/question/${post!.id}');
       }
     }
   }

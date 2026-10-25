@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/models/enums.dart';
 import '../../../core/utils/image_compress.dart';
+import '../../../data/models/post_model.dart';
 import '../../../data/providers/repository_providers.dart';
 
 /// Vaka oluşturma ekranının durumunu ve mantığını yöneten kontrolcü.
@@ -24,7 +25,7 @@ class CreateCaseController extends AutoDisposeAsyncNotifier<void> {
   /// [imageFiles] kullanıcının cihazından seçtiği ham görsel dosyaları.
   /// Görseller Supabase Storage'a (`post-images` bucket'ı) yüklenir,
   /// ardından post ve ilişkili kayıtlar veritabanına yazılır.
-  Future<void> submit({
+  Future<PostModel?> submit({
     required String title,
     required String content,
     required DentalBranch branch,
@@ -35,7 +36,7 @@ class CreateCaseController extends AutoDisposeAsyncNotifier<void> {
     try {
       final repo = ref.read(createPostRepositoryProvider);
 
-      await repo.createCase(
+      final post = await repo.createCase(
         title: title,
         content: content,
         branch: branch,
@@ -44,8 +45,10 @@ class CreateCaseController extends AutoDisposeAsyncNotifier<void> {
       );
 
       state = const AsyncData(null);
+      return post;
     } catch (e, st) {
       state = AsyncError(e, st);
+      return null;
     }
   }
 }

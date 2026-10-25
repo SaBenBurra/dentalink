@@ -62,7 +62,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
         return;
       }
 
-      await ref.read(createCaseProvider.notifier).submit(
+      final post = await ref.read(createCaseProvider.notifier).submit(
         title: _titleController.text,
         content: _contentController.text,
         branch: _selectedBranch!,
@@ -82,7 +82,8 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.caseShared)),
         );
-        context.pop();
+        // Paylaşılan postu aç; form yığından çıkar (geri → önceki ekran).
+        context.pushReplacement('/feed/case/${post!.id}');
       }
     }
   }

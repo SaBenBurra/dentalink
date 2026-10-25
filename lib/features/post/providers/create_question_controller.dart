@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../data/models/post_model.dart';
 import '../../../data/providers/repository_providers.dart';
 
 /// Soru oluşturma ekranının durumunu ve mantığını yöneten kontrolcü.
@@ -20,7 +21,7 @@ class CreateQuestionController extends AutoDisposeAsyncNotifier<void> {
   ///
   /// Soru gönderilerinde görsel opsiyoneldir ve şu anki implementasyonda
   /// desteklenmez (ileride eklenebilir). Etiketler veritabanına upsert edilir.
-  Future<void> submit({
+  Future<PostModel?> submit({
     required String title,
     required String content,
     required List<String> tags,
@@ -29,15 +30,17 @@ class CreateQuestionController extends AutoDisposeAsyncNotifier<void> {
     try {
       final repo = ref.read(createPostRepositoryProvider);
 
-      await repo.createQuestion(
+      final post = await repo.createQuestion(
         title: title,
         content: content,
         tags: tags,
       );
 
       state = const AsyncData(null);
+      return post;
     } catch (e, st) {
       state = AsyncError(e, st);
+      return null;
     }
   }
 }

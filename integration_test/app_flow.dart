@@ -96,4 +96,16 @@ Future<void> runAppFlow(WidgetTester tester) async {
   await _goBack(tester);
 
   expect(find.text(seedCase.title), findsOneWidget);
+
+  // Soru paylaş → paylaşılan sorunun detayı açılır, form yığında kalmaz.
+  await _tapAndSettle(tester, find.byIcon(Icons.add_rounded));
+  await _tapAndSettle(tester, find.text('Soru Sor'));
+  final fields = find.byType(TextFormField);
+  await tester.enterText(fields.at(0), 'Yeni soru başlığı');
+  await tester.enterText(fields.at(1), 'Yeni soru detayı');
+  await _tapAndSettle(tester, find.text('Paylaş'));
+  expect(find.byType(TextFormField), findsNothing);
+  expect(find.text('Yeni soru detayı'), findsOneWidget);
+  await _goBack(tester);
+  expect(find.text(seedCase.title), findsOneWidget);
 }
