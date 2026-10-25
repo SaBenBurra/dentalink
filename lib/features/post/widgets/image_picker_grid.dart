@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
+import 'package:dentlink/shared/utils/error_messages.dart';
 
 /// Vaka veya Soru oluştururken kullanılacak Görsel Seçici Izgara.
 ///
@@ -70,37 +71,49 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
   }
 
   Future<void> _pickImages(ImageSource source) async {
-    if (source == ImageSource.camera) {
-      final pickedFile = await _picker.pickImage(
-        source: source,
-        imageQuality: 85,
-        maxWidth: 1920,
-        maxHeight: 1920,
-      );
+    final remaining = widget.maxImages - _images.length;
+    if (remaining <= 0) return;
+    const quality = 85;
+    const maxSide = 1920.0;
 
-      if (pickedFile != null) {
-        setState(() {
-          _images.add(File(pickedFile.path));
-        });
-        widget.onImagesChanged(List.unmodifiable(_images));
+    final List<XFile> picked;
+    try {
+      if (source == ImageSource.camera || remaining == 1) {
+        // pickMultiImage limit'i en az 2 ister; tek yer kaldıysa tekli seçim.
+        final file = await _picker.pickImage(
+          source: source,
+          imageQuality: quality,
+          maxWidth: maxSide,
+          maxHeight: maxSide,
+        );
+        picked = [?file];
+      } else {
+        picked = await _picker.pickMultiImage(
+          imageQuality: quality,
+          maxWidth: maxSide,
+          maxHeight: maxSide,
+          limit: remaining,
+        );
       }
-    } else {
-      final pickedFiles = await _picker.pickMultiImage(
-        imageQuality: 85,
-        maxWidth: 1920,
-        maxHeight: 1920,
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
+      return;
+    }
+    if (!mounted || picked.isEmpty) return;
+
+    // Bazı galeri uygulamaları limit'i yok sayar; fazlası atılır ama kullanıcıya söylenir.
+    setState(() {
+      _images.addAll(picked.take(remaining).map((xf) => File(xf.path)));
+    });
+    widget.onImagesChanged(List.unmodifiable(_images));
+    if (picked.length > remaining) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('En fazla ${widget.maxImages} görsel ekleyebilirsiniz.'),
+        ),
       );
-
-      if (pickedFiles.isEmpty) return;
-
-      final remaining = widget.maxImages - _images.length;
-      final toAdd =
-          pickedFiles.take(remaining).map((xf) => File(xf.path)).toList();
-
-      setState(() {
-        _images.addAll(toAdd);
-      });
-      widget.onImagesChanged(List.unmodifiable(_images));
     }
   }
 

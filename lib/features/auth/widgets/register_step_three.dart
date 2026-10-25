@@ -6,6 +6,7 @@ import 'package:dentlink/core/constants/app_text_styles.dart';
 import 'package:dentlink/shared/widgets/glass_field.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:dentlink/shared/utils/error_messages.dart';
 
 /// Kayıt Step 3 — Profil Detayları.
 ///
@@ -31,16 +32,18 @@ class RegisterStepThree extends StatelessWidget {
   final ValueChanged<int> onAvatarSelected;
   final ValueChanged<File?> onImageFilePicked;
 
-  Future<void> _pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final XFile? image = await picker.pickImage(
-      source: source,
-      maxWidth: 512,
-      maxHeight: 512,
-      imageQuality: 85,
-    );
-    if (image != null) {
-      onImageFilePicked(File(image.path));
+  Future<void> _pickImage(BuildContext context, ImageSource source) async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final image = await ImagePicker().pickImage(
+        source: source,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 85,
+      );
+      if (image != null) onImageFilePicked(File(image.path));
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(e))));
     }
   }
 
@@ -132,7 +135,7 @@ class RegisterStepThree extends StatelessWidget {
                     _ActionButton(
                       icon: Icons.camera_alt_outlined,
                       label: 'Fotoğraf Çek',
-                      onTap: () => _pickImage(ImageSource.camera),
+                      onTap: () => _pickImage(context, ImageSource.camera),
                       isDark: isDark,
                       glassBgColor: glassBgColor,
                       glassBorderColor: glassBorderColor,
@@ -142,7 +145,7 @@ class RegisterStepThree extends StatelessWidget {
                     _ActionButton(
                       icon: Icons.photo_library_outlined,
                       label: 'Galeriden Seç',
-                      onTap: () => _pickImage(ImageSource.gallery),
+                      onTap: () => _pickImage(context, ImageSource.gallery),
                       isDark: isDark,
                       glassBgColor: glassBgColor,
                       glassBorderColor: glassBorderColor,

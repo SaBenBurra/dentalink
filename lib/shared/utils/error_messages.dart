@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show PlatformException;
 
 import 'package:supabase_flutter/supabase_flutter.dart'
     show AuthRetryableFetchException, PostgrestException;
@@ -25,6 +26,11 @@ String getErrorMessage(Object e) {
   // guardSupabase'den geçmeyen repository çağrıları için.
   if (e is SocketException || e is AuthRetryableFetchException) {
     return 'İnternet bağlantınızı kontrol edin.';
+  }
+  // image_picker izin reddi.
+  if (e is PlatformException &&
+      (e.code == 'camera_access_denied' || e.code == 'photo_access_denied')) {
+    return 'Erişim izni verilmedi. Telefon ayarlarından izin verebilirsiniz.';
   }
   if (e is PostgrestException && e.code == '42501') {
     return 'Bu işlem için yetkiniz yok.';
