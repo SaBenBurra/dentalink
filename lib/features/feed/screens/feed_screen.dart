@@ -7,6 +7,7 @@ import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../data/models/enums.dart';
 import '../../../providers/feed_provider.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../shell/main_shell.dart';
 
 class FeedScreen extends ConsumerStatefulWidget {
   const FeedScreen({super.key});
@@ -77,17 +78,30 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
       backgroundColor: isDark
           ? AppColors.darkBackground
           : AppColors.bgGradientStart,
-      appBar: FeedScreenAppBar(
-        labels: [for (final (label, _) in tabs) label],
-        selectedIndex: _index,
-        onSelected: _select,
-      ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (i) {
-          if (!_animatingToTap) setState(() => _index = i);
-        },
-        children: [for (final (_, page) in tabs) page],
+      // Üst bar gövdede: alt menüyle birlikte kayınca liste yukarı uzar.
+      body: Column(
+        children: [
+          FeedScreenAppBar(
+            labels: [for (final (label, _) in tabs) label],
+            selectedIndex: _index,
+            onSelected: _select,
+            visibility: ref.watch(bottomBarAnimationProvider),
+          ),
+          Expanded(
+            // Durum çubuğu payını üst bar aldı; listeler tekrar eklemesin.
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (i) {
+                  if (!_animatingToTap) setState(() => _index = i);
+                },
+                children: [for (final (_, page) in tabs) page],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

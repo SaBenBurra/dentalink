@@ -1,6 +1,7 @@
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:dentlink/features/feed/widgets/feed_filter_segments.dart';
 import 'package:dentlink/features/feed/widgets/feed_screen_app_bar.dart';
+import 'package:dentlink/providers/auth_provider.dart';
 import 'package:dentlink/providers/notification_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,11 +57,18 @@ void main() {
             path: '/search',
             builder: (_, _) => const Text('search page'),
           ),
+          GoRoute(
+            path: '/profile',
+            builder: (_, _) => const Text('profile page'),
+          ),
         ],
       );
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [unreadNotificationCountProvider.overrideWith((ref) => 0)],
+          overrides: [
+            unreadNotificationCountProvider.overrideWith((ref) => 0),
+            currentUserProvider.overrideWith((ref) => null),
+          ],
           child: MaterialApp.router(
             routerConfig: router,
             locale: const Locale('tr'),
@@ -68,6 +76,14 @@ void main() {
             supportedLocales: AppLocalizations.supportedLocales,
           ),
         ),
+      );
+
+      // Sekmeler ortalının 16dp soluna uzatılmış: merkez 8dp solda.
+      final screenW =
+          tester.view.physicalSize.width / tester.view.devicePixelRatio;
+      expect(
+        tester.getCenter(find.byType(FeedFilterSegments)).dx,
+        closeTo(screenW / 2 - 8, 0.01),
       );
 
       await tester.tap(find.text('Sorular'));
@@ -80,8 +96,51 @@ void main() {
       await tester.tap(find.byIcon(Icons.search_rounded));
       await tester.pumpAndSettle();
       expect(find.text('search page'), findsOneWidget);
+
+      // Avatar → Profil sekmesi.
+      router.go('/');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Profil'));
+      await tester.pumpAndSettle();
+      expect(find.text('profile page'), findsOneWidget);
     },
   );
+
+  testWidgets('visibility 0 iken bar kayar ve yer kaplamaz', (tester) async {
+    Future<Size> pumpAt(double v) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            unreadNotificationCountProvider.overrideWith((ref) => 0),
+            currentUserProvider.overrideWith((ref) => null),
+          ],
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: Column(
+                children: [
+                  FeedScreenAppBar(
+                    labels: const ['A', 'B'],
+                    selectedIndex: 0,
+                    onSelected: (_) {},
+                    visibility: AlwaysStoppedAnimation(v),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      return tester.getSize(find.byType(FeedScreenAppBar));
+    }
+
+    expect((await pumpAt(1)).height, 56);
+    expect((await pumpAt(0.5)).height, 28);
+    // Yay 0'ın altına taşsa da yükseklik negatif olmaz.
+    expect((await pumpAt(-0.2)).height, 0);
+    expect(find.byTooltip('Profil').hitTestable(), findsNothing);
+  });
 
   testWidgets('3 segment rayı tam doldurur ve kaymaz', (tester) async {
     await _pumpSegments(

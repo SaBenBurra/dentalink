@@ -6,24 +6,37 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../providers/auth_provider.dart';
 import '../../../providers/notification_provider.dart';
+import '../../../shared/widgets/user_avatar.dart';
 
-/// Feed üst barı: logo, tür segmentleri, arama ve bildirim.
+/// Feed üst barı: profil avatarı, tür segmentleri, arama ve bildirim.
 class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
   const FeedScreenAppBar({
     super.key,
     required this.labels,
     required this.selectedIndex,
     required this.onSelected,
+    this.visibility = kAlwaysCompleteAnimation,
   });
 
   final List<String> labels;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
 
+  /// 1 = tam görünür, 0 = yukarı kaymış (durum çubuğu alanı kalır).
+  final Animation<double> visibility;
+
   // Alt çizgiyle birlikte 56dp (Material toolbar); alt menüyle (~58dp) dengeli.
   static const double _height = 55;
   static const double _iconPad = (48 - AppDimensions.iconMedium) / 2;
+  static const double _searchGap = AppDimensions.spacing10;
+  // Sekmeler ekranda ortalıya yakın dursun: sağdaki alan (boşluk + iki 48dp
+  // ikon) kadar solda da yer bırakılır, ray sonra sola 16dp uzatılır.
+  static const double _avatarGap =
+      _searchGap + 48 * 2 - _avatarLeftPad - 48 - AppDimensions.spacing16;
+  // 32dp avatarın 48dp alanında 8dp payı var; avatar kenardan 14dp görünür.
+  static const double _avatarLeftPad = _iconPad - (48 - 32) / 2;
 
   @override
   Size get preferredSize => const Size.fromHeight(_height + 1); // + alt çizgi
@@ -42,58 +55,51 @@ class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
         color: colorScheme.surface.withValues(alpha: 0.96),
         child: SafeArea(
           bottom: false,
-          child: Container(
-            height: _height + 1,
-            // 20dp ikonun 48dp alanında iki yanda 14dp payı var; sol kenar da 14dp.
-            padding: const EdgeInsets.only(left: _iconPad),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: colorScheme.surfaceContainerHigh),
+          child: AnimatedBuilder(
+            animation: visibility,
+            builder: (context, child) {
+              final v = visibility.value.clamp(0.0, 1.0);
+              // Alta yaslı kırpma: yükseklik azaldıkça bar yukarı kayar.
+              return ClipRect(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  heightFactor: v,
+                  child: ExcludeSemantics(excluding: v == 0, child: child),
+                ),
+              );
+            },
+            child: Container(
+              height: _height + 1,
+              // 20dp ikonun 48dp alanında iki yanda 14dp payı var; sol kenar da 14dp.
+              padding: const EdgeInsets.only(left: _avatarLeftPad),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: colorScheme.surfaceContainerHigh),
+                ),
               ),
-            ),
-            child: Row(
-              children: [
-                ExcludeSemantics(
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary,
-                      borderRadius: BorderRadius.circular(
-                        AppDimensions.spacing8,
-                      ),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      'D', // marka monogramı, çevrilmez
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        height: 1,
-                        color: colorScheme.onPrimary,
-                      ),
+              child: Row(
+                children: [
+                  const _ProfileAvatarButton(),
+                  const SizedBox(width: _avatarGap),
+                  Expanded(
+                    child: FeedFilterSegments(
+                      labels: labels,
+                      selectedIndex: selectedIndex,
+                      onSelected: onSelected,
                     ),
                   ),
-                ),
-                const SizedBox(width: AppDimensions.spacing8),
-                Expanded(
-                  child: FeedFilterSegments(
-                    labels: labels,
-                    selectedIndex: selectedIndex,
-                    onSelected: onSelected,
+                  // Arama ikonu 48dp alanının sağına yaslı (sağ payı 2dp):
+                  // segment-arama 10+26 = 36dp, arama-zil 2+14 = 16dp.
+                  const SizedBox(width: _searchGap),
+                  _HeaderIconButton(
+                    alignment: Alignment.centerRight,
+                    icon: Icons.search_rounded,
+                    tooltip: l10n.searchHint,
+                    onTap: () => context.go('/search'),
                   ),
-                ),
-                // Arama ikonu 48dp alanının sağına yaslı (sağ payı 2dp):
-                // segment-arama 10+26 = 36dp, arama-zil 2+14 = 16dp.
-                const SizedBox(width: AppDimensions.spacing10),
-                _HeaderIconButton(
-                  alignment: Alignment.centerRight,
-                  icon: Icons.search_rounded,
-                  tooltip: l10n.searchHint,
-                  onTap: () => context.go('/search'),
-                ),
-                const _NotificationBell(),
-              ],
+                  const _NotificationBell(),
+                ],
+              ),
             ),
           ),
         ),
@@ -181,6 +187,38 @@ class _NotificationBell extends ConsumerWidget {
       tooltip: AppLocalizations.of(context)!.notificationsTitle,
       showDot: unread > 0,
       onTap: () => context.push('/notifications'),
+    );
+  }
+}
+
+/// Oturumdaki kullanıcının avatarı; dokununca Profil sekmesine gider.
+class _ProfileAvatarButton extends ConsumerWidget {
+  const _ProfileAvatarButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(currentUserProvider);
+    return Tooltip(
+      message: AppLocalizations.of(context)!.navProfile,
+      child: Semantics(
+        button: true,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => context.go('/profile'),
+          child: SizedBox.square(
+            dimension: 48,
+            child: Center(
+              child: ExcludeSemantics(
+                child: UserAvatar(
+                  name: user?.fullName ?? '',
+                  imageUrl: user?.avatarUrl,
+                  size: AvatarSize.small,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

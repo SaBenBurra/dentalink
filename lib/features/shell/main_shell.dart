@@ -5,6 +5,12 @@ import 'package:go_router/go_router.dart';
 import '../../providers/message_provider.dart';
 import '../../shared/widgets/app_bottom_nav_bar.dart';
 
+/// Alt menünün görünürlük animasyonu (1 = görünür, 0 = gizli; yay 0–1 dışına
+/// taşabilir). Üst barlar bunu izleyerek alt menüyle aynı karede kayar.
+final bottomBarAnimationProvider = Provider<ProxyAnimation>(
+  (ref) => ProxyAnimation(kAlwaysCompleteAnimation),
+);
+
 /// Ana shell — go_router ShellRoute tarafından sarılır.
 /// [child] parametresi aktif sekme ekranıdır.
 ///
@@ -35,6 +41,7 @@ class MainShell extends ConsumerWidget {
         motion: const BottomBarMotion.cupertino(
           preset: BottomBarCupertinoMotion.snappy,
           duration: Duration(milliseconds: 400),
+          transitionBuilder: _barTransition,
         ),
         scrollBehavior: const BottomBarScrollBehavior(
           hideOnScroll: true,
@@ -77,7 +84,9 @@ class MainShell extends ConsumerWidget {
             valueListenable: BottomBarScope.of(context).barHeight,
             builder: (context, barHeight, child) => MediaQuery(
               data: MediaQuery.of(context).copyWith(
-                padding: MediaQuery.paddingOf(context).copyWith(bottom: barHeight),
+                padding: MediaQuery.paddingOf(
+                  context,
+                ).copyWith(bottom: barHeight),
               ),
               child: child!,
             ),
@@ -94,6 +103,27 @@ class MainShell extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+
+  /// Paketin varsayılan kayma geçişi; ayrıca barın animasyonunu
+  /// [bottomBarAnimationProvider]'a bağlar. Statik: motion eşitliği sabit kalsın.
+  static Widget _barTransition(
+    BuildContext context,
+    Animation<double> animation,
+    Widget child,
+  ) {
+    final proxy = ProviderScope.containerOf(
+      context,
+      listen: false,
+    ).read(bottomBarAnimationProvider);
+    if (proxy.parent != animation) proxy.parent = animation;
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(0, 2),
+        end: Offset.zero,
+      ).animate(animation),
+      child: child,
     );
   }
 
