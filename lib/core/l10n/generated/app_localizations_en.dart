@@ -1127,4 +1127,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get casePrivacyRequired => 'Confirm patient privacy before posting';
+
+  @override
+  String get logoutConfirmTitle => 'Log out?';
 }

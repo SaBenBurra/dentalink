@@ -137,7 +137,7 @@
 | UX-2 | 🟠 | create/edit ekranları | `PopScope` yok; dolu form ve yükleme sırasında geri basılınca veri kayboluyor, retry'da duplicate oluşabiliyor. | `PopScope(canPop: !loading && !dirty)` + onay diyaloğu. *(Faz 3)* | ✅ |
 | UX-3 | 🟠 | `create_case_screen.dart:65`, `create_question_screen.dart:41`, `edit_profile_screen.dart:73`, `case_detail_screen.dart:58,517`, `question_detail_screen.dart:51,376`, `register_screen.dart:153`, `profile_posts_tab.dart:51` | Ham `Exception: ...` metni kullanıcıya gösteriliyor. | `getErrorMessage(e)` (`lib/shared/utils/error_messages.dart`). | ✅ |
 | UX-4 | 🟠 | `settings_screen.dart:303-332` | Bildirim toggle'ları `value: true` ile sabit; `onToggle` boş. | Gizle ya da bağla. *(Faz 1)* | ✅ |
-| UX-5 | 🟠 | `settings_screen.dart:353-404` | Gizlilik, Engellenenler, Koşullar ve Politika `enabled:false`; **hesap silme yok** (mağaza zorunluluğu); sürüm sabit "v0.1.0 (Demo)"; çıkışta onay yok. | Faz 4 (hukuk) + `package_info_plus` + onay diyaloğu. | ⬜ |
+| UX-5 | 🟠 | `settings_screen.dart:353-404` | Gizlilik, Engellenenler, Koşullar ve Politika `enabled:false`; **hesap silme yok** (mağaza zorunluluğu); sürüm sabit "v0.1.0 (Demo)"; çıkışta onay yok. | Faz 4 (hukuk) + `package_info_plus` + onay diyaloğu. | ✅ Faz 4 (024; hukuk metinleri taslak) |
 | UX-6 | 🟠 | menüler, profil, chat | Raporlama ve engelleme yok. | Faz 4. | ✅ Faz 4 (023) |
 | UX-7 | 🟡 | `profile_posts_tab.dart` ve diğerleri | Boş durum yok; profil, bildirim, sohbet ve takipçi ekranlarında pull-to-refresh yok. | `EmptyState` widget'ı + `RefreshIndicator`. *(Faz 3)* | ✅ |
 | UX-8 | 🟡 | tüm girişler; `post_body.dart:35` | `maxLength` yok; feed kartındaki başlıkta `maxLines` yok. | Başlık 150, gövde 5000, yorum 2000 karakter; kartta `maxLines: 2`. *(Faz 3)* | ✅ |

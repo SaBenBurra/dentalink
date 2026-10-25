@@ -423,5 +423,6 @@
   "registerAcceptTerms": "I have read and accept the Terms of Use. I have read the KVKK Privacy Notice and the Privacy Policy.",
   "validationTermsRequired": "You need to accept the terms of use to continue",
   "casePrivacyConfirm": "The images and description do not show the patient's face, name or anything that identifies them.",
-  "casePrivacyRequired": "Confirm patient privacy before posting"
+  "casePrivacyRequired": "Confirm patient privacy before posting",
+  "logoutConfirmTitle": "Log out?"
 }

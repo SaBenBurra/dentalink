@@ -2149,6 +2149,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Paylaşmadan önce hasta mahremiyeti onayını işaretlemelisin'**
   String get casePrivacyRequired;
+
+  /// No description provided for @logoutConfirmTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çıkış yapılsın mı?'**
+  String get logoutConfirmTitle;
 }
 
 class _AppLocalizationsDelegate

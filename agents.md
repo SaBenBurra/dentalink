@@ -70,22 +70,22 @@ lib/
 ### İçerik
 | Tür | Alanlar | Not |
 |---|---|---|
-| **Vaka** | başlık, açıklama, branş (zorunlu, `DentalBranch`), etiketler, en fazla 10 görsel | Hasta mahremiyeti: yüz ve kimlik bilgisi içermemeli (Faz 4'te onay kutusu) |
-| **Soru** | başlık, detay, etiketler, en fazla 4 görsel | Soru sahibi "En İyi Cevap" seçer (`mark_best_answer` RPC) |
+| **Vaka** | başlık, açıklama, branş (zorunlu, `DentalBranch`), etiketler, en fazla 10 görsel | Hasta mahremiyeti: yüz ve kimlik bilgisi içermemeli (paylaşırken onay kutusu zorunlu) |
+| **Soru** | başlık, detay, etiketler (görsel yükleme henüz yok) | Soru sahibi "En İyi Cevap" seçer (`mark_best_answer` RPC) |
 | İş ilanı, pazar yeri | — | Yayın sonrası |
 
 **Branşlar** (`DentalBranch`): Pedodonti, Endodonti, Ortodonti, Periodontoloji, Protetik, Çene Cerrahisi, Çene Radyolojisi, Oral Diagnoz, Restoratif.
 
 ### Sosyal
-- Beğeni (post ve yorum), yorum ve cevap, takip, kaydetme (bookmark), bire bir DM (realtime), bildirimler (Faz 1'de gerçek).
+- Beğeni (post ve yorum), yorum ve cevap, takip, kaydetme (bookmark), bire bir DM (realtime), bildirimler.
 - Feed sekmeleri: Tümü / Vakalar / Sorular. Sıralama kronolojik (algoritmik feed yayından sonra).
 - Arama: Türkçe full-text (başlık + içerik), kullanıcı arama, branş ve tür filtresi.
-- Moderasyon (Faz 4): raporla, engelle, hesap silme.
+- Moderasyon: raporla (post, yorum, kullanıcı), engelle (iki yönlü gizler), hesap silme. Kuyruk: `docs/SUPABASE.md` §6.
 
 ### Navigasyon
 Alt menü: **Ana Sayfa** `/feed` · **Keşfet** `/search` · **Oluştur (+)** (vaka/soru seçimi) · **Mesajlar** `/messages` · **Profil** `/profile`.
 
-Diğer rotalar: `/feed/case/:id`, `/feed/question/:id`, `/create-case`, `/create-question`, `/chat/:userId`, `/profile/:userId`, `/edit-profile`, `/network/:id`, `/notifications`, `/bookmarks`, `/settings`, `/login`, `/register`. Tam liste: `lib/core/router/app_router.dart`.
+Diğer rotalar: `/feed/case/:id`, `/feed/question/:id`, `/create-case`, `/create-question`, `/chat/:userId`, `/profile/:userId`, `/edit-profile`, `/network/:id`, `/notifications`, `/bookmarks`, `/settings`, `/settings/blocked`, `/legal/:doc`, `/login`, `/register`. Tam liste: `lib/core/router/app_router.dart`.
 
 ---
 

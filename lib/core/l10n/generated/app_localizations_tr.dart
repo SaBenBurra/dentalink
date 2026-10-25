@@ -1127,4 +1127,7 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get casePrivacyRequired =>
       'Paylaşmadan önce hasta mahremiyeti onayını işaretlemelisin';
+
+  @override
+  String get logoutConfirmTitle => 'Çıkış yapılsın mı?';
 }

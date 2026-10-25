@@ -2,6 +2,7 @@ import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -16,6 +17,11 @@ import '../../../providers/auth_provider.dart';
 ///
 /// Genişletilebilirlik prensibi: Yeni bir ayar eklemek için
 /// [_buildSections] metoduna yeni bir [SettingsSection] eklemek yeterlidir.
+final _appVersionProvider = FutureProvider.autoDispose<String>((ref) async {
+  final info = await PackageInfo.fromPlatform();
+  return '${info.version} (${info.buildNumber})';
+});
+
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -326,6 +332,29 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
+  Future<void> _confirmSignOut(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.logoutConfirmTitle),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: Theme.of(ctx).colorScheme.error),
+            child: Text(l10n.settingsLogout),
+          ),
+        ],
+      ),
+    );
+    // Router oturum kapanınca /login'e yönlendirir.
+    if (confirmed == true) await ref.read(authProvider.notifier).signOut();
+  }
+
   // ─── Hakkında ───────────────────────────────────────────────────────────
 
   Widget _buildAboutSection(BuildContext context, WidgetRef ref, bool isDark) {
@@ -351,8 +380,7 @@ class SettingsScreen extends ConsumerWidget {
         SettingsTile(
           icon: Icons.info_outline_rounded,
           title: AppLocalizations.of(context)!.settingsAppVersion,
-          subtitle: 'v0.1.0 (Demo)',
-          onTap: () {},
+          subtitle: ref.watch(_appVersionProvider).valueOrNull ?? '',
         ),
         const SizedBox(height: AppDimensions.spacing16),
         Padding(
@@ -360,10 +388,7 @@ class SettingsScreen extends ConsumerWidget {
             horizontal: AppDimensions.spacing24,
           ),
           child: OutlinedButton.icon(
-            onPressed: () async {
-              await ref.read(authProvider.notifier).signOut();
-              // Router will automatically redirect to /login due to auth state change.
-            },
+            onPressed: () => _confirmSignOut(context, ref),
             icon: const Icon(Icons.logout_rounded, color: AppColors.error),
             label: Text(
               AppLocalizations.of(context)!.settingsLogout,
