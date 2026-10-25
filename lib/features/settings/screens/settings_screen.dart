@@ -48,7 +48,6 @@ class SettingsScreen extends ConsumerWidget {
     return [
       _buildAppearanceSection(context, ref, isDark),
       _buildLanguageSection(context, ref, isDark),
-      _buildNotificationSection(context, ref, isDark),
       _buildAccountSection(context, ref, isDark),
       _buildAboutSection(context, ref, isDark),
     ];
@@ -286,51 +285,6 @@ class SettingsScreen extends ConsumerWidget {
         ref.read(localeModeProvider.notifier).setLocale(locale);
         Navigator.pop(context);
       },
-    );
-  }
-
-  // ─── Bildirimler ────────────────────────────────────────────────────────
-
-  Widget _buildNotificationSection(
-    BuildContext context,
-    WidgetRef ref,
-    bool isDark,
-  ) {
-    return SettingsSection(
-      title: 'Bildirimler',
-      icon: Icons.notifications_outlined,
-      children: [
-        SettingsTile.toggle(
-          icon: Icons.favorite_outline_rounded,
-          title: 'Beğeni Bildirimleri',
-          subtitle: 'Gönderileriniz beğenildiğinde bildirim alın',
-          value: true,
-          onToggle: (_) {
-            // Faz 3'te notification_preferences JSONB güncellenecek
-          },
-        ),
-        SettingsTile.toggle(
-          icon: Icons.chat_bubble_outline_rounded,
-          title: 'Yorum Bildirimleri',
-          subtitle: 'Gönderilerinize yorum yapıldığında bildirim alın',
-          value: true,
-          onToggle: (_) {},
-        ),
-        SettingsTile.toggle(
-          icon: Icons.person_add_outlined,
-          title: 'Takip Bildirimleri',
-          subtitle: 'Yeni takipçileriniz olduğunda bildirim alın',
-          value: true,
-          onToggle: (_) {},
-        ),
-        SettingsTile.toggle(
-          icon: Icons.mail_outline_rounded,
-          title: 'Mesaj Bildirimleri',
-          subtitle: 'Yeni mesaj aldığınızda bildirim alın',
-          value: true,
-          onToggle: (_) {},
-        ),
-      ],
     );
   }
 

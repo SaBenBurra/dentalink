@@ -99,7 +99,7 @@
 - [x] Uzunluk CHECK'leri (migration 017): post başlığı 150, içerik 5000, yorum ve mesaj 2000, etiket 30 karakter, post başına 5 etiket (trigger); oluşturma ekranlarına `maxLength`; RPC `22023` → `ValidationFailure`. Profil alanları UX-8'de. _(2026-10-25; canlıda, smoke 13 geçti)_ — `DATA-17`
 - [x] Paylaş butonu kaldırıldı — `BUG-11`
 - [x] Ortak takipçiler: profili takip edenlerden benim takip ettiklerim (`mutualFollowersProvider`); kendi profilinde gizli. _(2026-10-25; testli, cihazda doğrulandı)_ — `BUG-19`
-- [ ] Bildirim ayarları toggle'ları (bağla ya da gizle) — `UX-4`
+- [x] Bildirim ayarları toggle'ları kaldırıldı (DB tercihi ve push yok); tercihler Faz 5'te push ile gelir — `UX-4`
 - [ ] Integration test'i fake repository'lerle çalışır hale getir — `TEST-2`
 
 **Bitti tanımı:**
@@ -168,7 +168,7 @@
 - [ ] Production Supabase projesi + `--dart-define-from-file` (dev/prod) — `SEC-15`
 - [ ] E-posta OTP şablonu ve SMTP; `site_url` — `AUTH-9`
 - [ ] Crash raporlama (Sentry veya Crashlytics) — `REL-5`
-- [ ] Push bildirim (FCM + `push_tokens` + Edge Function) — `REL-6`
+- [ ] Push bildirim (FCM + `push_tokens` + Edge Function) + ayarlarda bildirim tercihleri (`notification_preferences`, UX-4) — `REL-6`
 - [ ] Performans profili (başlatma süresi, jank, bellek)
 - [ ] Beta testi (TestFlight + Play Internal) → mağaza açıklamaları ve ekran görüntüleri → yayın
 
