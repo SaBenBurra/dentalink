@@ -10,6 +10,7 @@ class RegisterState {
   final String? nameError;
   final UserTitle? selectedTitle;
   final File? selectedImageFile;
+  final bool acceptedTerms;
 
   const RegisterState({
     this.currentStep = 0,
@@ -17,6 +18,7 @@ class RegisterState {
     this.nameError,
     this.selectedTitle,
     this.selectedImageFile,
+    this.acceptedTerms = false,
   });
 
   RegisterState copyWith({
@@ -25,6 +27,7 @@ class RegisterState {
     String? Function()? nameError,
     UserTitle? Function()? selectedTitle,
     File? Function()? selectedImageFile,
+    bool? acceptedTerms,
   }) {
     return RegisterState(
       currentStep: currentStep ?? this.currentStep,
@@ -32,6 +35,7 @@ class RegisterState {
       nameError: nameError != null ? nameError() : this.nameError,
       selectedTitle: selectedTitle != null ? selectedTitle() : this.selectedTitle,
       selectedImageFile: selectedImageFile != null ? selectedImageFile() : this.selectedImageFile,
+      acceptedTerms: acceptedTerms ?? this.acceptedTerms,
     );
   }
 }
@@ -59,11 +63,18 @@ class RegisterController extends AutoDisposeNotifier<RegisterState> {
       if (state.selectedTitle == null) {
         throw StateError('title not selected');
       }
+      if (!state.acceptedTerms) {
+        throw StateError('terms not accepted');
+      }
     }
     
     if (state.currentStep < totalSteps - 1) {
       state = state.copyWith(currentStep: state.currentStep + 1);
     }
+  }
+
+  void setAcceptedTerms(bool value) {
+    state = state.copyWith(acceptedTerms: value);
   }
 
   void prevStep() {

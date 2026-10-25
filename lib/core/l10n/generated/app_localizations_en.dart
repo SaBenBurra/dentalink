@@ -987,9 +987,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsChooseLanguage => 'Choose Language';
 
   @override
-  String get comingSoon => 'Coming soon';
-
-  @override
   String get settingsBlocked => 'Blocked Users';
 
   @override
@@ -1112,4 +1109,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String deleteAccountTypeToConfirm(String word) {
     return 'Type $word to confirm';
   }
+
+  @override
+  String get legalKvkk => 'KVKK Privacy Notice';
+
+  @override
+  String get registerAcceptTerms =>
+      'I have read and accept the Terms of Use. I have read the KVKK Privacy Notice and the Privacy Policy.';
+
+  @override
+  String get validationTermsRequired =>
+      'You need to accept the terms of use to continue';
+
+  @override
+  String get casePrivacyConfirm =>
+      'The images and description do not show the patient\'s face, name or anything that identifies them.';
+
+  @override
+  String get casePrivacyRequired => 'Confirm patient privacy before posting';
 }

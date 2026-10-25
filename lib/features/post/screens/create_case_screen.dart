@@ -28,6 +28,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
   List<File> _images = [];
   List<String> _tags = [];
   bool _dirty = false; // UX-2
+  bool _privacyConfirmed = false;
 
   @override
   void dispose() {
@@ -50,6 +51,13 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
           SnackBar(
             content: Text(AppLocalizations.of(context)!.caseImageRequired),
           ),
+        );
+        return;
+      }
+
+      if (!_privacyConfirmed) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.casePrivacyRequired)),
         );
         return;
       }
@@ -188,6 +196,17 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
                     _images = List.of(images);
                   });
                 },
+              ),
+              // Hasta mahremiyeti (Faz 4): yüz ve kimlik bilgisi paylaşılmaz.
+              CheckboxListTile(
+                value: _privacyConfirmed,
+                onChanged: (v) => setState(() {
+                  _dirty = true;
+                  _privacyConfirmed = v ?? false;
+                }),
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+                title: Text(AppLocalizations.of(context)!.casePrivacyConfirm),
               ),
               const SizedBox(height: AppDimensions.spacing24),
 

@@ -1,0 +1,46 @@
+DRAFT — Pending legal review. Do not publish until the bracketed details are filled in.
+
+PRIVACY POLICY
+
+Last updated: [DD.MM.YYYY]
+
+This policy explains what information is collected when you use the DentLink mobile app (the "App"), how it is used and what your rights are. Legal details on personal data processing are in the KVKK Privacy Notice.
+
+1. Information we collect
+- The email address or phone number you sign in with. It is never shown to other users.
+- Your profile: full name, title, university, city, clinic, years of experience, bio and profile photo. These are visible to other members.
+- Cases, questions, images, comments and likes you post. These are visible to signed-in members.
+- Your direct messages. Only you and the person you message can see them.
+- Reports you submit and users you block. These are not shown to other users.
+- Technical information needed to run the App (device type, app version, error logs).
+
+2. How we use it
+- To create your account and manage your session.
+- To show your posts and provide follow, messaging and notification features.
+- To review reports, remove content that breaks the rules and prevent abuse.
+- To fix errors.
+
+We do not use your information for advertising, and we do not sell or rent it.
+
+3. Sharing
+Your information is stored only with the infrastructure provider we use to run the service (Supabase; servers in the European Union) and may be shared with authorities when required by law.
+
+4. Patient privacy
+When posting a case, do not share the patient's face, name, ID or file number, or anything else that could identify them. Content that breaks this rule can be reported and will be removed.
+
+5. Security
+Data is sent over encrypted connections (HTTPS). Case images are shown only to signed-in members through expiring links. Each user can change only their own data.
+
+6. Retention and deletion
+Your information is kept while your account is open. You can permanently delete your account and all your content in Settings → Delete Account. Deleted chats are removed for the other person as well.
+
+7. Children
+The App is for dentists and dental students. People under 18 may not use the App.
+
+8. Your rights
+To access, correct or delete your data, write to [EMAIL]. See the KVKK Privacy Notice for details.
+
+9. Changes
+We will notify you in the App when we update this policy.
+
+Contact: [COMPANY NAME / FULL NAME], [ADDRESS], [EMAIL]

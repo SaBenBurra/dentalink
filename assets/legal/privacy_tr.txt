@@ -1,0 +1,46 @@
+TASLAK — Hukukçu onayı bekleniyor. Köşeli parantez içindeki bilgiler doldurulmadan yayınlanmamalıdır.
+
+GİZLİLİK POLİTİKASI
+
+Son güncelleme: [GG.AA.YYYY]
+
+Bu politika, DentLink mobil uygulamasını ("Uygulama") kullanırken hangi bilgilerin toplandığını, nasıl kullanıldığını ve haklarınızı açıklar. Kişisel verilerin işlenmesine ilişkin yasal ayrıntılar KVKK Aydınlatma Metni'nde yer alır.
+
+1. Topladığımız bilgiler
+- Giriş için verdiğiniz e-posta adresi veya telefon numarası. Bu bilgiler diğer kullanıcılara gösterilmez.
+- Profil bilgileriniz: ad soyad, unvan, üniversite, şehir, klinik, deneyim yılı, biyografi ve profil fotoğrafı. Bu bilgiler diğer üyelere görünür.
+- Paylaştığınız vakalar, sorular, görseller, yorumlar ve beğeniler. Bunlar Uygulama'ya giriş yapmış üyelere görünür.
+- Doğrudan mesajlarınız. Yalnızca siz ve mesajlaştığınız kişi görebilir.
+- Gönderdiğiniz raporlar ve engellediğiniz kullanıcılar. Bunlar diğer kullanıcılara gösterilmez.
+- Uygulamanın çalışması için gerekli teknik bilgiler (cihaz türü, uygulama sürümü, hata kayıtları).
+
+2. Bilgileri nasıl kullanıyoruz
+- Hesabınızı oluşturmak ve oturumunuzu yönetmek.
+- Paylaşımlarınızı göstermek; takip, mesajlaşma ve bildirim özelliklerini sunmak.
+- Raporları incelemek, kurallara aykırı içeriği kaldırmak ve kötüye kullanımı önlemek.
+- Hataları gidermek.
+
+Bilgilerinizi reklam amacıyla kullanmıyor, satmıyor veya kiralamıyoruz.
+
+3. Paylaşım
+Bilgileriniz yalnızca hizmeti sunmak için çalıştığımız altyapı sağlayıcısında (Supabase; sunucular Avrupa Birliği'nde) saklanır ve kanunen zorunlu hallerde yetkili makamlarla paylaşılabilir.
+
+4. Hasta mahremiyeti
+Vaka paylaşırken hastanın yüzünü, adını, kimlik veya dosya numarasını ya da kimliğini ortaya çıkarabilecek başka bir bilgiyi paylaşmamanız gerekir. Bu kurala aykırı içerik raporlanabilir ve kaldırılır.
+
+5. Güvenlik
+Veriler şifreli bağlantı (HTTPS) üzerinden iletilir. Vaka görselleri yalnızca giriş yapmış üyelere, süreli bağlantılarla gösterilir. Her kullanıcı yalnızca kendi verisini değiştirebilir.
+
+6. Saklama ve silme
+Bilgileriniz hesabınız açık olduğu sürece saklanır. Ayarlar → Hesabı Sil ile hesabınızı ve tüm içeriğinizi kalıcı olarak silebilirsiniz. Silinen sohbetler karşı taraftan da kaldırılır.
+
+7. Çocuklar
+Uygulama, diş hekimleri ve diş hekimliği öğrencileri içindir. 18 yaşından küçükler Uygulama'yı kullanamaz.
+
+8. Haklarınız
+Verilerinize erişme, düzeltme ve silme talepleriniz için [E-POSTA] adresine yazabilirsiniz. Ayrıntılar için KVKK Aydınlatma Metni'ne bakın.
+
+9. Değişiklikler
+Bu politikayı güncellediğimizde Uygulama içinde bildiririz.
+
+İletişim: [ŞİRKET UNVANI / AD SOYAD], [ADRES], [E-POSTA]

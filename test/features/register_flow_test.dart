@@ -46,6 +46,17 @@ void main() {
     await tester.enterText(find.byType(TextField).first, 'Ayşe Yılmaz');
     await tester.tap(find.text('Öğrenci'));
     await tester.pumpAndSettle();
+
+    // Koşullar onaylanmadan ilk adım geçilmez.
+    await tester.tap(find.text('Devam Et'));
+    await tester.pumpAndSettle();
+    expect(find.text('Devam etmek için kullanım koşullarını kabul etmelisin'), findsOneWidget);
+    await tester.ensureVisible(find.byType(CheckboxListTile));
+    await tester.tap(find.byType(CheckboxListTile));
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 5)); // SnackBar "Devam Et"i örtmesin
+    await tester.pumpAndSettle();
+
     await tester.tap(find.text('Devam Et'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Devam Et'));

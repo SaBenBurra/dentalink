@@ -91,6 +91,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           behavior: SnackBarBehavior.floating,
         ),
       );
+    } else if (state.currentStep == 0 && !state.acceptedTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.validationTermsRequired),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
     
     try {
@@ -246,6 +253,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         },
                         onTitleSelected: (title) {
                           ref.read(registerControllerProvider.notifier).setTitle(title);
+                        },
+                        acceptedTerms: state.acceptedTerms,
+                        onAcceptedTermsChanged: (value) {
+                          ref.read(registerControllerProvider.notifier).setAcceptedTerms(value);
                         },
                       ),
                       RegisterStepTwo(

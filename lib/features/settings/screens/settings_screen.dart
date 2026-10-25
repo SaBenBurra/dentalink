@@ -336,16 +336,17 @@ class SettingsScreen extends ConsumerWidget {
         SettingsTile(
           icon: Icons.description_outlined,
           title: AppLocalizations.of(context)!.settingsTerms,
-          subtitle: AppLocalizations.of(context)!.comingSoon,
-          enabled: false,
-          onTap: () {},
+          onTap: () => context.push('/legal/terms'),
         ),
         SettingsTile(
           icon: Icons.privacy_tip_outlined,
           title: AppLocalizations.of(context)!.settingsPrivacyPolicy,
-          subtitle: AppLocalizations.of(context)!.comingSoon,
-          enabled: false,
-          onTap: () {},
+          onTap: () => context.push('/legal/privacy'),
+        ),
+        SettingsTile(
+          icon: Icons.gavel_outlined,
+          title: AppLocalizations.of(context)!.legalKvkk,
+          onTap: () => context.push('/legal/kvkk'),
         ),
         SettingsTile(
           icon: Icons.info_outline_rounded,

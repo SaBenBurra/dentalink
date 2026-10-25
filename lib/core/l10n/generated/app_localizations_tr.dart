@@ -986,9 +986,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsChooseLanguage => 'Dil Seçin';
 
   @override
-  String get comingSoon => 'Yakında';
-
-  @override
   String get settingsBlocked => 'Engellenenler';
 
   @override
@@ -1111,4 +1108,23 @@ class AppLocalizationsTr extends AppLocalizations {
   String deleteAccountTypeToConfirm(String word) {
     return 'Onaylamak için $word yaz';
   }
+
+  @override
+  String get legalKvkk => 'KVKK Aydınlatma Metni';
+
+  @override
+  String get registerAcceptTerms =>
+      'Kullanım Koşulları\'nı okudum ve kabul ediyorum. KVKK Aydınlatma Metni\'ni ve Gizlilik Politikası\'nı okudum.';
+
+  @override
+  String get validationTermsRequired =>
+      'Devam etmek için kullanım koşullarını kabul etmelisin';
+
+  @override
+  String get casePrivacyConfirm =>
+      'Görseller ve açıklama hastanın yüzünü, adını veya kimliğini ortaya çıkaracak bilgi içermiyor.';
+
+  @override
+  String get casePrivacyRequired =>
+      'Paylaşmadan önce hasta mahremiyeti onayını işaretlemelisin';
 }

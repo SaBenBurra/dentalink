@@ -1,0 +1,55 @@
+TASLAK — Hukukçu onayı bekleniyor. Köşeli parantez içindeki bilgiler doldurulmadan yayınlanmamalıdır.
+
+KİŞİSEL VERİLERİN KORUNMASI KANUNU KAPSAMINDA AYDINLATMA METNİ
+
+Son güncelleme: [GG.AA.YYYY]
+
+1. Veri sorumlusu
+6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca kişisel verileriniz, veri sorumlusu sıfatıyla [ŞİRKET UNVANI / AD SOYAD], [ADRES], [MERSİS / VERGİ NO] ("DentLink") tarafından aşağıda açıklanan kapsamda işlenir.
+İletişim: [E-POSTA]
+
+2. İşlenen kişisel veriler
+- Kimlik ve iletişim: ad soyad, kullanıcı adı, e-posta adresi veya telefon numarası.
+- Mesleki bilgiler: unvan, üniversite, şehir, çalıştığınız klinik veya kurum, meslekteki deneyim yılı, biyografi, profil fotoğrafı.
+- Kullanıcı içeriği: paylaştığınız vakalar ve sorular, bunlara eklediğiniz görseller, yorumlar, beğeniler, kaydettikleriniz, takip ettiğiniz kişiler ve doğrudan mesajlarınız.
+- Güvenlik ve moderasyon: oturum kayıtları, gönderdiğiniz raporlar, engellediğiniz kullanıcılar.
+- Teknik veriler: cihaz ve uygulama sürümü, hata kayıtları, IP adresi.
+
+Hasta verileri: Platformda paylaşılan vaka görsellerinin ve açıklamalarının hastanın kimliğini belirlemeye yarayacak bilgi (yüz, ad, kimlik numarası, dosya numarası vb.) içermemesi zorunludur. Bu verileri anonimleştirmek, içeriği paylaşan hekimin sorumluluğundadır. DentLink, hastalara ait kimliği belirli sağlık verisi işlemeyi amaçlamaz; bu tür içerik fark edildiğinde kaldırılır.
+
+3. İşleme amaçları
+- Hesabınızı oluşturmak, oturum açmanızı sağlamak (tek kullanımlık kod ile).
+- Profilinizi ve paylaşımlarınızı diğer üyelere göstermek, takip, mesajlaşma ve bildirim özelliklerini sunmak.
+- Topluluk kurallarına aykırı içerikleri ve kullanıcıları tespit etmek, raporları incelemek, platform güvenliğini sağlamak.
+- Hataları gidermek ve hizmeti geliştirmek.
+- Hukuki yükümlülükleri yerine getirmek ve yetkili makamların taleplerini karşılamak.
+
+4. Hukuki sebepler (KVKK m. 5)
+- Bir sözleşmenin kurulması veya ifasıyla doğrudan ilgili olması (kullanım koşulları kapsamında hizmetin sunulması).
+- Veri sorumlusunun hukuki yükümlülüğünü yerine getirmesi.
+- İlgili kişinin temel hak ve özgürlüklerine zarar vermemek kaydıyla veri sorumlusunun meşru menfaati (güvenlik, moderasyon, hata giderme).
+- İlgili kişinin kendisi tarafından alenileştirilmiş olması (herkese açık profil ve paylaşımlar).
+
+5. Kişisel verilerin aktarılması
+Verileriniz, hizmetin altyapısını sağlayan barındırma ve veritabanı hizmet sağlayıcısına (Supabase Inc.; sunucular Avrupa Birliği'nde, Frankfurt) aktarılır. Bu aktarım KVKK m. 9 kapsamında [STANDART SÖZLEŞME / AÇIK RIZA — hukukçu belirleyecek] dayanağıyla yapılır. Verileriniz ayrıca kanunen yetkili kamu kurum ve kuruluşlarına, talep halinde ve yalnızca gerektiği ölçüde aktarılabilir. Verileriniz pazarlama amacıyla üçüncü kişilere satılmaz veya kiralanmaz.
+
+6. Toplama yöntemi
+Kişisel verileriniz, uygulamaya girdiğiniz bilgiler ve uygulamayı kullanımınız sırasında elektronik ortamda otomatik yollarla toplanır.
+
+7. Saklama süresi
+Verileriniz hesabınız açık olduğu sürece saklanır. Hesabınızı Ayarlar → Hesabı Sil ile sildiğinizde profiliniz, paylaşımlarınız, yorumlarınız, mesajlarınız ve yüklediğiniz görseller kalıcı olarak silinir. Hukuki yükümlülük gereği saklanması gereken kayıtlar, ilgili mevzuatta öngörülen süre boyunca saklanır ve ardından silinir.
+
+8. Haklarınız (KVKK m. 11)
+DentLink'e başvurarak:
+- kişisel verilerinizin işlenip işlenmediğini öğrenme,
+- işlenmişse buna ilişkin bilgi talep etme,
+- işlenme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme,
+- yurt içinde veya yurt dışında aktarıldığı üçüncü kişileri bilme,
+- eksik veya yanlış işlenmişse düzeltilmesini isteme,
+- KVKK m. 7'deki şartlar çerçevesinde silinmesini veya yok edilmesini isteme,
+- düzeltme ve silme işlemlerinin aktarıldığı üçüncü kişilere bildirilmesini isteme,
+- münhasıran otomatik sistemlerle analiz edilmesi sonucu aleyhinize bir sonuç çıkmasına itiraz etme,
+- kanuna aykırı işleme sebebiyle zarara uğramanız halinde zararın giderilmesini talep etme
+haklarına sahipsiniz.
+
+Başvurularınızı [E-POSTA] adresine veya [ADRES] adresine yazılı olarak iletebilirsiniz. Başvurular en geç otuz gün içinde ücretsiz olarak sonuçlandırılır.

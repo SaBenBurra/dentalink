@@ -1,0 +1,46 @@
+TASLAK — Hukukçu onayı bekleniyor. Köşeli parantez içindeki bilgiler doldurulmadan yayınlanmamalıdır.
+
+KULLANIM KOŞULLARI
+
+Son güncelleme: [GG.AA.YYYY]
+
+Bu koşullar, [ŞİRKET UNVANI / AD SOYAD] ("DentLink") tarafından sunulan DentLink mobil uygulamasının ("Uygulama") kullanımını düzenler. Hesap oluşturarak bu koşulları kabul etmiş olursunuz.
+
+1. Kimler kullanabilir
+Uygulama, diş hekimleri, uzman diş hekimleri ve diş hekimliği öğrencileri için mesleki bir paylaşım platformudur. 18 yaşından büyük olmanız ve profilinizde unvanınızı doğru belirtmeniz gerekir. Başkası adına veya sahte bilgiyle hesap açılamaz.
+
+2. Hasta mahremiyeti
+- Paylaştığınız vaka görselleri ve açıklamaları hastanın kimliğini ortaya çıkarmamalıdır: yüz, ad soyad, kimlik veya dosya numarası, randevu bilgisi, hastaya ait başka bir tanımlayıcı paylaşılamaz.
+- Vaka paylaşmadan önce hastadan gerekli izinleri almak ve verileri anonimleştirmek paylaşan hekimin sorumluluğundadır.
+- Bu kurala aykırı içerik bildirim beklenmeden kaldırılabilir.
+
+3. İçerik kuralları
+Aşağıdakiler yasaktır:
+- Hakaret, taciz, nefret söylemi veya tehdit.
+- Spam, reklam ve izinsiz tanıtım; hasta yönlendirme veya ücret karşılığı hizmet teklifi.
+- Yanlış, yanıltıcı veya hastalara zarar verebilecek tıbbi bilgi.
+- Müstehcen, şiddet içeren veya mesleki ortama uygun olmayan içerik.
+- Başkalarının telif hakkı veya kişisel verilerini ihlal eden içerik.
+- Uygulamanın güvenliğini bozmaya yönelik girişimler.
+
+Paylaşımlar mesleki görüş alışverişi içindir ve bir hastaya yönelik teşhis veya tedavi önerisi yerine geçmez. Klinik kararların sorumluluğu hekime aittir.
+
+4. Raporlama ve engelleme
+Kurallara aykırı içerik veya kullanıcıları ⋮ menüsünden raporlayabilirsiniz. Raporlar incelenir; aykırı içerik kaldırılır ve tekrar eden ihlallerde hesap kapatılabilir. İstemediğiniz kullanıcıları engelleyebilirsiniz; engellenen kişiyle birbirinizin içeriğini görmez ve mesajlaşamazsınız.
+
+5. İçeriğinizin hakları
+Paylaştığınız içeriğin hakları sizde kalır. İçeriğinizi Uygulama içinde diğer üyelere göstermemiz için DentLink'e münhasır olmayan, ücretsiz bir kullanım izni verirsiniz. Bu izin içeriği veya hesabınızı sildiğinizde sona erer.
+
+6. Hesabın sonlandırılması
+Hesabınızı istediğiniz zaman Ayarlar → Hesabı Sil ile kalıcı olarak silebilirsiniz. DentLink, bu koşulları ihlal eden hesapları askıya alabilir veya kapatabilir.
+
+7. Sorumluluğun sınırlandırılması
+Uygulama "olduğu gibi" sunulur. DentLink, kullanıcıların paylaştığı içeriğin doğruluğunu garanti etmez ve bu içeriğe dayanılarak verilen kararlardan sorumlu değildir. Hizmette kesinti veya veri kaybı olmaması için makul özeni gösteririz.
+
+8. Değişiklikler
+Bu koşulları güncelleyebiliriz. Önemli değişiklikleri Uygulama içinde bildiririz; Uygulama'yı kullanmaya devam etmeniz güncel koşulları kabul ettiğiniz anlamına gelir.
+
+9. Uygulanacak hukuk
+Bu koşullara Türkiye Cumhuriyeti hukuku uygulanır. Uyuşmazlıklarda [İL] mahkemeleri ve icra daireleri yetkilidir.
+
+İletişim: [E-POSTA]

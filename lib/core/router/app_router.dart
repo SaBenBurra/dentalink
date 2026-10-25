@@ -22,6 +22,7 @@ import '../../features/messaging/screens/chat_screen.dart';
 import '../../features/notifications/screens/notifications_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
 import '../../features/settings/screens/blocked_users_screen.dart';
+import '../../features/settings/screens/legal_screen.dart';
 import '../../features/bookmarks/screens/bookmarks_screen.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import '../../providers/auth_provider.dart';
@@ -45,6 +46,9 @@ String? resolveAuthRedirect({
   final isRegister = location == '/register';
   final isAuthError = location == '/auth-error';
   final isAuthRoute = isLogin || isRegister || isAuthError;
+
+  // Hukuk metinleri her durumda okunabilir (kayıtta onay kutusundan açılır).
+  if (location.startsWith('/legal/')) return null;
 
   // Oturum yoksa korumalı sayfalara girilemez.
   if (!hasSession) return (isLogin || isRegister) ? null : '/login';
@@ -202,6 +206,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/settings/blocked',
         builder: (context, state) => const BlockedUsersScreen(),
+      ),
+      GoRoute(
+        path: '/legal/:doc',
+        redirect: (context, state) =>
+            LegalDoc.tryParse(state.pathParameters['doc']) == null ? '/settings' : null,
+        builder: (context, state) =>
+            LegalScreen(doc: LegalDoc.tryParse(state.pathParameters['doc'])!),
       ),
       GoRoute(
         path: '/bookmarks',

@@ -1904,12 +1904,6 @@ abstract class AppLocalizations {
   /// **'Dil Seçin'**
   String get settingsChooseLanguage;
 
-  /// No description provided for @comingSoon.
-  ///
-  /// In tr, this message translates to:
-  /// **'Yakında'**
-  String get comingSoon;
-
   /// No description provided for @settingsBlocked.
   ///
   /// In tr, this message translates to:
@@ -2125,6 +2119,36 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Onaylamak için {word} yaz'**
   String deleteAccountTypeToConfirm(String word);
+
+  /// No description provided for @legalKvkk.
+  ///
+  /// In tr, this message translates to:
+  /// **'KVKK Aydınlatma Metni'**
+  String get legalKvkk;
+
+  /// No description provided for @registerAcceptTerms.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanım Koşulları\'nı okudum ve kabul ediyorum. KVKK Aydınlatma Metni\'ni ve Gizlilik Politikası\'nı okudum.'**
+  String get registerAcceptTerms;
+
+  /// No description provided for @validationTermsRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Devam etmek için kullanım koşullarını kabul etmelisin'**
+  String get validationTermsRequired;
+
+  /// No description provided for @casePrivacyConfirm.
+  ///
+  /// In tr, this message translates to:
+  /// **'Görseller ve açıklama hastanın yüzünü, adını veya kimliğini ortaya çıkaracak bilgi içermiyor.'**
+  String get casePrivacyConfirm;
+
+  /// No description provided for @casePrivacyRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Paylaşmadan önce hasta mahremiyeti onayını işaretlemelisin'**
+  String get casePrivacyRequired;
 }
 
 class _AppLocalizationsDelegate

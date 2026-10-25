@@ -58,5 +58,10 @@ void main() {
       expect(go('/auth-error', auth: AsyncData(user)), '/feed');
       expect(go('/profile/abc', auth: AsyncData(user)), isNull);
     });
+
+    test('hukuk metinleri oturumsuz ve kayıt sırasında da açılır', () {
+      expect(go('/legal/terms', session: false, auth: const AsyncData(null)), isNull);
+      expect(go('/legal/kvkk', auth: const AsyncData(null)), isNull);
+    });
   });
 }

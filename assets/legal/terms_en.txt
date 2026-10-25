@@ -1,0 +1,46 @@
+DRAFT — Pending legal review. Do not publish until the bracketed details are filled in.
+
+TERMS OF USE
+
+Last updated: [DD.MM.YYYY]
+
+These terms govern your use of the DentLink mobile app (the "App") provided by [COMPANY NAME / FULL NAME] ("DentLink"). By creating an account you accept these terms.
+
+1. Who may use the App
+The App is a professional sharing platform for dentists, dental specialists and dental students. You must be over 18 and state your title accurately on your profile. Accounts may not be opened on behalf of someone else or with false information.
+
+2. Patient privacy
+- Case images and descriptions you post must not reveal the patient's identity: no face, full name, ID or file number, appointment details or any other patient identifier.
+- Obtaining the necessary patient permissions and anonymising data before posting is the responsibility of the posting clinician.
+- Content that breaks this rule may be removed without notice.
+
+3. Content rules
+The following are prohibited:
+- Insults, harassment, hate speech or threats.
+- Spam, advertising and unsolicited promotion; patient referrals or offers of paid services.
+- False, misleading or potentially harmful medical information.
+- Obscene, violent or otherwise unprofessional content.
+- Content that infringes others' copyright or personal data.
+- Attempts to compromise the App's security.
+
+Posts are for professional discussion and do not replace a diagnosis or treatment plan for any patient. Clinical decisions remain the clinician's responsibility.
+
+4. Reporting and blocking
+You can report content or users that break the rules from the ⋮ menu. Reports are reviewed; violating content is removed and repeated violations may lead to account closure. You can block users you do not want to interact with; you and the blocked person will not see each other's content or be able to message each other.
+
+5. Rights to your content
+You keep the rights to the content you post. You grant DentLink a non-exclusive, royalty-free licence to show your content to other members within the App. This licence ends when you delete the content or your account.
+
+6. Termination
+You can permanently delete your account at any time in Settings → Delete Account. DentLink may suspend or close accounts that violate these terms.
+
+7. Limitation of liability
+The App is provided "as is". DentLink does not guarantee the accuracy of content posted by users and is not responsible for decisions made in reliance on it. We take reasonable care to avoid service interruptions and data loss.
+
+8. Changes
+We may update these terms. We will announce significant changes in the App; continuing to use the App means you accept the updated terms.
+
+9. Governing law
+These terms are governed by the laws of the Republic of Türkiye. The courts and enforcement offices of [CITY] have jurisdiction over disputes.
+
+Contact: [EMAIL]

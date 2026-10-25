@@ -7,6 +7,8 @@ import 'package:dentlink/shared/extensions/user_title_ui.dart';
 import 'package:dentlink/shared/widgets/glass_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:dentlink/features/settings/screens/legal_screen.dart';
 import 'package:dentlink/core/constants/profile_limits.dart';
 
 class RegisterStepOne extends StatelessWidget {
@@ -18,6 +20,8 @@ class RegisterStepOne extends StatelessWidget {
     required this.selectedTitle,
     required this.onNameChanged,
     required this.onTitleSelected,
+    required this.acceptedTerms,
+    required this.onAcceptedTermsChanged,
   });
   final TextEditingController nameController;
   final String? nameError;
@@ -26,6 +30,8 @@ class RegisterStepOne extends StatelessWidget {
 
   final ValueChanged<String> onNameChanged;
   final ValueChanged<UserTitle> onTitleSelected;
+  final bool acceptedTerms;
+  final ValueChanged<bool> onAcceptedTermsChanged;
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -168,6 +174,27 @@ class RegisterStepOne extends StatelessWidget {
                 ),
               );
             },
+          ),
+          const SizedBox(height: AppDimensions.spacing24),
+          CheckboxListTile(
+            value: acceptedTerms,
+            onChanged: (v) => onAcceptedTermsChanged(v ?? false),
+            controlAffinity: ListTileControlAffinity.leading,
+            contentPadding: EdgeInsets.zero,
+            title: Text(
+              AppLocalizations.of(context)!.registerAcceptTerms,
+              style: AppTextStyles.bodySmall.copyWith(color: textPrimaryColor),
+            ),
+          ),
+          Wrap(
+            spacing: AppDimensions.spacing8,
+            children: [
+              for (final doc in LegalDoc.values)
+                TextButton(
+                  onPressed: () => context.push('/legal/${doc.name}'),
+                  child: Text(doc.title(AppLocalizations.of(context)!)),
+                ),
+            ],
           ),
           const SizedBox(height: AppDimensions.spacing32),
         ],

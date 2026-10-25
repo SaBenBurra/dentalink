@@ -53,3 +53,6 @@ flutter:
 
   # Lokalizasyon
   generate: true
+
+  assets:
+    - assets/legal/

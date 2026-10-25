@@ -665,7 +665,6 @@
   "settingsChooseTheme": "Tema Seçin",
   "settingsAppLanguage": "Uygulama Dili",
   "settingsChooseLanguage": "Dil Seçin",
-  "comingSoon": "Yakında",
   "settingsBlocked": "Engellenenler",
   "settingsAbout": "Hakkında",
   "settingsTerms": "Kullanım Koşulları",
@@ -707,5 +706,10 @@
   "deleteAccountBody": "Profilin, gönderilerin, yorumların, mesajların (karşı taraftaki sohbet dahil) ve yüklediğin tüm görseller kalıcı olarak silinir. Bu işlem geri alınamaz.",
   "deleteAccountConfirmWord": "SİL",
   "deleteAccountTypeToConfirm": "Onaylamak için {word} yaz",
-  "@deleteAccountTypeToConfirm": { "placeholders": { "word": { "type": "String" } } }
+  "@deleteAccountTypeToConfirm": { "placeholders": { "word": { "type": "String" } } },
+  "legalKvkk": "KVKK Aydınlatma Metni",
+  "registerAcceptTerms": "Kullanım Koşulları'nı okudum ve kabul ediyorum. KVKK Aydınlatma Metni'ni ve Gizlilik Politikası'nı okudum.",
+  "validationTermsRequired": "Devam etmek için kullanım koşullarını kabul etmelisin",
+  "casePrivacyConfirm": "Görseller ve açıklama hastanın yüzünü, adını veya kimliğini ortaya çıkaracak bilgi içermiyor.",
+  "casePrivacyRequired": "Paylaşmadan önce hasta mahremiyeti onayını işaretlemelisin"
 }
