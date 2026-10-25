@@ -1093,4 +1093,22 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get blockedEmpty => 'Engellediğin kimse yok';
+
+  @override
+  String get settingsDeleteAccount => 'Hesabı Sil';
+
+  @override
+  String get deleteAccountTitle => 'Hesabın kalıcı olarak silinsin mi?';
+
+  @override
+  String get deleteAccountBody =>
+      'Profilin, gönderilerin, yorumların, mesajların (karşı taraftaki sohbet dahil) ve yüklediğin tüm görseller kalıcı olarak silinir. Bu işlem geri alınamaz.';
+
+  @override
+  String get deleteAccountConfirmWord => 'SİL';
+
+  @override
+  String deleteAccountTypeToConfirm(String word) {
+    return 'Onaylamak için $word yaz';
+  }
 }

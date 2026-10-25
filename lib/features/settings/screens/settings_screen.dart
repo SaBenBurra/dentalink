@@ -8,6 +8,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../providers/locale_provider.dart';
 import '../../../providers/theme_provider.dart';
 import '../widgets/settings_section.dart';
+import '../widgets/delete_account_dialog.dart';
 import '../widgets/settings_tile.dart';
 import '../../../providers/auth_provider.dart';
 
@@ -311,6 +312,15 @@ class SettingsScreen extends ConsumerWidget {
           icon: Icons.block_outlined,
           title: AppLocalizations.of(context)!.settingsBlocked,
           onTap: () => context.push('/settings/blocked'),
+        ),
+        SettingsTile(
+          icon: Icons.delete_forever_outlined,
+          title: AppLocalizations.of(context)!.settingsDeleteAccount,
+          onTap: () => showDialog<void>(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => const DeleteAccountDialog(),
+          ),
         ),
       ],
     );

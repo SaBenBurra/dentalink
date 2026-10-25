@@ -97,6 +97,17 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
     state = const AsyncData(null);
   }
 
+  /// Hesabı siler ve oturumu kapatır. Hesap silindikten sonra signOut
+  /// hata verse bile kullanıcı uygulamada oturumlu kalmaz.
+  Future<void> deleteAccount() async {
+    await ref.read(userRepositoryProvider).deleteAccount();
+    try {
+      await ref.read(authRepositoryProvider).signOut();
+    } finally {
+      state = const AsyncData(null);
+    }
+  }
+
 
 }
 

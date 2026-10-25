@@ -131,4 +131,29 @@ class SupabaseUserRepository implements UserRepository {
 
     return publicUrl;
   });
+
+  @override
+  Future<void> deleteAccount() => guardSupabase(() async {
+    final uid = client.auth.currentUser?.id;
+    if (uid == null) throw const AuthRequiredFailure();
+
+    for (final bucket in const ['avatars', 'post-images']) {
+      await _emptyFolder(bucket, uid);
+    }
+    await client.rpc('delete_account');
+  });
+
+  /// Klasörü sayfa sayfa boşaltır. Hiçbir dosya silinemezse (yetki) durur;
+  /// aksi halde liste hiç küçülmez ve döngü bitmez.
+  Future<void> _emptyFolder(String bucket, String uid) async {
+    final api = client.storage.from(bucket);
+    while (true) {
+      final files = await api.list(path: uid, searchOptions: const SearchOptions(limit: 100));
+      if (files.isEmpty) return;
+      final removed = await api.remove([for (final f in files) '$uid/${f.name}']);
+      if (removed.isEmpty) {
+        throw const ServerFailure(message: 'storage files could not be removed');
+      }
+    }
+  }
 }

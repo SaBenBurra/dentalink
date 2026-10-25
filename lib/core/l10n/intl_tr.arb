@@ -701,5 +701,11 @@
   "userBlocked": "Kullanıcı engellendi",
   "unblock": "Engeli Kaldır",
   "userUnblocked": "Engel kaldırıldı",
-  "blockedEmpty": "Engellediğin kimse yok"
+  "blockedEmpty": "Engellediğin kimse yok",
+  "settingsDeleteAccount": "Hesabı Sil",
+  "deleteAccountTitle": "Hesabın kalıcı olarak silinsin mi?",
+  "deleteAccountBody": "Profilin, gönderilerin, yorumların, mesajların (karşı taraftaki sohbet dahil) ve yüklediğin tüm görseller kalıcı olarak silinir. Bu işlem geri alınamaz.",
+  "deleteAccountConfirmWord": "SİL",
+  "deleteAccountTypeToConfirm": "Onaylamak için {word} yaz",
+  "@deleteAccountTypeToConfirm": { "placeholders": { "word": { "type": "String" } } }
 }

@@ -2095,6 +2095,36 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Engellediğin kimse yok'**
   String get blockedEmpty;
+
+  /// No description provided for @settingsDeleteAccount.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesabı Sil'**
+  String get settingsDeleteAccount;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesabın kalıcı olarak silinsin mi?'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profilin, gönderilerin, yorumların, mesajların (karşı taraftaki sohbet dahil) ve yüklediğin tüm görseller kalıcı olarak silinir. Bu işlem geri alınamaz.'**
+  String get deleteAccountBody;
+
+  /// No description provided for @deleteAccountConfirmWord.
+  ///
+  /// In tr, this message translates to:
+  /// **'SİL'**
+  String get deleteAccountConfirmWord;
+
+  /// No description provided for @deleteAccountTypeToConfirm.
+  ///
+  /// In tr, this message translates to:
+  /// **'Onaylamak için {word} yaz'**
+  String deleteAccountTypeToConfirm(String word);
 }
 
 class _AppLocalizationsDelegate

@@ -39,4 +39,9 @@ abstract class UserRepository {
   /// Kullanıcı avatarını yükler, `avatar_url`'i günceller ve yeni public
   /// URL'yi döndürür. Eski avatar dosyaları ardından silinir (en iyi çaba).
   Future<String> uploadAvatar(String userId, File imageFile);
+
+  /// Oturumdaki hesabı kalıcı olarak siler: önce kendi Storage dosyaları,
+  /// sonra `delete_account` RPC (024). Dosyalar silinemezse hesaba
+  /// dokunulmaz ve hata fırlatılır (yeniden denenebilir).
+  Future<void> deleteAccount();
 }

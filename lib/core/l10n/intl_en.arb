@@ -413,5 +413,11 @@
   "userBlocked": "User blocked",
   "unblock": "Unblock",
   "userUnblocked": "User unblocked",
-  "blockedEmpty": "You haven't blocked anyone"
+  "blockedEmpty": "You haven't blocked anyone",
+  "settingsDeleteAccount": "Delete Account",
+  "deleteAccountTitle": "Permanently delete your account?",
+  "deleteAccountBody": "Your profile, posts, comments, messages (including the other person's copy of the chat) and all images you uploaded will be permanently deleted. This cannot be undone.",
+  "deleteAccountConfirmWord": "DELETE",
+  "deleteAccountTypeToConfirm": "Type {word} to confirm",
+  "@deleteAccountTypeToConfirm": { "placeholders": { "word": { "type": "String" } } }
 }

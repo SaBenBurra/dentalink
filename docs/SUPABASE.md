@@ -238,6 +238,13 @@ insert into public.blocks (blocker_id, blocked_id) values ('<A>', '<B>');
 select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
 select public.send_message('<A>', 'merhaba');
 rollback;
+
+-- 18) Hesap silme (024) → BEKLENEN: anon için permission denied. Gerçek silme
+--     yalnızca uygulamadan bir test hesabıyla denenir (geri alınamaz).
+begin;
+set local role anon;
+select public.delete_account();
+rollback;
 ```
 
 ---
@@ -261,7 +268,7 @@ update public.reports set status = 'actioned' where target_id = '<POST>';
 update public.reports set status = 'dismissed' where target_id = '<ID>';
 ```
 
-Kullanıcıyı kapatmak için Dashboard → Authentication → kullanıcı → Ban user. Hesap silindiğinde public verisi cascade ile silinir.
+Kullanıcıyı kapatmak için Dashboard → Authentication → kullanıcı → Ban user. Hesap silme (024, `delete_account`) `auth.users` satırını siler; public verisi cascade ile gider. Bilinen sınır: karşı kullanıcının sohbet geçmişi de silinir. Storage dosyalarını istemci RPC'den önce siler.
 
 ---
 

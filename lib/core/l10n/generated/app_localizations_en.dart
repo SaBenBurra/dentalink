@@ -1094,4 +1094,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get blockedEmpty => 'You haven\'t blocked anyone';
+
+  @override
+  String get settingsDeleteAccount => 'Delete Account';
+
+  @override
+  String get deleteAccountTitle => 'Permanently delete your account?';
+
+  @override
+  String get deleteAccountBody =>
+      'Your profile, posts, comments, messages (including the other person\'s copy of the chat) and all images you uploaded will be permanently deleted. This cannot be undone.';
+
+  @override
+  String get deleteAccountConfirmWord => 'DELETE';
+
+  @override
+  String deleteAccountTypeToConfirm(String word) {
+    return 'Type $word to confirm';
+  }
 }
