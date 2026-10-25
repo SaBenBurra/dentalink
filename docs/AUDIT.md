@@ -119,7 +119,7 @@
 | BUG-19 | 🟡 | `mutual_followers_widget.dart:14` | Profilin takipçilerini "ortak takipçi" diye gösteriyor. | Yanlış bilgi (kendi profilinde bile). | Gerçek kesişim sorgusu ya da widget'ı kaldır. | ✅ |
 | BUG-20 | 🟡 | `followers_screen.dart:142` | Kullanıcının kendi satırında takip butonu görünüyor. | Kendini takip etmeye çalışabiliyor. | `user.id == me` ise butonu gizle. | ✅ |
 | BUG-21 | 🟡 | `register_screen.dart:122-147` | Başarı diyaloğu ile router redirect'i yarışıyor. | Diyalog görünmeyebilir. | `authRedirectHoldProvider`'ı OTP akışındaki gibi kullan. | ⬜ |
-| BUG-22 | 🟡 | `user_search_delegate.dart:254` | "Debounce" aslında gecikme: her tuşta istek gidiyor. | Gereksiz istekler. | `Timer` iptal kalıbı. | ⬜ |
+| BUG-22 | 🟡 | `user_search_delegate.dart:254` | "Debounce" aslında gecikme: her tuşta istek gidiyor. | Gereksiz istekler. | `Timer` iptal kalıbı. | ✅ |
 | BUG-23 | 🟡 | `notifications_screen.dart:42,134` | `markRead` await edilmiyor, hatası yakalanmıyor; hata durumu `postLoadError` metnini kullanıyor. | Sessiz hatalar. | *(Faz 1, gerçek repo ile)* | ✅ |
 | BUG-24 | 🟡 | `bookmarks_screen.dart:94` | Kaydedilenlerdeki like butonu animasyon oynatıyor ama hiçbir şey yapmıyor; bookmark ikonu onaysız ve geri almasız siliyor. | Tutarsız davranış. | Bağla; undo snackbar. | ⬜ |
 | BUG-25 | 🟡 | `tag_input.dart:36`, `post_body.dart:16` | Onaylanmamış etiket gönderimde kayboluyor; etiket limiti yok; `#` ve boşluk temizlenmiyor; etiket tıklanabilir görünüyor ama `onTagTap` null. | Veri kaybı ve yanıltıcı UI. | Gönderimde bekleyen etiketi ekle, normalize et, limit koy. | ✅ |

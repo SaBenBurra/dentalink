@@ -47,10 +47,11 @@ class UserSearchDelegate extends SearchDelegate<UserModel?> {
     }
 
     if (query != _lastQuery) {
-      _lastQuery = query;
-      // Debounce and memoize
+      final q = _lastQuery = query;
+      // Debounce: superseded futures skip the request; FutureBuilder ignores their result.
       _future = Future.delayed(const Duration(milliseconds: 300), () {
-        return ref.read(userRepositoryProvider).searchUsers(query);
+        if (q != _lastQuery) return const <UserModel>[];
+        return ref.read(userRepositoryProvider).searchUsers(q);
       });
     }
 

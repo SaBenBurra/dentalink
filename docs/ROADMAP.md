@@ -147,7 +147,7 @@
 - [ ] Kayıt başarı diyaloğu yarışı; hazır avatar kararı — `BUG-21`, `AUTH-8`
 - [ ] Login küçük UX düzeltmeleri — `AUTH-10`
 - [ ] Domain katmanı kararı (tamamla ya da kaldır) — `DATA-19`
-- [ ] Ölü kod: ~~`FeedMode`~~ (DATA-12 ile kaldırıldı, `BUG-26` ✅); sohbet kullanıcı aramasında gerçek debounce — `BUG-22`
+- [x] Ölü kod: ~~`FeedMode`~~ (DATA-12 ile kaldırıldı, `BUG-26` ✅); sohbet kullanıcı aramasında gerçek debounce: 300 ms içinde yeni harf gelirse önceki sorgu istek atmaz. _(2026-10-25; testli)_ — `BUG-22`
 
 **Bitti tanımı:** Uygulama dili İngilizce'ye alınınca hiçbir Türkçe metin görünmüyor; en büyük yazı boyutunda ekranlar taşmıyor.
 
