@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/error/app_failures.dart';
 import '../core/utils/string_utils.dart';
-import '../domain/enums/enums.dart';
+import '../data/models/enums.dart';
 import '../data/models/user_model.dart';
 import '../data/providers/repository_providers.dart';
 

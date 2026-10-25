@@ -1,9 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'user_summary.dart';
+import 'user_model.dart';
 
-/// Yorum Entity'si (Domain Katmanı)
-/// JSON veya Supabase spesifik hiçbir mantık içermez.
-class CommentEntity extends Equatable {
+/// Yorum modeli.
+class CommentModel extends Equatable {
   final String id;
   final String postId;
   final String userId;
@@ -20,9 +19,9 @@ class CommentEntity extends Equatable {
   
   /// Embed: yorumu yazan kullanıcı.
   /// RLS kuralları sebebiyle yazar çekilemezse veya silinmişse null olabilir.
-  final UserSummary? author;
+  final UserModel? author;
 
-  const CommentEntity({
+  const CommentModel({
     required this.id,
     required this.postId,
     required this.userId,
@@ -35,7 +34,26 @@ class CommentEntity extends Equatable {
     this.author,
   });
 
-  CommentEntity copyWith({
+  /// Supabase satırından (yazar ve `my_likes` gömülü) yorum üretir.
+  factory CommentModel.fromRow(Map<String, dynamic> row) {
+    // Yazar RLS veya silinme sebebiyle null dönebilir.
+    final authorJson = row['author'] as Map<String, dynamic>?;
+    return CommentModel(
+      id: row['id'] as String,
+      postId: row['post_id'] as String,
+      userId: row['user_id'] as String,
+      content: row['content'] as String,
+      isBestAnswer: row['is_best_answer'] as bool? ?? false,
+      likeCount: row['like_count'] as int? ?? 0,
+      // `my_likes` yalnızca oturumdaki kullanıcının beğenisini içerir.
+      isLiked: (row['my_likes'] as List<dynamic>? ?? const []).isNotEmpty,
+      createdAt: DateTime.parse(row['created_at'] as String).toLocal(),
+      updatedAt: DateTime.parse(row['updated_at'] as String).toLocal(),
+      author: authorJson == null ? null : UserModel.fromJson(authorJson),
+    );
+  }
+
+  CommentModel copyWith({
     String? id,
     String? postId,
     String? userId,
@@ -45,9 +63,9 @@ class CommentEntity extends Equatable {
     bool? isLiked,
     DateTime? createdAt,
     DateTime? updatedAt,
-    UserSummary? author,
+    UserModel? author,
   }) {
-    return CommentEntity(
+    return CommentModel(
       id: id ?? this.id,
       postId: postId ?? this.postId,
       userId: userId ?? this.userId,

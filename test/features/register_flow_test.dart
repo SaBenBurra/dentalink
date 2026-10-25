@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dentlink/data/models/user_model.dart';
-import 'package:dentlink/domain/enums/enums.dart';
+import 'package:dentlink/data/models/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

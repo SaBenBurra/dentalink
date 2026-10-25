@@ -1,12 +1,12 @@
 import 'package:dentlink/core/utils/paging.dart';
 import 'package:dentlink/data/providers/repository_providers.dart';
-import 'package:dentlink/domain/entities/comment_entity.dart';
-import 'package:dentlink/domain/repositories/comment_repository.dart';
+import 'package:dentlink/data/models/comment_model.dart';
+import 'package:dentlink/data/repositories/comment_repository.dart';
 import 'package:dentlink/providers/comment_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-CommentEntity _c(String id) => CommentEntity(
+CommentModel _c(String id) => CommentModel(
       id: id,
       postId: 'p1',
       userId: 'u',
@@ -22,7 +22,7 @@ class _Repo implements CommentRepository {
   final afters = <PageCursor?>[];
 
   @override
-  Future<PageResult<CommentEntity>> getComments(String postId,
+  Future<PageResult<CommentModel>> getComments(String postId,
       {PageCursor? after}) async {
     afters.add(after);
     return after == null
@@ -31,7 +31,7 @@ class _Repo implements CommentRepository {
   }
 
   @override
-  Future<CommentEntity> addComment(String postId, String content) async =>
+  Future<CommentModel> addComment(String postId, String content) async =>
       _c('c3');
 
   @override

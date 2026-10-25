@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../domain/entities/comment_entity.dart';
-import '../domain/repositories/comment_repository.dart';
+import '../data/models/comment_model.dart';
+import '../data/repositories/comment_repository.dart';
 import '../data/providers/repository_providers.dart';
 import '../core/error/app_failures.dart';
 import '../core/utils/paging.dart';
@@ -9,16 +9,16 @@ import 'feed_provider.dart';
 import 'post_provider.dart';
 import 'search_provider.dart';
 
-class CommentsNotifier extends AutoDisposeFamilyAsyncNotifier<List<CommentEntity>, String> {
+class CommentsNotifier extends AutoDisposeFamilyAsyncNotifier<List<CommentModel>, String> {
   final _pendingLikes = <String>{};
-  final _pager = Pager<CommentEntity>();
+  final _pager = Pager<CommentModel>();
 
   CommentRepository get _repo => ref.read(commentRepositoryProvider);
 
   bool get hasMore => _pager.hasMore;
 
   @override
-  Future<List<CommentEntity>> build(String postId) async {
+  Future<List<CommentModel>> build(String postId) async {
     return _pager.first(await ref.watch(commentRepositoryProvider).getComments(postId));
   }
 
@@ -70,7 +70,7 @@ class CommentsNotifier extends AutoDisposeFamilyAsyncNotifier<List<CommentEntity
   }
 
   /// Her zaman GÜNCEL state üzerinden id ile değiştirir (eski liste kopyası yok).
-  void _replace(CommentEntity updated) {
+  void _replace(CommentModel updated) {
     final current = state.valueOrNull;
     if (current == null) return;
     state = AsyncData([for (final c in current) c.id == updated.id ? updated : c]);
@@ -133,6 +133,6 @@ class CommentsNotifier extends AutoDisposeFamilyAsyncNotifier<List<CommentEntity
 }
 
 final commentsProvider = AsyncNotifierProvider.autoDispose
-    .family<CommentsNotifier, List<CommentEntity>, String>(() {
+    .family<CommentsNotifier, List<CommentModel>, String>(() {
       return CommentsNotifier();
     });

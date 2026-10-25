@@ -4,7 +4,7 @@ import 'package:dentlink/data/models/post_model.dart';
 import 'package:dentlink/data/models/user_model.dart';
 import 'package:dentlink/data/providers/repository_providers.dart';
 import 'package:dentlink/data/repositories/post_repository.dart';
-import 'package:dentlink/domain/enums/enums.dart';
+import 'package:dentlink/data/models/enums.dart';
 import 'package:dentlink/providers/feed_provider.dart';
 import 'package:dentlink/providers/post_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

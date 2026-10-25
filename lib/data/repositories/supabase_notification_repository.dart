@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/utils/supabase_error_mapper.dart';
-import '../../domain/enums/enums.dart';
+import '../models/enums.dart';
 import '../models/notification_model.dart';
 import '../models/user_model.dart';
 import 'notification_repository.dart';

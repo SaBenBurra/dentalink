@@ -1,4 +1,4 @@
-import '../../domain/enums/enums.dart';
+import 'enums.dart';
 import 'tag_model.dart';
 import 'user_model.dart';
 

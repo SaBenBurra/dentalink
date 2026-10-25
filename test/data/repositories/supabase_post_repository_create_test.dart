@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:dentlink/core/error/app_failures.dart';
 import 'package:dentlink/data/repositories/supabase_post_repository.dart';
-import 'package:dentlink/domain/enums/enums.dart';
+import 'package:dentlink/data/models/enums.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

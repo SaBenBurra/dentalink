@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../domain/enums/enums.dart';
+import '../data/models/enums.dart';
 import '../core/error/app_failures.dart';
 import '../core/utils/paging.dart';
 import '../data/models/post_model.dart';

@@ -1,4 +1,4 @@
-import '../../domain/enums/enums.dart';
+import 'enums.dart';
 import 'user_model.dart';
 
 /// Bildirim modeli — Supabase `notifications` tablosuyla eşleşir.

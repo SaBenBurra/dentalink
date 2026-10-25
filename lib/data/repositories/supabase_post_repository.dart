@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart' show debugPrint;
 import '../../core/error/app_failures.dart';
 import '../../core/utils/paging.dart';
 import '../../core/utils/supabase_error_mapper.dart';
-import '../../domain/enums/enums.dart';
+import '../models/enums.dart';
 import '../models/post_model.dart';
 import '../models/tag_model.dart';
 import '../models/user_model.dart';

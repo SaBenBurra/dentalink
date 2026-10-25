@@ -1,5 +1,5 @@
 import 'dart:io';
-import '../../domain/enums/enums.dart';
+import '../models/enums.dart';
 import '../models/user_model.dart';
 
 /// Kimlik doğrulama repository arayüzü.

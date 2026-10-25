@@ -1,7 +1,7 @@
 import 'package:dentlink/data/models/user_model.dart';
 import 'package:dentlink/data/providers/repository_providers.dart';
 import 'package:dentlink/data/repositories/follow_repository.dart';
-import 'package:dentlink/domain/enums/enums.dart';
+import 'package:dentlink/data/models/enums.dart';
 import 'package:dentlink/providers/auth_provider.dart';
 import 'package:dentlink/providers/user_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

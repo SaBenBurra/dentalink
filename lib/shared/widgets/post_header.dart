@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../data/models/post_model.dart';
-import '../../../domain/enums/enums.dart';
+import '../../../data/models/enums.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../../../shared/widgets/relative_time_text.dart';
 import '../../../core/l10n/generated/app_localizations.dart';

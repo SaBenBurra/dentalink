@@ -6,7 +6,7 @@ import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../data/models/post_model.dart';
 import '../../../data/providers/repository_providers.dart';
 import '../../../providers/post_provider.dart';
-import '../../../domain/enums/enums.dart';
+import '../../../data/models/enums.dart';
 import '../../../shared/utils/error_messages.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_widget.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../domain/enums/enums.dart';
+import '../../../data/models/enums.dart';
 import '../../../providers/search_provider.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 

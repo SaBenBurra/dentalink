@@ -7,7 +7,7 @@ import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../shared/utils/error_messages.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../domain/enums/enums.dart';
+import '../../../data/models/enums.dart';
 import '../../../providers/auth_provider.dart';
 import '../providers/edit_profile_controller.dart';
 import '../../../shared/widgets/unsaved_changes_scope.dart';

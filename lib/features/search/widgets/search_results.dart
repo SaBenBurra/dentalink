@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/error/app_failures.dart';
-import '../../../domain/enums/enums.dart';
+import '../../../data/models/enums.dart';
 import '../../../providers/search_provider.dart';
 import '../../../shared/utils/error_messages.dart';
 import '../../../shared/widgets/user_tile.dart';

@@ -146,7 +146,7 @@
 - [x] Bookmarks ekranı: beğeni çalışıyor (iyimser, feed ve aramaya yansır); kaydırma ve bookmark ikonu aynı akış: onaysız kaldırır, "Geri Al" postu eski sırasına koyar; kaldırma/geri alma feed ve aramadaki bookmark durumunu da günceller. _(2026-10-25; testli)_ — `BUG-24`
 - [x] Kayıt başarı diyaloğu yarışı: kayıt sürerken ve diyalog açıkken `authRedirectHoldProvider` tutulur. Hazır avatarlar kaldırıldı (karar 2026-10-25); fotoğraf seçilmezse ikon gösterilir. _(2026-10-25; widget testli)_ — `BUG-21`, `AUTH-8`
 - [x] Login küçük UX düzeltmeleri: geri sayım 60 sn (limiter ile aynı), yalnızca sunucunun reddettiği kod "Kod hatalı", ağ ve diğer hatalar `getErrorMessage` ile; dispose sonrası state yazılmaz. _(2026-10-25; testli)_ — `AUTH-10`
-- [ ] Domain katmanı kararı (tamamla ya da kaldır) — `DATA-19`
+- [x] Domain katmanı kaldırıldı (karar 2026-10-25): `enums.dart` → `lib/data/models/`, `CommentEntity` → `CommentModel` (yazar `UserModel`, satır parse `CommentModel.fromRow`), `CommentRepository` arayüzü `lib/data/repositories/`; kullanılmayan `UserEntity`, `UserSummary`, `UserMapper`, `CommentMapper` silindi. Tek unvan varsayılanı `UserModel.fromJson`. — `DATA-19`
 - [x] Ölü kod: ~~`FeedMode`~~ (DATA-12 ile kaldırıldı, `BUG-26` ✅); sohbet kullanıcı aramasında gerçek debounce: 300 ms içinde yeni harf gelirse önceki sorgu istek atmaz. _(2026-10-25; testli)_ — `BUG-22`
 
 **Bitti tanımı:** Uygulama dili İngilizce'ye alınınca hiçbir Türkçe metin görünmüyor; en büyük yazı boyutunda ekranlar taşmıyor.
@@ -202,6 +202,6 @@
 |---|---|
 | Uygulama adı (DentLink placeholder) | Faz 5 öncesi |
 | ~~Kayıtta hazır avatar seçeneği kalsın mı?~~ Kaldırıldı (2026-10-25) | Faz 3 ✅ |
-| Domain katmanı: tamamla mı, kaldır mı? | Faz 3 |
+| ~~Domain katmanı: tamamla mı, kaldır mı?~~ Kaldırıldı (2026-10-25) | Faz 3 ✅ |
 | Doğrulama belgesi türü (diploma / TDB oda kaydı) | Faz 4 |
 | İş ilanı ve pazar yeri: feed'de mi, ayrı sekmede mi? | Yayın sonrası |

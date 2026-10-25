@@ -16,9 +16,9 @@ import 'package:dentlink/data/repositories/message_repository.dart';
 import 'package:dentlink/data/repositories/notification_repository.dart';
 import 'package:dentlink/data/repositories/post_repository.dart';
 import 'package:dentlink/data/repositories/user_repository.dart';
-import 'package:dentlink/domain/entities/comment_entity.dart';
-import 'package:dentlink/domain/enums/enums.dart';
-import 'package:dentlink/domain/repositories/comment_repository.dart';
+import 'package:dentlink/data/models/comment_model.dart';
+import 'package:dentlink/data/models/enums.dart';
+import 'package:dentlink/data/repositories/comment_repository.dart';
 import 'package:dentlink/providers/connectivity_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -102,9 +102,9 @@ class _FakePostRepository implements PostRepository {
 
 class _FakeCommentRepository implements CommentRepository {
   @override
-  Future<PageResult<CommentEntity>> getComments(String postId,
+  Future<PageResult<CommentModel>> getComments(String postId,
           {PageCursor? after}) async =>
-      (items: <CommentEntity>[], next: null);
+      (items: <CommentModel>[], next: null);
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

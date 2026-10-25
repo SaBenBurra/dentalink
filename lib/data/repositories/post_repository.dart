@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import '../../core/utils/paging.dart';
-import '../../domain/enums/enums.dart';
+import '../models/enums.dart';
 import '../models/post_model.dart';
 
 /// Feed odaklı işlemler (Listeleme)

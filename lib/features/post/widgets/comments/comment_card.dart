@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_dimensions.dart';
-import '../../../../../domain/entities/comment_entity.dart';
+import '../../../../../data/models/comment_model.dart';
 import '../../../../../providers/comment_provider.dart';
 import '../../../../../shared/widgets/user_avatar.dart';
 import '../../../../../shared/widgets/relative_time_text.dart';
@@ -11,7 +11,7 @@ import '../../../../../shared/utils/error_messages.dart';
 
 class CommentLikeButton extends StatelessWidget {
   const CommentLikeButton({super.key, required this.comment, required this.onTap});
-  final CommentEntity comment;
+  final CommentModel comment;
   final VoidCallback onTap;
 
   @override
@@ -115,7 +115,7 @@ class CommentEmptyState extends StatelessWidget {
 }
 
 class CommentCard extends ConsumerWidget {
-  final CommentEntity comment;
+  final CommentModel comment;
   final String postId;
   final bool isPostOwner;
   final bool isCase; 

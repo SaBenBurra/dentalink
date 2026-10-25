@@ -1,14 +1,14 @@
 import '../../core/utils/paging.dart';
-import '../entities/comment_entity.dart';
+import '../models/comment_model.dart';
 
-/// Yorum repository arayüzü (Domain Katmanı).
+/// Yorum repository arayüzü.
 abstract class CommentRepository {
   /// Bir gönderinin yorumlarını eskiden yeniye sayfalayarak getirir; [after]
   /// verilirse sonraki sayfa. En iyi cevap varsa ilk sayfanın başındadır.
-  Future<PageResult<CommentEntity>> getComments(String postId, {PageCursor? after});
+  Future<PageResult<CommentModel>> getComments(String postId, {PageCursor? after});
 
   /// Yeni yorum ekler.
-  Future<CommentEntity> addComment(String postId, String content);
+  Future<CommentModel> addComment(String postId, String content);
 
   /// Bir yorumu "En İyi Cevap" olarak işaretler (soru sahibi yapabilir).
   ///

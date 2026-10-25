@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../domain/enums/enums.dart';
+import '../../../data/models/enums.dart';
 import '../../../core/utils/image_compress.dart';
 import '../../../data/providers/repository_providers.dart';
 

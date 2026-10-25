@@ -29,7 +29,6 @@
 lib/
   core/        tema, sabitler, router, l10n, hata tipleri (app_failures), supabase_error_mapper
   data/        modeller, repository arayüzleri + Supabase implementasyonları, repository_providers.dart (DI)
-  domain/      (yarım; yalnızca yorumlar kullanıyor. Karar: ROADMAP Faz 3)
   providers/   birden fazla feature'ın kullandığı global state (auth, feed, post, comment, follow, message, search…)
   features/<x>/{screens,widgets,providers}   feature'a özel UI ve controller'lar
   shared/      ortak widget'lar, model→UI extension'ları, error_messages

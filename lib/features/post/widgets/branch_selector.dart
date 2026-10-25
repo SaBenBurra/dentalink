@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
-import '../../../domain/enums/enums.dart';
+import '../../../data/models/enums.dart';
 
 /// Vaka oluştururken Diş Hekimliği Branşını seçmek için kullanılan bileşen.
 class BranchSelector extends StatelessWidget {

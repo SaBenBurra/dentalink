@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../domain/enums/enums.dart';
+import '../../data/models/enums.dart';
 
 /// UserTitle enum'u için UI katmanı extension'ları.
 ///

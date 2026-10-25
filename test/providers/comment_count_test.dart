@@ -3,9 +3,9 @@ import 'package:dentlink/data/models/post_model.dart';
 import 'package:dentlink/data/models/user_model.dart';
 import 'package:dentlink/data/providers/repository_providers.dart';
 import 'package:dentlink/data/repositories/post_repository.dart';
-import 'package:dentlink/domain/entities/comment_entity.dart';
-import 'package:dentlink/domain/enums/enums.dart';
-import 'package:dentlink/domain/repositories/comment_repository.dart';
+import 'package:dentlink/data/models/comment_model.dart';
+import 'package:dentlink/data/models/enums.dart';
+import 'package:dentlink/data/repositories/comment_repository.dart';
 import 'package:dentlink/providers/comment_provider.dart';
 import 'package:dentlink/providers/feed_provider.dart';
 import 'package:dentlink/providers/post_provider.dart';
@@ -52,13 +52,13 @@ class _CommentRepo implements CommentRepository {
   Future<void> unmarkBestAnswer(String commentId) async => unmarked.add(commentId);
 
   @override
-  Future<PageResult<CommentEntity>> getComments(String postId,
+  Future<PageResult<CommentModel>> getComments(String postId,
           {PageCursor? after}) async =>
-      (items: <CommentEntity>[], next: null);
+      (items: <CommentModel>[], next: null);
 
   @override
-  Future<CommentEntity> addComment(String postId, String content) async =>
-      CommentEntity(
+  Future<CommentModel> addComment(String postId, String content) async =>
+      CommentModel(
         id: 'c1',
         postId: postId,
         userId: 'b',
