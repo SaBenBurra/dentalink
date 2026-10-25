@@ -19,6 +19,7 @@
 | 3.7 | Mesajlaşma: repository, `get_or_create_conversation`, okundu RPC, realtime | ✅ (eksikler Faz 1'de) |
 | 4.5 (kısmen) | `mark_best_answer` RPC | ✅ |
 | Yeni Faz 0 | Stabilizasyon & güvenlik: migration 012, auth/state, kritik UI akışları, hijyen | ✅ (2026-10-15) |
+| Faz 1 | Çekirdek akışlar: gerçek bildirimler, mesajlaşma, atomik post oluşturma/düzenleme, iyimser etkileşimler, migration 013–017, fake backend ile integration test + CI | ✅ (2026-10-25) |
 
 ---
 
@@ -81,7 +82,7 @@
 
 ---
 
-## Faz 1 — Çekirdek akışların tamamlanması 🟠
+## Faz 1 — Çekirdek akışların tamamlanması ✅
 
 - [x] **Bildirimler (gerçek):** migration 013 (like, yorum, takip, en iyi cevap trigger'ları; aktör = alıcı ise atlanır, okunmamış tekrar yazılmaz), realtime, zil ve mesaj rozetleri, iyimser okundu + rollback. Mesaj için ayrı bildirim yok, sohbet `unreadCount` yeterli. _(2026-10-15; iki hesapla cihazda doğrulandı 2026-10-20)_ — `DATA-5`, `UX-1`, `BUG-23`
 - [x] **Mesajlaşma tamamlama:** migration 014 canlıda, smoke 9 geçti; doğrudan `messages` insert'ü kapalı. _(2026-10-20; cihazda anlık mesaj ve okunmamış rozeti doğrulandı)_
@@ -100,13 +101,15 @@
 - [x] Paylaş butonu kaldırıldı — `BUG-11`
 - [x] Ortak takipçiler: profili takip edenlerden benim takip ettiklerim (`mutualFollowersProvider`); kendi profilinde gizli. _(2026-10-25; testli, cihazda doğrulandı)_ — `BUG-19`
 - [x] Bildirim ayarları toggle'ları kaldırıldı (DB tercihi ve push yok); tercihler Faz 5'te push ile gelir — `UX-4`
-- [x] Integration test fake repository'lerle (`integration_test/fake_repositories.dart`); koşullu assertion yok; aynı akış headless `test/app_flow_test.dart` ile `flutter test`'te ve GitHub Actions CI'da (`.github/workflows/ci.yml`: analyze + test) koşar. _(2026-10-25; yerelde ve Android emülatörde yeşil, CI push sonrası bekliyor)_ — `TEST-2`
+- [x] Integration test fake repository'lerle (`integration_test/fake_repositories.dart`); koşullu assertion yok; aynı akış headless `test/app_flow_test.dart` ile `flutter test`'te ve GitHub Actions CI'da (`.github/workflows/ci.yml`: analyze + test) koşar. _(2026-10-25; yerelde, Android emülatörde ve CI'da yeşil)_ — `TEST-2`
 
 **Bitti tanımı:**
 - İki gerçek hesapla: beğeni, yorum ve takip karşı tarafa bildirim olarak düşüyor; okunmamış rozeti artıp azalıyor.
 - Mesaj anında geliyor.
 - Post düzenlenebiliyor; görsel yüklemesi yarıda kesilince yarım post kalmıyor.
 - Integration test CI'da yeşil.
+
+**Durum (2026-10-25):** Faz 1 kapandı. `flutter analyze` hatasız, `flutter test` 233/233, migration 001–017 local = remote, smoke 12–13 geçti, integration test Android emülatörde ve GitHub Actions CI'da yeşil; bildirim, mesaj ve post düzenleme iki hesapla cihazda doğrulandı.
 
 ---
 
