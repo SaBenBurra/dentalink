@@ -127,6 +127,17 @@ class _FakeCommentRepository implements CommentRepository {
       (items: <CommentModel>[], next: null);
 
   @override
+  Future<CommentModel> addComment(String postId, String content) async =>
+      CommentModel(
+        id: 'c1',
+        postId: postId,
+        userId: 'me',
+        content: content,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+
+  @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 

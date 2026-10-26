@@ -33,7 +33,6 @@ class PostHeader extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(AppDimensions.spacing16),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           UserAvatar(
             name: post.author.fullName,
@@ -46,25 +45,17 @@ class PostHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  post.author.fullName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: AppDimensions.spacing2),
+                // Zaman isim satırında: unvan satırı tüm genişliği alır.
                 Row(
                   children: [
                     Flexible(
                       child: Text(
-                        subtitle,
+                        post.author.fullName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
+                        style: textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -83,58 +74,58 @@ class PostHeader extends StatelessWidget {
                     RelativeTimeText(dateTime: post.createdAt),
                   ],
                 ),
+                const SizedBox(height: AppDimensions.spacing2),
+                Text(
+                  subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
           ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              badge,
-              const SizedBox(width: AppDimensions.spacing16),
-              if (onMenuSelected != null)
-                PopupMenuButton<PostMenuAction>(
-                  padding: EdgeInsets.zero,
-                  icon: Icon(
-                    Icons.more_horiz,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                  tooltip: l10n.moreOptions,
-                  onSelected: onMenuSelected,
-                  itemBuilder: (context) => !isOwner
-                      ? moderationMenuItems(context)
-                      : [
-                    PopupMenuItem(
-                      value: PostMenuAction.edit,
-                      child: Row(
-                        children: [
-                          const Icon(Icons.edit_outlined, size: 20),
-                          const SizedBox(width: 8),
-                          Text(l10n.edit),
-                        ],
+          const SizedBox(width: AppDimensions.spacing8),
+          badge,
+          if (onMenuSelected != null)
+            PopupMenuButton<PostMenuAction>(
+              padding: EdgeInsets.zero,
+              icon: Icon(Icons.more_horiz, color: colorScheme.onSurfaceVariant),
+              tooltip: l10n.moreOptions,
+              onSelected: onMenuSelected,
+              itemBuilder: (context) => !isOwner
+                  ? moderationMenuItems(context)
+                  : [
+                      PopupMenuItem(
+                        value: PostMenuAction.edit,
+                        child: Row(
+                          children: [
+                            const Icon(Icons.edit_outlined, size: 20),
+                            const SizedBox(width: 8),
+                            Text(l10n.edit),
+                          ],
+                        ),
                       ),
-                    ),
-                    PopupMenuItem(
-                      value: PostMenuAction.delete,
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.delete_outline,
-                            size: 20,
-                            color: colorScheme.error,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            l10n.delete,
-                            style: TextStyle(color: colorScheme.error),
-                          ),
-                        ],
+                      PopupMenuItem(
+                        value: PostMenuAction.delete,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.delete_outline,
+                              size: 20,
+                              color: colorScheme.error,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              l10n.delete,
+                              style: TextStyle(color: colorScheme.error),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-            ],
-          ),
+                    ],
+            ),
         ],
       ),
     );

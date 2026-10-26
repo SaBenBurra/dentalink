@@ -73,6 +73,28 @@ void main() {
     });
   }
 
+  testWidgets('post başlığı: küçük rozet menünün solunda, unvan satırı rozete kadar uzanır',
+      (tester) async {
+    tester.view.physicalSize = const Size(360, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    const title = 'Restoratif Diş Tedavisi Uzmanı';
+    await tester.pumpWidget(_app(PostHeader(
+      post: post,
+      badge: const Text('Vaka'),
+      subtitle: title,
+      isOwner: false,
+      onMenuSelected: (_) {},
+    )));
+
+    final badge = tester.getRect(find.text('Vaka'));
+    final menu = tester.getRect(find.byType(PopupMenuButton<PostMenuAction>));
+    expect(badge.right, menu.left);
+    expect(badge.center.dy, closeTo(menu.center.dy, 1));
+    // Zaman isim satırında; unvan satırı rozete kadar tüm genişliği alır.
+    expect(tester.getTopRight(find.text(title)).dx, badge.left - 8);
+  });
+
   testWidgets('rapor: sebep seçilmeden gönderilemez, gönderirken buton kilitli',
       (tester) async {
     final repo = _Repo();

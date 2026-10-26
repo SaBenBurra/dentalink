@@ -16,27 +16,52 @@ class PostBadge extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    // Soru: marka teal; vaka: paletin "Professional Blue" ailesi.
+    final (
+      Color background,
+      Color border,
+      Color foreground,
+    ) = switch (postType) {
+      PostType.casePost =>
+        isDark
+            ? (
+                AppColors.secondaryLight.withValues(alpha: 0.2),
+                AppColors.secondaryLight.withValues(alpha: 0.4),
+                AppColors.secondaryContainer,
+              )
+            : (
+                AppColors.secondaryContainer.withValues(alpha: 0.7),
+                AppColors.secondaryLight.withValues(alpha: 0.4),
+                AppColors.secondaryDark,
+              ),
+      PostType.question =>
+        isDark
+            ? (
+                colorScheme.primaryContainer.withValues(alpha: 0.2),
+                colorScheme.primary.withValues(alpha: 0.3),
+                colorScheme.primaryContainer,
+              )
+            : (
+                AppColors.primaryContainer.withValues(alpha: 0.4),
+                AppColors.primaryContainer,
+                AppColors.primaryDark,
+              ),
+    };
+
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.spacing10,
-        vertical: AppDimensions.spacing4,
+        horizontal: AppDimensions.spacing8,
+        vertical: AppDimensions.spacing2,
       ),
       decoration: BoxDecoration(
-        color: isDark
-            ? colorScheme.primaryContainer.withValues(alpha: 0.2)
-            : AppColors.primaryContainer.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
-        border: Border.all(
-          color: isDark
-              ? colorScheme.primary.withValues(alpha: 0.3)
-              : AppColors.primaryContainer,
-          width: 1,
-        ),
+        color: background,
+        borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
+        border: Border.all(color: border, width: 1),
       ),
       child: Text(
-        '${postType.getBadgeLabel(context)} ${postType.emoji}',
+        postType.getBadgeLabel(context),
         style: textTheme.labelSmall?.copyWith(
-          color: isDark ? colorScheme.primaryContainer : AppColors.primaryDark,
+          color: foreground,
           fontWeight: FontWeight.bold,
         ),
       ),

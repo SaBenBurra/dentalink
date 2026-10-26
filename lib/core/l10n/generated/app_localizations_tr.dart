@@ -599,6 +599,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get validationExperience => '0 ile 70 arasında bir sayı girin.';
 
   @override
+  String get readMore => 'Devamını oku';
+
+  @override
   String get showMore => 'Daha fazla göster';
 
   @override
@@ -876,6 +879,9 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get unmarkSelection => 'Seçimi Kaldır';
+
+  @override
+  String get discussion => 'Tartışma';
 
   @override
   String get professionalDiscussion => 'Mesleki Tartışma';

@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_dimensions.dart';
+import '../../core/l10n/generated/app_localizations.dart';
 import '../../data/models/post_model.dart';
 import 'like_button.dart';
+import 'animated_action_button.dart';
 import 'bookmark_button.dart';
 import 'stat_count.dart';
 
@@ -100,13 +103,22 @@ class PostActionBar extends StatelessWidget {
           ),
           SizedBox(width: gap),
           StatCount(
-            icon: Icons.chat_bubble_outline_rounded,
+            icon: CupertinoIcons.chat_bubble,
             count: commentCount,
             onTap: onCommentTap,
             iconColor: AppColors.comment,
             iconSize: iconSize,
           ),
           const Spacer(),
+          // shortcut: paylaşma henüz yok, buton yalnızca görsel (kullanıcı isteği); deep link (yayın sonrası) ile bağlanacak.
+          AnimatedActionButton(
+            isActive: false,
+            activeIcon: Icons.share_outlined,
+            inactiveIcon: Icons.share_outlined,
+            activeColor: Theme.of(context).colorScheme.primary,
+            tooltip: AppLocalizations.of(context)!.share,
+            size: iconSize,
+          ),
           BookmarkButton(
             isBookmarked: isBookmarked,
             onToggle: onBookmarkToggle,

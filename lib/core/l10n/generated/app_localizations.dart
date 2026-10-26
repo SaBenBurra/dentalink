@@ -1196,6 +1196,12 @@ abstract class AppLocalizations {
   /// **'0 ile 70 arasında bir sayı girin.'**
   String get validationExperience;
 
+  /// Post kartında kısaltılmış içeriğin devamını açan bağlantı
+  ///
+  /// In tr, this message translates to:
+  /// **'Devamını oku'**
+  String get readMore;
+
   /// Sayfalı listede sonraki sayfayı elle yükleyen buton
   ///
   /// In tr, this message translates to:
@@ -1711,6 +1717,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Seçimi Kaldır'**
   String get unmarkSelection;
+
+  /// Yorumlar penceresinin başlığı (vaka)
+  ///
+  /// In tr, this message translates to:
+  /// **'Tartışma'**
+  String get discussion;
 
   /// No description provided for @professionalDiscussion.
   ///

@@ -26,13 +26,13 @@ class FeedSkeleton extends StatelessWidget {
         : Colors.white.withValues(alpha: 0.8);
 
     return ListView.builder(
-      padding: const EdgeInsets.all(AppDimensions.spacing16),
+      padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing8),
       itemCount: 3, // Show 3 skeleton cards
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (context, index) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: AppDimensions.spacing16),
+          padding: const EdgeInsets.only(bottom: AppDimensions.spacing8),
           child: Container(
             padding: const EdgeInsets.all(AppDimensions.spacing16),
             decoration: BoxDecoration(

@@ -57,12 +57,10 @@ class QuestionCard extends ConsumerWidget {
             },
           ),
 
-          // <-- 2. İçerik (Soru özel iş kuralı: maxLines 5)
+          // <-- 2. İçerik (uzunsa "Devamını oku")
           PostBody(
             title: post.title,
             content: post.content,
-            tags: post.tags,
-            contentMaxLines: 5,
           ),
 
           // <-- 3. Ayırıcı çizgi (Soru postlarında görsel eki olmadığından daima gösterilir)

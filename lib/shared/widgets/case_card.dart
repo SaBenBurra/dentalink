@@ -59,12 +59,10 @@ class CaseCard extends ConsumerWidget {
             },
           ),
 
-          // <-- 2. İçerik (Vaka özel iş kuralı: maxLines 4)
+          // <-- 2. İçerik (uzunsa "Devamını oku")
           PostBody(
             title: post.title,
             content: post.content,
-            tags: post.tags,
-            contentMaxLines: 4,
           ),
 
           // <-- 3. Görsel (yoksa ayırıcı çizgi)
@@ -73,7 +71,6 @@ class CaseCard extends ConsumerWidget {
               imageUrls: post.imageUrls,
               isLiked: post.isLiked,
               onLikeToggle: onLikeToggle,
-              onTap: onTap,
             )
           else
             Padding(

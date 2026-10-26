@@ -600,6 +600,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validationExperience => 'Enter a number between 0 and 70.';
 
   @override
+  String get readMore => 'Read more';
+
+  @override
   String get showMore => 'Show more';
 
   @override
@@ -877,6 +880,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unmarkSelection => 'Remove Selection';
+
+  @override
+  String get discussion => 'Discussion';
 
   @override
   String get professionalDiscussion => 'Professional Discussion';

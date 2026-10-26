@@ -26,6 +26,7 @@ class AnimatedActionButton extends StatefulWidget {
   final IconData activeIcon;
   final IconData inactiveIcon;
   final Color activeColor;
+
   /// Ekran okuyucu etiketi ve uzun basma ipucu (UX-13).
   final String tooltip;
   final VoidCallback? onToggle;
@@ -73,48 +74,63 @@ class _AnimatedActionButtonState extends State<AnimatedActionButton>
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Tooltip(
-          message: widget.tooltip,
-          child: InkWell(
-            customBorder: const CircleBorder(),
-            onTap: _handleTap,
-            // Dokunma alanı en az 48dp (UX-14).
-            child: Padding(
-              padding: EdgeInsets.all(
-                ((AppDimensions.spacing48 - widget.size) / 2).clamp(0, double.infinity),
-              ),
-              child: AnimatedBuilder(
-                animation: _scaleAnimation,
-                builder: (context, child) {
-                  return Transform.scale(
-                    scale: _scaleAnimation.value,
-                    child: child,
-                  );
-                },
-                child: Icon(
-                  widget.isActive ? widget.activeIcon : widget.inactiveIcon,
-                  color: widget.isActive
-                      ? widget.activeColor
-                      : colorScheme.onSurfaceVariant,
-                  size: widget.size,
+    final pad = ((AppDimensions.spacing48 - widget.size) / 2).clamp(
+      0.0,
+      double.infinity,
+    );
+
+    return Tooltip(
+      message: widget.tooltip,
+      child: InkWell(
+        customBorder: widget.showCount
+            ? const StadiumBorder()
+            : const CircleBorder(),
+        onTap: _handleTap,
+        // Dokunma alanı en az 48dp (UX-14). Sayaç da dokunma alanında:
+        // ikonla arası yorum sayacındaki gibi 4dp kalır.
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            minWidth: AppDimensions.spacing48,
+            minHeight: AppDimensions.spacing48,
+          ),
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: pad,
+              right: widget.showCount ? AppDimensions.spacing4 : pad,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedBuilder(
+                  animation: _scaleAnimation,
+                  builder: (context, child) {
+                    return Transform.scale(
+                      scale: _scaleAnimation.value,
+                      child: child,
+                    );
+                  },
+                  child: Icon(
+                    widget.isActive ? widget.activeIcon : widget.inactiveIcon,
+                    color: widget.isActive
+                        ? widget.activeColor
+                        : colorScheme.onSurfaceVariant,
+                    size: widget.size,
+                  ),
                 ),
-              ),
+                if (widget.showCount) ...[
+                  const SizedBox(width: AppDimensions.spacing4),
+                  Text(
+                    formatCount(widget.count),
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
         ),
-        if (widget.showCount) ...[
-          const SizedBox(width: AppDimensions.spacing4),
-          Text(
-            formatCount(widget.count),
-            style: textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ],
+      ),
     );
   }
 }

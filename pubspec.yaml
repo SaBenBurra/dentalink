@@ -39,6 +39,7 @@ dependencies:
   flutter_image_compress: ^2.5.1
   connectivity_plus: ^7.3.2
   package_info_plus: ^10.2.2
+  cupertino_icons: ^2.0.0
 
 dev_dependencies:
   integration_test:

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
+import 'fullscreen_image_viewer.dart';
 
 class PostMedia extends StatefulWidget {
   const PostMedia({
@@ -9,13 +10,11 @@ class PostMedia extends StatefulWidget {
     required this.imageUrls,
     required this.isLiked,
     required this.onLikeToggle,
-    this.onTap,
   });
 
   final List<String> imageUrls;
   final bool isLiked;
   final VoidCallback onLikeToggle;
-  final VoidCallback? onTap;
 
   @override
   State<PostMedia> createState() => _PostMediaState();
@@ -100,7 +99,11 @@ class _PostMediaState extends State<PostMedia> with TickerProviderStateMixin {
             itemCount: widget.imageUrls.length,
             itemBuilder: (context, index) {
               return GestureDetector(
-                onTap: widget.onTap,
+                onTap: () => openFullscreenImages(
+                  context,
+                  widget.imageUrls,
+                  initialIndex: index,
+                ),
                 onDoubleTap: _handleDoubleTap,
                 child: CachedNetworkImage(
                   imageUrl: widget.imageUrls[index],

@@ -10,7 +10,7 @@ import 'package:dentlink/shared/widgets/load_more_footer.dart';
 import 'package:dentlink/shared/utils/error_messages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:dentlink/features/post/widgets/comments/comments_sheet.dart';
 
 class FeedList extends StatelessWidget {
   const FeedList({
@@ -66,24 +66,19 @@ class FeedList extends StatelessWidget {
           return ListView.separated(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.fromLTRB(
-              AppDimensions.spacing16,
-              AppDimensions.spacing12,
-              AppDimensions.spacing16,
-              AppDimensions.spacing12 + MediaQuery.paddingOf(context).bottom,
+              0,
+              AppDimensions.spacing8,
+              0,
+              AppDimensions.spacing8 + MediaQuery.paddingOf(context).bottom,
             ),
             itemCount: filteredPosts.length + (hasMore ? 1 : 0),
             separatorBuilder: (context, index) =>
-                const SizedBox(height: AppDimensions.spacing16),
+                const SizedBox(height: AppDimensions.spacing8),
             itemBuilder: (context, index) {
               if (index == filteredPosts.length) {
                 return LoadMoreFooter(onLoadMore: notifier.loadMore);
               }
               final post = filteredPosts[index];
-
-              final routePath = post.type == PostType.casePost
-                  ? '/feed/case/${post.id}'
-                  : '/feed/question/${post.id}';
-
               return PostCardFactory.build(
                 post,
                 onLikeToggle: () => runOrShowError(
@@ -94,8 +89,7 @@ class FeedList extends StatelessWidget {
                   context,
                   () => ref.read(feedProvider.notifier).toggleBookmark(post.id),
                 ),
-                onCommentTap: () => context.push(routePath),
-                onTap: () => context.push(routePath),
+                onCommentTap: () => showCommentsSheet(context, post),
               );
             },
           );
