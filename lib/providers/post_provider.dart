@@ -24,6 +24,9 @@ class PostDetailNotifier
     if (post != null) state = AsyncData(update(post));
   }
 
+  /// Post silindi: açık sayfa "bulunamadı" durumuna geçer (PostScreen kendini kapatır).
+  void markDeleted() => state = AsyncError(const NotFoundFailure(), StackTrace.current);
+
   Future<void> toggleLike() => _toggle(PostToggle.like);
 
   Future<void> toggleBookmark() => _toggle(PostToggle.bookmark);

@@ -1,4 +1,5 @@
 import 'package:dentlink/shared/widgets/post_card_factory.dart';
+import 'package:dentlink/features/post/widgets/comments/comments_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -72,9 +73,7 @@ class ProfilePostsTab extends ConsumerWidget {
               }
               final post = posts[index];
 
-              final routePath = post.type == PostType.casePost
-                  ? '/feed/case/${post.id}'
-                  : '/feed/question/${post.id}';
+              final routePath = '/post/${post.id}';
 
               return PostCardFactory.build(
                 post,
@@ -88,7 +87,7 @@ class ProfilePostsTab extends ConsumerWidget {
                       ? repo.unbookmarkPost(post.id)
                       : repo.bookmarkPost(post.id);
                 }),
-                onCommentTap: () => context.push(routePath),
+                onCommentTap: () => showCommentsSheet(context, post),
                 onTap: () => context.push(routePath),
               );
             },

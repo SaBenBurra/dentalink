@@ -85,7 +85,7 @@ lib/
 ### Navigasyon
 Alt menü: **Ana Sayfa** `/feed` · **Keşfet** `/search` · **Oluştur (+)** (vaka/soru seçimi) · **Mesajlar** `/messages` · **Profil** `/profile`.
 
-Diğer rotalar: `/feed/case/:id`, `/feed/question/:id`, `/create-case`, `/create-question`, `/chat/:userId`, `/profile/:userId`, `/edit-profile`, `/network/:id`, `/notifications`, `/bookmarks`, `/settings`, `/settings/blocked`, `/legal/:doc`, `/login`, `/register`. Tam liste: `lib/core/router/app_router.dart`.
+Diğer rotalar: `/post/:id` (tek post kartı; bildirim ve deep link hedefi), `/create-case`, `/create-question`, `/chat/:userId`, `/profile/:userId`, `/edit-profile`, `/network/:id`, `/notifications`, `/bookmarks`, `/settings`, `/settings/blocked`, `/legal/:doc`, `/login`, `/register`. Tam liste: `lib/core/router/app_router.dart`.
 
 ---
 

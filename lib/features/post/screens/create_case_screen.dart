@@ -84,7 +84,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
           SnackBar(content: Text(AppLocalizations.of(context)!.caseShared)),
         );
         // Paylaşılan postu aç; form yığından çıkar (geri → önceki ekran).
-        context.pushReplacement('/feed/case/${post!.id}');
+        context.pushReplacement('/post/${post!.id}');
       }
     }
   }

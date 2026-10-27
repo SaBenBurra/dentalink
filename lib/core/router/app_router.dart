@@ -11,8 +11,7 @@ import '../../features/messaging/screens/conversations_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/search/screens/search_screen.dart';
 import '../../features/shell/main_shell.dart';
-import '../../features/post/screens/case_detail_screen.dart';
-import '../../features/post/screens/question_detail_screen.dart';
+import '../../features/post/screens/post_screen.dart';
 import '../../features/post/screens/create_case_screen.dart';
 import '../../features/post/screens/create_question_screen.dart';
 import '../../features/post/screens/edit_post_screen.dart';
@@ -74,8 +73,7 @@ String? resolveAuthRedirect({
 /// Navigasyon yapısı:
 ///   /login            → LoginScreen
 ///   /register         → RegisterScreen
-///   /feed/case/:id    → CaseDetailScreen
-///   /feed/question/:id → QuestionDetailScreen
+///   /post/:id         → PostScreen (tek post kartı)
 ///   /                 → redirect → /login
 ///   ShellRoute        → MainShell (bottom nav)
 ///     /feed           → FeedScreen
@@ -126,22 +124,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const AuthErrorScreen(),
       ),
 
-      // ── Gönderi Detayları (Root level - Bottom Nav gizlenir) ─
+      // ── Tek post (Root level - Bottom Nav gizlenir); bildirim ve deep link hedefi ─
       GoRoute(
-        path: '/feed/case/:id',
-        name: 'caseDetail',
-        builder: (context, state) {
-          final id = state.pathParameters['id']!;
-          return CaseDetailScreen(postId: id);
-        },
-      ),
-      GoRoute(
-        path: '/feed/question/:id',
-        name: 'questionDetail',
-        builder: (context, state) {
-          final id = state.pathParameters['id']!;
-          return QuestionDetailScreen(postId: id);
-        },
+        path: '/post/:id',
+        name: 'post',
+        builder: (context, state) => PostScreen(
+          postId: state.pathParameters['id']!,
+          openComments: state.uri.queryParameters['comments'] == '1',
+        ),
       ),
       GoRoute(
         path: '/create-case',

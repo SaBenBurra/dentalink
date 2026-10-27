@@ -52,7 +52,7 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
           SnackBar(content: Text(AppLocalizations.of(context)!.questionShared)),
         );
         // Paylaşılan postu aç; form yığından çıkar (geri → önceki ekran).
-        context.pushReplacement('/feed/question/${post!.id}');
+        context.pushReplacement('/post/${post!.id}');
       }
     }
   }

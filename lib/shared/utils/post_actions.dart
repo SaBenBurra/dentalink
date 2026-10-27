@@ -26,6 +26,9 @@ void _removeMyPost(WidgetRef ref, String postId) {
   if (uid != null && ref.exists(userPostsProvider(uid))) {
     ref.read(userPostsProvider(uid).notifier).removePost(postId);
   }
+  if (ref.exists(postDetailProvider(postId))) {
+    ref.read(postDetailProvider(postId).notifier).markDeleted();
+  }
   ref.invalidate(authProvider);
 }
 

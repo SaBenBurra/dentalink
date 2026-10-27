@@ -1,8 +1,8 @@
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+import 'package:dentlink/features/post/widgets/comments/comments_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../data/models/enums.dart';
 import '../../../providers/search_provider.dart';
 import '../../../shared/utils/error_messages.dart';
 import '../../../shared/widgets/user_tile.dart';
@@ -48,9 +48,7 @@ class PostSearchResults extends ConsumerWidget {
               return LoadMoreFooter(onLoadMore: notifier.loadMore);
             }
             final post = posts[index];
-            final routePath = post.type == PostType.casePost
-                ? '/feed/case/${post.id}'
-                : '/feed/question/${post.id}';
+            final routePath = '/post/${post.id}';
 
             return PostCardFactory.build(
               post,
@@ -62,7 +60,7 @@ class PostSearchResults extends ConsumerWidget {
                 context,
                 () => ref.read(searchProvider.notifier).toggleBookmark(post.id),
               ),
-              onCommentTap: () => context.push(routePath),
+              onCommentTap: () => showCommentsSheet(context, post),
               onTap: () => context.push(routePath),
             );
           },

@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../data/models/enums.dart';
-import '../../../data/providers/repository_providers.dart';
 import '../../../providers/notification_provider.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_widget.dart';
@@ -39,7 +38,6 @@ class _NotificationListView extends ConsumerWidget {
     WidgetRef ref,
     NotificationModel notification,
   ) async {
-    final localizations = AppLocalizations.of(context)!;
     final messenger = ScaffoldMessenger.of(context);
     final l10n = AppLocalizations.of(context)!;
     // Gezinmeyi bekletme; hata olursa notifier geri alır, burada yalnızca bildir.
@@ -64,38 +62,10 @@ class _NotificationListView extends ConsumerWidget {
         ).toString(),
       );
     } else if (notification.postId != null) {
-      // Yükleme göstergesi
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-
-      try {
-        final postRepo = ref.read(feedRepositoryProvider);
-        final post = await postRepo.getPostById(notification.postId!);
-        
-        if (!context.mounted) return;
-        context.pop(); // Yükleme göstergesini kapat
-
-        if (post.type == PostType.casePost) {
-          context.push('/feed/case/${post.id}');
-        } else if (post.type == PostType.question) {
-          context.push('/feed/question/${post.id}');
-        }
-      } catch (e) {
-        if (!context.mounted) return;
-        context.pop(); // Yükleme göstergesini kapat
-        
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(localizations.postNotFound),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+      // Yükleme, "bulunamadı" ve hata durumlarını PostScreen gösterir.
+      // Yorum, cevap, yorum beğenisi ve en iyi cevap bildirimleri yorumları açık getirir.
+      final comments = notification.commentId != null ? '?comments=1' : '';
+      context.push('/post/${notification.postId}$comments');
     }
   }
 
