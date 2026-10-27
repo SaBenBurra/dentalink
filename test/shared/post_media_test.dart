@@ -51,6 +51,37 @@ void main() {
     expect(page(tester, find.byKey(const Key('tabs'))), 0);
   });
 
+  testWidgets('çoklu görselde sayaç kaydırınca güncellenir', (tester) async {
+    await tester.pumpWidget(app());
+    expect(find.text('1/3'), findsOneWidget);
+
+    await tester.fling(
+      find.descendant(
+        of: find.byType(PostMedia),
+        matching: find.byType(PageView),
+      ),
+      const Offset(-300, 0),
+      1000,
+    );
+    await settle(tester);
+    expect(find.text('2/3'), findsOneWidget);
+  });
+
+  testWidgets('tek görselde sayaç yok', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: PostMedia(
+            imageUrls: const ['https://x/1.jpg'],
+            isLiked: false,
+            onLikeToggle: () {},
+          ),
+        ),
+      ),
+    );
+    expect(find.text('1/1'), findsNothing);
+  });
+
   testWidgets('görsele dokununca tam ekran, tıklanan görselden açılır', (
     tester,
   ) async {

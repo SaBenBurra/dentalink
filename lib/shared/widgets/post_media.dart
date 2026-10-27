@@ -63,6 +63,13 @@ class _PostMediaState extends State<PostMedia> with TickerProviderStateMixin {
         );
   }
 
+  // Sayaç ve noktaların zemini: açık görselde koyu dolgu, koyu görselde ince açık kenar seçilir.
+  static final _scrim = BoxDecoration(
+    color: Colors.black.withValues(alpha: 0.55),
+    border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 0.5),
+    borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
+  );
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -136,35 +143,58 @@ class _PostMediaState extends State<PostMedia> with TickerProviderStateMixin {
             },
           ),
         ),
-        if (widget.imageUrls.length > 1)
+        if (widget.imageUrls.length > 1) ...[
+          // Kaydırılabilir olduğu belli olsun: köşede sayaç, aktif nokta uzar.
           Positioned(
-            bottom: AppDimensions.spacing12,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(widget.imageUrls.length, (idx) {
-                final isActive = _currentPage == idx;
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  margin: const EdgeInsets.symmetric(horizontal: 3.0),
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isActive
-                        ? Colors.white
-                        : Colors.white.withValues(alpha: 0.5),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 2,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                );
-              }),
+            top: AppDimensions.spacing12,
+            right: AppDimensions.spacing12,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppDimensions.spacing8,
+                vertical: 3,
+              ),
+              decoration: _scrim,
+              child: Text(
+                '${_currentPage + 1}/${widget.imageUrls.length}',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
+          Positioned(
+            bottom: AppDimensions.spacing12,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppDimensions.spacing4,
+                vertical: AppDimensions.spacing4,
+              ),
+              decoration: _scrim,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(widget.imageUrls.length, (idx) {
+                  final isActive = _currentPage == idx;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOut,
+                    margin: const EdgeInsets.symmetric(horizontal: 3.0),
+                    width: isActive ? 18 : 7,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        AppDimensions.radiusRound,
+                      ),
+                      color: isActive
+                          ? Colors.white
+                          : Colors.white.withValues(alpha: 0.5),
+                    ),
+                  );
+                }),
+              ),
+            ),
+          ),
+        ],
         if (_showHeartPop)
           AnimatedBuilder(
             animation: _heartAnimController,
