@@ -1,4 +1,5 @@
 import 'package:dentlink/data/repositories/auth_repository.dart';
+import 'package:dentlink/data/models/post_model.dart';
 import 'package:dentlink/main.dart';
 import 'package:dentlink/providers/locale_provider.dart';
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
@@ -10,11 +11,15 @@ import 'fake_repositories.dart';
 
 /// Uygulamayı fake repository'lerle açar. Cihazda (integration_test/) ve
 /// headless (test/, CI) aynı akış çalışır.
-Future<void> pumpDentLink(WidgetTester tester, {AuthRepository? auth}) async {
+Future<void> pumpDentLink(
+  WidgetTester tester, {
+  AuthRepository? auth,
+  List<PostModel>? feed,
+}) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        ...fakeRepositoryOverrides(auth: auth),
+        ...fakeRepositoryOverrides(auth: auth, feed: feed),
         // Metinler cihaz dilinden bağımsız olsun (emülatör TR, headless EN açılır).
         localeModeProvider.overrideWith(_TurkishLocale.new),
       ],

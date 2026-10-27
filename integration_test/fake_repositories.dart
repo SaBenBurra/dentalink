@@ -54,8 +54,11 @@ final _conversation = ConversationModel(
 );
 
 /// ProviderScope'a verilecek override'ların tamamı.
-List<Override> fakeRepositoryOverrides({AuthRepository? auth}) {
-  final posts = _FakePostRepository();
+List<Override> fakeRepositoryOverrides({
+  AuthRepository? auth,
+  List<PostModel>? feed,
+}) {
+  final posts = _FakePostRepository(feed ?? [seedCase]);
   return [
     supabaseClientProvider.overrideWith(
       (_) => throw StateError('Testte gerçek Supabase istemcisi kullanılmamalı'),
@@ -76,6 +79,9 @@ List<Override> fakeRepositoryOverrides({AuthRepository? auth}) {
 }
 
 class _FakePostRepository implements PostRepository {
+  _FakePostRepository(this._feed);
+
+  final List<PostModel> _feed;
   final _created = <String, PostModel>{};
 
   @override
@@ -98,7 +104,7 @@ class _FakePostRepository implements PostRepository {
 
   @override
   Future<PageResult<PostModel>> getFeed({PageCursor? before}) async =>
-      (items: [seedCase], next: null);
+      (items: _feed, next: null);
 
   @override
   Future<PostModel> getPostById(String id) async =>

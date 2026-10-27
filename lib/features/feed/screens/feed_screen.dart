@@ -16,17 +16,71 @@ class FeedScreen extends ConsumerStatefulWidget {
   ConsumerState<FeedScreen> createState() => _FeedScreenState();
 }
 
-class _FeedScreenState extends ConsumerState<FeedScreen> {
+class _FeedScreenState extends ConsumerState<FeedScreen>
+    with SingleTickerProviderStateMixin {
   final _pageController = PageController();
   int _index = 0;
   // Segmente dokununca sayfa ara sayfalardan geçer; o sırada gelen
   // onPageChanged seçimi geri çekmesin.
   bool _animatingToTap = false;
 
+  // Gizli barlar yan sekmeye kaydırma oranında görünür; sekme değişince
+  // tamamen açılır, vazgeçilirse geri gizlenir.
+  late final _reveal = AnimationController(vsync: this);
+  late final ProxyAnimation _revealSlot;
+  late final Animation<double> _barMotion;
+  int _settledPage = 0;
+  // Paket barı yayla açarken reveal 1'de kalır; yay yetişince bırakılır.
+  bool _holding = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _revealSlot = ref.read(bottomBarRevealProvider)..parent = _reveal;
+    _barMotion = ref.read(bottomBarMotionProvider);
+    _pageController.addListener(_onPageScroll);
+  }
+
   @override
   void dispose() {
+    _barMotion.removeListener(_releaseWhenShown);
+    _revealSlot.parent = kAlwaysDismissedAnimation;
+    _reveal.dispose();
     _pageController.dispose();
     super.dispose();
+  }
+
+  void _onPageScroll() {
+    final page = _pageController.page ?? _settledPage.toDouble();
+    final nearest = page.round();
+    if ((page - nearest).abs() < 0.001 && nearest != _settledPage) {
+      _settledPage = nearest;
+      _showBars();
+    }
+    if (!_holding) {
+      _reveal.value = (page - _settledPage).abs().clamp(0.0, 1.0);
+    }
+  }
+
+  void _showBars() {
+    ref.read(bottomBarControllerProvider).show();
+    if (_barMotion.value >= 1) return;
+    _reveal.value = 1;
+    if (!_holding) _barMotion.addListener(_releaseWhenShown);
+    _holding = true;
+  }
+
+  void _releaseWhenShown() {
+    // Yay 1'e yetişti ya da araya kaydırmayla gizleme girdi.
+    final status = _barMotion.status;
+    if (_barMotion.value < 1 &&
+        status != AnimationStatus.completed &&
+        status != AnimationStatus.reverse) {
+      return;
+    }
+    _barMotion.removeListener(_releaseWhenShown);
+    _holding = false;
+    _reveal.value = 0;
   }
 
   Future<void> _select(int index) async {
@@ -97,12 +151,37 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                 onPageChanged: (i) {
                   if (!_animatingToTap) setState(() => _index = i);
                 },
-                children: [for (final (_, page) in tabs) page],
+                children: [
+                  for (final (_, page) in tabs) _KeepAlive(child: page),
+                ],
               ),
             ),
           ),
         ],
       ),
     );
+  }
+}
+
+/// PageView ekran dışındaki sayfayı atar; sekmeye dönünce kaydırma konumu ve
+/// açılmış "devamını oku"lar kaybolmasın diye sayfa canlı tutulur.
+class _KeepAlive extends StatefulWidget {
+  const _KeepAlive({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_KeepAlive> createState() => _KeepAliveState();
+}
+
+class _KeepAliveState extends State<_KeepAlive>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
   }
 }

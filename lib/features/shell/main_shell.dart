@@ -5,11 +5,32 @@ import 'package:go_router/go_router.dart';
 import '../../providers/message_provider.dart';
 import '../../shared/widgets/app_bottom_nav_bar.dart';
 
-/// Alt menünün görünürlük animasyonu (1 = görünür, 0 = gizli; yay 0–1 dışına
-/// taşabilir). Üst barlar bunu izleyerek alt menüyle aynı karede kayar.
-final bottomBarAnimationProvider = Provider<ProxyAnimation>(
+/// Paketin kaydırmayla sürdüğü görünürlük (1 = görünür, 0 = gizli; yay 0–1
+/// dışına taşabilir).
+final bottomBarMotionProvider = Provider<ProxyAnimation>(
   (ref) => ProxyAnimation(kAlwaysCompleteAnimation),
 );
+
+/// Ekranın elle verdiği görünürlük (feed'de yan sekmeye kaydırma oranı);
+/// 0 = katkı yok.
+final bottomBarRevealProvider = Provider<ProxyAnimation>(
+  (ref) => ProxyAnimation(kAlwaysDismissedAnimation),
+);
+
+/// Barların gerçek görünürlüğü: ikisinden büyüğü. Üst barlar bunu izleyerek
+/// alt menüyle aynı karede kayar.
+final bottomBarAnimationProvider = Provider<Animation<double>>(
+  (ref) => AnimationMax<double>(
+    ref.watch(bottomBarMotionProvider),
+    ref.watch(bottomBarRevealProvider),
+  ),
+);
+
+final bottomBarControllerProvider = Provider<BottomBarController>((ref) {
+  final controller = BottomBarController();
+  ref.onDispose(controller.dispose);
+  return controller;
+});
 
 /// Ana shell — go_router ShellRoute tarafından sarılır.
 /// [child] parametresi aktif sekme ekranıdır.
@@ -32,6 +53,7 @@ class MainShell extends ConsumerWidget {
 
     return Scaffold(
       body: BottomBar(
+        controller: ref.watch(bottomBarControllerProvider),
         layout: BottomBarLayout(
           width: MediaQuery.of(context).size.width - 32,
           borderRadius: BorderRadius.circular(28),
@@ -106,23 +128,22 @@ class MainShell extends ConsumerWidget {
     );
   }
 
-  /// Paketin varsayılan kayma geçişi; ayrıca barın animasyonunu
-  /// [bottomBarAnimationProvider]'a bağlar. Statik: motion eşitliği sabit kalsın.
+  /// Paketin varsayılan kayma geçişi; paketin animasyonunu
+  /// [bottomBarMotionProvider]'a bağlar, bar ise birleşik görünürlükle kayar.
+  /// Statik: motion eşitliği sabit kalsın.
   static Widget _barTransition(
     BuildContext context,
     Animation<double> animation,
     Widget child,
   ) {
-    final proxy = ProviderScope.containerOf(
-      context,
-      listen: false,
-    ).read(bottomBarAnimationProvider);
+    final container = ProviderScope.containerOf(context, listen: false);
+    final proxy = container.read(bottomBarMotionProvider);
     if (proxy.parent != animation) proxy.parent = animation;
     return SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(0, 2),
         end: Offset.zero,
-      ).animate(animation),
+      ).animate(container.read(bottomBarAnimationProvider)),
       child: child,
     );
   }
