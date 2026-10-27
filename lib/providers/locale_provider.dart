@@ -1,7 +1,6 @@
-import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/l10n/generated/app_localizations.dart';
 
@@ -22,7 +21,7 @@ const List<Locale> appSupportedLocales = [
 /// İngilizce'yi birincil dil yapsa bile listede Türkçe varsa yanlış
 /// sonuç dönerdi.
 Locale _resolveDeviceLocale() {
-  final systemLocales = ui.PlatformDispatcher.instance.locales;
+  final systemLocales = WidgetsBinding.instance.platformDispatcher.locales;
   if (systemLocales.isEmpty) return const Locale('en');
   final primary = systemLocales.first;
   if (primary.languageCode == 'tr') return const Locale('tr');
@@ -31,7 +30,9 @@ Locale _resolveDeviceLocale() {
 
 /// Kullanıcının dil tercihini yöneten provider.
 ///
-/// Uygulama ilk açıldığında cihazın sistem dili okunur:
+/// Ayarlardan seçilen dil kalıcıdır: `main` önceden yüklenmiş [SharedPreferences]
+/// ile override eder (override yoksa, testlerde, yalnızca bellekte tutulur).
+/// Seçim yapılmadıysa her açılışta cihazın sistem dili okunur:
 /// - Cihaz dili **Türkçe** ise uygulama Türkçe başlar.
 /// - Diğer tüm dillerde uygulama **İngilizce** başlar.
 ///
@@ -46,8 +47,20 @@ final localeModeProvider = NotifierProvider<LocaleModeNotifier, Locale>(
 );
 
 class LocaleModeNotifier extends Notifier<Locale> {
+  LocaleModeNotifier([this._prefs]);
+
+  final SharedPreferences? _prefs;
+  static const _key = 'locale';
+
+  /// Kullanıcı ayarlardan dil seçtiyse o, seçmediyse cihaz dili.
   @override
-  Locale build() => _resolveDeviceLocale();
+  Locale build() {
+    final saved = _prefs?.getString(_key);
+    return appSupportedLocales
+            .where((l) => l.languageCode == saved)
+            .firstOrNull ??
+        _resolveDeviceLocale();
+  }
 
   /// Dili değiştirir. [locale] değeri [appSupportedLocales] içinde olmalıdır.
   void setLocale(Locale locale) {
@@ -57,13 +70,14 @@ class LocaleModeNotifier extends Notifier<Locale> {
       'Lütfen appSupportedLocales listesine ekleyin.',
     );
     state = locale;
+    _prefs?.setString(_key, locale.languageCode);
   }
 
   /// Türkçe ve İngilizce arasında geçiş yapar.
   void toggle() {
-    state = state.languageCode == 'tr'
-        ? const Locale('en')
-        : const Locale('tr');
+    setLocale(
+      state.languageCode == 'tr' ? const Locale('en') : const Locale('tr'),
+    );
   }
 
   /// Mevcut dilin Türkçe olup olmadığını döner.

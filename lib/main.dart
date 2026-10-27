@@ -22,6 +22,7 @@ Future<void> main() async {
     ProviderScope(
       overrides: [
         themeModeProvider.overrideWith(() => ThemeModeNotifier(prefs)),
+        localeModeProvider.overrideWith(() => LocaleModeNotifier(prefs)),
       ],
       child: const MainApp(),
     ),
