@@ -6,8 +6,8 @@ import '../../core/l10n/generated/app_localizations.dart';
 /// Kartta ilk gösterilen içerik uzunluğu (karakter, ~5 satır).
 const int postPreviewChars = 300;
 
-/// "Devamını oku"ya her basışta eklenen karakter sayısı (~8 satır).
-const int postReadMoreStep = 500;
+/// "Devamını oku"ya her basışta eklenen karakter sayısı (~16 satır).
+const int postReadMoreStep = 1000;
 
 /// [text]'in ilk [limit] karakteri; kesilirse kelime ortasında bölmez, sonuna … ekler.
 /// Emoji gibi çok kod birimli karakterleri bölmemek için grapheme bazında sayar.
