@@ -130,6 +130,8 @@ class NotificationTile extends StatelessWidget {
         return Icons.favorite;
       case NotificationType.comment:
         return Icons.mode_comment;
+      case NotificationType.reply:
+        return Icons.reply_rounded;
       case NotificationType.follow:
         return Icons.person_add;
       case NotificationType.message:
@@ -149,6 +151,7 @@ class NotificationTile extends StatelessWidget {
       case NotificationType.like:
         return Colors.red;
       case NotificationType.comment:
+      case NotificationType.reply:
         return colorScheme.primary;
       case NotificationType.follow:
         return Colors.green;

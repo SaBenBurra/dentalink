@@ -171,6 +171,7 @@ enum ReportReason {
 enum NotificationType {
   like,
   comment,
+  reply,
   follow,
   message,
   bestAnswer,
@@ -179,6 +180,7 @@ enum NotificationType {
   String get dbValue => switch (this) {
     NotificationType.like => 'like',
     NotificationType.comment => 'comment',
+    NotificationType.reply => 'reply',
     NotificationType.follow => 'follow',
     NotificationType.message => 'message',
     NotificationType.bestAnswer => 'best_answer',

@@ -1155,4 +1155,33 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get imagesRejectedSize =>
       'Çok küçük ya da çok dar görseller eklenmedi.';
+
+  @override
+  String get reply => 'Yanıtla';
+
+  @override
+  String showReplies(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count yanıtı göster',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get hideReplies => 'Yanıtları gizle';
+
+  @override
+  String replyingTo(String name) {
+    return 'Yanıtlanan: $name';
+  }
+
+  @override
+  String get writeReply => 'Yanıtını yaz...';
+
+  @override
+  String notificationReplied(String actorName) {
+    return '$actorName yorumuna yanıt verdi.';
+  }
 }

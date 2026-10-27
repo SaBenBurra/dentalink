@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
+import '../../../../data/models/comment_model.dart';
 import '../../../../data/models/enums.dart';
 import '../../../../data/models/post_model.dart';
 import '../../../../providers/auth_provider.dart';
@@ -9,6 +10,7 @@ import '../../../../providers/comment_provider.dart';
 import '../../../../shared/utils/error_messages.dart';
 import '../../../../shared/widgets/load_more_footer.dart';
 import 'comment_card.dart';
+import 'comment_thread.dart';
 
 /// Feed kartındaki yorum ikonundan açılan yorumlar penceresi.
 void showCommentsSheet(BuildContext context, PostModel post) {
@@ -35,14 +37,24 @@ class CommentsSheet extends ConsumerStatefulWidget {
 class _CommentsSheetState extends ConsumerState<CommentsSheet> {
   static const _commentMax = 2000;
   final _controller = TextEditingController();
+  final _focusNode = FocusNode();
   bool _isSubmitting = false;
+
+  /// Yanıt modunda yanıtlanan yorum ve gönderilince çağrılacak geri bildirim.
+  ({CommentModel parent, VoidCallback onSent})? _replyTo;
 
   bool get _isCase => widget.post.type == PostType.casePost;
 
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
+  }
+
+  void _startReply(CommentModel parent, VoidCallback onSent) {
+    setState(() => _replyTo = (parent: parent, onSent: onSent));
+    _focusNode.requestFocus();
   }
 
   Future<void> _submit() async {
@@ -51,11 +63,19 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
 
     setState(() => _isSubmitting = true);
     try {
-      await ref
-          .read(commentsProvider(widget.post.id).notifier)
-          .addComment(text);
+      final replyTo = _replyTo;
+      if (replyTo == null) {
+        await ref
+            .read(commentsProvider(widget.post.id).notifier)
+            .addComment(text);
+      } else {
+        await commentThreadOf(ref, replyTo.parent)
+            .addReply(replyTo.parent, text);
+        replyTo.onSent();
+      }
       if (!mounted) return;
       _controller.clear();
+      setState(() => _replyTo = null);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -111,11 +131,13 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
                       if (index == comments.length) {
                         return LoadMoreFooter(onLoadMore: notifier.loadMore);
                       }
-                      return CommentCard(
-                        comment: comments[index],
-                        postId: postId,
+                      final comment = comments[index];
+                      return CommentThread(
+                        key: ValueKey(comment.id),
+                        comment: comment,
                         isPostOwner: isPostOwner,
                         isCase: _isCase,
+                        onReply: _startReply,
                       );
                     },
                   );
@@ -144,6 +166,39 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
               ),
             ),
             const Divider(height: 1),
+            if (_replyTo case final replyTo?)
+              Padding(
+                padding: const EdgeInsets.only(left: AppDimensions.spacing16),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.reply_rounded,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: AppDimensions.spacing8),
+                    Expanded(
+                      child: Text(
+                        l10n.replyingTo(
+                          replyTo.parent.author?.fullName ?? l10n.deletedUser,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: l10n.cancel,
+                      icon: const Icon(Icons.close_rounded, size: 18),
+                      onPressed: _isSubmitting
+                          ? null
+                          : () => setState(() => _replyTo = null),
+                    ),
+                  ],
+                ),
+              ),
             SafeArea(
               top: false,
               child: Padding(
@@ -158,12 +213,15 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
                     Expanded(
                       child: TextField(
                         controller: _controller,
+                        focusNode: _focusNode,
                         maxLength: _commentMax,
                         minLines: 1,
                         maxLines: 4,
                         decoration: InputDecoration(
                           counterText: '',
-                          hintText: _isCase
+                          hintText: _replyTo != null
+                              ? l10n.writeReply
+                              : _isCase
                               ? l10n.joinDiscussionHint
                               : l10n.writeAnswer,
                           border: InputBorder.none,

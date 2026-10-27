@@ -2203,6 +2203,42 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Çok küçük ya da çok dar görseller eklenmedi.'**
   String get imagesRejectedSize;
+
+  /// Yorumun altındaki yanıt butonu
+  ///
+  /// In tr, this message translates to:
+  /// **'Yanıtla'**
+  String get reply;
+
+  /// No description provided for @showReplies.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count, plural, other{{count} yanıtı göster}}'**
+  String showReplies(int count);
+
+  /// No description provided for @hideReplies.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yanıtları gizle'**
+  String get hideReplies;
+
+  /// No description provided for @replyingTo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yanıtlanan: {name}'**
+  String replyingTo(String name);
+
+  /// No description provided for @writeReply.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yanıtını yaz...'**
+  String get writeReply;
+
+  /// No description provided for @notificationReplied.
+  ///
+  /// In tr, this message translates to:
+  /// **'{actorName} yorumuna yanıt verdi.'**
+  String notificationReplied(String actorName);
 }
 
 class _AppLocalizationsDelegate

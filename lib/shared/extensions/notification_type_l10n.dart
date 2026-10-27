@@ -11,6 +11,7 @@ extension NotificationTypeL10n on NotificationType {
     return switch (this) {
       NotificationType.like => l10n.notificationLiked(actorName),
       NotificationType.comment => l10n.notificationCommented(actorName),
+      NotificationType.reply => l10n.notificationReplied(actorName),
       NotificationType.follow => l10n.notificationFollowed(actorName),
       NotificationType.message => l10n.notificationMessaged(actorName),
       NotificationType.bestAnswer => l10n.notificationBestAnswer(actorName),

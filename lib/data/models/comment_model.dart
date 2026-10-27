@@ -7,6 +7,12 @@ class CommentModel extends Equatable {
   final String postId;
   final String userId;
   final String content;
+
+  /// Yanıtlanan yorum; null = üst seviye yorum/cevap.
+  final String? parentId;
+
+  /// Doğrudan yanıt sayısı (DB trigger'ı tutar).
+  final int replyCount;
   
   /// Soru gönderilerinde: bu yorum en iyi cevap mı?
   final bool isBestAnswer;
@@ -26,6 +32,8 @@ class CommentModel extends Equatable {
     required this.postId,
     required this.userId,
     required this.content,
+    this.parentId,
+    this.replyCount = 0,
     this.isBestAnswer = false,
     this.likeCount = 0,
     this.isLiked = false,
@@ -43,6 +51,8 @@ class CommentModel extends Equatable {
       postId: row['post_id'] as String,
       userId: row['user_id'] as String,
       content: row['content'] as String,
+      parentId: row['parent_id'] as String?,
+      replyCount: row['reply_count'] as int? ?? 0,
       isBestAnswer: row['is_best_answer'] as bool? ?? false,
       likeCount: row['like_count'] as int? ?? 0,
       // `my_likes` yalnızca oturumdaki kullanıcının beğenisini içerir.
@@ -58,6 +68,7 @@ class CommentModel extends Equatable {
     String? postId,
     String? userId,
     String? content,
+    int? replyCount,
     bool? isBestAnswer,
     int? likeCount,
     bool? isLiked,
@@ -70,6 +81,8 @@ class CommentModel extends Equatable {
       postId: postId ?? this.postId,
       userId: userId ?? this.userId,
       content: content ?? this.content,
+      parentId: parentId,
+      replyCount: replyCount ?? this.replyCount,
       isBestAnswer: isBestAnswer ?? this.isBestAnswer,
       likeCount: likeCount ?? this.likeCount,
       isLiked: isLiked ?? this.isLiked,
@@ -85,6 +98,8 @@ class CommentModel extends Equatable {
         postId,
         userId,
         content,
+        parentId,
+        replyCount,
         isBestAnswer,
         likeCount,
         isLiked,

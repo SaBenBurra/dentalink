@@ -20,7 +20,7 @@ class SupabaseCommentRepository implements CommentRepository {
 
   /// Yorum, yazar ve oturum açan kullanıcıya ait beğeni durumunu çeken PostgREST seçimi.
   static const _fullCommentSelect = '''
-    id, post_id, user_id, content, is_best_answer, like_count, created_at, updated_at,
+    id, post_id, user_id, parent_id, reply_count, content, is_best_answer, like_count, created_at, updated_at,
     author:users!comments_user_id_fkey(id, full_name, username, avatar_url, title, is_verified, created_at),
     my_likes:likes(id)
   ''';
@@ -35,6 +35,7 @@ class SupabaseCommentRepository implements CommentRepository {
         .from('comments')
         .select(_fullCommentSelect)
         .eq('post_id', postId)
+        .isFilter('parent_id', null)
         .eq('my_likes.user_id', uid);
     // En iyi cevap ilk sayfanın başında; sonraki sayfalarda tekrar gelmez.
     if (after != null) {
@@ -53,7 +54,26 @@ class SupabaseCommentRepository implements CommentRepository {
   });
 
   @override
-  Future<CommentModel> addComment(String postId, String content) => guardSupabase(() async {
+  Future<PageResult<CommentModel>> getReplies(String parentId, {PageCursor? after}) => guardSupabase(() async {
+    final uid = _uid;
+
+    var query = _client
+        .from('comments')
+        .select(_fullCommentSelect)
+        .eq('parent_id', parentId)
+        .eq('my_likes.user_id', uid);
+    if (after != null) query = query.after(after, ascending: true);
+
+    final rows = await query
+        .order('created_at', ascending: true)
+        .order('id', ascending: true)
+        .limit(pageSize);
+
+    return (items: rows.map(CommentModel.fromRow).toList(), next: nextCursor(rows));
+  });
+
+  @override
+  Future<CommentModel> addComment(String postId, String content, {String? parentId}) => guardSupabase(() async {
     final uid = _uid;
 
     final row = await _client
@@ -62,6 +82,7 @@ class SupabaseCommentRepository implements CommentRepository {
           'post_id': postId,
           'user_id': uid,
           'content': content,
+          'parent_id': ?parentId,
         })
         .select(_fullCommentSelect)
         .single();

@@ -3,12 +3,15 @@ import '../models/comment_model.dart';
 
 /// Yorum repository arayüzü.
 abstract class CommentRepository {
-  /// Bir gönderinin yorumlarını eskiden yeniye sayfalayarak getirir; [after]
-  /// verilirse sonraki sayfa. En iyi cevap varsa ilk sayfanın başındadır.
+  /// Bir gönderinin üst seviye yorumlarını eskiden yeniye sayfalayarak getirir;
+  /// [after] verilirse sonraki sayfa. En iyi cevap varsa ilk sayfanın başındadır.
   Future<PageResult<CommentModel>> getComments(String postId, {PageCursor? after});
 
-  /// Yeni yorum ekler.
-  Future<CommentModel> addComment(String postId, String content);
+  /// Bir yorumun doğrudan yanıtlarını eskiden yeniye sayfalayarak getirir.
+  Future<PageResult<CommentModel>> getReplies(String parentId, {PageCursor? after});
+
+  /// Yeni yorum ekler; [parentId] verilirse o yorumun yanıtıdır.
+  Future<CommentModel> addComment(String postId, String content, {String? parentId});
 
   /// Bir yorumu "En İyi Cevap" olarak işaretler (soru sahibi yapabilir).
   ///

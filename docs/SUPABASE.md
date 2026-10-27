@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `023_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `026_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -257,6 +257,33 @@ rollback;
 begin;
 set local role anon;
 select public.suggest_tags('imp');
+rollback;
+
+-- 20) Yorum yanıtı (026) → BEKLENEN: yanıt eklenir, ebeveynin reply_count'u 1 artar;
+--     başka posttaki yoruma yanıt 22023;
+--     yanıta en iyi cevap 22023 (<Q> = A'nın soru postu, <BC> = B'nin <Q>'daki yorumu,
+--     <P2> = başka bir post)
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+insert into public.comments (post_id, user_id, parent_id, content)
+values ('<Q>', '<A>', '<BC>', 'yanıt');
+select reply_count from public.comments where id = '<BC>';
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+insert into public.comments (post_id, user_id, parent_id, content)
+values ('<P2>', '<A>', '<BC>', 'yanlış post');
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+with r as (
+  insert into public.comments (post_id, user_id, parent_id, content)
+  values ('<Q>', '<A>', '<BC>', 'yanıt') returning id
+)
+select public.mark_best_answer((select id from r));
 rollback;
 ```
 

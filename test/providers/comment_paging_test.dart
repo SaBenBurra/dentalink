@@ -31,7 +31,8 @@ class _Repo implements CommentRepository {
   }
 
   @override
-  Future<CommentModel> addComment(String postId, String content) async =>
+  Future<CommentModel> addComment(String postId, String content,
+          {String? parentId}) async =>
       _c('c3');
 
   @override

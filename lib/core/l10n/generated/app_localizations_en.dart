@@ -1155,4 +1155,34 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get imagesRejectedSize =>
       'Images that are too small or too narrow were not added.';
+
+  @override
+  String get reply => 'Reply';
+
+  @override
+  String showReplies(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Show $count replies',
+      one: 'Show 1 reply',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get hideReplies => 'Hide replies';
+
+  @override
+  String replyingTo(String name) {
+    return 'Replying to $name';
+  }
+
+  @override
+  String get writeReply => 'Write your reply...';
+
+  @override
+  String notificationReplied(String actorName) {
+    return '$actorName replied to your comment.';
+  }
 }

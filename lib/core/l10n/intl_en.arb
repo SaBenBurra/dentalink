@@ -432,5 +432,11 @@
   "logoutConfirmTitle": "Log out?",
   "chatToday": "Today",
   "chatYesterday": "Yesterday",
-  "imagesRejectedSize": "Images that are too small or too narrow were not added."
+  "imagesRejectedSize": "Images that are too small or too narrow were not added.",
+  "reply": "Reply",
+  "showReplies": "{count, plural, =1{Show 1 reply} other{Show {count} replies}}",
+  "hideReplies": "Hide replies",
+  "replyingTo": "Replying to {name}",
+  "writeReply": "Write your reply...",
+  "notificationReplied": "{actorName} replied to your comment."
 }

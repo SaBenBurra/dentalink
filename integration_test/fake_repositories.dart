@@ -133,7 +133,8 @@ class _FakeCommentRepository implements CommentRepository {
       (items: <CommentModel>[], next: null);
 
   @override
-  Future<CommentModel> addComment(String postId, String content) async =>
+  Future<CommentModel> addComment(String postId, String content,
+          {String? parentId}) async =>
       CommentModel(
         id: 'c1',
         postId: postId,

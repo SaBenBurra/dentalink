@@ -723,5 +723,15 @@
   "logoutConfirmTitle": "Çıkış yapılsın mı?",
   "chatToday": "Bugün",
   "chatYesterday": "Dün",
-  "imagesRejectedSize": "Çok küçük ya da çok dar görseller eklenmedi."
+  "imagesRejectedSize": "Çok küçük ya da çok dar görseller eklenmedi.",
+  "reply": "Yanıtla",
+  "@reply": { "description": "Yorumun altındaki yanıt butonu" },
+  "showReplies": "{count, plural, other{{count} yanıtı göster}}",
+  "@showReplies": { "placeholders": { "count": { "type": "int" } } },
+  "hideReplies": "Yanıtları gizle",
+  "replyingTo": "Yanıtlanan: {name}",
+  "@replyingTo": { "placeholders": { "name": { "type": "String" } } },
+  "writeReply": "Yanıtını yaz...",
+  "notificationReplied": "{actorName} yorumuna yanıt verdi.",
+  "@notificationReplied": { "placeholders": { "actorName": { "type": "String" } } }
 }
