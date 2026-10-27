@@ -51,6 +51,15 @@ void main() {
     expect(page(tester, find.byKey(const Key('tabs'))), 0);
   });
 
+  test('çerçeve oranı 4:5 ile 1.91:1 arasında sınırlanır', () {
+    expect(postMediaAspectRatio(1080, 1080), 1.0);
+    expect(postMediaAspectRatio(1080, 1350), 0.8);
+    expect(postMediaAspectRatio(1080, 1920), 0.8); // 9:16 → 4:5'e kırpılır
+    expect(postMediaAspectRatio(1920, 1080), closeTo(1.78, 0.01));
+    expect(postMediaAspectRatio(3000, 1000), 1.91);
+    expect(postMediaAspectRatio(100, 0), 1.0);
+  });
+
   testWidgets('çoklu görselde sayaç kaydırınca güncellenir', (tester) async {
     await tester.pumpWidget(app());
     expect(find.text('1/3'), findsOneWidget);

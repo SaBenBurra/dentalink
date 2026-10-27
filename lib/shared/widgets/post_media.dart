@@ -4,6 +4,10 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import 'fullscreen_image_viewer.dart';
 
+/// Instagram gibi: çerçeve oranı ilk görselden, 4:5 (dikey) ile 1.91:1 (yatay) arasında.
+double postMediaAspectRatio(int width, int height) =>
+    height == 0 ? 1.0 : (width / height).clamp(0.8, 1.91);
+
 class PostMedia extends StatefulWidget {
   const PostMedia({
     super.key,
@@ -70,8 +74,55 @@ class _PostMediaState extends State<PostMedia> with TickerProviderStateMixin {
     borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
   );
 
+  // shortcut: görsel boyutu DB'de yok, oran ilk görsel yüklenince okunur (ilk açılışta 1:1'den
+  // geçiş olur); post_images'a width/height eklenince oran doğrudan oradan gelsin.
+  static final _ratioCache = <String, double>{};
+  ImageStream? _ratioStream;
+  late final _ratioListener = ImageStreamListener(
+    (info, _) {
+      final ratio = postMediaAspectRatio(info.image.width, info.image.height);
+      info.dispose();
+      _ratioCache[_firstPath] = ratio;
+      if (mounted) setState(() {});
+    },
+    // Yüklenemezse 1:1 kalır; hata görselin kendi errorWidget'ında gösterilir.
+    onError: (_, _) {},
+  );
+
+  String get _firstPath => Uri.parse(widget.imageUrls.first).path;
+
+  double get _aspectRatio => _ratioCache[_firstPath] ?? 1.0;
+
+  void _resolveRatio() {
+    _ratioStream?.removeListener(_ratioListener);
+    _ratioStream = null;
+    if (widget.imageUrls.isEmpty || _ratioCache.containsKey(_firstPath)) return;
+    _ratioStream =
+        CachedNetworkImageProvider(
+            widget.imageUrls.first,
+            cacheKey: _firstPath,
+          ).resolve(createLocalImageConfiguration(context))
+          ..addListener(_ratioListener);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_ratioStream == null) _resolveRatio();
+  }
+
+  @override
+  void didUpdateWidget(PostMedia oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final oldFirst = oldWidget.imageUrls.isEmpty
+        ? null
+        : Uri.parse(oldWidget.imageUrls.first).path;
+    if (widget.imageUrls.isNotEmpty && oldFirst != _firstPath) _resolveRatio();
+  }
+
   @override
   void dispose() {
+    _ratioStream?.removeListener(_ratioListener);
     _pageController.dispose();
     _heartAnimController.dispose();
     super.dispose();
@@ -98,49 +149,56 @@ class _PostMediaState extends State<PostMedia> with TickerProviderStateMixin {
     return Stack(
       alignment: Alignment.center,
       children: [
-        AspectRatio(
-          aspectRatio: 1.0,
-          child: PageView.builder(
-            controller: _pageController,
-            onPageChanged: (idx) => setState(() => _currentPage = idx),
-            itemCount: widget.imageUrls.length,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () => openFullscreenImages(
-                  context,
-                  widget.imageUrls,
-                  initialIndex: index,
-                ),
-                onDoubleTap: _handleDoubleTap,
-                child: CachedNetworkImage(
-                  imageUrl: widget.imageUrls[index],
-                  // İmzalı URL her çekişte değişir; önbellek dosya yoluna bağlı (SEC-9).
-                  cacheKey: Uri.parse(widget.imageUrls[index]).path,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: isDark ? Colors.black26 : Colors.white24,
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColors.primary,
+        ColoredBox(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          child: AnimatedSize(
+            duration: const Duration(milliseconds: 150),
+            child: AspectRatio(
+              aspectRatio: _aspectRatio,
+              child: PageView.builder(
+                controller: _pageController,
+                onPageChanged: (idx) => setState(() => _currentPage = idx),
+                itemCount: widget.imageUrls.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () => openFullscreenImages(
+                      context,
+                      widget.imageUrls,
+                      initialIndex: index,
+                    ),
+                    onDoubleTap: _handleDoubleTap,
+                    child: CachedNetworkImage(
+                      imageUrl: widget.imageUrls[index],
+                      // İmzalı URL her çekişte değişir; önbellek dosya yoluna bağlı (SEC-9).
+                      cacheKey: Uri.parse(widget.imageUrls[index]).path,
+                      // Çerçeve ilk görselin oranında; diğerleri ve sınır dışı oranlar ortadan kırpılır.
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: isDark ? Colors.black26 : Colors.white24,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: isDark ? Colors.black26 : Colors.white24,
+                        child: const Center(
+                          child: Icon(
+                            Icons.broken_image_outlined,
+                            size: 48,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    color: isDark ? Colors.black26 : Colors.white24,
-                    child: const Center(
-                      child: Icon(
-                        Icons.broken_image_outlined,
-                        size: 48,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
+                  );
+                },
+              ),
+            ),
           ),
         ),
         if (widget.imageUrls.length > 1) ...[
