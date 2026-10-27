@@ -220,7 +220,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get followButton => 'Follow';
 
   @override
-  String get unfollowButton => 'Unfollow';
+  String get followingButton => 'Following';
 
   @override
   String get messageButton => 'Send Message';
@@ -1185,4 +1185,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String notificationReplied(String actorName) {
     return '$actorName replied to your comment.';
   }
+
+  @override
+  String profileExperience(int years) {
+    String _temp0 = intl.Intl.pluralLogic(
+      years,
+      locale: localeName,
+      other: '$years years experience',
+      one: '1 year experience',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get verifiedAccount => 'Verified account';
 }

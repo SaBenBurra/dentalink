@@ -518,11 +518,11 @@ abstract class AppLocalizations {
   /// **'Takip Et'**
   String get followButton;
 
-  /// Takibi bırak butonu
+  /// Takip edilen kullanıcıda buton; basınca takip bırakılır
   ///
   /// In tr, this message translates to:
-  /// **'Takibi Bırak'**
-  String get unfollowButton;
+  /// **'Takip Ediliyor'**
+  String get followingButton;
 
   /// Mesaj gönder butonu
   ///
@@ -2239,6 +2239,18 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'{actorName} yorumuna yanıt verdi.'**
   String notificationReplied(String actorName);
+
+  /// No description provided for @profileExperience.
+  ///
+  /// In tr, this message translates to:
+  /// **'{years} yıl deneyim'**
+  String profileExperience(int years);
+
+  /// No description provided for @verifiedAccount.
+  ///
+  /// In tr, this message translates to:
+  /// **'Doğrulanmış hesap'**
+  String get verifiedAccount;
 }
 
 class _AppLocalizationsDelegate

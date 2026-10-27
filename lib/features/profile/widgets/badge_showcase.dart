@@ -77,10 +77,7 @@ class BadgeShowcase extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const SizedBox(
-        height: 80,
-        child: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () => const SizedBox.shrink(),
       error: (error, stackTrace) => const SizedBox.shrink(),
     );
   }

@@ -220,7 +220,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get followButton => 'Takip Et';
 
   @override
-  String get unfollowButton => 'Takibi Bırak';
+  String get followingButton => 'Takip Ediliyor';
 
   @override
   String get messageButton => 'Mesaj Gönder';
@@ -1184,4 +1184,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String notificationReplied(String actorName) {
     return '$actorName yorumuna yanıt verdi.';
   }
+
+  @override
+  String profileExperience(int years) {
+    return '$years yıl deneyim';
+  }
+
+  @override
+  String get verifiedAccount => 'Doğrulanmış hesap';
 }

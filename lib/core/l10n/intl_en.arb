@@ -76,7 +76,7 @@
   "following": "Following",
   "posts": "Posts",
   "followButton": "Follow",
-  "unfollowButton": "Unfollow",
+  "followingButton": "Following",
   "messageButton": "Send Message",
   "bio": "Bio",
   "university": "University",
@@ -438,5 +438,8 @@
   "hideReplies": "Hide replies",
   "replyingTo": "Replying to {name}",
   "writeReply": "Write your reply...",
-  "notificationReplied": "{actorName} replied to your comment."
+  "notificationReplied": "{actorName} replied to your comment.",
+  "profileExperience": "{years, plural, =1{1 year experience} other{{years} years experience}}",
+  "@profileExperience": { "placeholders": { "years": { "type": "int" } } },
+  "verifiedAccount": "Verified account"
 }

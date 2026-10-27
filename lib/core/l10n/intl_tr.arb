@@ -211,8 +211,8 @@
   "followButton": "Takip Et",
   "@followButton": { "description": "Takip et butonu" },
 
-  "unfollowButton": "Takibi Bırak",
-  "@unfollowButton": { "description": "Takibi bırak butonu" },
+  "followingButton": "Takip Ediliyor",
+  "@followingButton": { "description": "Takip edilen kullanıcıda buton; basınca takip bırakılır" },
 
   "messageButton": "Mesaj Gönder",
   "@messageButton": { "description": "Mesaj gönder butonu" },
@@ -733,5 +733,8 @@
   "@replyingTo": { "placeholders": { "name": { "type": "String" } } },
   "writeReply": "Yanıtını yaz...",
   "notificationReplied": "{actorName} yorumuna yanıt verdi.",
-  "@notificationReplied": { "placeholders": { "actorName": { "type": "String" } } }
+  "@notificationReplied": { "placeholders": { "actorName": { "type": "String" } } },
+  "profileExperience": "{years} yıl deneyim",
+  "@profileExperience": { "placeholders": { "years": { "type": "int" } } },
+  "verifiedAccount": "Doğrulanmış hesap"
 }

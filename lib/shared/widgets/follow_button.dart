@@ -46,11 +46,12 @@ class _FollowButtonState extends ConsumerState<FollowButton> {
     final isFollowing = ref.watch(isFollowingProvider(widget.userId));
     final onPressed = (_busy || !loaded) ? null : _toggle;
 
+    // İki durumda da aynı şekil; takip ediliyorsa yalnızca renk tonal olur.
     return isFollowing
-        ? OutlinedButton(
+        ? FilledButton.tonal(
             onPressed: onPressed,
             style: widget.style,
-            child: Text(l10n.unfollowButton),
+            child: Text(l10n.followingButton),
           )
         : FilledButton(
             onPressed: onPressed,

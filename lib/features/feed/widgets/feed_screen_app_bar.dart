@@ -97,7 +97,7 @@ class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
                   // Arama ikonu 48dp alanının sağına yaslı (sağ payı 2dp):
                   // segment-arama 10+26 = 36dp, arama-zil 2+14 = 16dp.
                   const SizedBox(width: _searchGap),
-                  _HeaderIconButton(
+                  HeaderIconButton(
                     alignment: Alignment.centerRight,
                     icon: Icons.search_rounded,
                     tooltip: l10n.searchHint,
@@ -115,8 +115,9 @@ class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 /// Çerçevesiz 20dp ikon; dokunma alanı 48x48.
-class _HeaderIconButton extends StatelessWidget {
-  const _HeaderIconButton({
+class HeaderIconButton extends StatelessWidget {
+  const HeaderIconButton({
+    super.key,
     required this.icon,
     required this.tooltip,
     required this.onTap,
@@ -188,7 +189,7 @@ class _NotificationBell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final unread = ref.watch(unreadNotificationCountProvider);
-    return _HeaderIconButton(
+    return HeaderIconButton(
       icon: Icons.notifications_none_rounded,
       tooltip: AppLocalizations.of(context)!.notificationsTitle,
       showDot: unread > 0,

@@ -244,7 +244,7 @@ class _FollowButtonState extends ConsumerState<_FollowButton> {
               height: 16,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : Text(isFollowing ? AppLocalizations.of(context)!.unfollowButton : AppLocalizations.of(context)!.followButton),
+          : Text(isFollowing ? AppLocalizations.of(context)!.followingButton : AppLocalizations.of(context)!.followButton),
     );
   }
 }
