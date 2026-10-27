@@ -53,7 +53,7 @@ class SupabaseMessageRepository implements MessageRepository {
       content: row['content'] as String,
       isRead: row['is_read'] as bool? ?? false,
       deletedAt: row['deleted_at'] != null ? DateTime.parse(row['deleted_at'] as String) : null,
-      createdAt: DateTime.parse(row['created_at'] as String),
+      createdAt: DateTime.parse(row['created_at'] as String).toLocal(),
     );
   }
 

@@ -1145,4 +1145,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get logoutConfirmTitle => 'Çıkış yapılsın mı?';
+
+  @override
+  String get chatToday => 'Bugün';
+
+  @override
+  String get chatYesterday => 'Dün';
 }

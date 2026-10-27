@@ -17,6 +17,7 @@ import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../shared/utils/moderation_actions.dart';
 import '../../../data/models/enums.dart';
 import 'package:go_router/go_router.dart';
+
 /// Saat formatı — her build/itemBuilder çağrısında yeniden oluşturulmasını
 /// önlemek için modül seviyesinde tanımlanır.
 final _timeFormatter = DateFormat('HH:mm');
@@ -70,8 +71,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     try {
       // 4. Gönderim asenkron bekleniyor, hatalar yakalanıyor.
-      await ref.read(activeChatProvider(widget.userId).notifier).sendMessage(text);
-      
+      await ref
+          .read(activeChatProvider(widget.userId).notifier)
+          .sendMessage(text);
+
       // 5. Başarılı olursa input'u temizle; başarısız olursa kullanıcının yazdığı metin kalır.
       if (mounted) {
         _messageController.clear();
@@ -105,7 +108,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     // Deep link/bildirimden açılınca isim ve avatar query'de olmayabilir.
     final needsPeer = widget.userName.isEmpty;
-    final peer = needsPeer ? ref.watch(userProfileProvider(widget.userId)).valueOrNull : null;
+    final peer = needsPeer
+        ? ref.watch(userProfileProvider(widget.userId)).valueOrNull
+        : null;
     final userName = needsPeer ? (peer?.fullName ?? '') : widget.userName;
     final avatarUrl = needsPeer ? (peer?.avatarUrl ?? '') : widget.avatarUrl;
 
@@ -147,7 +152,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             target: ReportTarget.user,
             targetId: widget.userId,
             userId: widget.userId,
-            onBlocked: () => context.canPop() ? context.pop() : context.go('/messages'),
+            onBlocked: () =>
+                context.canPop() ? context.pop() : context.go('/messages'),
           ),
         ],
       ),
@@ -174,8 +180,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 // reversed.toList() yerine index matematiği ile ters sıralama.
                 // Her build'de yeni liste tahsisini (allocation) önler.
                 final messageCount = messages.length;
-                final notifier =
-                    ref.read(activeChatProvider(widget.userId).notifier);
+                final notifier = ref.read(
+                  activeChatProvider(widget.userId).notifier,
+                );
                 final hasMore = notifier.hasMore;
 
                 return ListView.builder(
@@ -192,15 +199,42 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     // reverse: true ile index 0 = en alttaki eleman.
                     // Kronolojik listeyi (eski→yeni) ters okuyarak
                     // en yeni mesajı alta yerleştiriyoruz.
-                    final message = messages[messageCount - 1 - index];
-                    final isMe = currentUser != null &&
+                    final position = messageCount - 1 - index;
+                    final message = messages[position];
+                    final isMe =
+                        currentUser != null &&
                         message.senderId == currentUser.id;
-
-                    return MessageBubble(
-                      key: ValueKey(message.id),
+                    final bubble = MessageBubble(
                       text: message.content,
                       isMe: isMe,
                       time: _timeFormatter.format(message.createdAt),
+                    );
+
+                    // Günün ilk mesajının üstüne gün ayırıcısı.
+                    final startsDay =
+                        position == 0 ||
+                        !DateUtils.isSameDay(
+                          messages[position - 1].createdAt,
+                          message.createdAt,
+                        );
+                    if (!startsDay) {
+                      return KeyedSubtree(
+                        key: ValueKey(message.id),
+                        child: bubble,
+                      );
+                    }
+                    return Column(
+                      key: ValueKey(message.id),
+                      children: [
+                        _DaySeparator(
+                          label: chatDayLabel(
+                            message.createdAt,
+                            DateTime.now(),
+                            l10n,
+                          ),
+                        ),
+                        bubble,
+                      ],
                     );
                   },
                 );
@@ -218,3 +252,47 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 }
 
+/// Sohbetteki gün ayırıcısının metni: Bugün, Dün, aynı yıl "5 Mart", eski yıl "5 Mart 2025".
+String chatDayLabel(DateTime day, DateTime now, AppLocalizations l10n) {
+  final today = DateUtils.dateOnly(now);
+  final date = DateUtils.dateOnly(day);
+  // Yaz saati geçişinde gün 23/25 saat olabilir, yuvarla.
+  final days = (today.difference(date).inHours / 24).round();
+  if (days == 0) return l10n.chatToday;
+  if (days == 1) return l10n.chatYesterday;
+  // Gün/ay sırası dile göre: TR "5 Mart", EN "March 5".
+  final format = date.year == today.year
+      ? DateFormat.MMMMd(l10n.localeName)
+      : DateFormat.yMMMMd(l10n.localeName);
+  return format.format(date);
+}
+
+class _DaySeparator extends StatelessWidget {
+  const _DaySeparator({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.spacing12,
+          vertical: AppDimensions.spacing4,
+        ),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHigh,
+          borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
+        ),
+        child: Text(
+          label,
+          style: Theme.of(
+            context,
+          ).textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant),
+        ),
+      ),
+    );
+  }
+}

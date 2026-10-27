@@ -720,5 +720,7 @@
   "validationTermsRequired": "Devam etmek için kullanım koşullarını kabul etmelisin",
   "casePrivacyConfirm": "Görseller ve açıklama hastanın yüzünü, adını veya kimliğini ortaya çıkaracak bilgi içermiyor.",
   "casePrivacyRequired": "Paylaşmadan önce hasta mahremiyeti onayını işaretlemelisin",
-  "logoutConfirmTitle": "Çıkış yapılsın mı?"
+  "logoutConfirmTitle": "Çıkış yapılsın mı?",
+  "chatToday": "Bugün",
+  "chatYesterday": "Dün"
 }

@@ -2185,6 +2185,18 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Çıkış yapılsın mı?'**
   String get logoutConfirmTitle;
+
+  /// No description provided for @chatToday.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bugün'**
+  String get chatToday;
+
+  /// No description provided for @chatYesterday.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dün'**
+  String get chatYesterday;
 }
 
 class _AppLocalizationsDelegate
