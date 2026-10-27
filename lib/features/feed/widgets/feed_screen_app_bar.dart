@@ -1,6 +1,7 @@
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:dentlink/features/feed/widgets/feed_filter_segments.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,6 +19,7 @@ class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.selectedIndex,
     required this.onSelected,
     this.visibility = kAlwaysCompleteAnimation,
+    this.position,
   });
 
   final List<String> labels;
@@ -26,6 +28,9 @@ class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// 1 = tam görünür, 0 = yukarı kaymış (durum çubuğu alanı kalır).
   final Animation<double> visibility;
+
+  /// Sayfa konumu (ör. 1.25); verilirse segment göstergesi onu izler.
+  final ValueListenable<double>? position;
 
   // Alt çizgiyle birlikte 56dp (Material toolbar); alt menüyle (~58dp) dengeli.
   static const double _height = 55;
@@ -86,6 +91,7 @@ class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
                       labels: labels,
                       selectedIndex: selectedIndex,
                       onSelected: onSelected,
+                      position: position,
                     ),
                   ),
                   // Arama ikonu 48dp alanının sağına yaslı (sağ payı 2dp):

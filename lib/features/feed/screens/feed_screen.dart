@@ -1,7 +1,9 @@
 import 'package:dentlink/features/feed/widgets/feed_list.dart';
 import 'package:dentlink/features/feed/widgets/feed_screen_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:motor/motor.dart' show BoundedSingleMotionController;
 import '../../../core/constants/app_colors.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../data/models/enums.dart';
@@ -24,63 +26,53 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
   // onPageChanged seçimi geri çekmesin.
   bool _animatingToTap = false;
 
-  // Gizli barlar yan sekmeye kaydırma oranında görünür; sekme değişince
-  // tamamen açılır, vazgeçilirse geri gizlenir.
-  late final _reveal = AnimationController(vsync: this);
-  late final ProxyAnimation _revealSlot;
-  late final Animation<double> _barMotion;
-  int _settledPage = 0;
-  // Paket barı yayla açarken reveal 1'de kalır; yay yetişince bırakılır.
-  bool _holding = false;
+  // Gizli üst bar sekme kaydırması başlayınca açılır (alt menü gizli kalır),
+  // aşağı kaydırınca yeniden gizlenir.
+  late final _reveal = BoundedSingleMotionController(
+    motion: const BottomBarMotion.cupertino(
+      preset: barMotionPreset,
+      duration: barMotionDuration,
+    ).resolveMotion(),
+    vsync: this,
+  );
+  late final _headerVisibility = AnimationMax<double>(
+    ref.read(bottomBarAnimationProvider),
+    _reveal,
+  );
+  // Segment göstergesi sayfayı parmakla birlikte izler.
+  final _pagePosition = ValueNotifier<double>(0);
+  bool _headerPinned = false;
 
   @override
   void initState() {
     super.initState();
-    _revealSlot = ref.read(bottomBarRevealProvider)..parent = _reveal;
-    _barMotion = ref.read(bottomBarMotionProvider);
     _pageController.addListener(_onPageScroll);
   }
 
   @override
   void dispose() {
-    _barMotion.removeListener(_releaseWhenShown);
-    _revealSlot.parent = kAlwaysDismissedAnimation;
+    _pagePosition.dispose();
     _reveal.dispose();
     _pageController.dispose();
     super.dispose();
   }
 
   void _onPageScroll() {
-    final page = _pageController.page ?? _settledPage.toDouble();
-    final nearest = page.round();
-    if ((page - nearest).abs() < 0.001 && nearest != _settledPage) {
-      _settledPage = nearest;
-      _showBars();
-    }
-    if (!_holding) {
-      _reveal.value = (page - _settledPage).abs().clamp(0.0, 1.0);
+    _pagePosition.value = _pageController.page ?? 0;
+    if (!_headerPinned) {
+      _headerPinned = true;
+      _reveal.animateTo(1);
     }
   }
 
-  void _showBars() {
-    ref.read(bottomBarControllerProvider).show();
-    if (_barMotion.value >= 1) return;
-    _reveal.value = 1;
-    if (!_holding) _barMotion.addListener(_releaseWhenShown);
-    _holding = true;
-  }
-
-  void _releaseWhenShown() {
-    // Yay 1'e yetişti ya da araya kaydırmayla gizleme girdi.
-    final status = _barMotion.status;
-    if (_barMotion.value < 1 &&
-        status != AnimationStatus.completed &&
-        status != AnimationStatus.reverse) {
-      return;
+  bool _onVerticalScroll(ScrollUpdateNotification n) {
+    if (_headerPinned &&
+        n.metrics.axis == Axis.vertical &&
+        (n.scrollDelta ?? 0) > 0) {
+      _headerPinned = false;
+      _reveal.animateTo(0, forward: false);
     }
-    _barMotion.removeListener(_releaseWhenShown);
-    _holding = false;
-    _reveal.value = 0;
+    return false;
   }
 
   Future<void> _select(int index) async {
@@ -139,21 +131,25 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
             labels: [for (final (label, _) in tabs) label],
             selectedIndex: _index,
             onSelected: _select,
-            visibility: ref.watch(bottomBarAnimationProvider),
+            visibility: _headerVisibility,
+            position: _pagePosition,
           ),
           Expanded(
             // Durum çubuğu payını üst bar aldı; listeler tekrar eklemesin.
             child: MediaQuery.removePadding(
               context: context,
               removeTop: true,
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (i) {
-                  if (!_animatingToTap) setState(() => _index = i);
-                },
-                children: [
-                  for (final (_, page) in tabs) _KeepAlive(child: page),
-                ],
+              child: NotificationListener<ScrollUpdateNotification>(
+                onNotification: _onVerticalScroll,
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: (i) {
+                    if (!_animatingToTap) setState(() => _index = i);
+                  },
+                  children: [
+                    for (final (_, page) in tabs) _KeepAlive(child: page),
+                  ],
+                ),
               ),
             ),
           ),

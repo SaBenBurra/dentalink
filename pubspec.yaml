@@ -31,6 +31,8 @@ dependencies:
   # UI Utilities
   shimmer: ^3.0.0
   flutter_floating_bottom_bar: ^2.0.2
+  # Feed üst barı alt menüyle aynı yayla açılsın (paketin kendi motoru).
+  motor: ^1.1.0
   shared_preferences: ^2.5.5
 
   equatable: ^2.1.0

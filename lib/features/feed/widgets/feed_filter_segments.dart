@@ -1,4 +1,5 @@
 import 'package:dentlink/core/constants/app_dimensions.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Ray üzerinde segmentli filtre. 3 segmente kadar eşit genişlikte durur;
@@ -10,11 +11,16 @@ class FeedFilterSegments extends StatefulWidget {
     required this.labels,
     required this.selectedIndex,
     required this.onSelected,
+    this.position,
   });
 
   final List<String> labels;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
+
+  /// Sayfa konumu (ör. 1.25): gösterge ve yazı renkleri kaydırmayla birlikte
+  /// ilerler. Yoksa [selectedIndex]'te durur.
+  final ValueListenable<double>? position;
 
   /// Ekrana sığan segment sayısı; .5, bir sonrakinin yarısını gösterir.
   static const double visibleWhenScrolling = 3.5;
@@ -68,6 +74,13 @@ class _FeedFilterSegmentsState extends State<FeedFilterSegments> {
       curve: Curves.easeOutCubic,
     );
   }
+
+  /// [t] 1 = seçili (göstergenin üstünde), 0 = seçili değil.
+  static TextStyle _labelStyle(ColorScheme colors, double t) => TextStyle(
+    fontSize: 11,
+    fontWeight: FontWeight.lerp(FontWeight.w500, FontWeight.w700, t),
+    color: Color.lerp(colors.onSurfaceVariant, colors.onPrimary, t),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -126,62 +139,60 @@ class _FeedFilterSegmentsState extends State<FeedFilterSegments> {
                       child: SizedBox(
                         width: _segmentWidth * count,
                         height: 48,
-                        child: Stack(
-                          children: [
-                            // Seçim tek bir kayan göstergeyle çizilir; segment
-                            // başına zemin/gölge yok (geçişte gri flaş olmasın).
-                            AnimatedPositioned(
-                              duration: _duration,
-                              curve: Curves.easeOutCubic,
-                              left: selected * _segmentWidth,
-                              width: _segmentWidth,
-                              top: (48 - 27) / 2,
-                              height: 27,
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(13),
+                        child: ValueListenableBuilder<double>(
+                          valueListenable:
+                              widget.position ??
+                              AlwaysStoppedAnimation(selected.toDouble()),
+                          builder: (context, position, _) => Stack(
+                            children: [
+                              // Seçim tek bir kayan göstergeyle çizilir; segment
+                              // başına zemin/gölge yok (geçişte gri flaş olmasın).
+                              Positioned(
+                                left: position * _segmentWidth,
+                                width: _segmentWidth,
+                                top: (48 - 27) / 2,
+                                height: 27,
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.primary,
+                                    borderRadius: BorderRadius.circular(13),
+                                  ),
                                 ),
                               ),
-                            ),
-                            Row(
-                              children: [
-                                for (final (i, text) in widget.labels.indexed)
-                                  Semantics(
-                                    button: true,
-                                    selected: i == selected,
-                                    child: GestureDetector(
-                                      behavior: HitTestBehavior.opaque,
-                                      onTap: () => widget.onSelected(i),
-                                      child: SizedBox(
-                                        width: _segmentWidth,
-                                        height: 48,
-                                        child: Center(
-                                          child: AnimatedDefaultTextStyle(
-                                            duration: _duration,
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              fontWeight: i == selected
-                                                  ? FontWeight.w700
-                                                  : FontWeight.w500,
-                                              color: i == selected
-                                                  ? colorScheme.onPrimary
-                                                  : colorScheme
-                                                        .onSurfaceVariant,
-                                            ),
-                                            child: Text(
-                                              text,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
+                              Row(
+                                children: [
+                                  for (final (i, text) in widget.labels.indexed)
+                                    Semantics(
+                                      button: true,
+                                      selected: i == selected,
+                                      child: GestureDetector(
+                                        behavior: HitTestBehavior.opaque,
+                                        onTap: () => widget.onSelected(i),
+                                        child: SizedBox(
+                                          width: _segmentWidth,
+                                          height: 48,
+                                          child: Center(
+                                            // Göstergenin altındaki pay kadar seçili görünüm.
+                                            child: DefaultTextStyle(
+                                              style: _labelStyle(
+                                                colorScheme,
+                                                (1 - (position - i).abs())
+                                                    .clamp(0.0, 1.0),
+                                              ),
+                                              child: Text(
+                                                text,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
