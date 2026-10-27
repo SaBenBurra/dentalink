@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:dentlink/core/error/app_failures.dart';
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
@@ -22,8 +23,7 @@ class _FakePicker extends ImagePickerPlatform {
   @override
   Future<List<XFile>> getMultiImageWithOptions({
     MultiImagePickerOptions options = const MultiImagePickerOptions(),
-  }) async =>
-      [XFile(path)];
+  }) async => [XFile(path)];
 }
 
 class _PostRepo implements ICreatePostRepository {
@@ -45,35 +45,31 @@ class _PostRepo implements ICreatePostRepository {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-// 1x1 şeffaf PNG.
-const _png = [
-  0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
-  0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
-  0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
-  0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
-  0x42, 0x60, 0x82,
-];
-
 void main() {
-  testWidgets('vaka: hasta mahremiyeti onayı olmadan gönderilmez', (tester) async {
+  testWidgets('vaka: hasta mahremiyeti onayı olmadan gönderilmez', (
+    tester,
+  ) async {
     final dir = Directory.systemTemp.createTempSync('case_privacy');
     addTearDown(() => dir.deleteSync(recursive: true));
-    final image = File('${dir.path}/x.png')..writeAsBytesSync(_png);
+    final bytes = (await tester.runAsync(_png))!;
+    final image = File('${dir.path}/x.png')..writeAsBytesSync(bytes);
     ImagePickerPlatform.instance = _FakePicker(image.path);
     final repo = _PostRepo();
 
-    await tester.pumpWidget(ProviderScope(
-      overrides: [
-        authRepositoryProvider.overrideWithValue(MockAuthForTest()),
-        createPostRepositoryProvider.overrideWithValue(repo),
-      ],
-      child: MaterialApp(
-        locale: const Locale('tr'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: const CreateCaseScreen(),
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authRepositoryProvider.overrideWithValue(MockAuthForTest()),
+          createPostRepositoryProvider.overrideWithValue(repo),
+        ],
+        child: MaterialApp(
+          locale: const Locale('tr'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const CreateCaseScreen(),
+        ),
       ),
-    ));
+    );
 
     final fields = find.byType(TextFormField);
     await tester.enterText(fields.at(0), 'Vaka başlığı');
@@ -82,25 +78,38 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Endodonti').last);
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.byIcon(Icons.add_photo_alternate_outlined).first);
+    await tester.ensureVisible(
+      find.byIcon(Icons.add_photo_alternate_outlined).first,
+    );
     await tester.tap(find.byIcon(Icons.add_photo_alternate_outlined).first);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Galeriden Seç'));
+    // Boyut kontrolü dosyayı gerçek I/O ile okur; sahte zamanda ilerlemez.
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 300)),
+    );
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Paylaş'));
     await tester.pumpAndSettle();
-    expect(find.text('Paylaşmadan önce hasta mahremiyeti onayını işaretlemelisin'),
-        findsOneWidget);
+    expect(
+      find.text('Paylaşmadan önce hasta mahremiyeti onayını işaretlemelisin'),
+      findsOneWidget,
+    );
     expect(repo.calls, 0);
     // Kullanıcı gibi uyarıyı kapat; floating SnackBar alttaki kutuyu örtebiliyor.
-    ScaffoldMessenger.of(tester.element(find.byType(CreateCaseScreen))).hideCurrentSnackBar();
+    ScaffoldMessenger.of(
+      tester.element(find.byType(CreateCaseScreen)),
+    ).hideCurrentSnackBar();
     await tester.pumpAndSettle();
 
     await tester.ensureVisible(find.byType(CheckboxListTile));
     await tester.tap(find.byType(CheckboxListTile));
     await tester.pumpAndSettle();
-    expect(tester.widget<CheckboxListTile>(find.byType(CheckboxListTile)).value, isTrue);
+    expect(
+      tester.widget<CheckboxListTile>(find.byType(CheckboxListTile)).value,
+      isTrue,
+    );
     // compressToWebp gerçek dosya G/Ç yapar; sahte zaman bölgesinde tamamlanmaz.
     await tester.runAsync(() async {
       await tester.tap(find.text('Paylaş'));
@@ -109,4 +118,16 @@ void main() {
     await tester.pumpAndSettle();
     expect(repo.calls, 1);
   });
+}
+
+/// Boyut kuralından geçen (isAcceptableImageSize) 400x400 PNG.
+Future<List<int>> _png() async {
+  final recorder = ui.PictureRecorder();
+  Canvas(
+    recorder,
+  ).drawRect(const Rect.fromLTWH(0, 0, 400, 400), Paint()..color = Colors.grey);
+  final image = await recorder.endRecording().toImage(400, 400);
+  final data = await image.toByteData(format: ui.ImageByteFormat.png);
+  image.dispose();
+  return data!.buffer.asUint8List();
 }

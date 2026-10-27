@@ -2197,6 +2197,12 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Dün'**
   String get chatYesterday;
+
+  /// No description provided for @imagesRejectedSize.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çok küçük ya da çok dar görseller eklenmedi.'**
+  String get imagesRejectedSize;
 }
 
 class _AppLocalizationsDelegate

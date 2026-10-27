@@ -1151,4 +1151,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatYesterday => 'Yesterday';
+
+  @override
+  String get imagesRejectedSize =>
+      'Images that are too small or too narrow were not added.';
 }

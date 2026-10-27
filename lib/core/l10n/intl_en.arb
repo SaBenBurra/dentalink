@@ -431,5 +431,6 @@
   "casePrivacyRequired": "Confirm patient privacy before posting",
   "logoutConfirmTitle": "Log out?",
   "chatToday": "Today",
-  "chatYesterday": "Yesterday"
+  "chatYesterday": "Yesterday",
+  "imagesRejectedSize": "Images that are too small or too narrow were not added."
 }

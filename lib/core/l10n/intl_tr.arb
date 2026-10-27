@@ -722,5 +722,6 @@
   "casePrivacyRequired": "Paylaşmadan önce hasta mahremiyeti onayını işaretlemelisin",
   "logoutConfirmTitle": "Çıkış yapılsın mı?",
   "chatToday": "Bugün",
-  "chatYesterday": "Dün"
+  "chatYesterday": "Dün",
+  "imagesRejectedSize": "Çok küçük ya da çok dar görseller eklenmedi."
 }

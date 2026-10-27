@@ -1,9 +1,18 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/shared/utils/error_messages.dart';
+
+/// Kısa kenarı 320px altı ya da 1:4'ten dar görseller feed'de anlamsız görünür (4:5–1.91:1
+/// çerçevede aşırı büyür/kırpılır). Panoramik röntgen (~2.5:1) sınırın içinde kalır.
+bool isAcceptableImageSize(int width, int height) {
+  final short = width < height ? width : height;
+  final long = width < height ? height : width;
+  return short >= 320 && long <= short * 4;
+}
 
 /// Vaka veya Soru oluştururken kullanılacak Görsel Seçici Izgara.
 ///
@@ -96,23 +105,56 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, e))));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(getErrorMessage(AppLocalizations.of(context)!, e)),
+        ),
+      );
       return;
     }
     if (!mounted || picked.isEmpty) return;
 
-    // Bazı galeri uygulamaları limit'i yok sayar; fazlası atılır ama kullanıcıya söylenir.
-    setState(() {
-      _images.addAll(picked.take(remaining).map((xf) => File(xf.path)));
-    });
-    widget.onImagesChanged(List.unmodifiable(_images));
-    if (picked.length > remaining) {
+    final accepted = [
+      for (final xf in picked)
+        if (await _hasAcceptableSize(xf.path)) File(xf.path),
+    ];
+    if (!mounted) return;
+    if (accepted.length < picked.length) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.maxImagesReached(widget.maxImages)),
+          content: Text(AppLocalizations.of(context)!.imagesRejectedSize),
         ),
       );
+    }
+    if (accepted.isEmpty) return;
+
+    // Bazı galeri uygulamaları limit'i yok sayar; fazlası atılır ama kullanıcıya söylenir.
+    setState(() {
+      _images.addAll(accepted.take(remaining));
+    });
+    widget.onImagesChanged(List.unmodifiable(_images));
+    if (accepted.length > remaining) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.maxImagesReached(widget.maxImages),
+          ),
+        ),
+      );
+    }
+  }
+
+  /// Boyut başlıktan okunur (tam decode yok); okunamazsa görsel kabul edilir.
+  static Future<bool> _hasAcceptableSize(String path) async {
+    try {
+      final buffer = await ui.ImmutableBuffer.fromFilePath(path);
+      final descriptor = await ui.ImageDescriptor.encoded(buffer);
+      final ok = isAcceptableImageSize(descriptor.width, descriptor.height);
+      descriptor.dispose();
+      buffer.dispose();
+      return ok;
+    } catch (_) {
+      return true;
     }
   }
 
