@@ -33,7 +33,7 @@ void main() {
     expect(tabs.index, 0);
     await tester.tap(find.text('Sorular'));
     await tester.pumpAndSettle();
-    expect(tabs.index, 1);
+    expect(tabs.index, 2);
     handle.dispose();
   });
 

@@ -59,11 +59,14 @@ class ProfileScreen extends ConsumerWidget {
         if (user == null) {
           return Center(child: Text(l10n.userNotFound));
         }
+        // null = Tümü (anasayfadaki gibi).
+        final types = <PostType?>[null, ...PostType.profileTabs];
         final labels = [
-          for (final type in PostType.profileTabs) type.getLabelInProfile(context),
+          for (final type in types)
+            type?.getLabelInProfile(context) ?? l10n.feedFilterAll,
         ];
         return DefaultTabController(
-          length: PostType.profileTabs.length,
+          length: types.length,
           child: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               SliverToBoxAdapter(
@@ -77,7 +80,7 @@ class ProfileScreen extends ConsumerWidget {
             ],
             body: TabBarView(
               children: [
-                for (final type in PostType.profileTabs)
+                for (final type in types)
                   ProfilePostsTab(userId: user.id, type: type),
               ],
             ),

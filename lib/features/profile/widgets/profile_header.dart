@@ -96,42 +96,38 @@ class ProfileHeader extends StatelessWidget {
               style: textTheme.bodyMedium,
             ),
           ],
-          const SizedBox(height: AppDimensions.spacing16),
+          const SizedBox(height: AppDimensions.spacing12),
           ClipRRect(
             borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
             child: ColoredBox(
               color: colorScheme.primary.withValues(alpha: 0.06),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: AppDimensions.spacing4,
-                ),
-                child: Row(
-                  children: [
-                    _Stat(count: user.postsCount, label: l10n.posts),
-                    const _StatDivider(),
-                    _Stat(
-                      count: user.followersCount,
-                      label: l10n.followers,
-                      onTap: () => context.push('/network/${user.id}?tab=0'),
-                    ),
-                    const _StatDivider(),
-                    _Stat(
-                      count: user.followingCount,
-                      label: l10n.statFollowing,
-                      onTap: () => context.push('/network/${user.id}?tab=1'),
-                    ),
-                  ],
-                ),
+              child: Row(
+                children: [
+                  _Stat(count: user.postsCount, label: l10n.posts),
+                  const _StatDivider(),
+                  _Stat(
+                    count: user.followersCount,
+                    label: l10n.followers,
+                    onTap: () => context.push('/network/${user.id}?tab=0'),
+                  ),
+                  const _StatDivider(),
+                  _Stat(
+                    count: user.followingCount,
+                    label: l10n.statFollowing,
+                    onTap: () => context.push('/network/${user.id}?tab=1'),
+                  ),
+                ],
               ),
             ),
           ),
-          const SizedBox(height: AppDimensions.spacing16),
+          const SizedBox(height: AppDimensions.spacing12),
           if (isCurrentUser)
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
+                style: _smallButton(context),
                 onPressed: () => context.push('/edit-profile'),
-                icon: const Icon(Icons.edit_outlined, size: 18),
+                icon: const Icon(Icons.edit_outlined, size: 16),
                 label: Text(l10n.editProfile),
               ),
             )
@@ -214,7 +210,7 @@ class _Stat extends StatelessWidget {
             children: [
               Text(
                 formatCount(count),
-                style: textTheme.titleMedium?.copyWith(
+                style: textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -222,7 +218,7 @@ class _Stat extends StatelessWidget {
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: textTheme.bodySmall?.copyWith(
+                style: textTheme.labelSmall?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                 ),
               ),
@@ -246,11 +242,14 @@ class _FollowAndMessageButtons extends StatelessWidget {
 
     return Row(
       children: [
-        Expanded(child: FollowButton(userId: user.id)),
+        Expanded(
+          child: FollowButton(userId: user.id, style: _smallButton(context)),
+        ),
         const SizedBox(width: AppDimensions.spacing8),
         Expanded(
           child: FilledButton.tonalIcon(
-            icon: const Icon(Icons.chat_bubble_outline, size: 18),
+            style: _smallButton(context),
+            icon: const Icon(Icons.chat_bubble_outline, size: 16),
             label: Text(l10n.profileMessageButton),
             onPressed: () => context.push(
               Uri(
@@ -267,3 +266,11 @@ class _FollowAndMessageButtons extends StatelessWidget {
     );
   }
 }
+
+/// Profil aksiyonları için küçük buton; dokunma alanı yine 48dp.
+ButtonStyle _smallButton(BuildContext context) => ButtonStyle(
+  minimumSize: const WidgetStatePropertyAll(
+    Size(0, AppDimensions.buttonHeightSmall),
+  ),
+  textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.labelMedium),
+);

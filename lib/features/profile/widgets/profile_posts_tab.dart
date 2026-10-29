@@ -16,9 +16,10 @@ import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class ProfilePostsTab extends ConsumerWidget {
   final String userId;
-  final PostType type;
+  /// null: tüm türler ("Tümü" sekmesi).
+  final PostType? type;
 
-  const ProfilePostsTab({super.key, required this.userId, required this.type});
+  const ProfilePostsTab({super.key, required this.userId, this.type});
 
   /// Profil listesi feedProvider'dan bağımsızdır; işlem repository'ye gider ve
   /// listedeki post sunucunun döndüğüyle değişir (AUDIT BUG-5); yüklenen
@@ -46,7 +47,9 @@ class ProfilePostsTab extends ConsumerWidget {
 
     return postsAsyncValue.when(
       data: (allPosts) {
-        final posts = allPosts.where((p) => p.type == type).toList();
+        final posts = type == null
+            ? allPosts
+            : allPosts.where((p) => p.type == type).toList();
 
         final notifier = ref.read(userPostsProvider(userId).notifier);
         final hasMore = notifier.hasMore;
