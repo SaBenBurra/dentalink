@@ -110,6 +110,11 @@ class ModerationMenuButton extends ConsumerWidget {
     return PopupMenuButton<PostMenuAction>(
       tooltip: l10n.moreOptions,
       icon: const Icon(Icons.more_vert),
+      // Varsayılan 300ms küçük bir menü için ağır geliyor.
+      popUpAnimationStyle: const AnimationStyle(
+        duration: Duration(milliseconds: 150),
+        reverseDuration: Duration(milliseconds: 100),
+      ),
       onSelected: (action) async {
         if (action == PostMenuAction.report) {
           await showReportSheet(context, target, targetId);

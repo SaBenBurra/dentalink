@@ -81,6 +81,7 @@ class _CommentTextAction extends StatelessWidget {
         foregroundColor: color ?? Theme.of(context).colorScheme.onSurfaceVariant,
         padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing8),
         minimumSize: const Size(40, 40), // 40px touch target
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap, // satır 48'e şişmesin
       ),
     );
   }
@@ -223,18 +224,29 @@ class CommentCard extends ConsumerWidget {
 
     // Tek satırlık başlık: avatar, isim · unvan · zaman ve menü aynı eksende ortalı.
     final header = SizedBox(
-      height: kMinInteractiveDimension, // menü butonunun dokunma alanı
+      height: 40, // aksiyon butonlarıyla aynı dokunma alanı
       child: Row(
         children: [
-          UserAvatar(
-            name: authorName,
-            imageUrl: comment.author?.avatarUrl,
-            size: AvatarSize.small,
-            onTap: comment.author == null
-                ? null
-                : () => context.push('/profile/${comment.author!.id}'),
+          // Dokunulabilir avatar 48dp alanda ortalı; fotoğrafı metnin sol kenarına çek.
+          Transform.translate(
+            offset: Offset(
+              comment.author == null
+                  ? 0
+                  : -(AppDimensions.spacing48 - AppDimensions.avatarSmall) / 2,
+              0,
+            ),
+            child: UserAvatar(
+              name: authorName,
+              imageUrl: comment.author?.avatarUrl,
+              size: AvatarSize.small,
+              onTap: comment.author == null
+                  ? null
+                  : () => context.push('/profile/${comment.author!.id}'),
+            ),
           ),
-          const SizedBox(width: AppDimensions.spacing8),
+          // Dokunulabilir avatarda bu boşluğu 48dp alanın sağ payı veriyor.
+          if (comment.author == null)
+            const SizedBox(width: AppDimensions.spacing16),
           Expanded(
             child: Row(
               children: [
@@ -273,7 +285,10 @@ class CommentCard extends ConsumerWidget {
     );
 
     return Container(
-      margin: const EdgeInsets.only(bottom: AppDimensions.spacing4),
+      // Üst seviyede boşluğu ayırıcı veriyor (comments_sheet).
+      margin: EdgeInsets.only(
+        bottom: comment.parentId == null ? 0 : AppDimensions.spacing8,
+      ),
       padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing8),
       decoration: showBest
           ? BoxDecoration(

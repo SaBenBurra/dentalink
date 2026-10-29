@@ -122,11 +122,18 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
                       child: CommentEmptyState(isCase: _isCase),
                     );
                   }
-                  return ListView.builder(
+                  return ListView.separated(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppDimensions.spacing16,
                     ),
                     itemCount: comments.length + (hasMore ? 1 : 0),
+                    // Yalnızca alt pay: üstteki boşluğu beğeni satırının iç payı (12dp) veriyor,
+                    // böylece çizgiden yoruma iki yönde de 12dp kalıyor.
+                    separatorBuilder: (_, _) =>
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: AppDimensions.spacing8),
+                          child: Divider(height: 1),
+                        ),
                     itemBuilder: (context, index) {
                       if (index == comments.length) {
                         return LoadMoreFooter(onLoadMore: notifier.loadMore);
