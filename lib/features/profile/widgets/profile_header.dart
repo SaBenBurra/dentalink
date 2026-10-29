@@ -4,14 +4,12 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../core/utils/number_formatter.dart';
-import '../../../data/models/enums.dart';
 import '../../../data/models/user_model.dart';
 import '../../../shared/widgets/follow_button.dart';
-import '../../../shared/widgets/post_badge.dart';
 import '../../../shared/widgets/user_avatar.dart';
 
-/// Ortalı profil başlığı: avatar, ad, unvan rozeti, üniversite · şehir,
-/// biyografi, sayaç şeridi, aksiyonlar.
+/// Instagram düzeni: solda avatar, yanında ad / unvan / üniversite / şehir;
+/// altında biyografi, sayaç satırı ve aksiyonlar.
 class ProfileHeader extends StatelessWidget {
   final UserModel user;
   final bool isCurrentUser;
@@ -27,109 +25,104 @@ class ProfileHeader extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final place = [
+    final details = [
+      user.title.displayName(context),
       user.university?.trim() ?? '',
       user.city?.trim() ?? '',
-    ].where((s) => s.isNotEmpty).join(' · ');
+    ].where((s) => s.isNotEmpty);
     final bio = user.bio?.trim() ?? '';
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
+        AppDimensions.spacing20,
         AppDimensions.spacing16,
-        AppDimensions.spacing24,
-        AppDimensions.spacing16,
+        AppDimensions.spacing20,
         AppDimensions.spacing8,
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _AvatarRing(user: user),
-          const SizedBox(height: AppDimensions.spacing12),
-          Text.rich(
-            TextSpan(
-              text: user.fullName,
-              children: [
-                if (user.isVerified)
-                  WidgetSpan(
-                    alignment: PlaceholderAlignment.middle,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        left: AppDimensions.spacing4,
+          Row(
+            children: [
+              _AvatarRing(user: user),
+              const SizedBox(width: AppDimensions.spacing16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text.rich(
+                      TextSpan(
+                        text: user.fullName,
+                        children: [
+                          if (user.isVerified)
+                            WidgetSpan(
+                              alignment: PlaceholderAlignment.middle,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: AppDimensions.spacing4,
+                                ),
+                                child: Icon(
+                                  Icons.verified_rounded,
+                                  size: 18,
+                                  color: colorScheme.primary,
+                                  semanticLabel: l10n.verifiedAccount,
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
-                      child: Icon(
-                        Icons.verified_rounded,
-                        size: 20,
-                        color: colorScheme.primary,
-                        semanticLabel: l10n.verifiedAccount,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                  ),
-              ],
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: AppDimensions.spacing8),
-          // Soru rozetinin yeşil-teal tonu.
-          PostBadge(
-            postType: PostType.question,
-            label: user.title.displayName(context),
-          ),
-          if (place.isNotEmpty) ...[
-            const SizedBox(height: AppDimensions.spacing8),
-            Text(
-              place,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
+                    for (final (i, line) in details.indexed)
+                      Text(
+                        line,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                          // İlk satır unvan.
+                          fontWeight: i == 0 ? FontWeight.w600 : null,
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
           if (bio.isNotEmpty) ...[
-            const SizedBox(height: AppDimensions.spacing8),
-            Text(
-              bio,
-              textAlign: TextAlign.center,
-              style: textTheme.bodyMedium,
-            ),
+            const SizedBox(height: AppDimensions.spacing12),
+            Text(bio, style: textTheme.bodyMedium),
           ],
-          const SizedBox(height: AppDimensions.spacing12),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-            child: ColoredBox(
-              color: colorScheme.primary.withValues(alpha: 0.06),
-              child: Row(
-                children: [
-                  _Stat(count: user.postsCount, label: l10n.posts),
-                  const _StatDivider(),
-                  _Stat(
-                    count: user.followersCount,
-                    label: l10n.followers,
-                    onTap: () => context.push('/network/${user.id}?tab=0'),
-                  ),
-                  const _StatDivider(),
-                  _Stat(
-                    count: user.followingCount,
-                    label: l10n.statFollowing,
-                    onTap: () => context.push('/network/${user.id}?tab=1'),
-                  ),
-                ],
+          const SizedBox(height: AppDimensions.spacing4),
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              _Stat(count: user.postsCount, label: l10n.posts),
+              const _StatDot(),
+              _Stat(
+                count: user.followersCount,
+                label: l10n.followers,
+                onTap: () => context.push('/network/${user.id}?tab=0'),
               ),
-            ),
+              const _StatDot(),
+              _Stat(
+                count: user.followingCount,
+                label: l10n.statFollowing,
+                onTap: () => context.push('/network/${user.id}?tab=1'),
+              ),
+            ],
           ),
-          const SizedBox(height: AppDimensions.spacing12),
+          const SizedBox(height: AppDimensions.spacing4),
           if (isCurrentUser)
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                style: _smallButton(context),
-                onPressed: () => context.push('/edit-profile'),
-                icon: const Icon(Icons.edit_outlined, size: 16),
-                label: Text(l10n.editProfile),
-              ),
+            OutlinedButton.icon(
+              style: _smallButton(context),
+              onPressed: () => context.push('/edit-profile'),
+              icon: const Icon(Icons.edit_outlined, size: 16),
+              label: Text(l10n.editProfile),
             )
           else
             _FollowAndMessageButtons(user: user),
@@ -165,27 +158,27 @@ class _AvatarRing extends StatelessWidget {
         child: UserAvatar(
           name: user.fullName,
           imageUrl: user.avatarUrl,
-          size: AvatarSize.profile,
+          size: AvatarSize.xLarge,
         ),
       ),
     );
   }
 }
 
-class _StatDivider extends StatelessWidget {
-  const _StatDivider();
+class _StatDot extends StatelessWidget {
+  const _StatDot();
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    height: AppDimensions.spacing24,
-    child: VerticalDivider(
-      width: 1,
-      color: Theme.of(context).colorScheme.outlineVariant,
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing10),
+    child: Text(
+      '•',
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
     ),
   );
 }
 
-/// Sayı üstte, etiket altta; dokunulabiliyorsa 48dp alan.
+/// "8 Gönderi" gibi tek satır, sayı kalın; dokunulabiliyorsa 48dp alan.
 class _Stat extends StatelessWidget {
   const _Stat({required this.count, required this.label, this.onTap});
 
@@ -195,34 +188,34 @@ class _Stat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            minHeight: kMinInteractiveDimension,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                formatCount(count),
-                style: textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: kMinInteractiveDimension),
+        child: Align(
+          widthFactor: 1,
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: formatCount(count),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
-              ),
-              Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: textTheme.labelSmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
+                TextSpan(text: ' $label'),
+                // Dokunulabilir sayaçlar okla ayrışır.
+                if (onTap != null)
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.middle,
+                    child: Icon(
+                      Icons.chevron_right_rounded,
+                      size: 18,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+              ],
+            ),
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
         ),
       ),

@@ -21,7 +21,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(ProfileScreen), findsOneWidget);
-    expect(find.text('Gönderi'), findsOneWidget);
+    expect(find.textContaining('Gönderi', findRichText: true), findsOneWidget);
     expect(find.text('Profili Düzenle'), findsOneWidget);
     await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
     await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
@@ -91,6 +91,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.text('123.5K'), findsOneWidget);
+    expect(find.textContaining('123.5K', findRichText: true), findsOneWidget);
   });
 }
