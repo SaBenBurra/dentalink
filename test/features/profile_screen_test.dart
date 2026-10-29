@@ -37,7 +37,7 @@ void main() {
     handle.dispose();
   });
 
-  testWidgets('başka profil: kullanıcı adı, mesaj ve geri', (tester) async {
+  testWidgets('başka profil: ad, mesaj ve geri', (tester) async {
     await pumpDentLink(tester);
     GoRouter.of(
       tester.element(find.text(seedCase.title)),
@@ -45,7 +45,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.text(otherUser.username), findsOneWidget);
+    expect(find.text(otherUser.fullName), findsWidgets);
     expect(find.text('Mesaj'), findsOneWidget);
 
     await tester.tap(find.byIcon(Icons.arrow_back_rounded));

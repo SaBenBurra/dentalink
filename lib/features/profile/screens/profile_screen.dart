@@ -102,7 +102,7 @@ class ProfileScreen extends ConsumerWidget {
       body: Column(
         children: [
           _ProfileTopBar(
-            title: userState.valueOrNull?.username ?? '',
+            title: l10n.profileTitle,
             actions: isCurrentUser
                 ? [
                     HeaderIconButton(
