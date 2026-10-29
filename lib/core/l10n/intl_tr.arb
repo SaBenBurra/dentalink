@@ -512,6 +512,8 @@
 
   "notificationLiked": "{actorName} gönderini beğendi.",
   "@notificationLiked": { "placeholders": { "actorName": { "type": "String" } } },
+  "notificationCommentLiked": "{actorName} yorumunu beğendi.",
+  "@notificationCommentLiked": { "placeholders": { "actorName": { "type": "String" } } },
   "notificationCommented": "{actorName} gönderine yorum yaptı.",
   "@notificationCommented": { "placeholders": { "actorName": { "type": "String" } } },
   "notificationFollowed": "{actorName} seni takip etmeye başladı.",

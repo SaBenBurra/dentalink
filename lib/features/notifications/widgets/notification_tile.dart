@@ -77,7 +77,11 @@ class NotificationTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    notification.type.getBodyText(context, notification.actor.fullName),
+                    notification.type.getBodyText(
+                      context,
+                      notification.actor.fullName,
+                      onComment: notification.commentId != null,
+                    ),
                     style: textTheme.bodyMedium?.copyWith(
                       color: isDark
                           ? AppColors.darkTextPrimary

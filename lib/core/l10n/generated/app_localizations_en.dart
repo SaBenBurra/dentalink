@@ -527,6 +527,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String notificationCommentLiked(String actorName) {
+    return '$actorName liked your comment.';
+  }
+
+  @override
   String notificationCommented(String actorName) {
     return '$actorName commented on your post.';
   }

@@ -1070,6 +1070,12 @@ abstract class AppLocalizations {
   /// **'{actorName} gönderini beğendi.'**
   String notificationLiked(String actorName);
 
+  /// No description provided for @notificationCommentLiked.
+  ///
+  /// In tr, this message translates to:
+  /// **'{actorName} yorumunu beğendi.'**
+  String notificationCommentLiked(String actorName);
+
   /// No description provided for @notificationCommented.
   ///
   /// In tr, this message translates to:

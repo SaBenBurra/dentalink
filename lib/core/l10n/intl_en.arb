@@ -226,6 +226,8 @@
 
   "notificationLiked": "{actorName} liked your post.",
   "@notificationLiked": { "placeholders": { "actorName": { "type": "String" } } },
+  "notificationCommentLiked": "{actorName} liked your comment.",
+  "@notificationCommentLiked": { "placeholders": { "actorName": { "type": "String" } } },
   "notificationCommented": "{actorName} commented on your post.",
   "@notificationCommented": { "placeholders": { "actorName": { "type": "String" } } },
   "notificationFollowed": "{actorName} started following you.",
