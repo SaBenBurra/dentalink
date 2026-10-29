@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +8,7 @@ import 'core/l10n/generated/app_localizations.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'providers/locale_provider.dart';
+import 'providers/push_provider.dart';
 import 'providers/theme_provider.dart';
 import 'shared/widgets/offline_banner.dart';
 
@@ -16,6 +18,14 @@ Future<void> main() async {
     url: 'https://lknvufbxekceevdblgmq.supabase.co',
     publishableKey: 'sb_publishable_CGm0mMqcvUubeXazytJr-w_WK6CLfS5',
   );
+  // Firebase yapılandırma dosyaları yoksa (henüz kurulmadı) push kapalı çalışır.
+  var firebaseReady = false;
+  try {
+    await Firebase.initializeApp();
+    firebaseReady = true;
+  } catch (e) {
+    debugPrint('Firebase başlatılamadı, push kapalı: $e');
+  }
   final prefs = await SharedPreferences.getInstance();
   runApp(
     // Riverpod'un tüm uygulamayı sarması gerekiyor
@@ -23,6 +33,7 @@ Future<void> main() async {
       overrides: [
         themeModeProvider.overrideWith(() => ThemeModeNotifier(prefs)),
         localeModeProvider.overrideWith(() => LocaleModeNotifier(prefs)),
+        firebaseReadyProvider.overrideWithValue(firebaseReady),
       ],
       child: const MainApp(),
     ),
@@ -37,6 +48,7 @@ class MainApp extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeModeProvider);
     final router = ref.watch(routerProvider);
+    ref.watch(pushProvider);
 
     return MaterialApp.router(
       title: 'DentLink',

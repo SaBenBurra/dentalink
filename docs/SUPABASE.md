@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `026_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `029_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -43,6 +43,7 @@ RLS **hangi satırlara** dokunulabileceğini belirler; GRANT **hangi kolonlara**
 | Her `SECURITY DEFINER` fonksiyonda `SET search_path = ''` (ya da en azından `public`), fonksiyonun içinde `auth.uid()` kontrolü ve `REVOKE EXECUTE … FROM public, anon` bulunur. | Yetki yükseltmeyi engeller. |
 | `notifications` tablosuna istemci **asla** yazmaz; yalnızca trigger'lar yazar. | Sahte bildirimi engeller. |
 | `users.email` ve `users.phone` istemciye **okunmaz**. | KVKK. |
+| `service_role`'ün public tablolarında **varsayılan yetkisi yok** (bu projede). Edge Function bir tabloya dokunacaksa migration'da kolon bazlı `GRANT … TO service_role` ver (028). | Aksi halde fonksiyon `42501 permission denied` ile düşer. |
 | Sorgularda `select('*')` / `users(*)` kullanma; gereken kolonları listele. | Yeni kolonlar istemeden sızmasın. |
 
 ---
@@ -285,6 +286,22 @@ with r as (
 )
 select public.mark_best_answer((select id from r));
 rollback;
+
+-- 21) Push token (027) → BEKLENEN: tabloya doğrudan okuma permission denied;
+--     register sonrası token B'den A'ya geçer (1 satır, user_id = A)
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select public.register_push_token('smoke-token', 'android');
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select public.register_push_token('smoke-token', 'ios');
+reset role;
+select user_id = '<A>' as moved, platform from public.push_tokens where token = 'smoke-token';
+rollback;
+begin;
+set local role authenticated;
+select * from public.push_tokens;
+rollback;
 ```
 
 ---
@@ -337,3 +354,29 @@ select * from pg_publication_tables where pubname = 'supabase_realtime';
 -- bucket'lar
 select id, public from storage.buckets;
 ```
+
+---
+
+## 8. Push bildirim kurulumu (027, REL-6)
+
+Akış: `notifications`/`messages` INSERT → trigger (`trigger_push`, pg_net) → Edge Function `push` → FCM HTTP v1 → cihaz. İstemci token'ını `register_push_token` ile kaydeder, çıkışta `unregister_push_token` + `deleteToken`. Firebase dosyaları yokken uygulama push'suz çalışır; trigger da Vault sırları yokken hiçbir şey yapmaz.
+
+1. **Firebase projesi** oluştur; Android ve iOS uygulamalarını `com.atlas.dentlink` ile ekle (Flutter simgesi değil, platform simgeleri). Kimlik değişirse Firebase'e yeni uygulama eklenir. _(Proje: `dentlink-ea0f2`)_
+2. `android/app/google-services.json` ve `ios/Runner/GoogleService-Info.plist` dosyalarını koy (plist'i Xcode'da Runner hedefine ekle). İkisi de gizli değil ama repo dışı tutmak istersen `.gitignore`'a ekle.
+3. **iOS:** Apple Developer'da APNs Auth Key (.p8) oluştur → Firebase Console → Cloud Messaging → APNs anahtarını yükle. Xcode → Runner → Signing & Capabilities → **Push Notifications** ekle.
+4. **Service account:** Firebase Console → Project settings → Service accounts → yeni özel anahtar (JSON). Bu anahtar yalnızca Edge Function'da durur, istemciye girmez.
+5. Sırlar ve deploy:
+   ```bash
+   SECRET=$(openssl rand -hex 32)
+   supabase secrets set PUSH_WEBHOOK_SECRET=$SECRET FIREBASE_SERVICE_ACCOUNT="$(cat service-account.json)"
+   supabase functions deploy push --no-verify-jwt   # JWT yerine x-push-secret başlığı
+   supabase db push                                  # 027
+   ```
+6. Vault'a URL ve aynı sırrı yaz (SQL Editor, bir kere; şema değişikliği değil):
+   ```sql
+   select vault.create_secret('https://lknvufbxekceevdblgmq.supabase.co/functions/v1/push', 'push_function_url');
+   select vault.create_secret('<SECRET>', 'push_webhook_secret');
+   ```
+7. Doğrula: iki hesapla beğeni/mesaj → karşı cihaza push düşer, dokununca ilgili post/sohbet açılır. Hata olursa: `select * from net._http_response order by created desc limit 5;` ve Dashboard → Edge Functions → push → Logs.
+
+Bilinen sınırlar: push metinleri yalnızca TR; uygulama ön plandayken push gösterilmez (realtime rozetleri günceller); push'tan açılan bildirim listede okunmamış kalır; tür bazında tercih yok (sonraki iş).

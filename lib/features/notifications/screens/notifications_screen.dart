@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
-import '../../../data/models/enums.dart';
+import '../../../core/router/notification_route.dart';
 import '../../../providers/notification_provider.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_widget.dart';
@@ -48,25 +48,15 @@ class _NotificationListView extends ConsumerWidget {
               SnackBar(content: Text(getErrorMessage(l10n, e))),
             ));
 
-    final type = notification.type;
-    if (type == NotificationType.follow) {
-      context.push('/profile/${notification.actor.id}');
-    } else if (type == NotificationType.message) {
-      context.push(
-        Uri(
-          path: '/chat/${notification.actor.id}',
-          queryParameters: {
-            'name': notification.actor.fullName,
-            'avatar': notification.actor.avatarUrl ?? '',
-          },
-        ).toString(),
-      );
-    } else if (notification.postId != null) {
-      // Yükleme, "bulunamadı" ve hata durumlarını PostScreen gösterir.
-      // Yorum, cevap, yorum beğenisi ve en iyi cevap bildirimleri yorumları açık getirir.
-      final comments = notification.commentId != null ? '?comments=1' : '';
-      context.push('/post/${notification.postId}$comments');
-    }
+    final route = notificationRoute(
+      type: notification.type,
+      actorId: notification.actor.id,
+      actorName: notification.actor.fullName,
+      actorAvatar: notification.actor.avatarUrl,
+      postId: notification.postId,
+      commentId: notification.commentId,
+    );
+    if (route != null) context.push(route);
   }
 
   @override

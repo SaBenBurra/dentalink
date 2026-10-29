@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "704803690504",
+    "project_id": "dentlink-ea0f2",
+    "storage_bucket": "dentlink-ea0f2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:704803690504:android:0baf4467ab40ba2f6d59bd",
+        "android_client_info": {
+          "package_name": "com.atlas.dentlink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1ZNqnPczJLY04pnXqTkkadr1VJEqapxI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -43,3 +43,8 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+// Push (FCM): google-services.json yokken de derlensin (docs/SUPABASE.md §8).
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+}

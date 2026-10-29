@@ -6,6 +6,7 @@ import '../core/utils/string_utils.dart';
 import '../data/models/enums.dart';
 import '../data/models/user_model.dart';
 import '../data/providers/repository_providers.dart';
+import 'push_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Auth State Notifier — OTP tabanlı şifresiz kimlik doğrulama
@@ -93,6 +94,7 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
   }
 
   Future<void> signOut() async {
+    await ref.read(pushProvider)?.unregister();
     await ref.read(authRepositoryProvider).signOut();
     state = const AsyncData(null);
   }
@@ -101,6 +103,7 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
   /// hata verse bile kullanıcı uygulamada oturumlu kalmaz.
   Future<void> deleteAccount() async {
     await ref.read(userRepositoryProvider).deleteAccount();
+    await ref.read(pushProvider)?.unregister();
     try {
       await ref.read(authRepositoryProvider).signOut();
     } finally {
