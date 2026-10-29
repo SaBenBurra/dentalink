@@ -6,9 +6,12 @@ import 'package:flutter/material.dart';
 import '../../../data/models/enums.dart';
 
 class PostBadge extends StatelessWidget {
-  const PostBadge({super.key, required this.postType});
+  const PostBadge({super.key, required this.postType, this.label});
 
   final PostType postType;
+
+  /// Verilirse tür etiketi yerine yazılır (ör. profilde unvan); renkler türden gelir.
+  final String? label;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +62,7 @@ class PostBadge extends StatelessWidget {
         border: Border.all(color: border, width: 1),
       ),
       child: Text(
-        postType.getBadgeLabel(context),
+        label ?? postType.getBadgeLabel(context),
         style: textTheme.labelSmall?.copyWith(
           color: foreground,
           fontWeight: FontWeight.bold,
