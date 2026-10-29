@@ -11,6 +11,7 @@ import 'package:dentlink/providers/auth_provider.dart';
 import 'package:dentlink/providers/connectivity_provider.dart';
 import 'package:dentlink/providers/message_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -176,6 +177,29 @@ void main() {
 
     repo.conversations = [_conv('a', 'p1', minute: 5)];
     net.add([ConnectivityResult.wifi]);
+    await pumpEventQueue();
+
+    expect(repo.getConversationsCalls, 2);
+    expect(container.read(conversationsProvider).requireValue.map((c) => c.id), ['a']);
+  });
+
+  test('uygulama ön plana dönünce sohbetler yeniden çekilir (arka planda kaçan mesaj)', () async {
+    final binding = TestWidgetsFlutterBinding.ensureInitialized();
+    container.listen(conversationsProvider, (_, _) {});
+    await container.read(conversationsProvider.future);
+
+    repo.conversations = [_conv('a', 'p1', minute: 5)];
+    // Gerçek cihazdaki sıra: arka plana git, geri gel.
+    for (final s in [
+      AppLifecycleState.inactive,
+      AppLifecycleState.hidden,
+      AppLifecycleState.paused,
+      AppLifecycleState.hidden,
+      AppLifecycleState.inactive,
+      AppLifecycleState.resumed,
+    ]) {
+      binding.handleAppLifecycleStateChanged(s);
+    }
     await pumpEventQueue();
 
     expect(repo.getConversationsCalls, 2);
