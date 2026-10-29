@@ -176,6 +176,7 @@
 ## Faz 5 — Yayın 🚀
 
 - [ ] Uygulama adı, `applicationId`/bundle id, ikon, splash — `REL-4`, `UX-17`, `AUTH-11`
+  - [x] `applicationId`/bundle id: `com.atlas.dentlink` (Firebase `dentlink-ea0f2`) _(2026-10-29)_
 - [ ] Fontları bundle'a ekle — `REL-3`
 - [ ] Android release imzalama (`key.properties`), R8 — `REL-2`
 - [ ] iOS imzalama ve provisioning

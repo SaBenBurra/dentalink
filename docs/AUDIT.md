@@ -160,7 +160,7 @@
 | REL-1 | 🟠 | `ios/Runner/Info.plist` | `NSCameraUsageDescription` ve `NSPhotoLibraryUsageDescription` yok, iOS'ta kamera/galeri açılınca **crash**. | İki anahtarı Türkçe açıklamayla ekle. | ✅ |
 | REL-2 | 🟠 | `android/app/build.gradle.kts:32` | Release build debug key ile imzalanıyor; Play Store reddeder. | `key.properties` (git dışı) + release signingConfig. *(Faz 5)* | ⬜ |
 | REL-3 | 🟡 | `pubspec.yaml`, `assets/fonts/*` | Font klasörleri boş, `fonts:` tanımı yok; uygulama sistem fontuna düşüyor. | Font dosyalarını ekle ve tanımla, ya da `google_fonts`. *(Faz 5)* | ⬜ |
-| REL-4 | 🟡 | `AndroidManifest.xml:5`, `Info.plist:10`, `build.gradle.kts:19` | Etiket "dentlink"/"Dentlink"; launcher ikonu Flutter varsayılanı; `applicationId` şablon. | İsim, ikon ve id kararı. *(Faz 5)* | ⬜ |
+| REL-4 | 🟡 | `AndroidManifest.xml:5`, `Info.plist:10`, `build.gradle.kts:19` | Etiket "dentlink"/"Dentlink"; launcher ikonu Flutter varsayılanı; `applicationId` şablon. | İsim, ikon ve id kararı. *(Faz 5)* Kimlik `com.atlas.dentlink` (2026-10-29); isim, ikon, splash açık. | 🔧 |
 | REL-5 | 🟡 | — | Crash raporlama yok (Sentry/Crashlytics). | *(Faz 5)* | ⬜ |
 | REL-6 | 🟡 | — | Push bildirim yok (FCM). | *(Faz 5)* | ⬜ |
 | REL-7 | ⚪ | `pubspec.yaml` | `flutter_riverpod` 2.x ve `go_router` 14.x bir major sürüm geride. | Yayın sonrası, ayrı bir PR'da yükselt. | ⬜ |
