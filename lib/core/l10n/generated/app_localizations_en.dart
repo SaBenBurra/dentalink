@@ -274,6 +274,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get postContent => 'Description';
 
   @override
+  String get postSectionContent => 'Content';
+
+  @override
   String get postBranch => 'Branch';
 
   @override

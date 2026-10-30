@@ -1,6 +1,7 @@
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
+import 'form_section_label.dart';
 
 /// Gönderiye (Vaka/Soru) etiket eklemek için kullanılan bileşen.
 class TagInput extends StatefulWidget {
@@ -119,19 +120,22 @@ class _TagInputState extends State<TagInput> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          AppLocalizations.of(context)!.postTags,
-          style: Theme.of(
-            context,
-          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+        FormSectionLabel(
+          icon: Icons.tag,
+          label: AppLocalizations.of(context)!.postTags,
+          trailing: Text(
+            '${_tags.length}/${TagInput.maxTags}',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
         ),
-        const SizedBox(height: AppDimensions.spacing8),
+        const SizedBox(height: AppDimensions.spacing12),
         Container(
           padding: const EdgeInsets.all(AppDimensions.spacing12),
           decoration: BoxDecoration(
-            border: Border.all(color: colorScheme.outline),
-            borderRadius: BorderRadius.circular(12),
-            color: colorScheme.surface,
+            borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+            color: Theme.of(context).inputDecorationTheme.fillColor,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,11 +147,12 @@ class _TagInputState extends State<TagInput> {
                   children: _tags.map((tag) {
                     return InputChip(
                       label: Text('#$tag'),
-                      labelStyle: TextStyle(color: colorScheme.primary),
-                      backgroundColor: colorScheme.primaryContainer.withValues(
-                        alpha: 0.3,
+                      labelStyle: TextStyle(color: colorScheme.secondary),
+                      backgroundColor: colorScheme.secondary.withValues(
+                        alpha: 0.12,
                       ),
-                      deleteIconColor: colorScheme.primary,
+                      side: BorderSide.none,
+                      deleteIconColor: colorScheme.secondary,
                       onDeleted: () => _removeTag(tag),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     );

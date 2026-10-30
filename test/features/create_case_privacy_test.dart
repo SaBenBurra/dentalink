@@ -74,13 +74,13 @@ void main() {
     final fields = find.byType(TextFormField);
     await tester.enterText(fields.at(0), 'Vaka başlığı');
     await tester.enterText(fields.at(1), 'Vaka açıklaması');
-    await tester.tap(find.byIcon(Icons.arrow_drop_down));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Endodonti').last);
+    await tester.ensureVisible(find.text('Endodonti'));
+    await tester.tap(find.text('Endodonti'));
     await tester.pumpAndSettle();
     await tester.ensureVisible(
       find.byIcon(Icons.add_photo_alternate_outlined).first,
     );
+    await tester.pumpAndSettle();
     await tester.tap(find.byIcon(Icons.add_photo_alternate_outlined).first);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Galeriden Seç'));
@@ -103,7 +103,13 @@ void main() {
     ).hideCurrentSnackBar();
     await tester.pumpAndSettle();
 
+    await tester.scrollUntilVisible(
+      find.byType(CheckboxListTile),
+      100,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.ensureVisible(find.byType(CheckboxListTile));
+    await tester.pumpAndSettle();
     await tester.tap(find.byType(CheckboxListTile));
     await tester.pumpAndSettle();
     expect(

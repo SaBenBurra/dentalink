@@ -263,6 +263,7 @@
   "@postTitle": { "description": "Gönderi başlığı alanı" },
 
   "postContent": "Açıklama",
+  "postSectionContent": "İçerik",
   "@postContent": { "description": "Gönderi içerik alanı" },
 
   "postBranch": "Branş",

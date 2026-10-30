@@ -6,6 +6,8 @@ import '../../../shared/utils/error_messages.dart';
 import '../../../shared/utils/post_actions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../widgets/form_section_label.dart';
+import '../widgets/share_submit.dart';
 import '../widgets/branch_selector.dart';
 import '../widgets/image_picker_grid.dart';
 import '../widgets/tag_input.dart';
@@ -29,6 +31,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
   List<File> _images = [];
   List<String> _tags = [];
   bool _dirty = false; // UX-2
+  String? _sharedPostId;
   bool _privacyConfirmed = false;
 
   @override
@@ -42,7 +45,11 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
     if (_formKey.currentState!.validate()) {
       if (_selectedBranch == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.validationBranchRequired)),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.validationBranchRequired,
+            ),
+          ),
         );
         return;
       }
@@ -58,35 +65,48 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
 
       if (!_privacyConfirmed) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.casePrivacyRequired)),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.casePrivacyRequired),
+          ),
         );
         return;
       }
 
-      final post = await ref.read(createCaseProvider.notifier).submit(
-        title: _titleController.text,
-        content: _contentController.text,
-        branch: _selectedBranch!,
-        imageFiles: _images,
-        tags: _tags,
-      );
+      final post = await ref
+          .read(createCaseProvider.notifier)
+          .submit(
+            title: _titleController.text,
+            content: _contentController.text,
+            branch: _selectedBranch!,
+            imageFiles: _images,
+            tags: _tags,
+          );
 
       if (!mounted) return;
 
       final state = ref.read(createCaseProvider);
       if (state.hasError) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, state.error!))),
+          SnackBar(
+            content: Text(
+              getErrorMessage(AppLocalizations.of(context)!, state.error!),
+            ),
+          ),
         );
       } else {
         invalidateMyPosts(ref);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.caseShared)),
-        );
-        // Paylaşılan postu aç; form yığından çıkar (geri → önceki ekran).
-        context.pushReplacement('/post/${post!.id}');
+        // Buton başarı animasyonunu oynatır; bitince _openShared.
+        setState(() => _sharedPostId = post!.id);
       }
     }
+  }
+
+  void _openShared() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context)!.caseShared)),
+    );
+    // Paylaşılan postu aç; form yığından çıkar (geri → önceki ekran).
+    context.pushReplacement('/post/$_sharedPostId');
   }
 
   @override
@@ -95,36 +115,14 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
 
     return UnsavedChangesScope(
       dirty: _dirty,
-      busy: ref.watch(createCaseProvider).isLoading,
+      busy: ref.watch(createCaseProvider).isLoading || _sharedPostId != null,
       child: Scaffold(
-        appBar: AppBar(
-          actionsPadding: EdgeInsets.symmetric(
-            horizontal: AppDimensions.spacing10,
-          ),
-          title: Text(AppLocalizations.of(context)!.createCase),
-          actions: [
-            Consumer(
-              builder: (context, ref, child) {
-                final isLoading = ref.watch(createCaseProvider).isLoading;
-                return TextButton(
-                  onPressed: isLoading ? null : _submit,
-                  child: isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(
-                          AppLocalizations.of(context)!.share,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.primary,
-                          ),
-                        ),
-                );
-              },
-            ),
-          ],
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.createCase)),
+        bottomNavigationBar: ShareSubmitBar(
+          isLoading: ref.watch(createCaseProvider).isLoading,
+          onPressed: _submit,
+          shared: _sharedPostId != null,
+          onSharedAnimationEnd: _openShared,
         ),
         body: Form(
           key: _formKey,
@@ -134,6 +132,11 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
           child: ListView(
             padding: const EdgeInsets.all(AppDimensions.spacing16),
             children: [
+              FormSectionLabel(
+                icon: Icons.edit_note,
+                label: AppLocalizations.of(context)!.postSectionContent,
+              ),
+              const SizedBox(height: AppDimensions.spacing12),
               // Başlık
               TextFormField(
                 controller: _titleController,
@@ -141,9 +144,6 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
                 decoration: InputDecoration(
                   labelText: AppLocalizations.of(context)!.caseTitleLabel,
                   hintText: AppLocalizations.of(context)!.caseTitleHint,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -161,21 +161,19 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
                 maxLines: 5,
                 decoration: InputDecoration(
                   labelText: AppLocalizations.of(context)!.postContent,
-                  hintText:
-                      AppLocalizations.of(context)!.caseContentHint,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
+                  hintText: AppLocalizations.of(context)!.caseContentHint,
                   alignLabelWithHint: true,
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return AppLocalizations.of(context)!.validationDescriptionEmpty;
+                    return AppLocalizations.of(
+                      context,
+                    )!.validationDescriptionEmpty;
                   }
                   return null;
                 },
               ),
-              const SizedBox(height: AppDimensions.spacing24),
+              const FormSectionDivider(),
 
               // Branş Seçimi
               BranchSelector(
@@ -187,7 +185,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
                   });
                 },
               ),
-              const SizedBox(height: AppDimensions.spacing24),
+              const FormSectionDivider(),
 
               // Görseller
               ImagePickerGrid(
@@ -199,18 +197,37 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
                   });
                 },
               ),
+              const SizedBox(height: AppDimensions.spacing16),
               // Hasta mahremiyeti (Faz 4): yüz ve kimlik bilgisi paylaşılmaz.
               CheckboxListTile(
+                tileColor:
+                    (_privacyConfirmed
+                            ? colorScheme.primary
+                            : colorScheme.tertiary)
+                        .withValues(alpha: 0.08),
                 value: _privacyConfirmed,
                 onChanged: (v) => setState(() {
                   _dirty = true;
                   _privacyConfirmed = v ?? false;
                 }),
                 controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-                title: Text(AppLocalizations.of(context)!.casePrivacyConfirm),
+                secondary: Icon(
+                  Icons.shield_outlined,
+                  color: _privacyConfirmed
+                      ? colorScheme.primary
+                      : colorScheme.tertiary,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    AppDimensions.radiusMedium,
+                  ),
+                ),
+                title: Text(
+                  AppLocalizations.of(context)!.casePrivacyConfirm,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               ),
-              const SizedBox(height: AppDimensions.spacing24),
+              const FormSectionDivider(),
 
               // Etiketler
               TagInput(

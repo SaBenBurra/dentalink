@@ -626,6 +626,12 @@ abstract class AppLocalizations {
   /// **'Açıklama'**
   String get postContent;
 
+  /// No description provided for @postSectionContent.
+  ///
+  /// In tr, this message translates to:
+  /// **'İçerik'**
+  String get postSectionContent;
+
   /// Branş seçim alanı
   ///
   /// In tr, this message translates to:

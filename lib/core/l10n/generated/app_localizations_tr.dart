@@ -274,6 +274,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get postContent => 'Açıklama';
 
   @override
+  String get postSectionContent => 'İçerik';
+
+  @override
   String get postBranch => 'Branş';
 
   @override

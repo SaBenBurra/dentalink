@@ -5,6 +5,7 @@ import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/shared/utils/error_messages.dart';
+import 'form_section_label.dart';
 
 /// Kısa kenarı 320px altı ya da 1:4'ten dar görseller feed'de anlamsız görünür (4:5–1.91:1
 /// çerçevede aşırı büyür/kırpılır). Panoramik röntgen (~2.5:1) sınırın içinde kalır.
@@ -172,22 +173,15 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.images,
-              style: Theme.of(
-                context,
-              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+        FormSectionLabel(
+          icon: Icons.photo_library_outlined,
+          label: AppLocalizations.of(context)!.images,
+          trailing: Text(
+            '${_images.length}/${widget.maxImages}',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
             ),
-            Text(
-              '${_images.length}/${widget.maxImages}',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
+          ),
         ),
         const SizedBox(height: AppDimensions.spacing12),
         SizedBox(
@@ -211,11 +205,11 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest,
+                        color: colorScheme.primary.withValues(alpha: 0.06),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: colorScheme.outlineVariant,
-                          width: 1,
+                          color: colorScheme.primary.withValues(alpha: 0.35),
+                          width: 1.5,
                         ),
                       ),
                       child: Column(

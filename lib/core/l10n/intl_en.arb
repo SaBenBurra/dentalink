@@ -95,6 +95,7 @@
   "createQuestion": "Ask Question",
   "postTitle": "Title",
   "postContent": "Description",
+  "postSectionContent": "Content",
   "postBranch": "Branch",
   "postTags": "Tags",
   "addTag": "Add Tag",

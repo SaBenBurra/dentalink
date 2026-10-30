@@ -12,6 +12,7 @@ import '../../../providers/auth_provider.dart';
 import '../../../providers/feed_provider.dart';
 import '../../../providers/post_provider.dart';
 import '../../../shared/utils/error_messages.dart';
+import '../widgets/form_section_label.dart';
 import '../widgets/branch_selector.dart';
 import '../widgets/detail/detail_states.dart';
 import '../widgets/tag_input.dart';
@@ -25,7 +26,9 @@ class EditPostScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(postDetailProvider(postId)).when(
+    return ref
+        .watch(postDetailProvider(postId))
+        .when(
           data: (post) => _EditPostForm(post: post),
           loading: () => const PostDetailLoading(),
           error: (e, _) => PostDetailError(
@@ -52,8 +55,9 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
 
   final _formKey = GlobalKey<FormState>();
   late final _titleController = TextEditingController(text: widget.post.title);
-  late final _contentController =
-      TextEditingController(text: widget.post.content);
+  late final _contentController = TextEditingController(
+    text: widget.post.content,
+  );
   late List<String> _tags = [for (final t in widget.post.tags) t.name];
   late DentalBranch? _branch = switch (widget.post) {
     CasePostModel(:final branch) => branch,
@@ -75,7 +79,9 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
     final l10n = AppLocalizations.of(context)!;
     final messenger = ScaffoldMessenger.of(context);
     try {
-      final updated = await ref.read(createPostRepositoryProvider).updatePost(
+      final updated = await ref
+          .read(createPostRepositoryProvider)
+          .updatePost(
             postId: widget.post.id,
             title: _titleController.text,
             content: _contentController.text,
@@ -108,7 +114,9 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
     // Yalnızca sahibi düzenleyebilir (RPC de kontrol eder).
     final isOwner = ref.watch(currentUserProvider)?.id == widget.post.userId;
     if (!isOwner) {
-      return PostDetailError(message: getErrorMessage(l10n, const NotFoundFailure()));
+      return PostDetailError(
+        message: getErrorMessage(l10n, const NotFoundFailure()),
+      );
     }
 
     return UnsavedChangesScope(
@@ -138,13 +146,15 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
           child: ListView(
             padding: const EdgeInsets.all(AppDimensions.spacing16),
             children: [
+              FormSectionLabel(
+                icon: Icons.edit_note,
+                label: AppLocalizations.of(context)!.postSectionContent,
+              ),
+              const SizedBox(height: AppDimensions.spacing12),
               TextFormField(
                 controller: _titleController,
                 maxLength: _titleMax,
-                decoration: InputDecoration(
-                  labelText: l10n.postTitle,
-                  border: const OutlineInputBorder(),
-                ),
+                decoration: InputDecoration(labelText: l10n.postTitle),
                 validator: _required,
               ),
               const SizedBox(height: AppDimensions.spacing16),
@@ -154,13 +164,12 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
                 maxLines: 8,
                 decoration: InputDecoration(
                   labelText: l10n.postContent,
-                  border: const OutlineInputBorder(),
                   alignLabelWithHint: true,
                 ),
                 validator: _required,
               ),
               if (isCase) ...[
-                const SizedBox(height: AppDimensions.spacing24),
+                const FormSectionDivider(),
                 BranchSelector(
                   selectedBranch: _branch,
                   onBranchSelected: (b) => setState(() {
@@ -169,7 +178,7 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
                   }),
                 ),
               ],
-              const SizedBox(height: AppDimensions.spacing24),
+              const FormSectionDivider(),
               TagInput(
                 suggest: ref.read(createPostRepositoryProvider).suggestTags,
                 initialTags: _tags,
