@@ -20,63 +20,76 @@ class ChatInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.spacing8,
-        vertical: AppDimensions.spacing8,
-      ),
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
+        border: Border(top: BorderSide(color: colorScheme.outlineVariant)),
       ),
       child: SafeArea(
-        child: Row(
-          children: [
-            const SizedBox(width: AppDimensions.spacing8),
-            Expanded(
-              child: TextField(
-                controller: controller,
-                maxLength: maxLength,
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!.typeMessage,
-                  counterText: '',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24.0),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  fillColor: colorScheme.surfaceContainerHighest,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.spacing16,
-                    vertical: AppDimensions.spacing10,
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppDimensions.spacing12,
+            AppDimensions.spacing8,
+            AppDimensions.spacing8,
+            AppDimensions.spacing8,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  maxLength: maxLength,
+                  minLines: 1,
+                  maxLines: 5,
+                  textCapitalization: TextCapitalization.sentences,
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: (_) => onSend(),
+                  decoration: InputDecoration(
+                    hintText: l10n.typeMessage,
+                    counterText: '',
+                    isDense: true,
+                    filled: true,
+                    fillColor: colorScheme.surfaceContainerHigh,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        AppDimensions.radiusXLarge,
+                      ),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AppDimensions.spacing16,
+                      vertical: AppDimensions.spacing12,
+                    ),
                   ),
                 ),
-                maxLines: null,
-                textInputAction: TextInputAction.send,
-                onSubmitted: (_) => onSend(),
               ),
-            ),
-            const SizedBox(width: AppDimensions.spacing8),
-            IconButton(
-              tooltip: AppLocalizations.of(context)!.sendMessage,
-              icon: isSending
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.send),
-              onPressed: isSending ? null : onSend,
-              color: colorScheme.primary,
-            ),
-          ],
+              const SizedBox(width: AppDimensions.spacing8),
+              // Metin boşken buton pasif; yalnızca gönder butonu yeniden çizilir.
+              ValueListenableBuilder<TextEditingValue>(
+                valueListenable: controller,
+                builder: (context, value, _) {
+                  final canSend = !isSending && value.text.trim().isNotEmpty;
+                  return IconButton.filled(
+                    tooltip: l10n.sendMessage,
+                    onPressed: canSend ? onSend : null,
+                    icon: isSending
+                        ? const SizedBox.square(
+                            dimension: AppDimensions.iconMedium,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(
+                            Icons.arrow_upward_rounded,
+                            size: AppDimensions.iconMedium,
+                          ),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

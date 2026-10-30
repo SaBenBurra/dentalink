@@ -11,7 +11,10 @@ import '../../../providers/auth_provider.dart';
 import '../../../shared/widgets/load_more_footer.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/error_widget.dart';
+import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/extensions/user_title_ui.dart';
 import '../../../data/models/conversation_model.dart';
+import '../../../data/models/message_model.dart';
 import '../../../providers/user_provider.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../shared/utils/moderation_actions.dart';
@@ -106,11 +109,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final l10n = AppLocalizations.of(context)!;
     final currentUser = ref.watch(currentUserProvider);
 
-    // Deep link/bildirimden açılınca isim ve avatar query'de olmayabilir.
+    // Deep link/bildirimden açılınca isim ve avatar query'de olmayabilir;
+    // unvan her durumda profilden gelir.
+    final peer = ref.watch(userProfileProvider(widget.userId)).valueOrNull;
     final needsPeer = widget.userName.isEmpty;
-    final peer = needsPeer
-        ? ref.watch(userProfileProvider(widget.userId)).valueOrNull
-        : null;
     final userName = needsPeer ? (peer?.fullName ?? '') : widget.userName;
     final avatarUrl = needsPeer ? (peer?.avatarUrl ?? '') : widget.avatarUrl;
 
@@ -128,24 +130,49 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
         titleSpacing: 0,
-        title: Row(
-          children: [
-            UserAvatar(
-              name: userName,
-              imageUrl: avatarUrl,
-              size: AvatarSize.medium,
+        scrolledUnderElevation: 0,
+        shape: Border(bottom: BorderSide(color: colorScheme.outlineVariant)),
+        title: InkWell(
+          onTap: () => context.push('/profile/${widget.userId}'),
+          borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: AppDimensions.spacing4,
             ),
-            const SizedBox(width: AppDimensions.spacing12),
-            Expanded(
-              child: Text(
-                userName,
-                style: textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
+            child: Row(
+              children: [
+                UserAvatar(
+                  name: userName,
+                  imageUrl: avatarUrl,
+                  size: AvatarSize.medium,
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
+                const SizedBox(width: AppDimensions.spacing12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        userName,
+                        style: textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (peer != null)
+                        Text(
+                          peer.title.displayName(context),
+                          style: textTheme.bodySmall?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
         actions: [
           ModerationMenuButton(
@@ -174,7 +201,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 final messages = state.messages;
 
                 if (messages.isEmpty) {
-                  return Center(child: Text(l10n.chatEmpty));
+                  return DentLinkEmptyState(
+                    icon: Icons.chat_bubble_outline_rounded,
+                    iconSize: AppDimensions.spacing48,
+                    title: userName,
+                    subtitle: l10n.chatEmpty,
+                  );
                 }
 
                 // reversed.toList() yerine index matematiği ile ters sıralama.
@@ -204,19 +236,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     final isMe =
                         currentUser != null &&
                         message.senderId == currentUser.id;
+                    final prev = position > 0 ? messages[position - 1] : null;
+                    final next = position < messageCount - 1
+                        ? messages[position + 1]
+                        : null;
+                    // Günün ilk mesajının üstüne gün ayırıcısı.
+                    final startsDay =
+                        prev == null ||
+                        !DateUtils.isSameDay(prev.createdAt, message.createdAt);
                     final bubble = MessageBubble(
                       text: message.content,
                       isMe: isMe,
                       time: _timeFormatter.format(message.createdAt),
+                      isFirstInGroup: !isSameMessageGroup(prev, message),
+                      isLastInGroup: !isSameMessageGroup(message, next),
                     );
-
-                    // Günün ilk mesajının üstüne gün ayırıcısı.
-                    final startsDay =
-                        position == 0 ||
-                        !DateUtils.isSameDay(
-                          messages[position - 1].createdAt,
-                          message.createdAt,
-                        );
                     if (!startsDay) {
                       return KeyedSubtree(
                         key: ValueKey(message.id),
@@ -252,6 +286,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 }
 
+/// Aynı göndericiden, aynı gün ve 5 dakika içinde gelen ardışık mesajlar tek grup.
+bool isSameMessageGroup(MessageModel? a, MessageModel? b) =>
+    a != null &&
+    b != null &&
+    a.senderId == b.senderId &&
+    DateUtils.isSameDay(a.createdAt, b.createdAt) &&
+    b.createdAt.difference(a.createdAt).abs() < const Duration(minutes: 5);
+
 /// Sohbetteki gün ayırıcısının metni: Bugün, Dün, aynı yıl "5 Mart", eski yıl "5 Mart 2025".
 String chatDayLabel(DateTime day, DateTime now, AppLocalizations l10n) {
   final today = DateUtils.dateOnly(now);
@@ -276,21 +318,16 @@ class _DaySeparator extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppDimensions.spacing12,
-          vertical: AppDimensions.spacing4,
-        ),
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHigh,
-          borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
-        ),
-        child: Text(
-          label,
-          style: Theme.of(
-            context,
-          ).textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant),
+      padding: const EdgeInsets.only(
+        top: AppDimensions.spacing24,
+        bottom: AppDimensions.spacing8,
+      ),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: colorScheme.onSurfaceVariant,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.4,
         ),
       ),
     );
