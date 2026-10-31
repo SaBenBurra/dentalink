@@ -44,27 +44,56 @@ function notificationBody(r: Row): string | null {
   return quote ? `${action}: “${snippet(quote, 80)}”` : action;
 }
 
-type Push = { userId: string; title: string; body: string; data: Record<string, string> };
+// threadId (DM): iOS'ta her mesaj ayrı bildirimdir, aynı sohbetinkiler tek yığında durur.
+// Android'e DM data-only gider; bildirimi uygulama MessagingStyle ile kendisi çizer
+// (lib/core/push/message_notifications.dart).
+type Push = { userId: string; title: string; body: string; data: Record<string, string>; threadId?: string };
+
+// Android sohbet bildiriminde listelenen en fazla okunmamış mesaj (FCM data sınırı 4 KB).
+const MAX_GROUPED = 8;
 
 async function load(kind: string, id: string): Promise<Push | null> {
   if (kind === 'message') {
     const { data, error } = await db
       .from('messages')
-      .select('receiver_id, sender_id, content, sender:users!messages_sender_id_fkey(full_name, avatar_url)')
+      .select('receiver_id, sender_id, conversation_id, content, sender:users!messages_sender_id_fkey(full_name, avatar_url)')
       .eq('id', id)
       .maybeSingle();
     if (error) throw error;
     if (!data) return null;
+    // Android bildirimi sohbetin okunmamış son mesajlarını listeler; her mesajda yeniden çizilip titrer.
+    // Okunmamış sayısı için is_read değil sayaç: uygulama sohbeti açınca sayacı sıfırlıyor.
+    const { data: conv, error: convError } = await db
+      .from('conversations')
+      .select('user1_id, user1_unread_count, user2_unread_count')
+      .eq('id', data.conversation_id)
+      .maybeSingle();
+    if (convError) throw convError;
+    const unread = conv ? (conv.user1_id === data.receiver_id ? conv.user1_unread_count : conv.user2_unread_count) : 1;
+    const { data: recent, error: recentError } = await db
+      .from('messages')
+      .select('content, created_at')
+      .eq('conversation_id', data.conversation_id)
+      .eq('sender_id', data.sender_id)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false })
+      .limit(Math.min(Math.max(unread, 1), MAX_GROUPED));
+    if (recentError) throw recentError;
+    const messages = (recent ?? []).reverse().map((m) => ({ text: snippet(m.content, 140), at: m.created_at }));
     const sender = data.sender as unknown as { full_name: string; avatar_url: string | null };
     return {
       userId: data.receiver_id,
       title: sender.full_name,
       body: snippet(data.content, 140),
+      threadId: data.conversation_id,
       data: {
         type: 'message',
         actor_id: data.sender_id,
         actor_name: sender.full_name,
         actor_avatar: sender.avatar_url ?? '',
+        conversation_id: data.conversation_id,
+        messages: JSON.stringify(messages),
+        unread: String(Math.max(unread, messages.length)),
       },
     };
   }
@@ -121,24 +150,26 @@ async function accessToken(): Promise<string> {
 }
 
 async function send(push: Push): Promise<void> {
-  const { data: tokens, error } = await db.from('push_tokens').select('token').eq('user_id', push.userId);
+  const { data: tokens, error } = await db.from('push_tokens').select('token, platform').eq('user_id', push.userId);
   if (error) throw error;
   if (!tokens?.length) return;
 
   const auth = await accessToken();
-  await Promise.all(tokens.map(async ({ token }) => {
-    const res = await fetch(`https://fcm.googleapis.com/v1/projects/${sa.project_id}/messages:send`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${auth}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: {
+  await Promise.all(tokens.map(async ({ token, platform }) => {
+    const dataOnly = platform === 'android' && push.data.type === 'message';
+    const message = dataOnly
+      ? { token, data: push.data, android: { priority: 'high' } }
+      : {
           token,
           notification: { title: push.title, body: push.body },
           data: push.data,
           android: { priority: 'high' },
-          apns: { payload: { aps: { sound: 'default' } } },
-        },
-      }),
+          apns: { payload: { aps: { sound: 'default', ...(push.threadId && { 'thread-id': push.threadId }) } } },
+        };
+    const res = await fetch(`https://fcm.googleapis.com/v1/projects/${sa.project_id}/messages:send`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${auth}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message }),
     });
     if (res.ok) return;
     const text = await res.text();

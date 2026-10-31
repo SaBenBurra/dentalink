@@ -1209,6 +1209,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verifiedAccount => 'Verified account';
 
   @override
+  String get messageNotificationChannel => 'Messages';
+
+  @override
+  String get messageNotificationYou => 'You';
+
+  @override
+  String messageNotificationSummary(int chats, int messages) {
+    String _temp0 = intl.Intl.pluralLogic(
+      messages,
+      locale: localeName,
+      other: '$messages messages',
+      one: '1 message',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      chats,
+      locale: localeName,
+      other: '$chats chats',
+      one: '1 chat',
+    );
+    return '$_temp0 from $_temp1';
+  }
+
+  @override
   String get postTreatment => 'Treatment type';
 
   @override

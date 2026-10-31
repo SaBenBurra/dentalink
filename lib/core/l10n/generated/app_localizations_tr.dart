@@ -1202,6 +1202,22 @@ class AppLocalizationsTr extends AppLocalizations {
   String get verifiedAccount => 'Doğrulanmış hesap';
 
   @override
+  String get messageNotificationChannel => 'Mesajlar';
+
+  @override
+  String get messageNotificationYou => 'Sen';
+
+  @override
+  String messageNotificationSummary(int chats, int messages) {
+    String _temp0 = intl.Intl.pluralLogic(
+      chats,
+      locale: localeName,
+      other: '$chats sohbetten $messages mesaj',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get postTreatment => 'Tedavi türü';
 
   @override

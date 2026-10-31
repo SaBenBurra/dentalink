@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/push/message_notifications.dart';
 import '../core/router/app_router.dart';
 import '../core/router/notification_route.dart';
 import '../data/models/enums.dart';
@@ -64,15 +65,18 @@ class PushController {
   Future<void> start() async {
     _subs
       ..add(_messaging.onTokenRefresh.listen(_register))
-      ..add(FirebaseMessaging.onMessageOpenedApp.listen(_open));
+      ..add(FirebaseMessaging.onMessage.listen(_onForeground))
+      ..add(FirebaseMessaging.onMessageOpenedApp.listen((m) => _open(m.data)));
     try {
+      final launch = await initMessageNotifications(_open);
+      if (launch != null) _open(launch);
       final settings = await _messaging.requestPermission();
       if (settings.authorizationStatus != AuthorizationStatus.denied) {
         final token = await _messaging.getToken();
         if (token != null) await _register(token);
       }
       final initial = await _messaging.getInitialMessage();
-      if (initial != null) _open(initial);
+      if (initial != null) _open(initial.data);
     } catch (e) {
       debugPrint('push start: $e');
     }
@@ -86,8 +90,17 @@ class PushController {
     }
   }
 
-  void _open(RemoteMessage message) {
-    final route = pushRoute(message.data);
+  // Uygulama açıkken: DM bildirimi, o sohbet ekranında değilsek gösterilir.
+  void _onForeground(RemoteMessage message) {
+    final path = _router.routerDelegate.currentConfiguration.uri.path;
+    if (path == '/chat/${message.data['actor_id']}') return;
+    showMessageNotification(message.data).catchError(
+      (Object e) => debugPrint('push foreground: $e'),
+    );
+  }
+
+  void _open(Map<String, dynamic> data) {
+    final route = pushRoute(data);
     if (route == null) return;
     // Soğuk açılışta router önce /login → /feed yönlendirmesini yapar; ondan sonra aç.
     bool ready() => !const {'/', '/login', '/register', '/auth-error'}
@@ -117,6 +130,11 @@ class PushController {
   /// UNREGISTERED döner, Edge Function satırı siler).
   Future<void> unregister() async {
     cancel();
+    try {
+      await cancelAllMessageNotifications();
+    } catch (e) {
+      debugPrint('push cancel notifications: $e');
+    }
     try {
       final token = await _messaging.getToken();
       if (token != null) await _repo.unregister(token);

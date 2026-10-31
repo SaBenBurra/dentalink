@@ -2264,6 +2264,24 @@ abstract class AppLocalizations {
   /// **'Doğrulanmış hesap'**
   String get verifiedAccount;
 
+  /// Android bildirim kanalı adı (ayarlarda görünür)
+  ///
+  /// In tr, this message translates to:
+  /// **'Mesajlar'**
+  String get messageNotificationChannel;
+
+  /// No description provided for @messageNotificationYou.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sen'**
+  String get messageNotificationYou;
+
+  /// No description provided for @messageNotificationSummary.
+  ///
+  /// In tr, this message translates to:
+  /// **'{chats, plural, other{{chats} sohbetten {messages} mesaj}}'**
+  String messageNotificationSummary(int chats, int messages);
+
   /// Vaka formunda branştan sonra seçilen tedavi türü
   ///
   /// In tr, this message translates to:

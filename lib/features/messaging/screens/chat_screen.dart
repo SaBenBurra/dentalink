@@ -19,6 +19,7 @@ import '../../../providers/user_provider.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../shared/utils/moderation_actions.dart';
 import '../../../data/models/enums.dart';
+import '../../../core/push/message_notifications.dart';
 import 'package:go_router/go_router.dart';
 
 /// Saat formatı — her build/itemBuilder çağrısında yeniden oluşturulmasını
@@ -58,6 +59,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final c = convs.firstWhereOrNull((c) => c.otherUser.id == widget.userId);
     if (c != null && c.unreadCount > 0) {
       ref.read(activeChatProvider(widget.userId).notifier).markAsRead(c.id);
+      cancelMessageNotification(c.id);
     }
   }
 
