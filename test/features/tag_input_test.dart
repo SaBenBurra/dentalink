@@ -100,4 +100,54 @@ void main() {
       expect(emitted, ['implant-üstü-protez', 'kendi-etiketim']);
     });
   });
+
+  group('sabit etiket (tedavi türü)', () {
+    late List<String> emitted;
+
+    Widget app(String? locked, {List<String> initial = const []}) => MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: TagInput(
+              initialTags: initial,
+              lockedTag: locked,
+              onTagsChanged: (t) => emitted = t,
+            ),
+          ),
+        );
+
+    testWidgets('silinemez, sınıra dahil, iletilmez, tekrar eklenmez', (tester) async {
+      emitted = [];
+      await tester.pumpWidget(app('kanal-tedavisi'));
+
+      expect(find.text('#kanal-tedavisi'), findsOneWidget);
+      expect(find.byType(InputChip), findsNothing, reason: 'silme düğmesi yok');
+      expect(find.text('1/5'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), 'kanal-tedavisi a b c d e ');
+      await tester.pump();
+      expect(emitted, ['a', 'b', 'c', 'd'], reason: 'sabit etiket bir yer kaplar');
+      expect(find.text('5/5'), findsOneWidget);
+    });
+
+    testWidgets('sabit etiket gelince fazla etiket düşer, eski sabit etiket kalkar', (tester) async {
+      emitted = [];
+      await tester.pumpWidget(app('kron', initial: ['kron', 'a', 'b', 'c', 'd']));
+      expect(find.text('5/5'), findsOneWidget, reason: 'başlangıçtaki sabit etiket tekrar sayılmaz');
+
+      await tester.pumpWidget(app('köprü', initial: ['kron', 'a', 'b', 'c', 'd']));
+      await tester.pump();
+      expect(emitted, ['a', 'b', 'c', 'd'], reason: 'eski tedavinin etiketi gider');
+    });
+
+    testWidgets('5 serbest etiketli posta tedavi seçilince sondaki düşer', (tester) async {
+      emitted = [];
+      const initial = ['a', 'b', 'c', 'd', 'e'];
+      await tester.pumpWidget(app(null, initial: initial));
+      await tester.pumpWidget(app('kron', initial: initial));
+      await tester.pump();
+      expect(emitted, ['a', 'b', 'c', 'd']);
+      expect(find.text('5/5'), findsOneWidget);
+    });
+  });
 }

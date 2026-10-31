@@ -34,6 +34,7 @@ class SupabasePostRepository implements PostRepository {
     users!posts_user_id_fkey(*),
     post_images(id, image_url, sort_order),
     post_tags(tags(id, name, slug, usage_count)),
+    other_treatment:tags!posts_other_treatment_tag_id_fkey(name),
     likes(id, user_id),
     bookmarks(id, user_id)
   ''';
@@ -97,6 +98,8 @@ class SupabasePostRepository implements PostRepository {
           title: row['title'] as String,
           content: row['content'] as String,
           branch: DentalBranch.tryFromDbValue(row['branch'] as String?),
+          treatment: TreatmentType.tryFromDbValue(row['treatment'] as String?),
+          otherTreatment: (row['other_treatment'] as Map<String, dynamic>?)?['name'] as String?,
           imageUrls: imageUrls,
           tags: tags,
           likeCount: row['like_count'] as int? ?? 0,
@@ -341,6 +344,8 @@ class SupabasePostRepository implements PostRepository {
     required String title,
     required String content,
     required DentalBranch branch,
+    TreatmentType? treatment,
+    String? otherTreatment,
     required List<File> imageFiles,
     required List<String> tags,
   }) => guardSupabase(() async {
@@ -353,6 +358,8 @@ class SupabasePostRepository implements PostRepository {
         title: title,
         content: content,
         branch: branch,
+        treatment: treatment,
+        otherTreatment: otherTreatment,
         imagePaths: paths,
         tags: tags,
       );
@@ -385,6 +392,8 @@ class SupabasePostRepository implements PostRepository {
     required String title,
     required String content,
     DentalBranch? branch,
+    TreatmentType? treatment,
+    String? otherTreatment,
     List<String> imagePaths = const [],
     required List<String> tags,
   }) async {
@@ -395,6 +404,8 @@ class SupabasePostRepository implements PostRepository {
       'p_branch': branch?.dbValue,
       'p_image_paths': imagePaths,
       'p_tags': _tagsPayload(tags),
+      'p_treatment': treatment?.dbValue,
+      'p_other_treatment': otherTreatment,
     }) as String;
     return getPostById(postId);
   }
@@ -405,6 +416,8 @@ class SupabasePostRepository implements PostRepository {
     required String title,
     required String content,
     DentalBranch? branch,
+    TreatmentType? treatment,
+    String? otherTreatment,
     required List<String> tags,
   }) => guardSupabase(() async {
     await _client.rpc('update_post', params: {
@@ -413,6 +426,8 @@ class SupabasePostRepository implements PostRepository {
       'p_content': content,
       'p_branch': branch?.dbValue,
       'p_tags': _tagsPayload(tags),
+      'p_treatment': treatment?.dbValue,
+      'p_other_treatment': otherTreatment,
     });
     return getPostById(postId);
   });

@@ -70,7 +70,7 @@ lib/
 ### İçerik
 | Tür | Alanlar | Not |
 |---|---|---|
-| **Vaka** | başlık, açıklama, branş (zorunlu, `DentalBranch`), etiketler, en fazla 10 görsel | Hasta mahremiyeti: yüz ve kimlik bilgisi içermemeli (paylaşırken onay kutusu zorunlu) |
+| **Vaka** | başlık, açıklama, branş (zorunlu, `DentalBranch`), tedavi türü (zorunlu, branşa göre, `TreatmentType` ya da "Diğer" + ad; etiketi posta sabit eklenir), etiketler, en fazla 10 görsel | Hasta mahremiyeti: yüz ve kimlik bilgisi içermemeli (paylaşırken onay kutusu zorunlu) |
 | **Soru** | başlık, detay, etiketler (görsel yükleme henüz yok) | Soru sahibi "En İyi Cevap" seçer (`mark_best_answer` RPC) |
 | İş ilanı, pazar yeri | — | Yayın sonrası |
 

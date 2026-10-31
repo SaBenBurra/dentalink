@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import '../widgets/form_section_label.dart';
 import '../widgets/share_submit.dart';
 import '../widgets/branch_selector.dart';
+import '../widgets/treatment_selector.dart';
 import '../widgets/image_picker_grid.dart';
 import '../widgets/tag_input.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
@@ -28,11 +29,19 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   DentalBranch? _selectedBranch;
+  TreatmentType? _treatment;
+  String? _other; // "Diğer" seçiliyse yazılan ad
   List<File> _images = [];
   List<String> _tags = [];
   bool _dirty = false; // UX-2
   String? _sharedPostId;
   bool _privacyConfirmed = false;
+
+  /// "Diğer" adının etiket hali; boşsa null.
+  String? get _otherTag {
+    final tag = TreatmentSelector.otherTag(_other ?? '');
+    return tag.isEmpty ? null : tag;
+  }
 
   @override
   void dispose() {
@@ -48,6 +57,28 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
           SnackBar(
             content: Text(
               AppLocalizations.of(context)!.validationBranchRequired,
+            ),
+          ),
+        );
+        return;
+      }
+
+      if (_treatment == null && _other == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.validationTreatmentRequired,
+            ),
+          ),
+        );
+        return;
+      }
+
+      if (_other != null && _otherTag == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.otherTreatmentRequired,
             ),
           ),
         );
@@ -78,6 +109,8 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
             title: _titleController.text,
             content: _contentController.text,
             branch: _selectedBranch!,
+            treatment: _treatment,
+            otherTreatment: _otherTag,
             imageFiles: _images,
             tags: _tags,
           );
@@ -181,10 +214,35 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
                 onBranchSelected: (branch) {
                   setState(() {
                     _dirty = true;
+                    // Tedavi branşa bağlı: branş değişince seçim sıfırlanır.
+                    if (_selectedBranch != branch) {
+                      _treatment = null;
+                      _other = null;
+                    }
                     _selectedBranch = branch;
                   });
                 },
               ),
+              // Tedavi türü: branştan sonra; etiketi posta sabitlenir.
+              if (_selectedBranch case final branch?) ...[
+                const FormSectionDivider(),
+                TreatmentSelector(
+                  branch: branch,
+                  selected: _treatment,
+                  other: _other,
+                  suggest: ref.read(createPostRepositoryProvider).suggestTags,
+                  onSelected: (t) => setState(() {
+                    _dirty = true;
+                    _treatment = t;
+                    _other = null;
+                  }),
+                  onOtherChanged: (v) => setState(() {
+                    _dirty = true;
+                    _treatment = null;
+                    _other = v;
+                  }),
+                ),
+              ],
               const FormSectionDivider(),
 
               // Görseller
@@ -232,6 +290,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
               // Etiketler
               TagInput(
                 suggest: ref.read(createPostRepositoryProvider).suggestTags,
+                lockedTag: _treatment?.tag ?? _otherTag,
                 onTagsChanged: (tags) {
                   setState(() {
                     _dirty = true;

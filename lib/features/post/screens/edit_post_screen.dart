@@ -14,6 +14,7 @@ import '../../../providers/post_provider.dart';
 import '../../../shared/utils/error_messages.dart';
 import '../widgets/form_section_label.dart';
 import '../widgets/branch_selector.dart';
+import '../widgets/treatment_selector.dart';
 import '../widgets/detail/detail_states.dart';
 import '../widgets/tag_input.dart';
 import '../../../shared/widgets/unsaved_changes_scope.dart';
@@ -63,8 +64,23 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
     CasePostModel(:final branch) => branch,
     _ => null,
   };
+  late TreatmentType? _treatment = switch (widget.post) {
+    CasePostModel(:final treatment) => treatment,
+    _ => null,
+  };
+  /// "Diğer" seçiliyse yazılan ad.
+  late String? _other = switch (widget.post) {
+    CasePostModel(:final otherTreatment) => otherTreatment,
+    _ => null,
+  };
   bool _saving = false;
   bool _dirty = false; // UX-2
+
+  /// "Diğer" adının etiket hali; boşsa null.
+  String? get _otherTag {
+    final tag = TreatmentSelector.otherTag(_other ?? '');
+    return tag.isEmpty ? null : tag;
+  }
 
   @override
   void dispose() {
@@ -86,6 +102,8 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
             title: _titleController.text,
             content: _contentController.text,
             branch: _branch,
+            treatment: _treatment,
+            otherTreatment: _otherTag,
             tags: _tags,
           );
       ref.read(feedProvider.notifier).replacePost(updated);
@@ -127,7 +145,7 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
           title: Text(l10n.editPost),
           actions: [
             TextButton(
-              onPressed: _saving || (isCase && _branch == null) ? null : _save,
+              onPressed: _saving || (isCase && _treatment == null && _otherTag == null) ? null : _save,
               child: _saving
                   ? const SizedBox(
                       width: 20,
@@ -173,15 +191,40 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
                 BranchSelector(
                   selectedBranch: _branch,
                   onBranchSelected: (b) => setState(() {
+                    // Tedavi branşa bağlı: branş değişince seçim sıfırlanır.
+                    if (_branch != b) {
+                      _treatment = null;
+                      _other = null;
+                    }
                     _branch = b;
                     _dirty = true;
                   }),
                 ),
+                if (_branch case final branch?) ...[
+                  const FormSectionDivider(),
+                  TreatmentSelector(
+                    branch: branch,
+                    selected: _treatment,
+                    other: _other,
+                    suggest: ref.read(createPostRepositoryProvider).suggestTags,
+                    onSelected: (t) => setState(() {
+                      _treatment = t;
+                      _other = null;
+                      _dirty = true;
+                    }),
+                    onOtherChanged: (v) => setState(() {
+                      _treatment = null;
+                      _other = v;
+                      _dirty = true;
+                    }),
+                  ),
+                ],
               ],
               const FormSectionDivider(),
               TagInput(
                 suggest: ref.read(createPostRepositoryProvider).suggestTags,
                 initialTags: _tags,
+                lockedTag: _treatment?.tag ?? _otherTag,
                 onTagsChanged: (tags) => setState(() {
                   _tags = tags;
                   _dirty = true;

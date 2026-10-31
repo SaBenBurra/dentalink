@@ -34,6 +34,8 @@ class _PostRepo implements ICreatePostRepository {
     required String title,
     required String content,
     required DentalBranch branch,
+    TreatmentType? treatment,
+    String? otherTreatment,
     required List<File> imageFiles,
     required List<String> tags,
   }) async {
@@ -76,6 +78,31 @@ void main() {
     await tester.enterText(fields.at(1), 'Vaka açıklaması');
     await tester.ensureVisible(find.text('Endodonti'));
     await tester.tap(find.text('Endodonti'));
+    await tester.pumpAndSettle();
+    // Tedavi türü seçilmeden gönderilmez.
+    await tester.ensureVisible(find.text('Paylaş'));
+    await tester.tap(find.text('Paylaş'));
+    await tester.pumpAndSettle();
+    expect(find.text('Lütfen bir tedavi türü seçin.'), findsOneWidget);
+    ScaffoldMessenger.of(
+      tester.element(find.byType(CreateCaseScreen)),
+    ).hideCurrentSnackBar();
+    await tester.pumpAndSettle();
+    // "Diğer" seçilip ad yazılmadan gönderilmez.
+    await tester.ensureVisible(find.text('Diğer'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Diğer'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Paylaş'));
+    await tester.pumpAndSettle();
+    expect(find.text('Tedavi adını yazın.'), findsOneWidget);
+    ScaffoldMessenger.of(
+      tester.element(find.byType(CreateCaseScreen)),
+    ).hideCurrentSnackBar();
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Kanal tedavisi'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Kanal tedavisi'));
     await tester.pumpAndSettle();
     await tester.ensureVisible(
       find.byIcon(Icons.add_photo_alternate_outlined).first,
@@ -123,6 +150,13 @@ void main() {
     });
     await tester.pumpAndSettle();
     expect(repo.calls, 1);
+    // Tedavi türünün etiketi etiket alanında sabit.
+    await tester.scrollUntilVisible(
+      find.text('#kanal-tedavisi'),
+      100,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('#kanal-tedavisi'), findsOneWidget);
   });
 }
 

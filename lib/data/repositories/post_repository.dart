@@ -42,11 +42,14 @@ abstract class ICreatePostRepository {
   ///
   /// [imageFiles] Supabase Storage'a yüklenecek ham dosyalar.
   /// Etiketler (`tags`) varsa `tags` tablosuna upsert yapılır,
-  /// ardından `post_tags` junction tablosuna bağlanır.
+  /// ardından `post_tags` junction tablosuna bağlanır. Tedavi: [treatment] ([branch]'a ait)
+  /// ya da "Diğer" adı [otherTreatment]; etiketi sunucuda posta zorunlu eklenir (033, 034).
   Future<PostModel> createCase({
     required String title,
     required String content,
     required DentalBranch branch,
+    TreatmentType? treatment,
+    String? otherTreatment,
     required List<File> imageFiles,
     required List<String> tags,
   });
@@ -58,13 +61,15 @@ abstract class ICreatePostRepository {
     required List<String> tags,
   });
 
-  /// Başlık, içerik, branş (yalnızca vaka) ve etiketleri günceller.
+  /// Başlık, içerik, branş (yalnızca vaka), tedavi türü (vakada zorunlu) ve etiketleri günceller.
   /// Görseller düzenlenmez. Post yoksa ya da başkasınınsa [NotFoundFailure].
   Future<PostModel> updatePost({
     required String postId,
     required String title,
     required String content,
     DentalBranch? branch,
+    TreatmentType? treatment,
+    String? otherTreatment,
     required List<String> tags,
   });
 

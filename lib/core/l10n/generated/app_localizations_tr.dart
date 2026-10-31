@@ -1200,4 +1200,221 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get verifiedAccount => 'Doğrulanmış hesap';
+
+  @override
+  String get postTreatment => 'Tedavi türü';
+
+  @override
+  String get validationTreatmentRequired => 'Lütfen bir tedavi türü seçin.';
+
+  @override
+  String get treatmentTagLocked => 'Tedavi türünün etiketi, kaldırılamaz';
+
+  @override
+  String get treatmentKanalTedavisi => 'Kanal tedavisi';
+
+  @override
+  String get treatmentYenidenKanalTedavisi => 'Kanal tedavisi yenileme';
+
+  @override
+  String get treatmentVitalPulpaTedavisi => 'Vital pulpa tedavisi';
+
+  @override
+  String get treatmentApeksifikasyon => 'Apeksifikasyon';
+
+  @override
+  String get treatmentRejeneratifEndodonti => 'Rejeneratif endodonti';
+
+  @override
+  String get treatmentEndodontikCerrahi => 'Endodontik cerrahi';
+
+  @override
+  String get treatmentKompozit => 'Kompozit restorasyon';
+
+  @override
+  String get treatmentIndirektRestorasyon => 'İnley / onley';
+
+  @override
+  String get treatmentKompozitVeneer => 'Kompozit veneer';
+
+  @override
+  String get treatmentBeyazlatma => 'Beyazlatma';
+
+  @override
+  String get treatmentDiastema => 'Diastema kapatma';
+
+  @override
+  String get treatmentGulusTasarimi => 'Gülüş tasarımı';
+
+  @override
+  String get treatmentKron => 'Kron';
+
+  @override
+  String get treatmentKopru => 'Köprü';
+
+  @override
+  String get treatmentLamineVeneer => 'Lamine veneer';
+
+  @override
+  String get treatmentTotalProtez => 'Total protez';
+
+  @override
+  String get treatmentParsiyelProtez => 'Parsiyel protez';
+
+  @override
+  String get treatmentImplantUstuProtez => 'İmplant üstü protez';
+
+  @override
+  String get treatmentTamAgizRehabilitasyonu => 'Tam ağız rehabilitasyonu';
+
+  @override
+  String get treatmentGecePlagi => 'Gece plağı / splint';
+
+  @override
+  String get treatmentDisCekimi => 'Diş çekimi';
+
+  @override
+  String get treatmentGomuluDis => 'Gömülü diş cerrahisi';
+
+  @override
+  String get treatmentImplant => 'İmplant cerrahisi';
+
+  @override
+  String get treatmentSinusLifting => 'Sinüs lifting';
+
+  @override
+  String get treatmentKemikGrefti => 'Kemik grefti';
+
+  @override
+  String get treatmentKist => 'Kist cerrahisi';
+
+  @override
+  String get treatmentApikalRezeksiyon => 'Apikal rezeksiyon';
+
+  @override
+  String get treatmentOrtognatikCerrahi => 'Ortognatik cerrahi';
+
+  @override
+  String get treatmentCeneKirigi => 'Çene kırığı tedavisi';
+
+  @override
+  String get treatmentDisTasi => 'Diş taşı temizliği';
+
+  @override
+  String get treatmentKokYuzeyiDuzlestirme => 'Kök yüzeyi düzleştirme';
+
+  @override
+  String get treatmentFlepOperasyonu => 'Flep operasyonu';
+
+  @override
+  String get treatmentRejeneratifPeriodontalTedavi =>
+      'Rejeneratif periodontal tedavi';
+
+  @override
+  String get treatmentBagDokusuGrefti => 'Bağ dokusu grefti';
+
+  @override
+  String get treatmentSerbestDisetiGrefti => 'Serbest dişeti grefti';
+
+  @override
+  String get treatmentKronBoyuUzatma => 'Kron boyu uzatma';
+
+  @override
+  String get treatmentGingivektomi => 'Gingivektomi';
+
+  @override
+  String get treatmentPeriImplantitis => 'Peri-implantitis tedavisi';
+
+  @override
+  String get treatmentBraket => 'Sabit ortodontik tedavi';
+
+  @override
+  String get treatmentSeffafPlak => 'Şeffaf plak tedavisi';
+
+  @override
+  String get treatmentFonksiyonelAparey => 'Fonksiyonel tedavi';
+
+  @override
+  String get treatmentHizliUstCeneGenisletme => 'Hızlı üst çene genişletme';
+
+  @override
+  String get treatmentInterseptifOrtodonti => 'İnterseptif ortodonti';
+
+  @override
+  String get treatmentMiniVida => 'Mini vida destekli tedavi';
+
+  @override
+  String get treatmentPekistirme => 'Pekiştirme';
+
+  @override
+  String get treatmentPulpotomi => 'Pulpotomi';
+
+  @override
+  String get treatmentSutDisiKanalTedavisi => 'Süt dişi kanal tedavisi';
+
+  @override
+  String get treatmentFissurOrtucu => 'Fissür örtücü';
+
+  @override
+  String get treatmentFlorUygulamasi => 'Flor uygulaması';
+
+  @override
+  String get treatmentYerTutucu => 'Yer tutucu';
+
+  @override
+  String get treatmentPaslanmazCelikKuron => 'Paslanmaz çelik kuron';
+
+  @override
+  String get treatmentDisTravmasi => 'Travma tedavisi';
+
+  @override
+  String get treatmentGenelAnestezi => 'Genel anestezi altında tedavi';
+
+  @override
+  String get treatmentPanoramik => 'Panoramik röntgen';
+
+  @override
+  String get treatmentPeriapikalRontgen => 'Periapikal röntgen';
+
+  @override
+  String get treatmentBitewing => 'Bitewing';
+
+  @override
+  String get treatmentCbct => 'KIBT (CBCT)';
+
+  @override
+  String get treatmentSefalometrikRontgen => 'Sefalometrik röntgen';
+
+  @override
+  String get treatmentBiyopsi => 'Biyopsi';
+
+  @override
+  String get treatmentOralLezyon => 'Oral lezyon tanı ve takibi';
+
+  @override
+  String get treatmentTmeBozuklugu => 'TME tedavisi';
+
+  @override
+  String get treatmentOrofasiyalAgri => 'Orofasiyal ağrı yönetimi';
+
+  @override
+  String get treatmentAyiriciTani => 'Ayırıcı tanı';
+
+  @override
+  String get treatmentBotoks => 'Botoks uygulaması';
+
+  @override
+  String get treatmentOther => 'Diğer';
+
+  @override
+  String get otherTreatmentLabel => 'Tedavi adı';
+
+  @override
+  String get otherTreatmentHint => 'Örn. hemiseksiyon';
+
+  @override
+  String get otherTreatmentRequired => 'Tedavi adını yazın.';
+
+  @override
+  String get treatmentInList => 'listede var';
 }

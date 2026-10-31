@@ -33,6 +33,7 @@ void main() {
         title: 't',
         content: 'c',
         branch: DentalBranch.endodonti,
+        treatment: TreatmentType.kanalTedavisi,
         imageFiles: [File('a.JPG'), File('b.png')],
         tags: const [],
       );
@@ -76,6 +77,8 @@ void main() {
         postId: 'p1',
         title: 't',
         content: 'c',
+        branch: DentalBranch.endodonti,
+        treatment: TreatmentType.kanalTedavisi,
         tags: const ['İmplant', 'implant'],
       ),
       throwsA(isA<NotFoundFailure>()),
@@ -85,7 +88,9 @@ void main() {
         .captured
         .single as Map<String, dynamic>;
     expect(params['p_post_id'], 'p1');
-    expect(params['p_branch'], isNull);
+    expect(params['p_branch'], 'endodontist');
+    expect(params['p_treatment'], 'kanal-tedavisi');
+    expect(params['p_other_treatment'], isNull);
     expect(params['p_tags'], [
       {'name': 'İmplant', 'slug': 'implant'},
     ]);

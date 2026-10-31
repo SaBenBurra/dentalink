@@ -73,6 +73,10 @@ sealed class PostModel {
 /// Vaka gönderisi
 class CasePostModel extends PostModel {
   final DentalBranch? branch;
+  final TreatmentType? treatment;
+
+  /// "Diğer" tedavinin adı (sabit etiketin adı); listeden türde null.
+  final String? otherTreatment;
   final List<String> imageUrls;
 
   const CasePostModel({
@@ -82,6 +86,8 @@ class CasePostModel extends PostModel {
     required super.title,
     required super.content,
     this.branch,
+    this.treatment,
+    this.otherTreatment,
     this.imageUrls = const [],
     super.tags,
     super.likeCount,
@@ -103,6 +109,8 @@ class CasePostModel extends PostModel {
     String? title,
     String? content,
     DentalBranch? branch,
+    TreatmentType? treatment,
+    String? otherTreatment,
     List<String>? imageUrls,
     List<TagModel>? tags,
     int? likeCount,
@@ -122,6 +130,8 @@ class CasePostModel extends PostModel {
       title: title ?? this.title,
       content: content ?? this.content,
       branch: branch ?? this.branch,
+      treatment: treatment ?? this.treatment,
+      otherTreatment: otherTreatment ?? this.otherTreatment,
       imageUrls: imageUrls ?? this.imageUrls,
       tags: tags ?? this.tags,
       likeCount: likeCount ?? this.likeCount,

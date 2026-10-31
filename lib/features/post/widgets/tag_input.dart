@@ -11,6 +11,10 @@ class TagInput extends StatefulWidget {
   /// Tanımlı etiket önerileri (normalize edilmiş sorguyla çağrılır). Null ise öneri yok.
   final Future<List<String>> Function(String query)? suggest;
 
+  /// Tedavi türünün etiketi: başta, silinemez, 5 etiket sınırına dahil.
+  /// Üst bileşene iletilen listeye girmez; sunucu kendisi ekler.
+  final String? lockedTag;
+
   static const maxTags = 5;
   static const maxTagLength = 30;
   static const minSuggestLength = 2;
@@ -29,6 +33,7 @@ class TagInput extends StatefulWidget {
     this.initialTags = const [],
     required this.onTagsChanged,
     this.suggest,
+    this.lockedTag,
   });
 
   @override
@@ -43,7 +48,20 @@ class _TagInputState extends State<TagInput> {
   @override
   void initState() {
     super.initState();
-    _tags = List.from(widget.initialTags);
+    _tags = [for (final t in widget.initialTags) if (t != widget.lockedTag) t];
+  }
+
+  @override
+  void didUpdateWidget(TagInput old) {
+    super.didUpdateWidget(old);
+    if (widget.lockedTag == old.lockedTag) return;
+    _tags.remove(widget.lockedTag);
+    // Sabit etiket bir yer kaplar; sınır aşılırsa sondaki etiket düşer.
+    if (_isOver) _tags.removeRange(TagInput.maxTags - _lockedCount, _tags.length);
+    // Üst bileşen build ederken setState çağrılmasın.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _emit();
+    });
   }
 
   @override
@@ -53,11 +71,14 @@ class _TagInputState extends State<TagInput> {
     super.dispose();
   }
 
-  bool get _isFull => _tags.length >= TagInput.maxTags;
+  int get _lockedCount => widget.lockedTag == null ? 0 : 1;
+  bool get _isFull => _tags.length + _lockedCount >= TagInput.maxTags;
+  bool get _isOver => _tags.length + _lockedCount > TagInput.maxTags;
+  bool _taken(String tag) => tag == widget.lockedTag || _tags.contains(tag);
 
   void _addTag(String value) {
     final tag = TagInput.normalize(value);
-    if (tag.isNotEmpty && !_isFull && !_tags.contains(tag)) _tags.add(tag);
+    if (tag.isNotEmpty && !_isFull && !_taken(tag)) _tags.add(tag);
   }
 
   /// Yazılmakta olan etiket de dahil edilir: gönderimde kaybolmasın.
@@ -65,7 +86,7 @@ class _TagInputState extends State<TagInput> {
     final pending = TagInput.normalize(_controller.text);
     widget.onTagsChanged([
       ..._tags,
-      if (pending.isNotEmpty && !_isFull && !_tags.contains(pending)) pending,
+      if (pending.isNotEmpty && !_isFull && !_taken(pending)) pending,
     ]);
   }
 
@@ -102,7 +123,7 @@ class _TagInputState extends State<TagInput> {
       return const [];
     }
     try {
-      return (await suggest(query)).where((t) => !_tags.contains(t));
+      return (await suggest(query)).where((t) => !_taken(t));
     } catch (_) {
       return const []; // Öneri yardımcı bir özellik; hata etiket yazmayı engellemesin.
     }
@@ -124,7 +145,7 @@ class _TagInputState extends State<TagInput> {
           icon: Icons.tag,
           label: AppLocalizations.of(context)!.postTags,
           trailing: Text(
-            '${_tags.length}/${TagInput.maxTags}',
+            '${_tags.length + _lockedCount}/${TagInput.maxTags}',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: colorScheme.onSurfaceVariant,
             ),
@@ -140,11 +161,24 @@ class _TagInputState extends State<TagInput> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (_tags.isNotEmpty) ...[
+              if (_tags.isNotEmpty || widget.lockedTag != null) ...[
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: _tags.map((tag) {
+                  children: [
+                    if (widget.lockedTag case final locked?)
+                      Semantics(
+                        label: AppLocalizations.of(context)!.treatmentTagLocked,
+                        child: Chip(
+                          avatar: Icon(Icons.lock_outline, size: 16, color: colorScheme.onSecondaryContainer),
+                          label: Text('#$locked'),
+                          labelStyle: TextStyle(color: colorScheme.onSecondaryContainer),
+                          backgroundColor: colorScheme.secondaryContainer,
+                          side: BorderSide.none,
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
+                    ..._tags.map((tag) {
                     return InputChip(
                       label: Text('#$tag'),
                       labelStyle: TextStyle(color: colorScheme.secondary),
@@ -156,7 +190,8 @@ class _TagInputState extends State<TagInput> {
                       onDeleted: () => _removeTag(tag),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     );
-                  }).toList(),
+                    }),
+                  ],
                 ),
                 const SizedBox(height: AppDimensions.spacing8),
               ],

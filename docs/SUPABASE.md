@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `032_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `034_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -318,6 +318,47 @@ from public.post_tags pt join public.tags t on t.id = pt.tag_id
 where pt.post_id = current_setting('t.id')::uuid;
 select public.suggest_tags('rct') rct, public.suggest_tags('zirkonyom') typo;
 rollback;
+
+-- 23) Tedavi türü (033) → BEKLENEN: has_fixed = true (etiket gönderilmese de
+--     kanal-tedavisi posta eklenir), treatment = 'kanal-tedavisi'.
+--     Tedavisiz vaka ya da başka branşın tedavisi → invalid treatment (22023)
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select set_config('t.id', public.create_post('case', 'Vaka', 'içerik', 'endodontist', null,
+  '[{"name":"a","slug":"a"}]', 'kanal-tedavisi')::text, true);
+select p.treatment, exists (
+  select 1 from public.post_tags pt join public.tags t on t.id = pt.tag_id
+  where pt.post_id = p.id and t.slug = 'kanal-tedavisi') as has_fixed
+from public.posts p where p.id = current_setting('t.id')::uuid;
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select public.create_post('case', 'Vaka', 'içerik', 'endodontist', null, '[]', 'braket');
+rollback;
+
+-- 24) "Diğer" tedavi (034) → BEKLENEN: ilk sorgu treatment = null, other = 'hemiseksiyon',
+--     has_fixed = true. İkincisi: Endodonti'de "Diğer"e 'RCT' yazılınca listedeki tür
+--     seçilir → treatment = 'kanal-tedavisi', other = null. Boş ad → invalid treatment
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select set_config('t.a', public.create_post('case', 'Vaka', 'içerik', 'endodontist', null,
+  '[]', null, 'hemiseksiyon')::text, true);
+select set_config('t.b', public.create_post('case', 'Vaka', 'içerik', 'endodontist', null,
+  '[]', null, 'RCT')::text, true);
+select p.id = current_setting('t.a')::uuid as first, p.treatment, t.name as other,
+  exists (select 1 from public.post_tags pt where pt.post_id = p.id
+          and pt.tag_id = p.other_treatment_tag_id) as has_fixed
+from public.posts p left join public.tags t on t.id = p.other_treatment_tag_id
+where p.id in (current_setting('t.a')::uuid, current_setting('t.b')::uuid);
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select public.create_post('case', 'Vaka', 'içerik', 'endodontist', null, '[]', null, '  ');
+rollback;
 ```
 
 ---
@@ -437,3 +478,19 @@ where not u.is_curated
 order by u.usage_count desc, sim desc
 limit 100;
 ```
+
+### "Diğer" tedavileri listeye alma (033, 034)
+
+Vakada listede olmayan tedavi "Diğer" ile yazılır; ad etiket olur ve `posts.other_treatment_tag_id`'de tutulur. Ayda bir sık yazılanlara bak:
+
+```sql
+select p.branch, t.name, t.slug, count(*) as cases
+from public.posts p join public.tags t on t.id = p.other_treatment_tag_id
+group by 1, 2, 3 order by cases desc limit 50;
+```
+
+Aynı kavramın farklı yazımları varsa önce `add_tag_alias` ile birleştir (sayılar toplanır). 5+ vakada geçen ve listeye girmesi gereken bir ad için (yalnızca onayla):
+
+1. Yeni migration: `select public.promote_other_treatment('<slug>', '<branch>');` (o branştaki vakalar türe taşınır, etiket tanımlı olur).
+2. İstemci: `TreatmentType` enum'una `('<slug>', '<etiket adı>', DentalBranch.x)` ve TR/EN ARB metni. `treatment_type_test` ikisinin aynılığını denetler.
+3. Migration'ı uygulama sürümüyle birlikte yayınla. Eski sürüm yeni türü tanımaz; düzenlemede türü yeniden seçtirir.

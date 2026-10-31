@@ -1207,4 +1207,222 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get verifiedAccount => 'Verified account';
+
+  @override
+  String get postTreatment => 'Treatment type';
+
+  @override
+  String get validationTreatmentRequired => 'Please select a treatment type.';
+
+  @override
+  String get treatmentTagLocked => 'Treatment type tag, cannot be removed';
+
+  @override
+  String get treatmentKanalTedavisi => 'Root canal treatment';
+
+  @override
+  String get treatmentYenidenKanalTedavisi => 'Root canal retreatment';
+
+  @override
+  String get treatmentVitalPulpaTedavisi => 'Vital pulp therapy';
+
+  @override
+  String get treatmentApeksifikasyon => 'Apexification';
+
+  @override
+  String get treatmentRejeneratifEndodonti => 'Regenerative endodontics';
+
+  @override
+  String get treatmentEndodontikCerrahi => 'Endodontic surgery';
+
+  @override
+  String get treatmentKompozit => 'Composite restoration';
+
+  @override
+  String get treatmentIndirektRestorasyon => 'Inlay / onlay';
+
+  @override
+  String get treatmentKompozitVeneer => 'Composite veneer';
+
+  @override
+  String get treatmentBeyazlatma => 'Bleaching';
+
+  @override
+  String get treatmentDiastema => 'Diastema closure';
+
+  @override
+  String get treatmentGulusTasarimi => 'Smile design';
+
+  @override
+  String get treatmentKron => 'Crown';
+
+  @override
+  String get treatmentKopru => 'Bridge';
+
+  @override
+  String get treatmentLamineVeneer => 'Laminate veneer';
+
+  @override
+  String get treatmentTotalProtez => 'Complete denture';
+
+  @override
+  String get treatmentParsiyelProtez => 'Partial denture';
+
+  @override
+  String get treatmentImplantUstuProtez => 'Implant-supported prosthesis';
+
+  @override
+  String get treatmentTamAgizRehabilitasyonu => 'Full-mouth rehabilitation';
+
+  @override
+  String get treatmentGecePlagi => 'Night guard / splint';
+
+  @override
+  String get treatmentDisCekimi => 'Tooth extraction';
+
+  @override
+  String get treatmentGomuluDis => 'Impacted tooth surgery';
+
+  @override
+  String get treatmentImplant => 'Implant surgery';
+
+  @override
+  String get treatmentSinusLifting => 'Sinus lift';
+
+  @override
+  String get treatmentKemikGrefti => 'Bone grafting';
+
+  @override
+  String get treatmentKist => 'Cyst surgery';
+
+  @override
+  String get treatmentApikalRezeksiyon => 'Apicoectomy';
+
+  @override
+  String get treatmentOrtognatikCerrahi => 'Orthognathic surgery';
+
+  @override
+  String get treatmentCeneKirigi => 'Jaw fracture treatment';
+
+  @override
+  String get treatmentDisTasi => 'Scaling';
+
+  @override
+  String get treatmentKokYuzeyiDuzlestirme => 'Root planing';
+
+  @override
+  String get treatmentFlepOperasyonu => 'Flap surgery';
+
+  @override
+  String get treatmentRejeneratifPeriodontalTedavi =>
+      'Regenerative periodontal therapy';
+
+  @override
+  String get treatmentBagDokusuGrefti => 'Connective tissue graft';
+
+  @override
+  String get treatmentSerbestDisetiGrefti => 'Free gingival graft';
+
+  @override
+  String get treatmentKronBoyuUzatma => 'Crown lengthening';
+
+  @override
+  String get treatmentGingivektomi => 'Gingivectomy';
+
+  @override
+  String get treatmentPeriImplantitis => 'Peri-implantitis treatment';
+
+  @override
+  String get treatmentBraket => 'Fixed orthodontic treatment';
+
+  @override
+  String get treatmentSeffafPlak => 'Clear aligner treatment';
+
+  @override
+  String get treatmentFonksiyonelAparey => 'Functional appliance therapy';
+
+  @override
+  String get treatmentHizliUstCeneGenisletme => 'Rapid maxillary expansion';
+
+  @override
+  String get treatmentInterseptifOrtodonti => 'Interceptive orthodontics';
+
+  @override
+  String get treatmentMiniVida => 'Mini-screw anchorage';
+
+  @override
+  String get treatmentPekistirme => 'Retention';
+
+  @override
+  String get treatmentPulpotomi => 'Pulpotomy';
+
+  @override
+  String get treatmentSutDisiKanalTedavisi =>
+      'Primary tooth root canal treatment';
+
+  @override
+  String get treatmentFissurOrtucu => 'Fissure sealant';
+
+  @override
+  String get treatmentFlorUygulamasi => 'Fluoride application';
+
+  @override
+  String get treatmentYerTutucu => 'Space maintainer';
+
+  @override
+  String get treatmentPaslanmazCelikKuron => 'Stainless steel crown';
+
+  @override
+  String get treatmentDisTravmasi => 'Dental trauma treatment';
+
+  @override
+  String get treatmentGenelAnestezi => 'Treatment under general anesthesia';
+
+  @override
+  String get treatmentPanoramik => 'Panoramic radiograph';
+
+  @override
+  String get treatmentPeriapikalRontgen => 'Periapical radiograph';
+
+  @override
+  String get treatmentBitewing => 'Bitewing';
+
+  @override
+  String get treatmentCbct => 'CBCT';
+
+  @override
+  String get treatmentSefalometrikRontgen => 'Cephalometric radiograph';
+
+  @override
+  String get treatmentBiyopsi => 'Biopsy';
+
+  @override
+  String get treatmentOralLezyon => 'Oral lesion diagnosis and follow-up';
+
+  @override
+  String get treatmentTmeBozuklugu => 'TMJ treatment';
+
+  @override
+  String get treatmentOrofasiyalAgri => 'Orofacial pain management';
+
+  @override
+  String get treatmentAyiriciTani => 'Differential diagnosis';
+
+  @override
+  String get treatmentBotoks => 'Botulinum toxin injection';
+
+  @override
+  String get treatmentOther => 'Other';
+
+  @override
+  String get otherTreatmentLabel => 'Treatment name';
+
+  @override
+  String get otherTreatmentHint => 'e.g. hemisection';
+
+  @override
+  String get otherTreatmentRequired => 'Enter the treatment name.';
+
+  @override
+  String get treatmentInList => 'in the list';
 }

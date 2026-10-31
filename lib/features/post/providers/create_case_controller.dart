@@ -29,6 +29,8 @@ class CreateCaseController extends AutoDisposeAsyncNotifier<void> {
     required String title,
     required String content,
     required DentalBranch branch,
+    TreatmentType? treatment,
+    String? otherTreatment,
     required List<File> imageFiles,
     required List<String> tags,
   }) async {
@@ -40,6 +42,8 @@ class CreateCaseController extends AutoDisposeAsyncNotifier<void> {
         title: title,
         content: content,
         branch: branch,
+        treatment: treatment,
+        otherTreatment: otherTreatment,
         imageFiles: await compressToWebp(imageFiles),
         tags: tags,
       );

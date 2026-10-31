@@ -2263,6 +2263,438 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Doğrulanmış hesap'**
   String get verifiedAccount;
+
+  /// Vaka formunda branştan sonra seçilen tedavi türü
+  ///
+  /// In tr, this message translates to:
+  /// **'Tedavi türü'**
+  String get postTreatment;
+
+  /// No description provided for @validationTreatmentRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Lütfen bir tedavi türü seçin.'**
+  String get validationTreatmentRequired;
+
+  /// No description provided for @treatmentTagLocked.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tedavi türünün etiketi, kaldırılamaz'**
+  String get treatmentTagLocked;
+
+  /// No description provided for @treatmentKanalTedavisi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kanal tedavisi'**
+  String get treatmentKanalTedavisi;
+
+  /// No description provided for @treatmentYenidenKanalTedavisi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kanal tedavisi yenileme'**
+  String get treatmentYenidenKanalTedavisi;
+
+  /// No description provided for @treatmentVitalPulpaTedavisi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Vital pulpa tedavisi'**
+  String get treatmentVitalPulpaTedavisi;
+
+  /// No description provided for @treatmentApeksifikasyon.
+  ///
+  /// In tr, this message translates to:
+  /// **'Apeksifikasyon'**
+  String get treatmentApeksifikasyon;
+
+  /// No description provided for @treatmentRejeneratifEndodonti.
+  ///
+  /// In tr, this message translates to:
+  /// **'Rejeneratif endodonti'**
+  String get treatmentRejeneratifEndodonti;
+
+  /// No description provided for @treatmentEndodontikCerrahi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Endodontik cerrahi'**
+  String get treatmentEndodontikCerrahi;
+
+  /// No description provided for @treatmentKompozit.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kompozit restorasyon'**
+  String get treatmentKompozit;
+
+  /// No description provided for @treatmentIndirektRestorasyon.
+  ///
+  /// In tr, this message translates to:
+  /// **'İnley / onley'**
+  String get treatmentIndirektRestorasyon;
+
+  /// No description provided for @treatmentKompozitVeneer.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kompozit veneer'**
+  String get treatmentKompozitVeneer;
+
+  /// No description provided for @treatmentBeyazlatma.
+  ///
+  /// In tr, this message translates to:
+  /// **'Beyazlatma'**
+  String get treatmentBeyazlatma;
+
+  /// No description provided for @treatmentDiastema.
+  ///
+  /// In tr, this message translates to:
+  /// **'Diastema kapatma'**
+  String get treatmentDiastema;
+
+  /// No description provided for @treatmentGulusTasarimi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gülüş tasarımı'**
+  String get treatmentGulusTasarimi;
+
+  /// No description provided for @treatmentKron.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kron'**
+  String get treatmentKron;
+
+  /// No description provided for @treatmentKopru.
+  ///
+  /// In tr, this message translates to:
+  /// **'Köprü'**
+  String get treatmentKopru;
+
+  /// No description provided for @treatmentLamineVeneer.
+  ///
+  /// In tr, this message translates to:
+  /// **'Lamine veneer'**
+  String get treatmentLamineVeneer;
+
+  /// No description provided for @treatmentTotalProtez.
+  ///
+  /// In tr, this message translates to:
+  /// **'Total protez'**
+  String get treatmentTotalProtez;
+
+  /// No description provided for @treatmentParsiyelProtez.
+  ///
+  /// In tr, this message translates to:
+  /// **'Parsiyel protez'**
+  String get treatmentParsiyelProtez;
+
+  /// No description provided for @treatmentImplantUstuProtez.
+  ///
+  /// In tr, this message translates to:
+  /// **'İmplant üstü protez'**
+  String get treatmentImplantUstuProtez;
+
+  /// No description provided for @treatmentTamAgizRehabilitasyonu.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tam ağız rehabilitasyonu'**
+  String get treatmentTamAgizRehabilitasyonu;
+
+  /// No description provided for @treatmentGecePlagi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gece plağı / splint'**
+  String get treatmentGecePlagi;
+
+  /// No description provided for @treatmentDisCekimi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Diş çekimi'**
+  String get treatmentDisCekimi;
+
+  /// No description provided for @treatmentGomuluDis.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gömülü diş cerrahisi'**
+  String get treatmentGomuluDis;
+
+  /// No description provided for @treatmentImplant.
+  ///
+  /// In tr, this message translates to:
+  /// **'İmplant cerrahisi'**
+  String get treatmentImplant;
+
+  /// No description provided for @treatmentSinusLifting.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sinüs lifting'**
+  String get treatmentSinusLifting;
+
+  /// No description provided for @treatmentKemikGrefti.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kemik grefti'**
+  String get treatmentKemikGrefti;
+
+  /// No description provided for @treatmentKist.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kist cerrahisi'**
+  String get treatmentKist;
+
+  /// No description provided for @treatmentApikalRezeksiyon.
+  ///
+  /// In tr, this message translates to:
+  /// **'Apikal rezeksiyon'**
+  String get treatmentApikalRezeksiyon;
+
+  /// No description provided for @treatmentOrtognatikCerrahi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ortognatik cerrahi'**
+  String get treatmentOrtognatikCerrahi;
+
+  /// No description provided for @treatmentCeneKirigi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çene kırığı tedavisi'**
+  String get treatmentCeneKirigi;
+
+  /// No description provided for @treatmentDisTasi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Diş taşı temizliği'**
+  String get treatmentDisTasi;
+
+  /// No description provided for @treatmentKokYuzeyiDuzlestirme.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kök yüzeyi düzleştirme'**
+  String get treatmentKokYuzeyiDuzlestirme;
+
+  /// No description provided for @treatmentFlepOperasyonu.
+  ///
+  /// In tr, this message translates to:
+  /// **'Flep operasyonu'**
+  String get treatmentFlepOperasyonu;
+
+  /// No description provided for @treatmentRejeneratifPeriodontalTedavi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Rejeneratif periodontal tedavi'**
+  String get treatmentRejeneratifPeriodontalTedavi;
+
+  /// No description provided for @treatmentBagDokusuGrefti.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bağ dokusu grefti'**
+  String get treatmentBagDokusuGrefti;
+
+  /// No description provided for @treatmentSerbestDisetiGrefti.
+  ///
+  /// In tr, this message translates to:
+  /// **'Serbest dişeti grefti'**
+  String get treatmentSerbestDisetiGrefti;
+
+  /// No description provided for @treatmentKronBoyuUzatma.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kron boyu uzatma'**
+  String get treatmentKronBoyuUzatma;
+
+  /// No description provided for @treatmentGingivektomi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Gingivektomi'**
+  String get treatmentGingivektomi;
+
+  /// No description provided for @treatmentPeriImplantitis.
+  ///
+  /// In tr, this message translates to:
+  /// **'Peri-implantitis tedavisi'**
+  String get treatmentPeriImplantitis;
+
+  /// No description provided for @treatmentBraket.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sabit ortodontik tedavi'**
+  String get treatmentBraket;
+
+  /// No description provided for @treatmentSeffafPlak.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şeffaf plak tedavisi'**
+  String get treatmentSeffafPlak;
+
+  /// No description provided for @treatmentFonksiyonelAparey.
+  ///
+  /// In tr, this message translates to:
+  /// **'Fonksiyonel tedavi'**
+  String get treatmentFonksiyonelAparey;
+
+  /// No description provided for @treatmentHizliUstCeneGenisletme.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hızlı üst çene genişletme'**
+  String get treatmentHizliUstCeneGenisletme;
+
+  /// No description provided for @treatmentInterseptifOrtodonti.
+  ///
+  /// In tr, this message translates to:
+  /// **'İnterseptif ortodonti'**
+  String get treatmentInterseptifOrtodonti;
+
+  /// No description provided for @treatmentMiniVida.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mini vida destekli tedavi'**
+  String get treatmentMiniVida;
+
+  /// No description provided for @treatmentPekistirme.
+  ///
+  /// In tr, this message translates to:
+  /// **'Pekiştirme'**
+  String get treatmentPekistirme;
+
+  /// No description provided for @treatmentPulpotomi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Pulpotomi'**
+  String get treatmentPulpotomi;
+
+  /// No description provided for @treatmentSutDisiKanalTedavisi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Süt dişi kanal tedavisi'**
+  String get treatmentSutDisiKanalTedavisi;
+
+  /// No description provided for @treatmentFissurOrtucu.
+  ///
+  /// In tr, this message translates to:
+  /// **'Fissür örtücü'**
+  String get treatmentFissurOrtucu;
+
+  /// No description provided for @treatmentFlorUygulamasi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Flor uygulaması'**
+  String get treatmentFlorUygulamasi;
+
+  /// No description provided for @treatmentYerTutucu.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yer tutucu'**
+  String get treatmentYerTutucu;
+
+  /// No description provided for @treatmentPaslanmazCelikKuron.
+  ///
+  /// In tr, this message translates to:
+  /// **'Paslanmaz çelik kuron'**
+  String get treatmentPaslanmazCelikKuron;
+
+  /// No description provided for @treatmentDisTravmasi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Travma tedavisi'**
+  String get treatmentDisTravmasi;
+
+  /// No description provided for @treatmentGenelAnestezi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Genel anestezi altında tedavi'**
+  String get treatmentGenelAnestezi;
+
+  /// No description provided for @treatmentPanoramik.
+  ///
+  /// In tr, this message translates to:
+  /// **'Panoramik röntgen'**
+  String get treatmentPanoramik;
+
+  /// No description provided for @treatmentPeriapikalRontgen.
+  ///
+  /// In tr, this message translates to:
+  /// **'Periapikal röntgen'**
+  String get treatmentPeriapikalRontgen;
+
+  /// No description provided for @treatmentBitewing.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bitewing'**
+  String get treatmentBitewing;
+
+  /// No description provided for @treatmentCbct.
+  ///
+  /// In tr, this message translates to:
+  /// **'KIBT (CBCT)'**
+  String get treatmentCbct;
+
+  /// No description provided for @treatmentSefalometrikRontgen.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sefalometrik röntgen'**
+  String get treatmentSefalometrikRontgen;
+
+  /// No description provided for @treatmentBiyopsi.
+  ///
+  /// In tr, this message translates to:
+  /// **'Biyopsi'**
+  String get treatmentBiyopsi;
+
+  /// No description provided for @treatmentOralLezyon.
+  ///
+  /// In tr, this message translates to:
+  /// **'Oral lezyon tanı ve takibi'**
+  String get treatmentOralLezyon;
+
+  /// No description provided for @treatmentTmeBozuklugu.
+  ///
+  /// In tr, this message translates to:
+  /// **'TME tedavisi'**
+  String get treatmentTmeBozuklugu;
+
+  /// No description provided for @treatmentOrofasiyalAgri.
+  ///
+  /// In tr, this message translates to:
+  /// **'Orofasiyal ağrı yönetimi'**
+  String get treatmentOrofasiyalAgri;
+
+  /// No description provided for @treatmentAyiriciTani.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ayırıcı tanı'**
+  String get treatmentAyiriciTani;
+
+  /// No description provided for @treatmentBotoks.
+  ///
+  /// In tr, this message translates to:
+  /// **'Botoks uygulaması'**
+  String get treatmentBotoks;
+
+  /// Listede olmayan tedavi seçeneği
+  ///
+  /// In tr, this message translates to:
+  /// **'Diğer'**
+  String get treatmentOther;
+
+  /// No description provided for @otherTreatmentLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tedavi adı'**
+  String get otherTreatmentLabel;
+
+  /// No description provided for @otherTreatmentHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Örn. hemiseksiyon'**
+  String get otherTreatmentHint;
+
+  /// No description provided for @otherTreatmentRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tedavi adını yazın.'**
+  String get otherTreatmentRequired;
+
+  /// Diğer alanına yazılan tedavi listede varsa öneride gösterilir
+  ///
+  /// In tr, this message translates to:
+  /// **'listede var'**
+  String get treatmentInList;
 }
 
 class _AppLocalizationsDelegate
