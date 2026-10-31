@@ -189,6 +189,7 @@
   - [x] Firebase projesi (`dentlink-ea0f2`), sırlar + deploy (`SUPABASE.md` §8); Android'de iki hesapla cihazda doğrulandı (mesaj, yorum) _(2026-10-29)_
   - [ ] iOS: `GoogleService-Info.plist`, APNs anahtarı, Push Notifications capability, cihaz testi; smoke 21
   - [ ] Ayarlarda bildirim tercihleri (`notification_preferences`, UX-4)
+- [x] Etiket kataloğu ve tekilleştirme (migration 032): 464 tanımlı etiket (025'teki 80 + 384), 310 eş anlamlı (kısaltma, İngilizce, yaygın yanlış yazım). Aynı etiketin yazımları sunucuda tek etikete bağlanır: `match_key` (harf/Türkçe karakter/tire/boşluk farkı), `tag_aliases`, çoğul eki; mevcut tekrarlar birleştirilir. `suggest_tags` eş anlamlı ve yazım hatasında (pg_trgm) asıl etiketi, 3+ postta geçen kullanıcı etiketlerini de önerir. Yönetim ve aylık temizlik: `SUPABASE.md` §9. İstemci değişmedi. _(2026-10-31; katalog tutarlılık betiğiyle denetlendi, 032 canlıda, smoke 19 ve 22 geçti)_
 - [ ] Performans profili (başlatma süresi, jank, bellek)
 - [ ] Beta testi (TestFlight + Play Internal) → mağaza açıklamaları ve ekran görüntüleri → yayın
 

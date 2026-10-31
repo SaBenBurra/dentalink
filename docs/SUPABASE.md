@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `029_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `032_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -302,6 +302,22 @@ begin;
 set local role authenticated;
 select * from public.push_tokens;
 rollback;
+
+-- 22) Etiket tekilleştirme (032) → BEKLENEN: n_tags = 3, etiketler
+--     {e-max, implant, kanal-tedavisi}; "E max"/"emax" aynı etiket, "RCT" eş anlamlı,
+--     "implantlar" çoğul. Öneri: 'rct' → kanal-tedavisi, 'zirkonyom' (yazım hatası)
+--     → zirkonyum. Doğrudan resolve_tags ve tag_aliases → permission denied
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select set_config('t.id', public.create_post('question', 'Başlık', 'içerik', null, null,
+  '[{"name":"emax","slug":"emax"},{"name":"e max","slug":"e-max"},
+    {"name":"rct","slug":"rct"},{"name":"implantlar","slug":"implantlar"}]')::text, true);
+select count(*) n_tags, array_agg(t.name order by t.name) names
+from public.post_tags pt join public.tags t on t.id = pt.tag_id
+where pt.post_id = current_setting('t.id')::uuid;
+select public.suggest_tags('rct') rct, public.suggest_tags('zirkonyom') typo;
+rollback;
 ```
 
 ---
@@ -380,3 +396,44 @@ Akış: `notifications`/`messages` INSERT → trigger (`trigger_push`, pg_net) �
 7. Doğrula: iki hesapla beğeni/mesaj → karşı cihaza push düşer, dokununca ilgili post/sohbet açılır. Hata olursa: `select * from net._http_response order by created desc limit 5;` ve Dashboard → Edge Functions → push → Logs.
 
 Bilinen sınırlar: push metinleri yalnızca TR; uygulama ön plandayken push gösterilmez (realtime rozetleri günceller); push'tan açılan bildirim listede okunmamış kalır; tür bazında tercih yok (sonraki iş).
+
+---
+
+## 9. Etiket yönetimi (025, 032)
+
+Kullanıcı istediği etiketi yazabilir; aynı etiketin farklı yazımları sunucuda (`resolve_tags`) tek etikete bağlanır:
+
+| Yazım farkı | Nasıl yakalanır | Örnek |
+|---|---|---|
+| Büyük/küçük harf, Türkçe harf, boşluk, tire, nokta | `tags.match_key` (slug'ın tiresiz hali, UNIQUE) | `E-Max`, `emax`, `e max` → `e-max`; `Çene Kırığı` = `cene-kirigi` |
+| Eş anlamlı, kısaltma, İngilizce, yaygın yanlış yazım | `tag_aliases` | `rct`, `root-canal`, `kanal` → `kanal-tedavisi`; `zirkon` → `zirkonyum` |
+| Çoğul (`-lar/-ler`) | Kök tanımlıysa köke bağlanır | `implantlar` → `implant` |
+| Yazım hatası | Otomatik birleştirilmez (`kron`/`krom` riski); `suggest_tags` benzer etiketi önerir (pg_trgm), periyodik temizlikte eş anlamlı yapılır | `zirkonyom` yazarken `zirkonyum` önerilir |
+
+Öneri listesi: tanımlı etiketler + en az 3 postta geçen kullanıcı etiketleri; eş anlamlı yazılsa da asıl etiket gösterilir. Fonksiyonlar istemciye kapalı, SQL Editor'dan çalıştırılır:
+
+```sql
+-- yeni tanımlı etiket(ler); aynı yazımlı kullanıcı etiketi varsa tanımlıya çevrilir
+select public.add_curated_tags(array['yeni-etiket', 'başka-etiket']);
+
+-- eş anlamlı; bu yazımla açılmış kullanıcı etiketi varsa postlarıyla birleştirilir
+select public.add_tag_alias('zirkonyom', 'zirkonyum');
+
+-- iki tanımlı etiketi birleştir (eski olanın tanımlılığını kaldırıp eş anlamlı yap)
+update public.tags set is_curated = false where slug = '<eski>';
+select public.add_tag_alias('<eski>', '<yeni>');
+```
+
+**Periyodik temizlik** (ayda bir): kullanıcı etiketleri ve en benzer tanımlı etiket. Aynı anlamdaysa `add_tag_alias`, yeni ve yaygın bir kavramsa `add_curated_tags`.
+
+```sql
+select u.name, u.usage_count, c.name as closest, round(extensions.similarity(u.match_key, c.match_key)::numeric, 2) as sim
+from public.tags u
+cross join lateral (
+  select name, match_key from public.tags
+  where is_curated order by extensions.similarity(u.match_key, match_key) desc limit 1
+) c
+where not u.is_curated
+order by u.usage_count desc, sim desc
+limit 100;
+```
