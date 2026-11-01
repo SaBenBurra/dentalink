@@ -279,25 +279,5 @@ void main() {
       when(mockAuthClient.currentUser).thenReturn(null);
       expect(() => repository.getPostsByUser('user-1'), throwsException);
     });
-
-    test('searchPosts with empty query returns empty list', () async {
-      final mockUser = MockUser();
-      when(mockUser.id).thenReturn('current-user');
-      when(mockAuthClient.currentUser).thenReturn(mockUser);
-
-      final result = await repository.searchPosts('');
-      expect(result.items, isEmpty);
-      expect(result.next, isNull);
-    });
-
-    test('searchPosts with whitespace-only query returns empty list', () async {
-      final mockUser = MockUser();
-      when(mockUser.id).thenReturn('current-user');
-      when(mockAuthClient.currentUser).thenReturn(mockUser);
-
-      final result = await repository.searchPosts('   ');
-      expect(result.items, isEmpty);
-      expect(result.next, isNull);
-    });
   });
 }

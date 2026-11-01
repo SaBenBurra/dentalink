@@ -3,6 +3,7 @@ import 'dart:io';
 import '../../core/utils/paging.dart';
 import '../models/enums.dart';
 import '../models/post_model.dart';
+import '../models/tag_model.dart';
 
 /// Feed odaklı işlemler (Listeleme)
 abstract class IFeedRepository {
@@ -12,14 +13,21 @@ abstract class IFeedRepository {
   Future<PageResult<PostModel>> getPostsByUser(String userId, {PageCursor? before});
 }
 
-/// Arama işlemleri
+/// Keşfet: popülerlik sırası ve popüler etiketler
 abstract class ISearchRepository {
-  Future<PageResult<PostModel>> searchPosts(
-    String query, {
+  /// Popülerlik sırasıyla (035, `post_hot_score`) en fazla [pageSize] post.
+  /// [query] metni, [tags] (hepsi bulunmalı) ve [branch] ile filtreler.
+  /// [now] sayfalar boyunca aynı kalmalı; [offset] atlanacak post sayısı.
+  Future<List<PostModel>> popularPosts({
+    String query = '',
+    List<String> tags = const [],
     DentalBranch? branch,
-    PostType? type,
-    PageCursor? before,
+    required DateTime now,
+    int offset = 0,
   });
+
+  /// En çok postta geçen [limit] etiket (`usageCount` = post sayısı).
+  Future<List<TagModel>> popularTags({int limit = 5});
 }
 
 /// Kaydedilenler işlemleri

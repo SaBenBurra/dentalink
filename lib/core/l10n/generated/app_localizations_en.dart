@@ -324,6 +324,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get branchRestorativeDentistry => 'Restorative Dentistry';
 
   @override
+  String get branchShortPedodontics => 'Pedo';
+
+  @override
+  String get branchShortEndodontics => 'Endo';
+
+  @override
+  String get branchShortOrthodontics => 'Ortho';
+
+  @override
+  String get branchShortPeriodontology => 'Perio';
+
+  @override
+  String get branchShortProsthodontics => 'Prostho';
+
+  @override
+  String get branchShortOralSurgery => 'Surgery';
+
+  @override
+  String get branchShortOralRadiology => 'Radiology';
+
+  @override
+  String get branchShortOralDiagnosis => 'Diagnosis';
+
+  @override
+  String get branchShortRestorativeDentistry => 'Restorative';
+
+  @override
   String get feedChronological => 'Latest';
 
   @override
@@ -399,7 +426,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exploreTitle => 'Explore';
 
   @override
-  String get searchHint => 'Search cases, dentists or questions...';
+  String get searchHint => 'Search or type #tag';
 
   @override
   String get filterByBranch => 'By Branch';
@@ -976,26 +1003,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchNoUsers => 'No users match your search.';
 
   @override
-  String get searchUsersTab => 'Users';
-
-  @override
-  String get searchEmptyTitle => 'Start Searching';
-
-  @override
-  String get searchEmptySubtitle =>
-      'Search for cases, questions or colleagues in the dental world.';
-
-  @override
-  String get searchPostsTab => 'Posts';
-
-  @override
   String get clear => 'Clear';
-
-  @override
-  String get contentType => 'Content Type';
-
-  @override
-  String get allBranches => 'All Branches';
 
   @override
   String get settingsAppearance => 'Appearance';
@@ -1166,6 +1174,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reply => 'Reply';
+
+  @override
+  String get explorePopularTags => 'Trending topics';
+
+  @override
+  String get explorePopularPosts => 'Popular posts';
+
+  @override
+  String get explorePeople => 'People';
+
+  @override
+  String exploreTagPostCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count posts',
+      one: '1 post',
+    );
+    return '$_temp0';
+  }
 
   @override
   String showReplies(int count) {

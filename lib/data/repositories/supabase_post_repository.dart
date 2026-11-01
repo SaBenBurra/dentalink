@@ -203,30 +203,46 @@ class SupabasePostRepository implements PostRepository {
   // ═══════════════════════════════════════════════════════════════════════════
 
   @override
-  Future<PageResult<PostModel>> searchPosts(
-    String query, {
+  Future<List<PostModel>> popularPosts({
+    String query = '',
+    List<String> tags = const [],
     DentalBranch? branch,
-    PostType? type,
-    PageCursor? before,
+    required DateTime now,
+    int offset = 0,
   }) => guardSupabase(() async {
-    // Boş sorgu — boş sonuç döndür.
-    final q = query.trim();
-    if (q.isEmpty) return (items: <PostModel>[], next: null);
+    final ids = (await _client.rpc('popular_post_ids', params: {
+      'p_query': query.trim(),
+      'p_tags': tags,
+      'p_branch': branch?.dbValue,
+      'p_now': now.toUtc().toIso8601String(),
+      'p_limit': pageSize,
+      'p_offset': offset,
+    }) as List).cast<String>();
+    if (ids.isEmpty) return <PostModel>[];
+    final rows = await _basePostQuery().inFilter('id', ids);
+    // RPC sırası korunur; arada silinen post atlanır.
+    final byId = {for (final r in rows) r['id'] as String: r};
+    return _mapRows([for (final id in ids) ?byId[id]]);
+  });
 
-    var request = _basePostQuery();
-
-    // Full-text search: `search_vector` sütunu üzerinde `plainto_tsquery`
-    // kullanılır. 'turkish' konfigürasyonu ile kelime kökleri (stemming) desteklenir.
-    request = request.textSearch('search_vector', q, type: TextSearchType.plain, config: 'turkish');
-
-    if (branch != null) {
-      request = request.eq('branch', branch.dbValue);
-    }
-    if (type != null) {
-      request = request.eq('type', type.dbValue);
-    }
-
-    return _toPage(await request.pageBefore(before));
+  @override
+  Future<List<TagModel>> popularTags({int limit = 5}) => guardSupabase(() async {
+    final rows = await _client
+        .from('tags')
+        .select('id, name, slug, usage_count')
+        .gt('usage_count', 0)
+        .order('usage_count', ascending: false)
+        .order('name', ascending: true)
+        .limit(limit);
+    return [
+      for (final t in rows)
+        TagModel(
+          id: t['id'] as String,
+          name: t['name'] as String,
+          slug: t['slug'] as String,
+          usageCount: t['usage_count'] as int,
+        ),
+    ];
   });
 
   // ═══════════════════════════════════════════════════════════════════════════

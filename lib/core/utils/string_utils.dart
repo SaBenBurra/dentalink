@@ -30,3 +30,16 @@ String generateUsername(String fullName) {
   final suffix = _random.nextInt(900000) + 100000;
   return '${normalized}_$suffix';
 }
+
+/// Türkçe alfabetik karşılaştırma: Ç, Ğ, I, Ö, Ş, Ü kendi harflerinden sonra
+/// gelir (kod noktası sırasında Z'nin arkasına düşerlerdi).
+int compareTurkish(String a, String b) => _trSortKey(a).compareTo(_trSortKey(b));
+
+String _trSortKey(String s) {
+  // Harfin hemen ardına U+007F: "ce" < "c\x7f…" yani C'li sözcükler Ç'lilerden önce.
+  const after = {
+    'ç': 'c\x7f', 'ğ': 'g\x7f', 'ı': 'h\x7f', 'ö': 'o\x7f', 'ş': 's\x7f', 'ü': 'u\x7f',
+  };
+  final lower = s.replaceAll('I', 'ı').replaceAll('İ', 'i').toLowerCase();
+  return lower.split('').map((c) => after[c] ?? c).join();
+}

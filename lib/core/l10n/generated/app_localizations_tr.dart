@@ -324,6 +324,33 @@ class AppLocalizationsTr extends AppLocalizations {
   String get branchRestorativeDentistry => 'Restoratif Diş Tedavisi';
 
   @override
+  String get branchShortPedodontics => 'Pedo';
+
+  @override
+  String get branchShortEndodontics => 'Endo';
+
+  @override
+  String get branchShortOrthodontics => 'Orto';
+
+  @override
+  String get branchShortPeriodontology => 'Perio';
+
+  @override
+  String get branchShortProsthodontics => 'Protez';
+
+  @override
+  String get branchShortOralSurgery => 'Cerrahi';
+
+  @override
+  String get branchShortOralRadiology => 'Radyoloji';
+
+  @override
+  String get branchShortOralDiagnosis => 'Diagnoz';
+
+  @override
+  String get branchShortRestorativeDentistry => 'Restoratif';
+
+  @override
   String get feedChronological => 'Son Eklenen';
 
   @override
@@ -399,7 +426,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get exploreTitle => 'Keşfet';
 
   @override
-  String get searchHint => 'Vaka, hekim veya soru ara...';
+  String get searchHint => 'Ara veya #etiket yaz';
 
   @override
   String get filterByBranch => 'Branşa Göre';
@@ -975,26 +1002,7 @@ class AppLocalizationsTr extends AppLocalizations {
       'Arama kriterlerinize uygun kullanıcı bulunamadı.';
 
   @override
-  String get searchUsersTab => 'Kullanıcılar';
-
-  @override
-  String get searchEmptyTitle => 'Arama Yapın';
-
-  @override
-  String get searchEmptySubtitle =>
-      'Diş hekimliği dünyasında vaka, soru veya meslektaş arayın.';
-
-  @override
-  String get searchPostsTab => 'Gönderiler';
-
-  @override
   String get clear => 'Temizle';
-
-  @override
-  String get contentType => 'İçerik Türü';
-
-  @override
-  String get allBranches => 'Tüm Branşlar';
 
   @override
   String get settingsAppearance => 'Görünüm';
@@ -1166,6 +1174,25 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get reply => 'Yanıtla';
+
+  @override
+  String get explorePopularTags => 'Popüler konular';
+
+  @override
+  String get explorePopularPosts => 'Popüler gönderiler';
+
+  @override
+  String get explorePeople => 'Kişiler';
+
+  @override
+  String exploreTagPostCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count paylaşım',
+    );
+    return '$_temp0';
+  }
 
   @override
   String showReplies(int count) {

@@ -27,6 +27,7 @@ void main() {
     var ctx = await pumpLocale(tester, const Locale('tr'));
     expect(UserTitle.ogrenci.displayName(ctx), 'Öğrenci');
     expect(DentalBranch.endodonti.displayName(ctx), 'Endodonti');
+    expect(DentalBranch.agizDisCeneCerrahisi.shortName(ctx), 'Cerrahi');
     for (final t in UserTitle.values) {
       expect(t.displayName(ctx), isNotEmpty);
     }
@@ -34,6 +35,7 @@ void main() {
     ctx = await pumpLocale(tester, const Locale('en'));
     expect(UserTitle.ogrenci.displayName(ctx), 'Student');
     expect(DentalBranch.endodonti.displayName(ctx), 'Endodontics');
+    expect(DentalBranch.ortodonti.shortName(ctx), 'Ortho');
     for (final b in DentalBranch.values) {
       expect(b.displayName(ctx), isNotEmpty);
     }

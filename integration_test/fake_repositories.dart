@@ -8,6 +8,7 @@ import 'package:dentlink/data/models/conversation_model.dart';
 import 'package:dentlink/data/models/message_model.dart';
 import 'package:dentlink/data/models/notification_model.dart';
 import 'package:dentlink/data/models/post_model.dart';
+import 'package:dentlink/data/models/tag_model.dart';
 import 'package:dentlink/data/models/user_model.dart';
 import 'package:dentlink/data/providers/repository_providers.dart';
 import 'package:dentlink/data/repositories/auth_repository.dart';
@@ -118,6 +119,19 @@ class _FakePostRepository implements PostRepository {
   @override
   Future<PageResult<PostModel>> getBookmarkedPosts({PageCursor? before}) async =>
       (items: <PostModel>[], next: null);
+
+  @override
+  Future<List<PostModel>> popularPosts({
+    String query = '',
+    List<String> tags = const [],
+    DentalBranch? branch,
+    required DateTime now,
+    int offset = 0,
+  }) async =>
+      offset == 0 ? _feed : <PostModel>[];
+
+  @override
+  Future<List<TagModel>> popularTags({int limit = 5}) async => const [];
 
   @override
   Future<void> incrementViewCount(String postId) async {}

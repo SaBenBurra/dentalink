@@ -23,6 +23,23 @@ extension DentalBranchUI on DentalBranch {
     };
   }
 
+  /// Dar yerler için hekimlerin kullandığı kısa ad (Endo, Perio…).
+  String shortName(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return switch (this) {
+      DentalBranch.pedodonti => l10n.branchShortPedodontics,
+      DentalBranch.endodonti => l10n.branchShortEndodontics,
+      DentalBranch.ortodonti => l10n.branchShortOrthodontics,
+      DentalBranch.periodontoloji => l10n.branchShortPeriodontology,
+      DentalBranch.protetikDisTedavisi => l10n.branchShortProsthodontics,
+      DentalBranch.agizDisCeneCerrahisi => l10n.branchShortOralSurgery,
+      DentalBranch.agizDisCeneRadyolojisi => l10n.branchShortOralRadiology,
+      DentalBranch.oralDiagnoz => l10n.branchShortOralDiagnosis,
+      DentalBranch.restoratifDisTedavisi =>
+        l10n.branchShortRestorativeDentistry,
+    };
+  }
+
   /// Her branşa özgü tema rengi.
   Color get color => switch (this) {
     DentalBranch.pedodonti => AppColors.branchPedodonti,
@@ -31,7 +48,8 @@ extension DentalBranchUI on DentalBranch {
     DentalBranch.periodontoloji => AppColors.branchPeriodontoloji,
     DentalBranch.protetikDisTedavisi => AppColors.branchProtetikDisTedavisi,
     DentalBranch.agizDisCeneCerrahisi => AppColors.branchAgizDisCeneCerrahisi,
-    DentalBranch.agizDisCeneRadyolojisi => AppColors.branchAgizDisCeneRadyolojisi,
+    DentalBranch.agizDisCeneRadyolojisi =>
+      AppColors.branchAgizDisCeneRadyolojisi,
     DentalBranch.oralDiagnoz => AppColors.branchOralDiagnoz,
     DentalBranch.restoratifDisTedavisi => AppColors.branchRestoratifDisTedavisi,
   };

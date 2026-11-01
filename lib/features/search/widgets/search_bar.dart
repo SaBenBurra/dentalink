@@ -7,10 +7,12 @@ class CustomSearchBar extends StatefulWidget {
     required this.controller,
     required this.onChanged,
     required this.hintText,
+    this.onSubmitted,
   });
 
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
+  final ValueChanged<String>? onSubmitted;
   final String hintText;
 
   @override
@@ -46,12 +48,16 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
       child: TextField(
         controller: widget.controller,
         onChanged: widget.onChanged,
+        onSubmitted: widget.onSubmitted,
+        textInputAction: TextInputAction.search,
+        maxLength: 100,
         decoration: InputDecoration(
+          counterText: '',
           hintText: widget.hintText,
           prefixIcon: const Icon(Icons.search_rounded),
           suffixIcon: widget.controller.text.isNotEmpty
               ? IconButton(
-                tooltip: MaterialLocalizations.of(context).clearButtonTooltip,
+                  tooltip: MaterialLocalizations.of(context).clearButtonTooltip,
                   icon: const Icon(Icons.clear_rounded),
                   onPressed: () {
                     widget.controller.clear();

@@ -722,6 +722,60 @@ abstract class AppLocalizations {
   /// **'Restoratif Diş Tedavisi'**
   String get branchRestorativeDentistry;
 
+  /// Keşfet branş çiplerinde kısa ad
+  ///
+  /// In tr, this message translates to:
+  /// **'Pedo'**
+  String get branchShortPedodontics;
+
+  /// No description provided for @branchShortEndodontics.
+  ///
+  /// In tr, this message translates to:
+  /// **'Endo'**
+  String get branchShortEndodontics;
+
+  /// No description provided for @branchShortOrthodontics.
+  ///
+  /// In tr, this message translates to:
+  /// **'Orto'**
+  String get branchShortOrthodontics;
+
+  /// No description provided for @branchShortPeriodontology.
+  ///
+  /// In tr, this message translates to:
+  /// **'Perio'**
+  String get branchShortPeriodontology;
+
+  /// No description provided for @branchShortProsthodontics.
+  ///
+  /// In tr, this message translates to:
+  /// **'Protez'**
+  String get branchShortProsthodontics;
+
+  /// No description provided for @branchShortOralSurgery.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cerrahi'**
+  String get branchShortOralSurgery;
+
+  /// No description provided for @branchShortOralRadiology.
+  ///
+  /// In tr, this message translates to:
+  /// **'Radyoloji'**
+  String get branchShortOralRadiology;
+
+  /// No description provided for @branchShortOralDiagnosis.
+  ///
+  /// In tr, this message translates to:
+  /// **'Diagnoz'**
+  String get branchShortOralDiagnosis;
+
+  /// No description provided for @branchShortRestorativeDentistry.
+  ///
+  /// In tr, this message translates to:
+  /// **'Restoratif'**
+  String get branchShortRestorativeDentistry;
+
   /// Kronolojik akış tab etiketi
   ///
   /// In tr, this message translates to:
@@ -839,7 +893,7 @@ abstract class AppLocalizations {
   /// Arama alanı ipucu
   ///
   /// In tr, this message translates to:
-  /// **'Vaka, hekim veya soru ara...'**
+  /// **'Ara veya #etiket yaz'**
   String get searchHint;
 
   /// Branş filtresi
@@ -1880,47 +1934,11 @@ abstract class AppLocalizations {
   /// **'Arama kriterlerinize uygun kullanıcı bulunamadı.'**
   String get searchNoUsers;
 
-  /// No description provided for @searchUsersTab.
-  ///
-  /// In tr, this message translates to:
-  /// **'Kullanıcılar'**
-  String get searchUsersTab;
-
-  /// No description provided for @searchEmptyTitle.
-  ///
-  /// In tr, this message translates to:
-  /// **'Arama Yapın'**
-  String get searchEmptyTitle;
-
-  /// No description provided for @searchEmptySubtitle.
-  ///
-  /// In tr, this message translates to:
-  /// **'Diş hekimliği dünyasında vaka, soru veya meslektaş arayın.'**
-  String get searchEmptySubtitle;
-
-  /// No description provided for @searchPostsTab.
-  ///
-  /// In tr, this message translates to:
-  /// **'Gönderiler'**
-  String get searchPostsTab;
-
   /// No description provided for @clear.
   ///
   /// In tr, this message translates to:
   /// **'Temizle'**
   String get clear;
-
-  /// No description provided for @contentType.
-  ///
-  /// In tr, this message translates to:
-  /// **'İçerik Türü'**
-  String get contentType;
-
-  /// No description provided for @allBranches.
-  ///
-  /// In tr, this message translates to:
-  /// **'Tüm Branşlar'**
-  String get allBranches;
 
   /// No description provided for @settingsAppearance.
   ///
@@ -2221,6 +2239,30 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Yanıtla'**
   String get reply;
+
+  /// No description provided for @explorePopularTags.
+  ///
+  /// In tr, this message translates to:
+  /// **'Popüler konular'**
+  String get explorePopularTags;
+
+  /// No description provided for @explorePopularPosts.
+  ///
+  /// In tr, this message translates to:
+  /// **'Popüler gönderiler'**
+  String get explorePopularPosts;
+
+  /// No description provided for @explorePeople.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kişiler'**
+  String get explorePeople;
+
+  /// No description provided for @exploreTagPostCount.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count, plural, other{{count} paylaşım}}'**
+  String exploreTagPostCount(int count);
 
   /// No description provided for @showReplies.
   ///
