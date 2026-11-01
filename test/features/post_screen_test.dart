@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart' show AppBar;
 import 'package:dentlink/features/post/screens/post_screen.dart';
 import 'package:dentlink/features/post/widgets/comments/comments_sheet.dart';
+import 'package:dentlink/data/providers/repository_providers.dart';
 import 'package:dentlink/providers/post_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -68,5 +69,30 @@ void main() {
     ).read(postDetailProvider(seedCase.id).notifier).markDeleted();
     await tester.pumpAndSettle();
     expect(find.byType(PostScreen), findsNothing);
+  });
+
+  testWidgets('forum postunda yorumlar pencere değil, kartın altında', (
+    tester,
+  ) async {
+    await pumpDentLink(tester);
+    final anchor = tester.element(find.text(seedCase.title));
+    final post = await ProviderScope.containerOf(anchor)
+        .read(createPostRepositoryProvider)
+        .createQuestion(title: 'Forum başlığı', content: 'içerik', tags: []);
+    GoRouter.of(anchor).push('/post/${post.id}?comments=1');
+    await tester.pumpAndSettle();
+
+    final page = find.byType(PostScreen);
+    final inline = find.descendant(
+      of: page,
+      matching: find.byType(CommentsSheet),
+    );
+    expect(inline, findsOneWidget);
+    expect(
+      find.descendant(of: inline, matching: find.text('Forum başlığı')),
+      findsOneWidget,
+    );
+    // Pencere açılmadı: tek CommentsSheet sayfanın içindeki.
+    expect(find.byType(CommentsSheet), findsOneWidget);
   });
 }

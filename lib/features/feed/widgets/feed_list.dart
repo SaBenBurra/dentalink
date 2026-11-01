@@ -10,6 +10,7 @@ import 'package:dentlink/shared/widgets/load_more_footer.dart';
 import 'package:dentlink/shared/utils/error_messages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:dentlink/features/post/widgets/comments/comments_sheet.dart';
 
 class FeedList extends StatelessWidget {
@@ -94,7 +95,10 @@ class FeedList extends StatelessWidget {
                   context,
                   () => ref.read(feedProvider.notifier).toggleBookmark(post.id),
                 ),
-                onCommentTap: () => showCommentsSheet(context, post),
+                onCommentTap: () => openComments(context, post),
+                onTap: post.type == PostType.question
+                    ? () => context.push('/post/${post.id}')
+                    : null,
               );
             },
           );

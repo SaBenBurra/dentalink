@@ -25,6 +25,6 @@ void main() {
     );
     expect(find.text('Vaka'), findsOneWidget);
     expect(await labelColor(tester, PostType.question), AppColors.primaryDark);
-    expect(find.text('Soru'), findsOneWidget);
+    expect(find.text('Forum'), findsOneWidget);
   });
 }

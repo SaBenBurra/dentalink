@@ -31,7 +31,7 @@ void main() {
       tester.element(find.byType(TabBarView)),
     );
     expect(tabs.index, 0);
-    await tester.tap(find.text('Sorular'));
+    await tester.tap(find.text('Forum'));
     await tester.pumpAndSettle();
     expect(tabs.index, 2);
     handle.dispose();

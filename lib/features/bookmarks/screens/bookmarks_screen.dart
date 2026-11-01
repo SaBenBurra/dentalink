@@ -87,7 +87,7 @@ class BookmarksScreen extends ConsumerWidget {
                       () => notifier.toggleLike(post.id),
                     ),
                     onBookmarkToggle: () => _remove(context, ref, post, index),
-                    onCommentTap: () => showCommentsSheet(context, post),
+                    onCommentTap: () => openComments(context, post),
                     onTap: () => context.push('/post/${post.id}'),
                   ),
                 );

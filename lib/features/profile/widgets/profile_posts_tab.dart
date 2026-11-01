@@ -97,7 +97,7 @@ class ProfilePostsTab extends ConsumerWidget {
                       ? repo.unbookmarkPost(post.id)
                       : repo.bookmarkPost(post.id);
                 }),
-                onCommentTap: () => showCommentsSheet(context, post),
+                onCommentTap: () => openComments(context, post),
                 onTap: () => context.push(routePath),
               );
             },

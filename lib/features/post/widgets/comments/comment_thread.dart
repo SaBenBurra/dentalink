@@ -20,7 +20,7 @@ class CommentThread extends StatefulWidget {
     super.key,
     required this.comment,
     required this.isPostOwner,
-    required this.isCase,
+    required this.allowsBestAnswer,
     required this.onReply,
     this.depth = 0,
   });
@@ -30,7 +30,7 @@ class CommentThread extends StatefulWidget {
 
   final CommentModel comment;
   final bool isPostOwner;
-  final bool isCase;
+  final bool allowsBestAnswer;
   final CommentReplyCallback onReply;
   final int depth;
 
@@ -60,7 +60,7 @@ class _CommentThreadState extends State<CommentThread>
       comment: comment,
       postId: comment.postId,
       isPostOwner: widget.isPostOwner,
-      isCase: widget.isCase,
+      allowsBestAnswer: widget.allowsBestAnswer,
       onReply: () => widget.onReply(comment, () {
         if (mounted) _setExpanded(true);
       }),
@@ -96,7 +96,7 @@ class _CommentThreadState extends State<CommentThread>
               child: _Replies(
                 thread: (postId: comment.postId, parentId: comment.id),
                 isPostOwner: widget.isPostOwner,
-                isCase: widget.isCase,
+                allowsBestAnswer: widget.allowsBestAnswer,
                 onReply: widget.onReply,
                 depth: widget.depth + 1,
               ),
@@ -112,14 +112,14 @@ class _Replies extends ConsumerWidget {
   const _Replies({
     required this.thread,
     required this.isPostOwner,
-    required this.isCase,
+    required this.allowsBestAnswer,
     required this.onReply,
     required this.depth,
   });
 
   final ReplyThread thread;
   final bool isPostOwner;
-  final bool isCase;
+  final bool allowsBestAnswer;
   final CommentReplyCallback onReply;
   final int depth;
 
@@ -139,7 +139,7 @@ class _Replies extends ConsumerWidget {
                     key: ValueKey(reply.id),
                     comment: reply,
                     isPostOwner: isPostOwner,
-                    isCase: isCase,
+                    allowsBestAnswer: allowsBestAnswer,
                     onReply: onReply,
                     depth: depth,
                   ),

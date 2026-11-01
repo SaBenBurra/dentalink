@@ -247,7 +247,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get profileCases => 'Vakalarım';
 
   @override
-  String get profileQuestions => 'Sorularım';
+  String get profileQuestions => 'Forum Gönderilerim';
 
   @override
   String get profileSaved => 'Kaydedilenler';
@@ -256,7 +256,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get casePost => 'Vaka';
 
   @override
-  String get questionPost => 'Soru';
+  String get questionPost => 'Forum';
 
   @override
   String get createPost => 'Gönderi Oluştur';
@@ -265,7 +265,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get createCase => 'Vaka Paylaş';
 
   @override
-  String get createQuestion => 'Soru Sor';
+  String get createQuestion => 'Foruma Yaz';
 
   @override
   String get postTitle => 'Başlık';
@@ -357,7 +357,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get feedFilterCases => 'Vakalar';
 
   @override
-  String get feedFilterQuestions => 'Sorular';
+  String get feedFilterQuestions => 'Forum';
 
   @override
   String get feedFilterJobs => 'İş İlanları';
@@ -372,7 +372,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get casesTabLabelInProfile => 'Vakalar';
 
   @override
-  String get questionsTabLabelInProfile => 'Sorular';
+  String get questionsTabLabelInProfile => 'Forum';
 
   @override
   String likesCount(int count) {
@@ -409,9 +409,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get writeComment => 'Yorum yaz...';
-
-  @override
-  String get writeAnswer => 'Cevabını yaz...';
 
   @override
   String get sendMessage => 'Gönder';
@@ -797,7 +794,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get bookmarksEmptySubtitle =>
-      'Beğendiğiniz vakaları ve soruları kaydedin,\nburadan kolayca erişin.';
+      'Beğendiğiniz vakaları ve forum gönderilerini kaydedin,\nburadan kolayca erişin.';
 
   @override
   String get bookmarksLoadError => 'Kaydedilenler yüklenemedi.';
@@ -864,20 +861,20 @@ class AppLocalizationsTr extends AppLocalizations {
   String get validationDescriptionEmpty => 'Açıklama boş bırakılamaz';
 
   @override
-  String get questionShared => 'Sorunuz başarıyla paylaşıldı!';
+  String get questionShared => 'Gönderiniz başarıyla paylaşıldı!';
 
   @override
-  String get questionTitleLabel => 'Soru Başlığı';
+  String get questionTitleLabel => 'Başlık';
 
   @override
   String get questionTitleHint => 'Örn: Zirkonyum kaplama sonrası hassasiyet';
 
   @override
-  String get questionContentLabel => 'Sorunun Detayları';
+  String get questionContentLabel => 'İçerik';
 
   @override
   String get questionContentHint =>
-      'Karşılaştığınız problemi veya merak ettiğiniz konuyu detaylıca açıklayın...';
+      'Aklındakini paylaş: bir soru, deneyim, fikir ya da konuşmak istediğin herhangi bir konu...';
 
   @override
   String get validationContentEmpty => 'İçerik boş bırakılamaz';
@@ -890,9 +887,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get noCommentsYet => 'Henüz yorum yapılmamış. İlk yorumu siz ekleyin!';
-
-  @override
-  String get noAnswersYet => 'Henüz cevap yazılmamış. İlk siz cevaplayın!';
 
   @override
   String get bestAnswerUnmarked => 'En iyi cevap seçimi kaldırıldı.';
@@ -921,10 +915,7 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get answersTitle => 'Cevaplar';
-
-  @override
-  String get answersLoadError => 'Cevaplar yüklenemedi.';
+  String get commentsTitle => 'Yorumlar';
 
   @override
   String get images => 'Görseller';
@@ -1027,7 +1018,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get createSheetSubtitle =>
-      'Klinik vakalarını ve sorularını paylaşarak topluluğa katkı sağla.';
+      'Klinik vakalarını ve aklındakileri paylaşarak topluluğa katkı sağla.';
 
   @override
   String get createCaseSubtitle =>
@@ -1035,7 +1026,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get createQuestionSubtitle =>
-      'Mesleki sorularını toplulukla paylaş, en iyi cevabı bul.';
+      'Aklındaki her şeyi paylaş: soru, deneyim, fikir ya da sohbet konusu.';
 
   @override
   String get timeJustNow => 'Az önce';

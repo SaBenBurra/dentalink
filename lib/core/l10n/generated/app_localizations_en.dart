@@ -247,7 +247,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileCases => 'My Cases';
 
   @override
-  String get profileQuestions => 'My Questions';
+  String get profileQuestions => 'My Forum Posts';
 
   @override
   String get profileSaved => 'Saved';
@@ -256,7 +256,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get casePost => 'Case';
 
   @override
-  String get questionPost => 'Question';
+  String get questionPost => 'Forum';
 
   @override
   String get createPost => 'Create Post';
@@ -265,7 +265,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createCase => 'Share Case';
 
   @override
-  String get createQuestion => 'Ask Question';
+  String get createQuestion => 'Post to Forum';
 
   @override
   String get postTitle => 'Title';
@@ -357,7 +357,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedFilterCases => 'Cases';
 
   @override
-  String get feedFilterQuestions => 'Questions';
+  String get feedFilterQuestions => 'Forum';
 
   @override
   String get feedFilterJobs => 'Jobs';
@@ -372,7 +372,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get casesTabLabelInProfile => 'Cases';
 
   @override
-  String get questionsTabLabelInProfile => 'Questions';
+  String get questionsTabLabelInProfile => 'Forum';
 
   @override
   String likesCount(int count) {
@@ -409,9 +409,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get writeComment => 'Write a comment...';
-
-  @override
-  String get writeAnswer => 'Write your answer...';
 
   @override
   String get sendMessage => 'Send';
@@ -797,7 +794,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookmarksEmptySubtitle =>
-      'Save the cases and questions you like\nand find them here easily.';
+      'Save the cases and forum posts you like\nand find them here easily.';
 
   @override
   String get bookmarksLoadError => 'Could not load saved posts.';
@@ -865,20 +862,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validationDescriptionEmpty => 'Description cannot be empty';
 
   @override
-  String get questionShared => 'Your question was shared successfully!';
+  String get questionShared => 'Your post was shared successfully!';
 
   @override
-  String get questionTitleLabel => 'Question Title';
+  String get questionTitleLabel => 'Title';
 
   @override
   String get questionTitleHint => 'E.g. Sensitivity after zirconia crown';
 
   @override
-  String get questionContentLabel => 'Question Details';
+  String get questionContentLabel => 'Content';
 
   @override
   String get questionContentHint =>
-      'Describe the problem you face or the topic you are curious about in detail...';
+      'Share what\'s on your mind: a question, an experience, an idea or any topic you\'d like to talk about...';
 
   @override
   String get validationContentEmpty => 'Content cannot be empty';
@@ -891,9 +888,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noCommentsYet => 'No comments yet. Be the first to comment!';
-
-  @override
-  String get noAnswersYet => 'No answers yet. Be the first to answer!';
 
   @override
   String get bestAnswerUnmarked => 'Best answer selection removed.';
@@ -922,10 +916,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get answersTitle => 'Answers';
-
-  @override
-  String get answersLoadError => 'Could not load answers.';
+  String get commentsTitle => 'Comments';
 
   @override
   String get images => 'Images';
@@ -1028,7 +1019,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createSheetSubtitle =>
-      'Contribute to the community by sharing your clinical cases and questions.';
+      'Contribute to the community by sharing your clinical cases and thoughts.';
 
   @override
   String get createCaseSubtitle =>
@@ -1036,7 +1027,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createQuestionSubtitle =>
-      'Share your professional questions with the community and find the best answer.';
+      'Share anything on your mind: a question, an experience, an idea or a topic to discuss.';
 
   @override
   String get timeJustNow => 'Just now';

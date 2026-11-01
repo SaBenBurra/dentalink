@@ -314,6 +314,12 @@ enum PostType {
     };
   }
 
+  /// Post sahibi bir yorumu "En İyi Cevap" seçebilir mi. Forumda (`question`)
+  /// soru şartı olmadığından kapalı; özellik ileride başka bir tür için açılabilir.
+  bool get allowsBestAnswer => switch (this) {
+    PostType.casePost || PostType.question => false,
+  };
+
   static PostType fromDbValue(String value) {
     for (final e in PostType.values) {
       if (e.dbValue == value) return e;

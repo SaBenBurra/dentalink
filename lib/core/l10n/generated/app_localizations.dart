@@ -575,7 +575,7 @@ abstract class AppLocalizations {
   /// Sorular sekmesi
   ///
   /// In tr, this message translates to:
-  /// **'Sorularım'**
+  /// **'Forum Gönderilerim'**
   String get profileQuestions;
 
   /// Kaydedilenler sekmesi
@@ -593,7 +593,7 @@ abstract class AppLocalizations {
   /// Soru gönderi türü etiketi
   ///
   /// In tr, this message translates to:
-  /// **'Soru'**
+  /// **'Forum'**
   String get questionPost;
 
   /// Gönderi oluştur başlığı
@@ -611,7 +611,7 @@ abstract class AppLocalizations {
   /// Soru sor butonu/başlığı
   ///
   /// In tr, this message translates to:
-  /// **'Soru Sor'**
+  /// **'Foruma Yaz'**
   String get createQuestion;
 
   /// Gönderi başlığı alanı
@@ -791,7 +791,7 @@ abstract class AppLocalizations {
   /// Akış filtre - Sorular
   ///
   /// In tr, this message translates to:
-  /// **'Sorular'**
+  /// **'Forum'**
   String get feedFilterQuestions;
 
   /// Akış filtre - İş ilanları (henüz içerik yok)
@@ -821,7 +821,7 @@ abstract class AppLocalizations {
   /// Profildeki sorular sekmesi başlığı
   ///
   /// In tr, this message translates to:
-  /// **'Sorular'**
+  /// **'Forum'**
   String get questionsTabLabelInProfile;
 
   /// Beğeni sayısı
@@ -859,12 +859,6 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Yorum yaz...'**
   String get writeComment;
-
-  /// Cevap yazma alanı ipucu
-  ///
-  /// In tr, this message translates to:
-  /// **'Cevabını yaz...'**
-  String get writeAnswer;
 
   /// Mesaj gönder butonu
   ///
@@ -1553,7 +1547,7 @@ abstract class AppLocalizations {
   /// No description provided for @bookmarksEmptySubtitle.
   ///
   /// In tr, this message translates to:
-  /// **'Beğendiğiniz vakaları ve soruları kaydedin,\nburadan kolayca erişin.'**
+  /// **'Beğendiğiniz vakaları ve forum gönderilerini kaydedin,\nburadan kolayca erişin.'**
   String get bookmarksEmptySubtitle;
 
   /// No description provided for @bookmarksLoadError.
@@ -1685,13 +1679,13 @@ abstract class AppLocalizations {
   /// No description provided for @questionShared.
   ///
   /// In tr, this message translates to:
-  /// **'Sorunuz başarıyla paylaşıldı!'**
+  /// **'Gönderiniz başarıyla paylaşıldı!'**
   String get questionShared;
 
   /// No description provided for @questionTitleLabel.
   ///
   /// In tr, this message translates to:
-  /// **'Soru Başlığı'**
+  /// **'Başlık'**
   String get questionTitleLabel;
 
   /// No description provided for @questionTitleHint.
@@ -1703,13 +1697,13 @@ abstract class AppLocalizations {
   /// No description provided for @questionContentLabel.
   ///
   /// In tr, this message translates to:
-  /// **'Sorunun Detayları'**
+  /// **'İçerik'**
   String get questionContentLabel;
 
   /// No description provided for @questionContentHint.
   ///
   /// In tr, this message translates to:
-  /// **'Karşılaştığınız problemi veya merak ettiğiniz konuyu detaylıca açıklayın...'**
+  /// **'Aklındakini paylaş: bir soru, deneyim, fikir ya da konuşmak istediğin herhangi bir konu...'**
   String get questionContentHint;
 
   /// No description provided for @validationContentEmpty.
@@ -1735,12 +1729,6 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Henüz yorum yapılmamış. İlk yorumu siz ekleyin!'**
   String get noCommentsYet;
-
-  /// No description provided for @noAnswersYet.
-  ///
-  /// In tr, this message translates to:
-  /// **'Henüz cevap yazılmamış. İlk siz cevaplayın!'**
-  String get noAnswersYet;
 
   /// No description provided for @bestAnswerUnmarked.
   ///
@@ -1790,17 +1778,11 @@ abstract class AppLocalizations {
   /// **'Cevaplar ({count})'**
   String answersWithCount(int count);
 
-  /// No description provided for @answersTitle.
+  /// No description provided for @commentsTitle.
   ///
   /// In tr, this message translates to:
-  /// **'Cevaplar'**
-  String get answersTitle;
-
-  /// No description provided for @answersLoadError.
-  ///
-  /// In tr, this message translates to:
-  /// **'Cevaplar yüklenemedi.'**
-  String get answersLoadError;
+  /// **'Yorumlar'**
+  String get commentsTitle;
 
   /// No description provided for @images.
   ///
@@ -1985,7 +1967,7 @@ abstract class AppLocalizations {
   /// No description provided for @createSheetSubtitle.
   ///
   /// In tr, this message translates to:
-  /// **'Klinik vakalarını ve sorularını paylaşarak topluluğa katkı sağla.'**
+  /// **'Klinik vakalarını ve aklındakileri paylaşarak topluluğa katkı sağla.'**
   String get createSheetSubtitle;
 
   /// No description provided for @createCaseSubtitle.
@@ -1997,7 +1979,7 @@ abstract class AppLocalizations {
   /// No description provided for @createQuestionSubtitle.
   ///
   /// In tr, this message translates to:
-  /// **'Mesleki sorularını toplulukla paylaş, en iyi cevabı bul.'**
+  /// **'Aklındaki her şeyi paylaş: soru, deneyim, fikir ya da sohbet konusu.'**
   String get createQuestionSubtitle;
 
   /// No description provided for @timeJustNow.

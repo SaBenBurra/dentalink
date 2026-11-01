@@ -272,9 +272,9 @@ class _CreatePostSheet extends StatelessWidget {
           ),
           const SizedBox(height: AppDimensions.spacing12),
 
-          // Soru Sor
+          // Foruma Yaz
           _CreateOptionTile(
-            icon: Icons.help_outline_rounded,
+            icon: Icons.forum_outlined,
             iconColor: colorScheme.secondary,
             iconBg: colorScheme.secondaryContainer.withValues(alpha: 0.3),
             title: AppLocalizations.of(context)!.createQuestion,

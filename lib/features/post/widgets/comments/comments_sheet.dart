@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../data/models/comment_model.dart';
@@ -12,8 +13,13 @@ import '../../../../shared/widgets/load_more_footer.dart';
 import 'comment_card.dart';
 import 'comment_thread.dart';
 
-/// Feed kartındaki yorum ikonundan açılan yorumlar penceresi.
-void showCommentsSheet(BuildContext context, PostModel post) {
+/// Kartın yorum ikonu: vaka yorumları pencerede açılır, forum postu ise
+/// yorumları altında gösteren post ekranına gider.
+void openComments(BuildContext context, PostModel post) {
+  if (post.type == PostType.question) {
+    context.push('/post/${post.id}');
+    return;
+  }
   showModalBottomSheet<void>(
     context: context,
     // Alt menünün de üstünü kaplar.
@@ -26,9 +32,13 @@ void showCommentsSheet(BuildContext context, PostModel post) {
 }
 
 class CommentsSheet extends ConsumerStatefulWidget {
-  const CommentsSheet({super.key, required this.post});
+  const CommentsSheet({super.key, required this.post, this.header});
 
   final PostModel post;
+
+  /// Verilirse pencere yerine sayfa gövdesi olarak çizilir: [header] (post kartı)
+  /// listenin başında yorumlarla birlikte kayar, giriş alanı altta sabit kalır.
+  final Widget? header;
 
   @override
   ConsumerState<CommentsSheet> createState() => _CommentsSheetState();
@@ -100,75 +110,115 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
     final isPostOwner =
         ref.watch(currentUserProvider)?.id == widget.post.userId;
 
+    final title = Text(
+      _isCase ? l10n.discussion : l10n.commentsTitle,
+      style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+    );
+    final header = widget.header;
+    final leading = [
+      if (header != null) ...[
+        header,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppDimensions.spacing16,
+            AppDimensions.spacing16,
+            AppDimensions.spacing16,
+            0,
+          ),
+          child: title,
+        ),
+        const Divider(height: AppDimensions.spacing24),
+      ],
+    ];
+    // Boş, yükleniyor ve hata durumlarında da post kartı görünür kalır.
+    Widget scrollable(Widget child) => ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [...leading, child],
+    );
+
     return Padding(
-      // Klavye açılınca giriş alanı üstte kalsın.
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      // Klavye açılınca giriş alanı üstte kalsın (sayfa modunda Scaffold halleder).
+      padding: EdgeInsets.only(
+        bottom: header == null ? MediaQuery.viewInsetsOf(context).bottom : 0,
+      ),
       child: SizedBox(
         height: double.infinity, // durum çubuğu altına kadar tam ekran
         child: Column(
           children: [
-            Text(
-              _isCase ? l10n.discussion : l10n.answersTitle,
-              style: textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const Divider(height: AppDimensions.spacing24),
+            if (header == null) ...[
+              title,
+              const Divider(height: AppDimensions.spacing24),
+            ],
             Expanded(
               child: commentsAsync.when(
                 data: (comments) {
                   final notifier = ref.read(commentsProvider(postId).notifier);
                   final hasMore = notifier.hasMore;
                   if (comments.isEmpty && !hasMore) {
-                    return SingleChildScrollView(
-                      child: CommentEmptyState(isCase: _isCase),
-                    );
+                    return scrollable(const CommentEmptyState());
                   }
+                  final offset = leading.length;
                   return ListView.separated(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDimensions.spacing16,
-                    ),
-                    itemCount: comments.length + (hasMore ? 1 : 0),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: offset + comments.length + (hasMore ? 1 : 0),
                     // Yalnızca alt pay: üstteki boşluğu beğeni satırının iç payı (12dp) veriyor,
                     // böylece çizgiden yoruma iki yönde de 12dp kalıyor.
-                    separatorBuilder: (_, _) => const Padding(
-                      padding: EdgeInsets.only(bottom: AppDimensions.spacing8),
-                      child: Divider(height: 1),
-                    ),
-                    itemBuilder: (context, index) {
-                      if (index == comments.length) {
-                        return LoadMoreFooter(onLoadMore: notifier.loadMore);
-                      }
-                      final comment = comments[index];
-                      return CommentThread(
-                        key: ValueKey(comment.id),
-                        comment: comment,
-                        isPostOwner: isPostOwner,
-                        isCase: _isCase,
-                        onReply: _startReply,
+                    separatorBuilder: (_, i) => i < offset
+                        ? const SizedBox.shrink()
+                        : const Padding(
+                            padding: EdgeInsets.fromLTRB(
+                              AppDimensions.spacing16,
+                              0,
+                              AppDimensions.spacing16,
+                              AppDimensions.spacing8,
+                            ),
+                            child: Divider(height: 1),
+                          ),
+                    itemBuilder: (context, i) {
+                      if (i < offset) return leading[i];
+                      final index = i - offset;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppDimensions.spacing16,
+                        ),
+                        child: index == comments.length
+                            ? LoadMoreFooter(onLoadMore: notifier.loadMore)
+                            : CommentThread(
+                                key: ValueKey(comments[index].id),
+                                comment: comments[index],
+                                isPostOwner: isPostOwner,
+                                allowsBestAnswer:
+                                    widget.post.type.allowsBestAnswer,
+                                onReply: _startReply,
+                              ),
                       );
                     },
                   );
                 },
-                loading: () => const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                loading: () => scrollable(
+                  const Padding(
+                    padding: EdgeInsets.all(AppDimensions.spacing24),
+                    child: Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
                 ),
-                error: (err, stack) => Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        _isCase
-                            ? l10n.commentsLoadError
-                            : l10n.answersLoadError,
-                        style: textTheme.bodyMedium,
-                      ),
-                      TextButton(
-                        onPressed: () =>
-                            ref.invalidate(commentsProvider(postId)),
-                        child: Text(l10n.retry),
-                      ),
-                    ],
+                error: (err, stack) => scrollable(
+                  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          l10n.commentsLoadError,
+                          style: textTheme.bodyMedium,
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              ref.invalidate(commentsProvider(postId)),
+                          child: Text(l10n.retry),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -231,7 +281,7 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
                               ? l10n.writeReply
                               : _isCase
                               ? l10n.joinDiscussionHint
-                              : l10n.writeAnswer,
+                              : l10n.writeComment,
                           border: InputBorder.none,
                         ),
                         textInputAction: TextInputAction.send,

@@ -117,7 +117,7 @@ class ExploreResults extends ConsumerWidget {
                           context,
                           () => notifier.toggleBookmark(post.id),
                         ),
-                        onCommentTap: () => showCommentsSheet(context, post),
+                        onCommentTap: () => openComments(context, post),
                         onTap: () => context.push('/post/${post.id}'),
                       );
                     },

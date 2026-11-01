@@ -138,8 +138,7 @@ class _BestAnswerBadge extends StatelessWidget {
 }
 
 class CommentEmptyState extends StatelessWidget {
-  final bool isCase;
-  const CommentEmptyState({super.key, this.isCase = false});
+  const CommentEmptyState({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -149,9 +148,7 @@ class CommentEmptyState extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing32),
       alignment: Alignment.center,
       child: Text(
-        isCase
-            ? AppLocalizations.of(context)!.noCommentsYet
-            : AppLocalizations.of(context)!.noAnswersYet,
+        AppLocalizations.of(context)!.noCommentsYet,
         style: textTheme.bodyMedium?.copyWith(
           color: colorScheme.onSurfaceVariant,
         ),
@@ -164,7 +161,9 @@ class CommentCard extends ConsumerWidget {
   final CommentModel comment;
   final String postId;
   final bool isPostOwner;
-  final bool isCase;
+
+  /// "En İyi Cevap" rozeti ve seçme butonu gösterilsin mi ([PostType.allowsBestAnswer]).
+  final bool allowsBestAnswer;
 
   /// Null ise "Yanıtla" butonu gizli.
   final VoidCallback? onReply;
@@ -178,7 +177,7 @@ class CommentCard extends ConsumerWidget {
     required this.comment,
     required this.postId,
     required this.isPostOwner,
-    this.isCase = false,
+    this.allowsBestAnswer = false,
     this.onReply,
     this.repliesExpanded = false,
     this.onToggleReplies,
@@ -227,7 +226,7 @@ class CommentCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final showBest = comment.isBestAnswer && !isCase;
+    final showBest = comment.isBestAnswer && allowsBestAnswer;
 
     final authorName = comment.author?.fullName ?? l10n.deletedUser;
     final titleName = comment.author?.title.displayName(context) ?? '';
@@ -362,7 +361,7 @@ class CommentCard extends ConsumerWidget {
                 ),
               ),
               // En iyi cevap yalnızca üst seviye yorum olabilir (026).
-              if (isPostOwner && !isCase && comment.parentId == null)
+              if (isPostOwner && allowsBestAnswer && comment.parentId == null)
                 _CommentTextAction(
                   icon: showBest ? Icons.close_rounded : Icons.verified_rounded,
                   label: showBest

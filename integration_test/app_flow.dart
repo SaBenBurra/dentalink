@@ -74,7 +74,7 @@ Future<void> runAppFlow(WidgetTester tester) async {
   expect(find.text('Tartışma'), findsNothing);
   expect(find.text(seedCase.title), findsOneWidget);
 
-  // Feed sekmeleri: sola kaydır → Vakalar (vaka görünür) → Sorular (görünmez);
+  // Feed sekmeleri: sola kaydır → Vakalar (vaka görünür) → Forum (görünmez);
   // segmente dokununca Tümü'ye döner.
   await tester.fling(find.text(seedCase.title), const Offset(-400, 0), 1000);
   await tester.pumpAndSettle();
@@ -113,22 +113,22 @@ Future<void> runAppFlow(WidgetTester tester) async {
   await _tapAndSettle(tester, find.text('Profili Düzenle'));
   await _goBack(tester);
 
-  // Oluştur (+) → vaka formu → geri; soru formu → geri.
+  // Oluştur (+) → vaka formu → geri; forum formu → geri.
   await _tapAndSettle(tester, find.text('Ana Sayfa'));
   await _tapAndSettle(tester, find.byIcon(Icons.add_rounded));
   await _tapAndSettle(tester, find.text('Vaka Paylaş'));
   expect(find.byType(TextFormField), findsWidgets);
   await _goBack(tester);
   await _tapAndSettle(tester, find.byIcon(Icons.add_rounded));
-  await _tapAndSettle(tester, find.text('Soru Sor'));
+  await _tapAndSettle(tester, find.text('Foruma Yaz'));
   expect(find.byType(TextFormField), findsWidgets);
   await _goBack(tester);
 
   expect(find.text(seedCase.title), findsOneWidget);
 
-  // Soru paylaş → paylaşılan sorunun detayı açılır, form yığında kalmaz.
+  // Forum postu paylaş → paylaşılan postun detayı açılır, form yığında kalmaz.
   await _tapAndSettle(tester, find.byIcon(Icons.add_rounded));
-  await _tapAndSettle(tester, find.text('Soru Sor'));
+  await _tapAndSettle(tester, find.text('Foruma Yaz'));
   final fields = find.byType(TextFormField);
   await tester.enterText(fields.at(0), 'Yeni soru başlığı');
   await tester.enterText(fields.at(1), 'Yeni soru detayı');
