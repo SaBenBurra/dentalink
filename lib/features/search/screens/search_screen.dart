@@ -23,14 +23,22 @@ class SearchScreen extends ConsumerStatefulWidget {
 class _SearchScreenState extends ConsumerState<SearchScreen> {
   Timer? _debounce;
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   /// `#` ile yazılan etiketin önerileri; doluyken gövdenin yerine gösterilir.
   List<String> _suggestions = const [];
 
   @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() => setState(() {}));
+  }
+
+  @override
   void dispose() {
     _debounce?.cancel();
     _searchController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -99,6 +107,37 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Arama satırı odaktayken keşfet içeriği kaybolur; gövde yalnızca
+    // arama sonuçları için (sorgu doluyken) görünür.
+    final hideExplore =
+        _focusNode.hasFocus &&
+        ref.watch(searchProvider.select((s) => s.query.trim().isEmpty));
+    final hideBody = hideExplore || _suggestions.isNotEmpty;
+    const duration = Duration(milliseconds: 250);
+    final Widget overlay;
+    if (_suggestions.isNotEmpty) {
+      overlay = ListView(
+        key: const ValueKey('suggestions'),
+        children: [
+          for (final tag in _suggestions)
+            ListTile(
+              leading: const Icon(Icons.tag_rounded),
+              title: Text(tag),
+              onTap: () => _pickSuggestion(tag),
+            ),
+        ],
+      );
+    } else if (hideExplore) {
+      // Boş alana dokunmak odağı bırakır ve keşfet içeriğine döner.
+      overlay = GestureDetector(
+        key: const ValueKey('empty'),
+        behavior: HitTestBehavior.opaque,
+        onTap: _focusNode.unfocus,
+      );
+    } else {
+      overlay = const SizedBox.shrink();
+    }
+
     return Scaffold(
       body: SafeArea(
         bottom: false,
@@ -108,23 +147,28 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               controller: _searchController,
               onChanged: _onSearchChanged,
               onSubmitted: _submit,
+              focusNode: _focusNode,
               autofocus: widget.autofocus,
               hintText: AppLocalizations.of(context)!.searchHint,
             ),
             const BranchFilterChips(),
             Expanded(
-              child: _suggestions.isEmpty
-                  ? ExploreResults(onTagTap: _onTagTap)
-                  : ListView(
-                      children: [
-                        for (final tag in _suggestions)
-                          ListTile(
-                            leading: const Icon(Icons.tag_rounded),
-                            title: Text(tag),
-                            onTap: () => _pickSuggestion(tag),
-                          ),
-                      ],
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Keşfet ağaçta kalır (liste, görseller, etiketler yeniden
+                  // kurulmaz); geri dönüş takılmadan solarak gelir.
+                  IgnorePointer(
+                    ignoring: hideBody,
+                    child: AnimatedOpacity(
+                      opacity: hideBody ? 0 : 1,
+                      duration: duration,
+                      child: ExploreResults(onTagTap: _onTagTap),
                     ),
+                  ),
+                  AnimatedSwitcher(duration: duration, child: overlay),
+                ],
+              ),
             ),
           ],
         ),
