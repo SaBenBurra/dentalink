@@ -33,16 +33,31 @@ void main() {
   });
 
   test('önce iki klasör sayfa sayfa boşaltılır, sonra RPC çağrılır', () async {
-    final avatarPages = [[_file('a.webp')], <FileObject>[]];
-    when(avatars.list(path: 'me', searchOptions: anyNamed('searchOptions')))
-        .thenAnswer((_) async => avatarPages.removeAt(0));
-    final postPages = [[_file('1.webp'), _file('2.webp')], [_file('3.webp')], <FileObject>[]];
-    when(postImages.list(path: 'me', searchOptions: anyNamed('searchOptions')))
-        .thenAnswer((_) async => postPages.removeAt(0));
-    when(avatars.remove(any)).thenAnswer((inv) async =>
-        [for (final p in inv.positionalArguments[0] as List<String>) _file(p)]);
-    when(postImages.remove(any)).thenAnswer((inv) async =>
-        [for (final p in inv.positionalArguments[0] as List<String>) _file(p)]);
+    final avatarPages = [
+      [_file('a.webp')],
+      <FileObject>[],
+    ];
+    when(
+      avatars.list(path: 'me', searchOptions: anyNamed('searchOptions')),
+    ).thenAnswer((_) async => avatarPages.removeAt(0));
+    final postPages = [
+      [_file('1.webp'), _file('2.webp')],
+      [_file('3.webp')],
+      <FileObject>[],
+    ];
+    when(
+      postImages.list(path: 'me', searchOptions: anyNamed('searchOptions')),
+    ).thenAnswer((_) async => postPages.removeAt(0));
+    when(avatars.remove(any)).thenAnswer(
+      (inv) async => [
+        for (final p in inv.positionalArguments[0] as List<String>) _file(p),
+      ],
+    );
+    when(postImages.remove(any)).thenAnswer(
+      (inv) async => [
+        for (final p in inv.positionalArguments[0] as List<String>) _file(p),
+      ],
+    );
 
     await expectLater(repo.deleteAccount(), throwsA(isA<StateError>()));
 
@@ -52,8 +67,9 @@ void main() {
   });
 
   test('dosyalar silinemezse hesaba dokunulmaz', () async {
-    when(avatars.list(path: 'me', searchOptions: anyNamed('searchOptions')))
-        .thenAnswer((_) async => [_file('a.webp')]);
+    when(
+      avatars.list(path: 'me', searchOptions: anyNamed('searchOptions')),
+    ).thenAnswer((_) async => [_file('a.webp')]);
     when(avatars.remove(any)).thenAnswer((_) async => []);
 
     await expectLater(repo.deleteAccount(), throwsA(isA<ServerFailure>()));

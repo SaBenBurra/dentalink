@@ -71,12 +71,7 @@ class OtpSendLimiter {
     if (!persist) return;
     final prefs = await SharedPreferences.getInstance();
     final payload = _recent
-        .map(
-          (e) => {
-            'd': e.destination,
-            't': e.sentAt.millisecondsSinceEpoch,
-          },
-        )
+        .map((e) => {'d': e.destination, 't': e.sentAt.millisecondsSinceEpoch})
         .toList();
     await prefs.setString(_prefsKey, jsonEncode(payload));
   }
@@ -126,8 +121,7 @@ class OtpSendLimiter {
 
   /// Bu cihaz oturumunda (kalıcı geçmiş dahil) [destination] için
   /// başarılı gönderim yapıldı mı?
-  bool hasSentTo(String destination) =>
-      _sentThisSession.contains(destination);
+  bool hasSentTo(String destination) => _sentThisSession.contains(destination);
 
   Future<void> recordSuccess(String destination) async {
     final now = DateTime.now();

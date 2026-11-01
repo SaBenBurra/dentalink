@@ -29,7 +29,9 @@ class UserProfileNotifier
     // durumunun da hazır olması gerekir. followingStateProvider bu
     // notifier'ın yaşam döngüsünden bağımsız olduğu için rebuild
     // döngüsü oluşturmaz.
-    ref.read(followingStateProvider.notifier).setFollowStatus(userId, isFollowing);
+    ref
+        .read(followingStateProvider.notifier)
+        .setFollowStatus(userId, isFollowing);
 
     return user;
   }
@@ -65,16 +67,16 @@ final userProfileProvider = AsyncNotifierProvider.autoDispose
       return UserProfileNotifier();
     });
 
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Followers / Following Providers
 // ─────────────────────────────────────────────────────────────────────────────
 
-typedef _FollowPageFetch = Future<PageResult<UserModel>> Function(
-  FollowRepository repo,
-  String userId,
-  PageCursor? before,
-);
+typedef _FollowPageFetch =
+    Future<PageResult<UserModel>> Function(
+      FollowRepository repo,
+      String userId,
+      PageCursor? before,
+    );
 
 /// Takipçi ya da takip edilen listesi; sayfalar [loadMore] ile eklenir.
 class FollowListNotifier
@@ -92,34 +94,39 @@ class FollowListNotifier
   Future<List<UserModel>> build(String arg) async =>
       _pager.first(await _fetch(_repo, arg, null));
 
-  Future<void> loadMore() => _pager.loadMore(
-        (before) => _fetch(_repo, arg, before),
-        (items) {
-          final users = state.valueOrNull;
-          if (users != null) state = AsyncData([...users, ...items]);
-        },
-      );
+  Future<void> loadMore() =>
+      _pager.loadMore((before) => _fetch(_repo, arg, before), (items) {
+        final users = state.valueOrNull;
+        if (users != null) state = AsyncData([...users, ...items]);
+      });
 }
 
 final followersProvider = AsyncNotifierProvider.autoDispose
     .family<FollowListNotifier, List<UserModel>, String>(
-  () => FollowListNotifier((r, id, before) => r.getFollowers(id, before: before)),
-);
+      () => FollowListNotifier(
+        (r, id, before) => r.getFollowers(id, before: before),
+      ),
+    );
 
 final followingProvider = AsyncNotifierProvider.autoDispose
     .family<FollowListNotifier, List<UserModel>, String>(
-  () => FollowListNotifier((r, id, before) => r.getFollowing(id, before: before)),
-);
+      () => FollowListNotifier(
+        (r, id, before) => r.getFollowing(id, before: before),
+      ),
+    );
 
 /// Profili takip edenlerden oturumdaki kullanıcının takip ettikleri.
 /// İlk birkaç kişi ve toplam; kendi profilinde ve oturumsuzken istek gitmez.
 /// Hesap değişince yeniden hesaplanır.
 final mutualFollowersProvider =
-    AutoDisposeFutureProvider.family<MutualFollowers, String>((ref, userId) async {
-  final me = ref.watch(authProvider.select((a) => a.value?.id));
-  if (me == null || me == userId) return (users: <UserModel>[], total: 0);
-  return ref.read(followRepositoryProvider).getMutualFollowers(userId);
-});
+    AutoDisposeFutureProvider.family<MutualFollowers, String>((
+      ref,
+      userId,
+    ) async {
+      final me = ref.watch(authProvider.select((a) => a.value?.id));
+      if (me == null || me == userId) return (users: <UserModel>[], total: 0);
+      return ref.read(followRepositoryProvider).getMutualFollowers(userId);
+    });
 
 // ─────────────────────────────────────────────────────────────────────────────
 // User Badges Provider

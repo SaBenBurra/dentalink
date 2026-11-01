@@ -11,7 +11,10 @@ abstract class MessageRepository {
 
   /// Bir konuşmanın en yeni mesaj sayfası, eski → yeni sıralı; [before]
   /// verilirse ondan önceki (daha eski) sayfa.
-  Future<PageResult<MessageModel>> getMessages(String conversationId, {PageCursor? before});
+  Future<PageResult<MessageModel>> getMessages(
+    String conversationId, {
+    PageCursor? before,
+  });
 
   /// Belirtilen alıcıya mesaj gönderir.
   /// Konuşma yoksa otomatik oluşturulur.

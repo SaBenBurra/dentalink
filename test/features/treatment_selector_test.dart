@@ -19,41 +19,51 @@ void main() {
     Future<void> pump(WidgetTester tester) async {
       selected = null;
       other = null;
-      await tester.pumpWidget(MaterialApp(
-        locale: const Locale('tr'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Scaffold(
-          body: StatefulBuilder(
-            builder: (context, setState) => TreatmentSelector(
-              branch: DentalBranch.endodonti,
-              selected: selected,
-              other: other,
-              suggest: (q) async => ['kanal-tedavisi', 'hemiseksiyon'],
-              onSelected: (t) => setState(() {
-                selected = t;
-                other = null;
-              }),
-              onOtherChanged: (v) => setState(() {
-                selected = null;
-                other = v;
-              }),
+      await tester.pumpWidget(
+        MaterialApp(
+          locale: const Locale('tr'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: StatefulBuilder(
+              builder: (context, setState) => TreatmentSelector(
+                branch: DentalBranch.endodonti,
+                selected: selected,
+                other: other,
+                suggest: (q) async => ['kanal-tedavisi', 'hemiseksiyon'],
+                onSelected: (t) => setState(() {
+                  selected = t;
+                  other = null;
+                }),
+                onOtherChanged: (v) => setState(() {
+                  selected = null;
+                  other = v;
+                }),
+              ),
             ),
           ),
         ),
-      ));
+      );
     }
 
-    testWidgets('yalnızca branşın türleri ve "Diğer" listelenir', (tester) async {
+    testWidgets('yalnızca branşın türleri ve "Diğer" listelenir', (
+      tester,
+    ) async {
       await pump(tester);
-      expect(find.byType(ChoiceChip),
-          findsNWidgets(TreatmentType.forBranch(DentalBranch.endodonti).length + 1));
+      expect(
+        find.byType(ChoiceChip),
+        findsNWidgets(
+          TreatmentType.forBranch(DentalBranch.endodonti).length + 1,
+        ),
+      );
       expect(find.text('Diğer'), findsOneWidget);
       expect(find.text('Braket'), findsNothing);
       expect(find.byType(TextField), findsNothing);
     });
 
-    testWidgets('"Diğer"de ad yazılır; listede olan öneri o türü seçer', (tester) async {
+    testWidgets('"Diğer"de ad yazılır; listede olan öneri o türü seçer', (
+      tester,
+    ) async {
       await pump(tester);
       await tester.tap(find.text('Diğer'));
       await tester.pump();
@@ -63,7 +73,11 @@ void main() {
       await tester.pump(TagInput.suggestDebounce);
       await tester.pump();
       expect(other, 'kan');
-      expect(find.text('Kanal tedavisi'), findsNWidgets(2), reason: 'çip + öneri');
+      expect(
+        find.text('Kanal tedavisi'),
+        findsNWidgets(2),
+        reason: 'çip + öneri',
+      );
       expect(find.text('listede var'), findsOneWidget);
       expect(find.text('#hemiseksiyon'), findsOneWidget);
 

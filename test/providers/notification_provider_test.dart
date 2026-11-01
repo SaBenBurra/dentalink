@@ -22,12 +22,12 @@ final _actor = UserModel(
 );
 
 NotificationModel _n(String id, {bool isRead = false}) => NotificationModel(
-      id: id,
-      type: NotificationType.like,
-      actor: _actor,
-      isRead: isRead,
-      createdAt: DateTime(2026),
-    );
+  id: id,
+  type: NotificationType.like,
+  actor: _actor,
+  isRead: isRead,
+  createdAt: DateTime(2026),
+);
 
 class _FakeNotificationRepo implements NotificationRepository {
   final live = StreamController<NotificationModel>.broadcast();
@@ -64,28 +64,34 @@ void main() {
 
   setUp(() async {
     repo = _FakeNotificationRepo();
-    container = ProviderContainer(overrides: [
-      authRepositoryProvider.overrideWithValue(MockAuthForTest()),
-      notificationRepositoryProvider.overrideWithValue(repo),
-    ]);
+    container = ProviderContainer(
+      overrides: [
+        authRepositoryProvider.overrideWithValue(MockAuthForTest()),
+        notificationRepositoryProvider.overrideWithValue(repo),
+      ],
+    );
     addTearDown(container.dispose);
     await container.read(authProvider.future);
     container.listen(notificationsProvider, (_, _) {});
     await container.read(notificationsProvider.future);
   });
 
-  List<NotificationModel> list() => container.read(notificationsProvider).requireValue;
+  List<NotificationModel> list() =>
+      container.read(notificationsProvider).requireValue;
 
-  test('realtime ile gelen bildirim başa eklenir, tekrar gelirse çoğalmaz', () async {
-    expect(repo.watchedUserId, 'mock_test_user_id');
+  test(
+    'realtime ile gelen bildirim başa eklenir, tekrar gelirse çoğalmaz',
+    () async {
+      expect(repo.watchedUserId, 'mock_test_user_id');
 
-    repo.live.add(_n('2'));
-    repo.live.add(_n('2'));
-    await Future<void>.delayed(Duration.zero);
+      repo.live.add(_n('2'));
+      repo.live.add(_n('2'));
+      await Future<void>.delayed(Duration.zero);
 
-    expect(list().map((n) => n.id), ['2', '1']);
-    expect(container.read(unreadNotificationCountProvider), 2);
-  });
+      expect(list().map((n) => n.id), ['2', '1']);
+      expect(container.read(unreadNotificationCountProvider), 2);
+    },
+  );
 
   test('markRead hata verirse okunmamışa geri döner (BUG-23)', () async {
     repo.failWrites = true;

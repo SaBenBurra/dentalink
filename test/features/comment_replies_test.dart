@@ -20,18 +20,22 @@ final _author = UserModel(
   createdAt: DateTime(2024),
 );
 
-CommentModel _c(String id, String content, {String? parentId, int replies = 0}) =>
-    CommentModel(
-      id: id,
-      postId: 'p1',
-      userId: 'u2',
-      parentId: parentId,
-      replyCount: replies,
-      content: content,
-      createdAt: DateTime(2024),
-      updatedAt: DateTime(2024),
-      author: _author,
-    );
+CommentModel _c(
+  String id,
+  String content, {
+  String? parentId,
+  int replies = 0,
+}) => CommentModel(
+  id: id,
+  postId: 'p1',
+  userId: 'u2',
+  parentId: parentId,
+  replyCount: replies,
+  content: content,
+  createdAt: DateTime(2024),
+  updatedAt: DateTime(2024),
+  author: _author,
+);
 
 /// Bellekte ağaç: c1 → r1; yeni yanıtlar ebeveynin listesine eklenir.
 class _Repo implements CommentRepository {
@@ -41,15 +45,23 @@ class _Repo implements CommentRepository {
   final added = <String?>[];
 
   @override
-  Future<PageResult<CommentModel>> getComments(String postId, {PageCursor? after}) async =>
-      (items: [_c('c1', 'top comment', replies: 1)], next: null);
+  Future<PageResult<CommentModel>> getComments(
+    String postId, {
+    PageCursor? after,
+  }) async => (items: [_c('c1', 'top comment', replies: 1)], next: null);
 
   @override
-  Future<PageResult<CommentModel>> getReplies(String parentId, {PageCursor? after}) async =>
-      (items: [...?replies[parentId]], next: null);
+  Future<PageResult<CommentModel>> getReplies(
+    String parentId, {
+    PageCursor? after,
+  }) async => (items: [...?replies[parentId]], next: null);
 
   @override
-  Future<CommentModel> addComment(String postId, String content, {String? parentId}) async {
+  Future<CommentModel> addComment(
+    String postId,
+    String content, {
+    String? parentId,
+  }) async {
     added.add(parentId);
     final c = _c('n${added.length}', content, parentId: parentId);
     if (parentId != null) (replies[parentId] ??= []).add(c);
@@ -61,7 +73,9 @@ class _Repo implements CommentRepository {
 }
 
 void main() {
-  testWidgets('yanıtlar açılır, yanıta yanıt yazılır ve altında görünür', (tester) async {
+  testWidgets('yanıtlar açılır, yanıta yanıt yazılır ve altında görünür', (
+    tester,
+  ) async {
     final repo = _Repo();
     final post = QuestionPostModel(
       id: 'p1',
@@ -72,15 +86,17 @@ void main() {
       updatedAt: DateTime(2024),
       author: _author,
     );
-    await tester.pumpWidget(ProviderScope(
-      overrides: [commentRepositoryProvider.overrideWithValue(repo)],
-      child: MaterialApp(
-        locale: const Locale('en'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Scaffold(body: CommentsSheet(post: post)),
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [commentRepositoryProvider.overrideWithValue(repo)],
+        child: MaterialApp(
+          locale: const Locale('en'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(body: CommentsSheet(post: post)),
+        ),
       ),
-    ));
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('first reply'), findsNothing);
@@ -103,7 +119,10 @@ void main() {
     expect(find.text('deep reply'), findsOneWidget);
     // r1'in sayacı arttı ve yanıtları açıldı.
     expect(
-      find.descendant(of: find.widgetWithText(CommentCard, 'first reply'), matching: find.text('Hide replies')),
+      find.descendant(
+        of: find.widgetWithText(CommentCard, 'first reply'),
+        matching: find.text('Hide replies'),
+      ),
       findsOneWidget,
     );
   });

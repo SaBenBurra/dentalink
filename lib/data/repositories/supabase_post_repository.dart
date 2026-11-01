@@ -50,7 +50,10 @@ class SupabasePostRepository implements PostRepository {
 
   /// Supabase'den dönen JSON haritasını uygun [PostModel] alt sınıfına
   /// (`CasePostModel` veya `QuestionPostModel`) dönüştürür.
-  PostModel _mapRowToPost(Map<String, dynamic> row, Map<String, String> signedUrls) {
+  PostModel _mapRowToPost(
+    Map<String, dynamic> row,
+    Map<String, String> signedUrls,
+  ) {
     final uid = _currentUserId;
 
     // --- Yazar ---
@@ -59,12 +62,13 @@ class SupabasePostRepository implements PostRepository {
     // --- Görseller ---
     final rawImages = row['post_images'] as List<dynamic>? ?? [];
     // sort_order'a göre sırala
-    rawImages.sort((a, b) =>
-        (a['sort_order'] as int? ?? 0).compareTo(b['sort_order'] as int? ?? 0));
+    rawImages.sort(
+      (a, b) => (a['sort_order'] as int? ?? 0).compareTo(
+        b['sort_order'] as int? ?? 0,
+      ),
+    );
     // image_url bucket içi yol tutar (migration 015); imzalanamayan (silinmiş) dosya atlanır.
-    final imageUrls = [
-      for (final e in rawImages) ?signedUrls[e['image_url']],
-    ];
+    final imageUrls = [for (final e in rawImages) ?signedUrls[e['image_url']]];
 
     // --- Etiketler ---
     final rawTags = row['post_tags'] as List<dynamic>? ?? [];
@@ -99,7 +103,9 @@ class SupabasePostRepository implements PostRepository {
           content: row['content'] as String,
           branch: DentalBranch.tryFromDbValue(row['branch'] as String?),
           treatment: TreatmentType.tryFromDbValue(row['treatment'] as String?),
-          otherTreatment: (row['other_treatment'] as Map<String, dynamic>?)?['name'] as String?,
+          otherTreatment:
+              (row['other_treatment'] as Map<String, dynamic>?)?['name']
+                  as String?,
           imageUrls: imageUrls,
           tags: tags,
           likeCount: row['like_count'] as int? ?? 0,
@@ -138,7 +144,8 @@ class SupabasePostRepository implements PostRepository {
   Future<List<PostModel>> _mapRows(List<Map<String, dynamic>> rows) async {
     final paths = [
       for (final row in rows)
-        for (final e in row['post_images'] as List<dynamic>? ?? []) e['image_url'] as String,
+        for (final e in row['post_images'] as List<dynamic>? ?? [])
+          e['image_url'] as String,
     ];
     final signed = <String, String>{};
     if (paths.isNotEmpty) {
@@ -172,15 +179,14 @@ class SupabasePostRepository implements PostRepository {
   // ═══════════════════════════════════════════════════════════════════════════
 
   @override
-  Future<PageResult<PostModel>> getFeed({PageCursor? before}) => guardSupabase(() async {
-    return _toPage(await _basePostQuery().pageBefore(before));
-  });
+  Future<PageResult<PostModel>> getFeed({PageCursor? before}) =>
+      guardSupabase(() async {
+        return _toPage(await _basePostQuery().pageBefore(before));
+      });
 
   @override
   Future<PostModel> getPostById(String id) => guardSupabase(() async {
-    final response = await _basePostQuery()
-        .eq('id', id)
-        .single();
+    final response = await _basePostQuery().eq('id', id).single();
 
     return (await _mapRows([response])).single;
   });
@@ -195,8 +201,9 @@ class SupabasePostRepository implements PostRepository {
     );
   });
 
-  Future<PageResult<PostModel>> _toPage(List<Map<String, dynamic>> rows) async =>
-      (items: await _mapRows(rows), next: nextCursor(rows));
+  Future<PageResult<PostModel>> _toPage(
+    List<Map<String, dynamic>> rows,
+  ) async => (items: await _mapRows(rows), next: nextCursor(rows));
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  ISearchRepository
@@ -210,14 +217,20 @@ class SupabasePostRepository implements PostRepository {
     required DateTime now,
     int offset = 0,
   }) => guardSupabase(() async {
-    final ids = (await _client.rpc('popular_post_ids', params: {
-      'p_query': query.trim(),
-      'p_tags': tags,
-      'p_branch': branch?.dbValue,
-      'p_now': now.toUtc().toIso8601String(),
-      'p_limit': pageSize,
-      'p_offset': offset,
-    }) as List).cast<String>();
+    final ids =
+        (await _client.rpc(
+                  'popular_post_ids',
+                  params: {
+                    'p_query': query.trim(),
+                    'p_tags': tags,
+                    'p_branch': branch?.dbValue,
+                    'p_now': now.toUtc().toIso8601String(),
+                    'p_limit': pageSize,
+                    'p_offset': offset,
+                  },
+                )
+                as List)
+            .cast<String>();
     if (ids.isEmpty) return <PostModel>[];
     final rows = await _basePostQuery().inFilter('id', ids);
     // RPC sırası korunur; arada silinen post atlanır.
@@ -226,24 +239,25 @@ class SupabasePostRepository implements PostRepository {
   });
 
   @override
-  Future<List<TagModel>> popularTags({int limit = 5}) => guardSupabase(() async {
-    final rows = await _client
-        .from('tags')
-        .select('id, name, slug, usage_count')
-        .gt('usage_count', 0)
-        .order('usage_count', ascending: false)
-        .order('name', ascending: true)
-        .limit(limit);
-    return [
-      for (final t in rows)
-        TagModel(
-          id: t['id'] as String,
-          name: t['name'] as String,
-          slug: t['slug'] as String,
-          usageCount: t['usage_count'] as int,
-        ),
-    ];
-  });
+  Future<List<TagModel>> popularTags({int limit = 5}) =>
+      guardSupabase(() async {
+        final rows = await _client
+            .from('tags')
+            .select('id, name, slug, usage_count')
+            .gt('usage_count', 0)
+            .order('usage_count', ascending: false)
+            .order('name', ascending: true)
+            .limit(limit);
+        return [
+          for (final t in rows)
+            TagModel(
+              id: t['id'] as String,
+              name: t['name'] as String,
+              slug: t['slug'] as String,
+              usageCount: t['usage_count'] as int,
+            ),
+        ];
+      });
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  IBookmarkRepository
@@ -251,7 +265,9 @@ class SupabasePostRepository implements PostRepository {
 
   /// Sayfa kaydedilme zamanına göre; imleç bookmark satırıdır.
   @override
-  Future<PageResult<PostModel>> getBookmarkedPosts({PageCursor? before}) => guardSupabase(() async {
+  Future<PageResult<PostModel>> getBookmarkedPosts({
+    PageCursor? before,
+  }) => guardSupabase(() async {
     final uid = _currentUserId;
 
     // Bookmark'lanmış post id'lerini çek, ardından postları getir.
@@ -265,8 +281,7 @@ class SupabasePostRepository implements PostRepository {
     final next = nextCursor(bookmarkRows);
     if (postIds.isEmpty) return (items: <PostModel>[], next: next);
 
-    final response = await _basePostQuery()
-        .inFilter('id', postIds);
+    final response = await _basePostQuery().inFilter('id', postIds);
 
     final posts = await _mapRows(response);
 
@@ -318,10 +333,7 @@ class SupabasePostRepository implements PostRepository {
     final uid = _currentUserId;
 
     try {
-      await _client.from('likes').insert({
-        'user_id': uid,
-        'post_id': postId,
-      });
+      await _client.from('likes').insert({'user_id': uid, 'post_id': postId});
     } on PostgrestException catch (e) {
       // 23505 is the PostgreSQL error code for unique_violation
       if (e.code != '23505') {
@@ -387,21 +399,23 @@ class SupabasePostRepository implements PostRepository {
 
   @override
   Future<List<String>> suggestTags(String query) => guardSupabase(() async {
-        final rows = await _client.rpc('suggest_tags', params: {'p_query': query});
-        return (rows as List).cast<String>();
-      });
+    final rows = await _client.rpc('suggest_tags', params: {'p_query': query});
+    return (rows as List).cast<String>();
+  });
 
   @override
   Future<PostModel> createQuestion({
     required String title,
     required String content,
     required List<String> tags,
-  }) => guardSupabase(() => _createPost(
-        type: PostType.question,
-        title: title,
-        content: content,
-        tags: tags,
-      ));
+  }) => guardSupabase(
+    () => _createPost(
+      type: PostType.question,
+      title: title,
+      content: content,
+      tags: tags,
+    ),
+  );
 
   Future<PostModel> _createPost({
     required PostType type,
@@ -413,16 +427,21 @@ class SupabasePostRepository implements PostRepository {
     List<String> imagePaths = const [],
     required List<String> tags,
   }) async {
-    final postId = await _client.rpc('create_post', params: {
-      'p_type': type.dbValue,
-      'p_title': title,
-      'p_content': content,
-      'p_branch': branch?.dbValue,
-      'p_image_paths': imagePaths,
-      'p_tags': _tagsPayload(tags),
-      'p_treatment': treatment?.dbValue,
-      'p_other_treatment': otherTreatment,
-    }) as String;
+    final postId =
+        await _client.rpc(
+              'create_post',
+              params: {
+                'p_type': type.dbValue,
+                'p_title': title,
+                'p_content': content,
+                'p_branch': branch?.dbValue,
+                'p_image_paths': imagePaths,
+                'p_tags': _tagsPayload(tags),
+                'p_treatment': treatment?.dbValue,
+                'p_other_treatment': otherTreatment,
+              },
+            )
+            as String;
     return getPostById(postId);
   }
 
@@ -436,15 +455,18 @@ class SupabasePostRepository implements PostRepository {
     String? otherTreatment,
     required List<String> tags,
   }) => guardSupabase(() async {
-    await _client.rpc('update_post', params: {
-      'p_post_id': postId,
-      'p_title': title,
-      'p_content': content,
-      'p_branch': branch?.dbValue,
-      'p_tags': _tagsPayload(tags),
-      'p_treatment': treatment?.dbValue,
-      'p_other_treatment': otherTreatment,
-    });
+    await _client.rpc(
+      'update_post',
+      params: {
+        'p_post_id': postId,
+        'p_title': title,
+        'p_content': content,
+        'p_branch': branch?.dbValue,
+        'p_tags': _tagsPayload(tags),
+        'p_treatment': treatment?.dbValue,
+        'p_other_treatment': otherTreatment,
+      },
+    );
     return getPostById(postId);
   });
 
@@ -477,7 +499,10 @@ class SupabasePostRepository implements PostRepository {
   /// Görselleri `post-images` bucket'ına kullanıcının klasörüne yükler,
   /// bucket içi yolları döndürür. Biri bile başarısız olursa yüklenenler
   /// silinir ve hata fırlatılır.
-  Future<List<String>> _uploadImages(String userId, List<File> imageFiles) async {
+  Future<List<String>> _uploadImages(
+    String userId,
+    List<File> imageFiles,
+  ) async {
     final stamp = DateTime.now().millisecondsSinceEpoch;
     final paths = [
       for (final (i, f) in imageFiles.indexed)
@@ -486,10 +511,15 @@ class SupabasePostRepository implements PostRepository {
     try {
       await Future.wait([
         for (final (i, f) in imageFiles.indexed)
-          _client.storage.from('post-images').upload(
+          _client.storage
+              .from('post-images')
+              .upload(
                 paths[i],
                 f,
-                fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+                fileOptions: const FileOptions(
+                  cacheControl: '3600',
+                  upsert: false,
+                ),
               ),
       ]);
     } catch (_) {
@@ -518,7 +548,9 @@ class SupabasePostRepository implements PostRepository {
       final slug = _slugify(trimmedName);
       if (slug.isNotEmpty) bySlug.putIfAbsent(slug, () => trimmedName);
     }
-    return [for (final e in bySlug.entries) {'name': e.value, 'slug': e.key}];
+    return [
+      for (final e in bySlug.entries) {'name': e.value, 'slug': e.key},
+    ];
   }
 
   /// Türkçe uyumlu basit slug oluşturma.
@@ -526,8 +558,18 @@ class SupabasePostRepository implements PostRepository {
   /// Türkçe karakterleri ASCII eşdeğerlerine çevirir ve URL-güvenli hale getirir.
   String _slugify(String input) {
     const trMap = {
-      'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u',
-      'Ç': 'c', 'Ğ': 'g', 'İ': 'i', 'Ö': 'o', 'Ş': 's', 'Ü': 'u',
+      'ç': 'c',
+      'ğ': 'g',
+      'ı': 'i',
+      'ö': 'o',
+      'ş': 's',
+      'ü': 'u',
+      'Ç': 'c',
+      'Ğ': 'g',
+      'İ': 'i',
+      'Ö': 'o',
+      'Ş': 's',
+      'Ü': 'u',
     };
 
     var slug = input.toLowerCase();

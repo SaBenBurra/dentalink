@@ -123,8 +123,10 @@ Future<void> _ensureInitialized() async {
 
 // Özet: Android'de sohbet bildirimlerini tek grupta toplar; kendisi titremez.
 Future<void> _updateSummary(AppLocalizations l10n) async {
-  final android = _plugin.resolvePlatformSpecificImplementation<
-      AndroidFlutterLocalNotificationsPlugin>();
+  final android = _plugin
+      .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin
+      >();
   final active = (await android?.getActiveNotifications() ?? const [])
       .where((n) => n.groupKey == _groupKey && n.tag != _summaryTag)
       .toList();
@@ -146,10 +148,9 @@ Future<void> _updateSummary(AppLocalizations l10n) async {
         l10n,
         tag: _summaryTag,
         summary: true,
-        style: InboxStyleInformation(
-          [for (final n in active) '${n.title ?? ''}  ${n.body ?? ''}'],
-          summaryText: summary,
-        ),
+        style: InboxStyleInformation([
+          for (final n in active) '${n.title ?? ''}  ${n.body ?? ''}',
+        ], summaryText: summary),
       ),
     ),
   );

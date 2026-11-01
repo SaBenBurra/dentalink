@@ -82,7 +82,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   void _nextStep() {
     FocusScope.of(context).unfocus();
     final state = ref.read(registerControllerProvider);
-    
+
     if (state.currentStep == 0 && state.selectedTitle == null) {
       // Validate first step title
       ScaffoldMessenger.of(context).showSnackBar(
@@ -99,17 +99,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         ),
       );
     }
-    
+
     try {
-      ref.read(registerControllerProvider.notifier).nextStep(_nameController.text);
+      ref
+          .read(registerControllerProvider.notifier)
+          .nextStep(_nameController.text);
       final newState = ref.read(registerControllerProvider);
-      
+
       if (newState.currentStep > state.currentStep) {
         _pageController.nextPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
-      } else if (state.currentStep == _totalSteps - 1 && newState.nameError == null) {
+      } else if (state.currentStep == _totalSteps - 1 &&
+          newState.nameError == null) {
         _completeRegistration();
       }
     } catch (e) {
@@ -120,7 +123,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   void _prevStep() {
     FocusScope.of(context).unfocus();
     final state = ref.read(registerControllerProvider);
-    
+
     if (state.currentStep > 0) {
       ref.read(registerControllerProvider.notifier).prevStep();
       _pageController.previousPage(
@@ -137,14 +140,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Future<void> _completeRegistration() async {
     _setAuthRedirectHold(true);
     try {
-      await ref.read(registerControllerProvider.notifier).completeRegistration(
-        fullName: _nameController.text.trim(),
-        bio: _bioController.text.trim(),
-        university: _uniController.text.trim(),
-        city: _cityController.text.trim(),
-        workplace: _clinicController.text.trim(),
-        experienceYearsStr: _expController.text.trim(),
-      );
+      await ref
+          .read(registerControllerProvider.notifier)
+          .completeRegistration(
+            fullName: _nameController.text.trim(),
+            bio: _bioController.text.trim(),
+            university: _uniController.text.trim(),
+            city: _cityController.text.trim(),
+            workplace: _clinicController.text.trim(),
+            experienceYearsStr: _expController.text.trim(),
+          );
 
       if (!mounted) return;
 
@@ -156,8 +161,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         transitionDuration: const Duration(milliseconds: 450),
         pageBuilder: (context, anim1, anim2) => const SizedBox.shrink(),
         transitionBuilder: (context, anim1, anim2, child) {
-          final scale = Tween<double>(begin: 0.8, end: 1.0)
-              .animate(CurvedAnimation(parent: anim1, curve: Curves.elasticOut));
+          final scale = Tween<double>(
+            begin: 0.8,
+            end: 1.0,
+          ).animate(CurvedAnimation(parent: anim1, curve: Curves.elasticOut));
           return RegisterDialog(scale: scale);
         },
       );
@@ -224,7 +231,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             width: 380,
             height: 380,
           ),
-          
+
           SafeArea(
             child: Column(
               children: [
@@ -240,7 +247,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     controller: _pageController,
                     physics: const NeverScrollableScrollPhysics(),
                     onPageChanged: (int page) {
-                      ref.read(registerControllerProvider.notifier).setStep(page);
+                      ref
+                          .read(registerControllerProvider.notifier)
+                          .setStep(page);
                     },
                     children: [
                       RegisterStepOne(
@@ -249,17 +258,23 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         nameFocusNode: _nameFocusNode,
                         selectedTitle: state.selectedTitle,
                         onNameChanged: (val) {
-                          ref.read(registerControllerProvider.notifier).clearNameError();
+                          ref
+                              .read(registerControllerProvider.notifier)
+                              .clearNameError();
                         },
                         onTitleSelected: (title) {
                           // Uyarı giderildi; floating SnackBar "Devam Et"i örtmesin.
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          ref.read(registerControllerProvider.notifier).setTitle(title);
+                          ref
+                              .read(registerControllerProvider.notifier)
+                              .setTitle(title);
                         },
                         acceptedTerms: state.acceptedTerms,
                         onAcceptedTermsChanged: (value) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          ref.read(registerControllerProvider.notifier).setAcceptedTerms(value);
+                          ref
+                              .read(registerControllerProvider.notifier)
+                              .setAcceptedTerms(value);
                         },
                       ),
                       RegisterStepTwo(
@@ -277,7 +292,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         bioController: _bioController,
                         bioFocusNode: _bioFocusNode,
                         onImageFilePicked: (File? file) {
-                          ref.read(registerControllerProvider.notifier).setImageFile(file);
+                          ref
+                              .read(registerControllerProvider.notifier)
+                              .setImageFile(file);
                         },
                       ),
                     ],

@@ -14,10 +14,7 @@ void main() {
 
   group('ConversationModel -', () {
     test('constructor sets correct defaults', () {
-      final conv = ConversationModel(
-        id: 'conv-1',
-        otherUser: otherUser,
-      );
+      final conv = ConversationModel(id: 'conv-1', otherUser: otherUser);
 
       expect(conv.id, 'conv-1');
       expect(conv.otherUser.id, 'user-other');
@@ -61,7 +58,9 @@ void main() {
     test('equality: same id means equal', () {
       final a = ConversationModel(id: 'conv-1', otherUser: otherUser);
       final b = ConversationModel(
-        id: 'conv-1', otherUser: otherUser, unreadCount: 99,
+        id: 'conv-1',
+        otherUser: otherUser,
+        unreadCount: 99,
       );
       expect(a, equals(b));
     });

@@ -43,10 +43,12 @@ class _FakeUserRepo implements UserRepository {
 }
 
 ProviderContainer _container(MockAuthForTest auth, _FakeUserRepo repo) {
-  final container = ProviderContainer(overrides: [
-    authRepositoryProvider.overrideWithValue(auth),
-    userRepositoryProvider.overrideWithValue(repo),
-  ]);
+  final container = ProviderContainer(
+    overrides: [
+      authRepositoryProvider.overrideWithValue(auth),
+      userRepositoryProvider.overrideWithValue(repo),
+    ],
+  );
   addTearDown(container.dispose);
   container.listen(editProfileProvider, (_, _) {});
   return container;
@@ -58,7 +60,9 @@ void main() {
     final container = _container(MockAuthForTest(), repo);
     await container.read(authProvider.future);
 
-    await container.read(editProfileProvider.notifier).saveProfile(
+    await container
+        .read(editProfileProvider.notifier)
+        .saveProfile(
           fullName: '  A  ',
           title: UserTitle.ogrenci,
           experience: ' 3 ',
@@ -66,7 +70,10 @@ void main() {
         );
 
     expect(container.read(editProfileProvider).hasError, isFalse);
-    expect(repo.calls, ['upload:mock_test_user_id', 'update:mock_test_user_id']);
+    expect(repo.calls, [
+      'upload:mock_test_user_id',
+      'update:mock_test_user_id',
+    ]);
     expect(repo.experienceYears, 3);
     expect(repo.fullName, 'A'); // UX-10
   });
@@ -81,6 +88,9 @@ void main() {
         .read(editProfileProvider.notifier)
         .saveProfile(fullName: 'A', title: UserTitle.ogrenci);
 
-    expect(container.read(editProfileProvider).error, isA<AuthRequiredFailure>());
+    expect(
+      container.read(editProfileProvider).error,
+      isA<AuthRequiredFailure>(),
+    );
   });
 }

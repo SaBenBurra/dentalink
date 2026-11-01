@@ -1,6 +1,7 @@
 /// DentLink — Tüm domain enum tanımları.
 /// Faz 3'te Supabase'in PostgreSQL enum'larıyla eşleştirilir.
 library;
+
 enum UserTitle {
   ogrenci,
   disHekimi,
@@ -95,70 +96,186 @@ enum DentalBranch {
 enum TreatmentType {
   // endodonti
   kanalTedavisi('kanal-tedavisi', 'kanal-tedavisi', DentalBranch.endodonti),
-  yenidenKanalTedavisi('yeniden-kanal-tedavisi', 'yeniden-kanal-tedavisi', DentalBranch.endodonti),
-  vitalPulpaTedavisi('vital-pulpa-tedavisi', 'vital-pulpa-tedavisi', DentalBranch.endodonti),
+  yenidenKanalTedavisi(
+    'yeniden-kanal-tedavisi',
+    'yeniden-kanal-tedavisi',
+    DentalBranch.endodonti,
+  ),
+  vitalPulpaTedavisi(
+    'vital-pulpa-tedavisi',
+    'vital-pulpa-tedavisi',
+    DentalBranch.endodonti,
+  ),
   apeksifikasyon('apeksifikasyon', 'apeksifikasyon', DentalBranch.endodonti),
-  rejeneratifEndodonti('rejeneratif-endodonti', 'rejeneratif-endodonti', DentalBranch.endodonti),
-  endodontikCerrahi('endodontik-cerrahi', 'endodontik-cerrahi', DentalBranch.endodonti),
+  rejeneratifEndodonti(
+    'rejeneratif-endodonti',
+    'rejeneratif-endodonti',
+    DentalBranch.endodonti,
+  ),
+  endodontikCerrahi(
+    'endodontik-cerrahi',
+    'endodontik-cerrahi',
+    DentalBranch.endodonti,
+  ),
   // restoratifDisTedavisi
   kompozit('kompozit', 'kompozit', DentalBranch.restoratifDisTedavisi),
-  indirektRestorasyon('indirekt-restorasyon', 'indirekt-restorasyon', DentalBranch.restoratifDisTedavisi),
-  kompozitVeneer('kompozit-veneer', 'kompozit-veneer', DentalBranch.restoratifDisTedavisi),
+  indirektRestorasyon(
+    'indirekt-restorasyon',
+    'indirekt-restorasyon',
+    DentalBranch.restoratifDisTedavisi,
+  ),
+  kompozitVeneer(
+    'kompozit-veneer',
+    'kompozit-veneer',
+    DentalBranch.restoratifDisTedavisi,
+  ),
   beyazlatma('beyazlatma', 'beyazlatma', DentalBranch.restoratifDisTedavisi),
   diastema('diastema', 'diastema', DentalBranch.restoratifDisTedavisi),
-  gulusTasarimi('gulus-tasarimi', 'gülüş-tasarımı', DentalBranch.restoratifDisTedavisi),
+  gulusTasarimi(
+    'gulus-tasarimi',
+    'gülüş-tasarımı',
+    DentalBranch.restoratifDisTedavisi,
+  ),
   // protetikDisTedavisi
   kron('kron', 'kron', DentalBranch.protetikDisTedavisi),
   kopru('kopru', 'köprü', DentalBranch.protetikDisTedavisi),
-  lamineVeneer('lamine-veneer', 'lamine-veneer', DentalBranch.protetikDisTedavisi),
+  lamineVeneer(
+    'lamine-veneer',
+    'lamine-veneer',
+    DentalBranch.protetikDisTedavisi,
+  ),
   totalProtez('total-protez', 'total-protez', DentalBranch.protetikDisTedavisi),
-  parsiyelProtez('parsiyel-protez', 'parsiyel-protez', DentalBranch.protetikDisTedavisi),
-  implantUstuProtez('implant-ustu-protez', 'implant-üstü-protez', DentalBranch.protetikDisTedavisi),
-  tamAgizRehabilitasyonu('tam-agiz-rehabilitasyonu', 'tam-ağız-rehabilitasyonu', DentalBranch.protetikDisTedavisi),
+  parsiyelProtez(
+    'parsiyel-protez',
+    'parsiyel-protez',
+    DentalBranch.protetikDisTedavisi,
+  ),
+  implantUstuProtez(
+    'implant-ustu-protez',
+    'implant-üstü-protez',
+    DentalBranch.protetikDisTedavisi,
+  ),
+  tamAgizRehabilitasyonu(
+    'tam-agiz-rehabilitasyonu',
+    'tam-ağız-rehabilitasyonu',
+    DentalBranch.protetikDisTedavisi,
+  ),
   gecePlagi('gece-plagi', 'gece-plağı', DentalBranch.protetikDisTedavisi),
   // agizDisCeneCerrahisi
   disCekimi('dis-cekimi', 'diş-çekimi', DentalBranch.agizDisCeneCerrahisi),
   gomuluDis('gomulu-dis', 'gömülü-diş', DentalBranch.agizDisCeneCerrahisi),
   implant('implant', 'implant', DentalBranch.agizDisCeneCerrahisi),
-  sinusLifting('sinus-lifting', 'sinüs-lifting', DentalBranch.agizDisCeneCerrahisi),
-  kemikGrefti('kemik-grefti', 'kemik-grefti', DentalBranch.agizDisCeneCerrahisi),
+  sinusLifting(
+    'sinus-lifting',
+    'sinüs-lifting',
+    DentalBranch.agizDisCeneCerrahisi,
+  ),
+  kemikGrefti(
+    'kemik-grefti',
+    'kemik-grefti',
+    DentalBranch.agizDisCeneCerrahisi,
+  ),
   kist('kist', 'kist', DentalBranch.agizDisCeneCerrahisi),
-  apikalRezeksiyon('apikal-rezeksiyon', 'apikal-rezeksiyon', DentalBranch.agizDisCeneCerrahisi),
-  ortognatikCerrahi('ortognatik-cerrahi', 'ortognatik-cerrahi', DentalBranch.agizDisCeneCerrahisi),
+  apikalRezeksiyon(
+    'apikal-rezeksiyon',
+    'apikal-rezeksiyon',
+    DentalBranch.agizDisCeneCerrahisi,
+  ),
+  ortognatikCerrahi(
+    'ortognatik-cerrahi',
+    'ortognatik-cerrahi',
+    DentalBranch.agizDisCeneCerrahisi,
+  ),
   ceneKirigi('cene-kirigi', 'çene-kırığı', DentalBranch.agizDisCeneCerrahisi),
   // periodontoloji
   disTasi('dis-tasi', 'diş-taşı', DentalBranch.periodontoloji),
-  kokYuzeyiDuzlestirme('kok-yuzeyi-duzlestirme', 'kök-yüzeyi-düzleştirme', DentalBranch.periodontoloji),
-  flepOperasyonu('flep-operasyonu', 'flep-operasyonu', DentalBranch.periodontoloji),
-  rejeneratifPeriodontalTedavi('rejeneratif-periodontal-tedavi', 'rejeneratif-periodontal-tedavi', DentalBranch.periodontoloji),
-  bagDokusuGrefti('bag-dokusu-grefti', 'bağ-dokusu-grefti', DentalBranch.periodontoloji),
-  serbestDisetiGrefti('serbest-diseti-grefti', 'serbest-dişeti-grefti', DentalBranch.periodontoloji),
-  kronBoyuUzatma('kron-boyu-uzatma', 'kron-boyu-uzatma', DentalBranch.periodontoloji),
+  kokYuzeyiDuzlestirme(
+    'kok-yuzeyi-duzlestirme',
+    'kök-yüzeyi-düzleştirme',
+    DentalBranch.periodontoloji,
+  ),
+  flepOperasyonu(
+    'flep-operasyonu',
+    'flep-operasyonu',
+    DentalBranch.periodontoloji,
+  ),
+  rejeneratifPeriodontalTedavi(
+    'rejeneratif-periodontal-tedavi',
+    'rejeneratif-periodontal-tedavi',
+    DentalBranch.periodontoloji,
+  ),
+  bagDokusuGrefti(
+    'bag-dokusu-grefti',
+    'bağ-dokusu-grefti',
+    DentalBranch.periodontoloji,
+  ),
+  serbestDisetiGrefti(
+    'serbest-diseti-grefti',
+    'serbest-dişeti-grefti',
+    DentalBranch.periodontoloji,
+  ),
+  kronBoyuUzatma(
+    'kron-boyu-uzatma',
+    'kron-boyu-uzatma',
+    DentalBranch.periodontoloji,
+  ),
   gingivektomi('gingivektomi', 'gingivektomi', DentalBranch.periodontoloji),
-  periImplantitis('peri-implantitis', 'peri-implantitis', DentalBranch.periodontoloji),
+  periImplantitis(
+    'peri-implantitis',
+    'peri-implantitis',
+    DentalBranch.periodontoloji,
+  ),
   // ortodonti
   braket('braket', 'braket', DentalBranch.ortodonti),
   seffafPlak('seffaf-plak', 'şeffaf-plak', DentalBranch.ortodonti),
-  fonksiyonelAparey('fonksiyonel-aparey', 'fonksiyonel-aparey', DentalBranch.ortodonti),
-  hizliUstCeneGenisletme('hizli-ust-cene-genisletme', 'hızlı-üst-çene-genişletme', DentalBranch.ortodonti),
-  interseptifOrtodonti('interseptif-ortodonti', 'interseptif-ortodonti', DentalBranch.ortodonti),
+  fonksiyonelAparey(
+    'fonksiyonel-aparey',
+    'fonksiyonel-aparey',
+    DentalBranch.ortodonti,
+  ),
+  hizliUstCeneGenisletme(
+    'hizli-ust-cene-genisletme',
+    'hızlı-üst-çene-genişletme',
+    DentalBranch.ortodonti,
+  ),
+  interseptifOrtodonti(
+    'interseptif-ortodonti',
+    'interseptif-ortodonti',
+    DentalBranch.ortodonti,
+  ),
   miniVida('mini-vida', 'mini-vida', DentalBranch.ortodonti),
   pekistirme('pekistirme', 'pekiştirme', DentalBranch.ortodonti),
   // pedodonti
   pulpotomi('pulpotomi', 'pulpotomi', DentalBranch.pedodonti),
-  sutDisiKanalTedavisi('sut-disi-kanal-tedavisi', 'süt-dişi-kanal-tedavisi', DentalBranch.pedodonti),
+  sutDisiKanalTedavisi(
+    'sut-disi-kanal-tedavisi',
+    'süt-dişi-kanal-tedavisi',
+    DentalBranch.pedodonti,
+  ),
   fissurOrtucu('fissur-ortucu', 'fissür-örtücü', DentalBranch.pedodonti),
   florUygulamasi('flor-uygulamasi', 'flor-uygulaması', DentalBranch.pedodonti),
   yerTutucu('yer-tutucu', 'yer-tutucu', DentalBranch.pedodonti),
-  paslanmazCelikKuron('paslanmaz-celik-kuron', 'paslanmaz-çelik-kuron', DentalBranch.pedodonti),
+  paslanmazCelikKuron(
+    'paslanmaz-celik-kuron',
+    'paslanmaz-çelik-kuron',
+    DentalBranch.pedodonti,
+  ),
   disTravmasi('dis-travmasi', 'diş-travması', DentalBranch.pedodonti),
   genelAnestezi('genel-anestezi', 'genel-anestezi', DentalBranch.pedodonti),
   // agizDisCeneRadyolojisi
   panoramik('panoramik', 'panoramik', DentalBranch.agizDisCeneRadyolojisi),
-  periapikalRontgen('periapikal-rontgen', 'periapikal-röntgen', DentalBranch.agizDisCeneRadyolojisi),
+  periapikalRontgen(
+    'periapikal-rontgen',
+    'periapikal-röntgen',
+    DentalBranch.agizDisCeneRadyolojisi,
+  ),
   bitewing('bitewing', 'bitewing', DentalBranch.agizDisCeneRadyolojisi),
   cbct('cbct', 'cbct', DentalBranch.agizDisCeneRadyolojisi),
-  sefalometrikRontgen('sefalometrik-rontgen', 'sefalometrik-röntgen', DentalBranch.agizDisCeneRadyolojisi);
+  sefalometrikRontgen(
+    'sefalometrik-rontgen',
+    'sefalometrik-röntgen',
+    DentalBranch.agizDisCeneRadyolojisi,
+  );
 
   /// `treatment_types.code` (etiketin slug'ı).
   final String dbValue;
@@ -169,8 +286,10 @@ enum TreatmentType {
 
   const TreatmentType(this.dbValue, this.tag, this.branch);
 
-  static List<TreatmentType> forBranch(DentalBranch branch) =>
-      [for (final t in values) if (t.branch == branch) t];
+  static List<TreatmentType> forBranch(DentalBranch branch) => [
+    for (final t in values)
+      if (t.branch == branch) t,
+  ];
 
   static TreatmentType? tryFromDbValue(String? value) {
     for (final e in values) {
@@ -220,12 +339,7 @@ enum PostType {
 // Gönderi Menü Aksiyonları
 // ─────────────────────────────────────────────────────────────────────────────
 
-enum PostMenuAction {
-  edit,
-  delete,
-  report,
-  block;
-}
+enum PostMenuAction { edit, delete, report, block }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Raporlama (reports tablosu CHECK değerleriyle eşleşir, migration 023)

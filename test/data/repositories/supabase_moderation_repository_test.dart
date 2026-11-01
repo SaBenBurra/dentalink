@@ -24,8 +24,9 @@ void main() {
     when(user.id).thenReturn('me');
     when(auth.currentUser).thenReturn(user);
     when(client.from(any)).thenAnswer((_) => query);
-    when(query.insert(any, defaultToNull: anyNamed('defaultToNull')))
-        .thenAnswer((_) => insert);
+    when(
+      query.insert(any, defaultToNull: anyNamed('defaultToNull')),
+    ).thenAnswer((_) => insert);
     repo = SupabaseModerationRepository(client: client);
   });
 
@@ -36,45 +37,64 @@ void main() {
           ? Future<List<Map<String, dynamic>>>.value([])
           : Future<List<Map<String, dynamic>>>.error(error);
       return result.then(
-        inv.positionalArguments[0] as dynamic Function(List<Map<String, dynamic>>),
+        inv.positionalArguments[0]
+            as dynamic Function(List<Map<String, dynamic>>),
         onError: inv.namedArguments[#onError] as Function?,
       );
     });
   }
 
-  test('report: DB değerleriyle reports satırı ekler, boş not gönderilmez', () async {
-    insertResult();
-    await repo.report(ReportTarget.post, 'p1', ReportReason.patientPrivacy, note: '  ');
+  test(
+    'report: DB değerleriyle reports satırı ekler, boş not gönderilmez',
+    () async {
+      insertResult();
+      await repo.report(
+        ReportTarget.post,
+        'p1',
+        ReportReason.patientPrivacy,
+        note: '  ',
+      );
 
-    verify(client.from('reports')).called(1);
-    final row = verify(query.insert(captureAny, defaultToNull: anyNamed('defaultToNull')))
-        .captured
-        .single;
-    expect(row, {
-      'reporter_id': 'me',
-      'target_type': 'post',
-      'target_id': 'p1',
-      'reason': 'patient_privacy',
-    });
-  });
+      verify(client.from('reports')).called(1);
+      final row = verify(
+        query.insert(captureAny, defaultToNull: anyNamed('defaultToNull')),
+      ).captured.single;
+      expect(row, {
+        'reporter_id': 'me',
+        'target_type': 'post',
+        'target_id': 'p1',
+        'reason': 'patient_privacy',
+      });
+    },
+  );
 
   test('aynı hedefi ikinci kez raporlamak (23505) hata vermez', () async {
-    insertResult(error: const PostgrestException(message: 'dup', code: '23505'));
+    insertResult(
+      error: const PostgrestException(message: 'dup', code: '23505'),
+    );
     await repo.report(ReportTarget.user, 'u1', ReportReason.spam);
   });
 
   test('blockUser: diğer DB hataları AppFailure olur', () async {
-    insertResult(error: const PostgrestException(message: 'rls', code: '42501'));
-    await expectLater(repo.blockUser('u1'), throwsA(isA<PermissionDeniedFailure>()));
-    final row = verify(query.insert(captureAny, defaultToNull: anyNamed('defaultToNull')))
-        .captured
-        .single;
+    insertResult(
+      error: const PostgrestException(message: 'rls', code: '42501'),
+    );
+    await expectLater(
+      repo.blockUser('u1'),
+      throwsA(isA<PermissionDeniedFailure>()),
+    );
+    final row = verify(
+      query.insert(captureAny, defaultToNull: anyNamed('defaultToNull')),
+    ).captured.single;
     expect(row, {'blocker_id': 'me', 'blocked_id': 'u1'});
   });
 
   test('oturum yoksa istek atılmaz', () async {
     when(auth.currentUser).thenReturn(null);
-    await expectLater(repo.blockUser('u1'), throwsA(isA<AuthRequiredFailure>()));
+    await expectLater(
+      repo.blockUser('u1'),
+      throwsA(isA<AuthRequiredFailure>()),
+    );
     verifyNever(client.from(any));
   });
 }

@@ -15,7 +15,11 @@ import '../../../../../providers/auth_provider.dart';
 import '../../../../../data/models/enums.dart';
 
 class CommentLikeButton extends StatelessWidget {
-  const CommentLikeButton({super.key, required this.comment, required this.onTap});
+  const CommentLikeButton({
+    super.key,
+    required this.comment,
+    required this.onTap,
+  });
   final CommentModel comment;
   final VoidCallback onTap;
 
@@ -25,7 +29,9 @@ class CommentLikeButton extends StatelessWidget {
     final color = comment.isLiked ? AppColors.like : cs.onSurfaceVariant;
     return Semantics(
       button: true,
-      label: comment.isLiked ? AppLocalizations.of(context)!.unlike : AppLocalizations.of(context)!.like,
+      label: comment.isLiked
+          ? AppLocalizations.of(context)!.unlike
+          : AppLocalizations.of(context)!.like,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
@@ -36,7 +42,9 @@ class CommentLikeButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                comment.isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                comment.isLiked
+                    ? Icons.favorite_rounded
+                    : Icons.favorite_border_rounded,
                 size: 16,
                 color: color,
               ),
@@ -46,7 +54,9 @@ class CommentLikeButton extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   color: color,
-                  fontWeight: comment.isLiked ? FontWeight.bold : FontWeight.normal,
+                  fontWeight: comment.isLiked
+                      ? FontWeight.bold
+                      : FontWeight.normal,
                 ),
               ),
             ],
@@ -78,7 +88,8 @@ class _CommentTextAction extends StatelessWidget {
       icon: Icon(icon, size: 16),
       label: Text(label, style: const TextStyle(fontSize: 11)),
       style: TextButton.styleFrom(
-        foregroundColor: color ?? Theme.of(context).colorScheme.onSurfaceVariant,
+        foregroundColor:
+            color ?? Theme.of(context).colorScheme.onSurfaceVariant,
         padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing8),
         minimumSize: const Size(40, 40), // 40px touch target
         tapTargetSize: MaterialTapTargetSize.shrinkWrap, // satır 48'e şişmesin
@@ -101,9 +112,7 @@ class _BestAnswerBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.success.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(
-          color: AppColors.success.withValues(alpha: 0.4),
-        ),
+        border: Border.all(color: AppColors.success.withValues(alpha: 0.4)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -140,7 +149,9 @@ class CommentEmptyState extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing32),
       alignment: Alignment.center,
       child: Text(
-        isCase ? AppLocalizations.of(context)!.noCommentsYet : AppLocalizations.of(context)!.noAnswersYet,
+        isCase
+            ? AppLocalizations.of(context)!.noCommentsYet
+            : AppLocalizations.of(context)!.noAnswersYet,
         style: textTheme.bodyMedium?.copyWith(
           color: colorScheme.onSurfaceVariant,
         ),
@@ -186,9 +197,9 @@ class CommentCard extends ConsumerWidget {
       }
       scaffold.showSnackBar(
         SnackBar(
-          content: Text(unmark
-              ? l10n.bestAnswerUnmarked
-              : l10n.bestAnswerMarked),
+          content: Text(
+            unmark ? l10n.bestAnswerUnmarked : l10n.bestAnswerMarked,
+          ),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -196,13 +207,17 @@ class CommentCard extends ConsumerWidget {
       scaffold.showSnackBar(SnackBar(content: Text(getErrorMessage(l10n, e))));
     }
   }
-  
+
   Future<void> _handleToggleLike(BuildContext context, WidgetRef ref) async {
     try {
       await commentThreadOf(ref, comment).toggleLike(comment.id);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, e))));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(getErrorMessage(AppLocalizations.of(context)!, e)),
+          ),
+        );
       }
     }
   }
@@ -294,7 +309,9 @@ class CommentCard extends ConsumerWidget {
           ? BoxDecoration(
               color: AppColors.success.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-              border: Border.all(color: AppColors.success.withValues(alpha: 0.5)),
+              border: Border.all(
+                color: AppColors.success.withValues(alpha: 0.5),
+              ),
             )
           : null,
       child: Column(
@@ -348,9 +365,13 @@ class CommentCard extends ConsumerWidget {
               if (isPostOwner && !isCase && comment.parentId == null)
                 _CommentTextAction(
                   icon: showBest ? Icons.close_rounded : Icons.verified_rounded,
-                  label: showBest ? l10n.unmarkSelection : l10n.markAsBestAnswer,
+                  label: showBest
+                      ? l10n.unmarkSelection
+                      : l10n.markAsBestAnswer,
                   onPressed: () => _handleMarkBest(context, ref),
-                  color: showBest ? colorScheme.onSurfaceVariant : AppColors.success,
+                  color: showBest
+                      ? colorScheme.onSurfaceVariant
+                      : AppColors.success,
                 ),
             ],
           ),

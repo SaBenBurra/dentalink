@@ -9,20 +9,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 PostModel _post(String id) => QuestionPostModel(
-      id: id,
-      userId: 'a',
-      title: 't',
-      content: 'c',
-      createdAt: DateTime(2024),
-      updatedAt: DateTime(2024),
-      author: UserModel(
-        id: 'a',
-        fullName: 'A',
-        username: 'a',
-        title: UserTitle.disHekimi,
-        createdAt: DateTime(2024),
-      ),
-    );
+  id: id,
+  userId: 'a',
+  title: 't',
+  content: 'c',
+  createdAt: DateTime(2024),
+  updatedAt: DateTime(2024),
+  author: UserModel(
+    id: 'a',
+    fullName: 'A',
+    username: 'a',
+    title: UserTitle.disHekimi,
+    createdAt: DateTime(2024),
+  ),
+);
 
 final _cursor = (createdAt: DateTime.utc(2024), id: 'p1');
 
@@ -43,27 +43,33 @@ class _TwoPageRepo implements PostRepository {
 }
 
 void main() {
-  test('loadMore ikinci sayfayı imleçle çekip ekler; sonra hasMore false', () async {
-    final repo = _TwoPageRepo();
-    final container = ProviderContainer(
-      overrides: [feedRepositoryProvider.overrideWithValue(repo)],
-    );
-    addTearDown(container.dispose);
-    container.listen(feedProvider, (_, _) {});
+  test(
+    'loadMore ikinci sayfayı imleçle çekip ekler; sonra hasMore false',
+    () async {
+      final repo = _TwoPageRepo();
+      final container = ProviderContainer(
+        overrides: [feedRepositoryProvider.overrideWithValue(repo)],
+      );
+      addTearDown(container.dispose);
+      container.listen(feedProvider, (_, _) {});
 
-    await container.read(feedProvider.future);
-    final notifier = container.read(feedProvider.notifier);
-    expect(notifier.hasMore, isTrue);
+      await container.read(feedProvider.future);
+      final notifier = container.read(feedProvider.notifier);
+      expect(notifier.hasMore, isTrue);
 
-    await notifier.loadMore();
+      await notifier.loadMore();
 
-    expect(repo.befores, [null, _cursor]);
-    expect(container.read(feedProvider).value!.map((p) => p.id), ['p1', 'p2']);
-    expect(notifier.hasMore, isFalse);
+      expect(repo.befores, [null, _cursor]);
+      expect(container.read(feedProvider).value!.map((p) => p.id), [
+        'p1',
+        'p2',
+      ]);
+      expect(notifier.hasMore, isFalse);
 
-    // Yenileme ilk sayfaya döner ve imleci yeniden kurar.
-    await notifier.refresh();
-    expect(container.read(feedProvider).value!.map((p) => p.id), ['p1']);
-    expect(notifier.hasMore, isTrue);
-  });
+      // Yenileme ilk sayfaya döner ve imleci yeniden kurar.
+      await notifier.refresh();
+      expect(container.read(feedProvider).value!.map((p) => p.id), ['p1']);
+      expect(notifier.hasMore, isTrue);
+    },
+  );
 }

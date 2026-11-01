@@ -16,6 +16,7 @@ import 'package:dentlink/core/constants/app_dimensions.dart';
 
 class ProfilePostsTab extends ConsumerWidget {
   final String userId;
+
   /// null: tüm türler ("Tümü" sekmesi).
   final PostType? type;
 
@@ -35,8 +36,11 @@ class ProfilePostsTab extends ConsumerWidget {
       notifier.patchPost(updated.id, (_) => updated);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, e))));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(getErrorMessage(AppLocalizations.of(context)!, e)),
+          ),
+        );
       }
     }
   }
@@ -66,7 +70,8 @@ class ProfilePostsTab extends ConsumerWidget {
           child: ListView.separated(
             padding: EdgeInsets.only(
               top: AppDimensions.spacing8,
-              bottom: AppDimensions.spacing8 + MediaQuery.paddingOf(context).bottom,
+              bottom:
+                  AppDimensions.spacing8 + MediaQuery.paddingOf(context).bottom,
             ),
             itemCount: posts.length + (hasMore ? 1 : 0),
             separatorBuilder: (context, index) => const Divider(),
@@ -82,7 +87,9 @@ class ProfilePostsTab extends ConsumerWidget {
                 post,
                 onLikeToggle: () => _run(context, ref, () {
                   final repo = ref.read(postActionRepositoryProvider);
-                  return post.isLiked ? repo.unlikePost(post.id) : repo.likePost(post.id);
+                  return post.isLiked
+                      ? repo.unlikePost(post.id)
+                      : repo.likePost(post.id);
                 }),
                 onBookmarkToggle: () => _run(context, ref, () {
                   final repo = ref.read(bookmarkRepositoryProvider);

@@ -69,8 +69,10 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
             .read(commentsProvider(widget.post.id).notifier)
             .addComment(text);
       } else {
-        await commentThreadOf(ref, replyTo.parent)
-            .addReply(replyTo.parent, text);
+        await commentThreadOf(
+          ref,
+          replyTo.parent,
+        ).addReply(replyTo.parent, text);
         replyTo.onSent();
       }
       if (!mounted) return;
@@ -129,11 +131,10 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
                     itemCount: comments.length + (hasMore ? 1 : 0),
                     // Yalnızca alt pay: üstteki boşluğu beğeni satırının iç payı (12dp) veriyor,
                     // böylece çizgiden yoruma iki yönde de 12dp kalıyor.
-                    separatorBuilder: (_, _) =>
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: AppDimensions.spacing8),
-                          child: Divider(height: 1),
-                        ),
+                    separatorBuilder: (_, _) => const Padding(
+                      padding: EdgeInsets.only(bottom: AppDimensions.spacing8),
+                      child: Divider(height: 1),
+                    ),
                     itemBuilder: (context, index) {
                       if (index == comments.length) {
                         return LoadMoreFooter(onLoadMore: notifier.loadMore);

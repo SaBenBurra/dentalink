@@ -49,7 +49,7 @@ final class ConflictFailure extends AppFailure {
 final class ServerFailure extends AppFailure {
   final String? code;
   final String? message;
-  
+
   const ServerFailure({this.code, this.message});
 
   @override

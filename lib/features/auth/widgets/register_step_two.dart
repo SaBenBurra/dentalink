@@ -65,7 +65,9 @@ class RegisterStepTwo extends StatelessWidget {
             focusNode: uniFocusNode,
             hintText: AppLocalizations.of(context)!.university,
             icon: Icons.school_outlined,
-            inputFormatters: [LengthLimitingTextInputFormatter(ProfileLimits.text)],
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(ProfileLimits.text),
+            ],
           ),
           const SizedBox(height: AppDimensions.spacing16),
 
@@ -75,7 +77,9 @@ class RegisterStepTwo extends StatelessWidget {
             focusNode: cityFocusNode,
             hintText: AppLocalizations.of(context)!.city,
             icon: Icons.location_on_outlined,
-            inputFormatters: [LengthLimitingTextInputFormatter(ProfileLimits.text)],
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(ProfileLimits.text),
+            ],
           ),
           const SizedBox(height: AppDimensions.spacing16),
 
@@ -85,7 +89,9 @@ class RegisterStepTwo extends StatelessWidget {
             focusNode: clinicFocusNode,
             hintText: AppLocalizations.of(context)!.workplace,
             icon: Icons.business_outlined,
-            inputFormatters: [LengthLimitingTextInputFormatter(ProfileLimits.text)],
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(ProfileLimits.text),
+            ],
           ),
           const SizedBox(height: AppDimensions.spacing16),
 

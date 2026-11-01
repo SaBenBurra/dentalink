@@ -94,17 +94,21 @@ class PushController {
   void _onForeground(RemoteMessage message) {
     final path = _router.routerDelegate.currentConfiguration.uri.path;
     if (path == '/chat/${message.data['actor_id']}') return;
-    showMessageNotification(message.data).catchError(
-      (Object e) => debugPrint('push foreground: $e'),
-    );
+    showMessageNotification(
+      message.data,
+    ).catchError((Object e) => debugPrint('push foreground: $e'));
   }
 
   void _open(Map<String, dynamic> data) {
     final route = pushRoute(data);
     if (route == null) return;
     // Soğuk açılışta router önce /login → /feed yönlendirmesini yapar; ondan sonra aç.
-    bool ready() => !const {'/', '/login', '/register', '/auth-error'}
-        .contains(_router.routerDelegate.currentConfiguration.uri.path);
+    bool ready() => !const {
+      '/',
+      '/login',
+      '/register',
+      '/auth-error',
+    }.contains(_router.routerDelegate.currentConfiguration.uri.path);
     if (ready()) {
       _router.push(route);
       return;

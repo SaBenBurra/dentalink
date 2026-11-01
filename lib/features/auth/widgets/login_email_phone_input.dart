@@ -47,7 +47,9 @@ class LoginEmailPhoneInput extends StatelessWidget {
       bgOpacityColor = AppColors.error.withValues(alpha: isDark ? 0.08 : 0.03);
     } else if (hasFocus) {
       borderColor = Theme.of(context).colorScheme.primary;
-      bgOpacityColor = Theme.of(context).colorScheme.primary.withValues(alpha: isDark ? 0.15 : 0.08);
+      bgOpacityColor = Theme.of(
+        context,
+      ).colorScheme.primary.withValues(alpha: isDark ? 0.15 : 0.08);
     }
 
     return Column(
@@ -64,7 +66,9 @@ class LoginEmailPhoneInput extends StatelessWidget {
             boxShadow: hasFocus
                 ? [
                     BoxShadow(
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.1),
                       blurRadius: 16,
                       offset: const Offset(0, 4),
                     ),
@@ -145,7 +149,9 @@ class LoginEmailPhoneInput extends StatelessWidget {
           height: 20,
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
       );

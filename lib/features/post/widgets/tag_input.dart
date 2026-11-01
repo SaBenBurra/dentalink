@@ -48,7 +48,10 @@ class _TagInputState extends State<TagInput> {
   @override
   void initState() {
     super.initState();
-    _tags = [for (final t in widget.initialTags) if (t != widget.lockedTag) t];
+    _tags = [
+      for (final t in widget.initialTags)
+        if (t != widget.lockedTag) t,
+    ];
   }
 
   @override
@@ -57,7 +60,9 @@ class _TagInputState extends State<TagInput> {
     if (widget.lockedTag == old.lockedTag) return;
     _tags.remove(widget.lockedTag);
     // Sabit etiket bir yer kaplar; sınır aşılırsa sondaki etiket düşer.
-    if (_isOver) _tags.removeRange(TagInput.maxTags - _lockedCount, _tags.length);
+    if (_isOver) {
+      _tags.removeRange(TagInput.maxTags - _lockedCount, _tags.length);
+    }
     // Üst bileşen build ederken setState çağrılmasın.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _emit();
@@ -170,26 +175,33 @@ class _TagInputState extends State<TagInput> {
                       Semantics(
                         label: AppLocalizations.of(context)!.treatmentTagLocked,
                         child: Chip(
-                          avatar: Icon(Icons.lock_outline, size: 16, color: colorScheme.onSecondaryContainer),
+                          avatar: Icon(
+                            Icons.lock_outline,
+                            size: 16,
+                            color: colorScheme.onSecondaryContainer,
+                          ),
                           label: Text('#$locked'),
-                          labelStyle: TextStyle(color: colorScheme.onSecondaryContainer),
+                          labelStyle: TextStyle(
+                            color: colorScheme.onSecondaryContainer,
+                          ),
                           backgroundColor: colorScheme.secondaryContainer,
                           side: BorderSide.none,
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
                         ),
                       ),
                     ..._tags.map((tag) {
-                    return InputChip(
-                      label: Text('#$tag'),
-                      labelStyle: TextStyle(color: colorScheme.secondary),
-                      backgroundColor: colorScheme.secondary.withValues(
-                        alpha: 0.12,
-                      ),
-                      side: BorderSide.none,
-                      deleteIconColor: colorScheme.secondary,
-                      onDeleted: () => _removeTag(tag),
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    );
+                      return InputChip(
+                        label: Text('#$tag'),
+                        labelStyle: TextStyle(color: colorScheme.secondary),
+                        backgroundColor: colorScheme.secondary.withValues(
+                          alpha: 0.12,
+                        ),
+                        side: BorderSide.none,
+                        deleteIconColor: colorScheme.secondary,
+                        onDeleted: () => _removeTag(tag),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      );
                     }),
                   ],
                 ),

@@ -169,7 +169,10 @@ class SettingsScreen extends ConsumerWidget {
   }) {
     final isSelected = mode == current;
     return ListTile(
-      leading: Icon(icon, color: isSelected ? Theme.of(context).colorScheme.primary : null),
+      leading: Icon(
+        icon,
+        color: isSelected ? Theme.of(context).colorScheme.primary : null,
+      ),
       title: Text(
         label,
         style: TextStyle(
@@ -178,7 +181,10 @@ class SettingsScreen extends ConsumerWidget {
         ),
       ),
       trailing: isSelected
-          ? Icon(Icons.check_rounded, color: Theme.of(context).colorScheme.primary)
+          ? Icon(
+              Icons.check_rounded,
+              color: Theme.of(context).colorScheme.primary,
+            )
           : null,
       onTap: () {
         ref.read(themeModeProvider.notifier).setThemeMode(mode);
@@ -289,7 +295,10 @@ class SettingsScreen extends ConsumerWidget {
         ),
       ),
       trailing: isSelected
-          ? Icon(Icons.check_rounded, color: Theme.of(context).colorScheme.primary)
+          ? Icon(
+              Icons.check_rounded,
+              color: Theme.of(context).colorScheme.primary,
+            )
           : null,
       onTap: () {
         ref.read(localeModeProvider.notifier).setLocale(locale);
@@ -345,7 +354,9 @@ class SettingsScreen extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: Theme.of(ctx).colorScheme.error),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(ctx).colorScheme.error,
+            ),
             child: Text(l10n.settingsLogout),
           ),
         ],

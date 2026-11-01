@@ -68,6 +68,7 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
     CasePostModel(:final treatment) => treatment,
     _ => null,
   };
+
   /// "Diğer" seçiliyse yazılan ad.
   late String? _other = switch (widget.post) {
     CasePostModel(:final otherTreatment) => otherTreatment,
@@ -145,7 +146,10 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
           title: Text(l10n.editPost),
           actions: [
             TextButton(
-              onPressed: _saving || (isCase && _treatment == null && _otherTag == null) ? null : _save,
+              onPressed:
+                  _saving || (isCase && _treatment == null && _otherTag == null)
+                  ? null
+                  : _save,
               child: _saving
                   ? const SizedBox(
                       width: 20,

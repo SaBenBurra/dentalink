@@ -13,7 +13,9 @@ void main() {
   group('Pager', () {
     test('ilk sayfa imleci kaydeder; son sayfada hasMore false olur', () async {
       final pager = Pager<int>();
-      final items = <int>[...pager.first((items: [1, 2], next: _c1))];
+      final items = <int>[
+        ...pager.first((items: [1, 2], next: _c1)),
+      ];
       expect(pager.hasMore, isTrue);
 
       PageCursor? asked;
@@ -78,19 +80,21 @@ void main() {
   });
 
   group('keyset', () {
-    test('imleç (created_at, id) ikilisiyle eşitlikte id kırıcısı kullanır', () {
-      expect(
-        keysetFilter(_c1),
-        'created_at.lt."2026-10-25T10:00:00.000123Z",'
-        'and(created_at.eq."2026-10-25T10:00:00.000123Z",id.lt.b)',
-      );
-      expect(
-        keysetFilter(_c1, ascending: true),
-        'created_at.gt."2026-10-25T10:00:00.000123Z",'
-        'and(created_at.eq."2026-10-25T10:00:00.000123Z",id.gt.b)',
-      );
-    });
-
+    test(
+      'imleç (created_at, id) ikilisiyle eşitlikte id kırıcısı kullanır',
+      () {
+        expect(
+          keysetFilter(_c1),
+          'created_at.lt."2026-10-25T10:00:00.000123Z",'
+          'and(created_at.eq."2026-10-25T10:00:00.000123Z",id.lt.b)',
+        );
+        expect(
+          keysetFilter(_c1, ascending: true),
+          'created_at.gt."2026-10-25T10:00:00.000123Z",'
+          'and(created_at.eq."2026-10-25T10:00:00.000123Z",id.gt.b)',
+        );
+      },
+    );
 
     test('imleçli sayfa indeks için created_at sınırını da gönderir', () async {
       final sent = <Uri>[];
@@ -99,7 +103,12 @@ void main() {
         'anon',
         httpClient: MockClient((req) async {
           sent.add(req.url);
-          return http.Response('[]', 200, request: req, headers: {'content-type': 'application/json'});
+          return http.Response(
+            '[]',
+            200,
+            request: req,
+            headers: {'content-type': 'application/json'},
+          );
         }),
       );
       await client.from('posts').select('id').pageBefore(_c1);
@@ -113,14 +122,22 @@ void main() {
     });
 
     test('eksik sayfada imleç yok; dolu sayfada son satır imleçtir', () {
-      Map<String, dynamic> row(int i) =>
-          {'id': 'id$i', 'created_at': '2026-10-25T10:00:00.00012${i % 10}+00:00'};
+      Map<String, dynamic> row(int i) => {
+        'id': 'id$i',
+        'created_at': '2026-10-25T10:00:00.00012${i % 10}+00:00',
+      };
 
-      expect(nextCursor([for (var i = 0; i < pageSize - 1; i++) row(i)]), isNull);
+      expect(
+        nextCursor([for (var i = 0; i < pageSize - 1; i++) row(i)]),
+        isNull,
+      );
 
       final next = nextCursor([for (var i = 0; i < pageSize; i++) row(i)]);
       expect(next?.id, 'id${pageSize - 1}');
-      expect(next?.createdAt.toUtc().toIso8601String(), '2026-10-25T10:00:00.000129Z');
+      expect(
+        next?.createdAt.toUtc().toIso8601String(),
+        '2026-10-25T10:00:00.000129Z',
+      );
     });
   });
 }

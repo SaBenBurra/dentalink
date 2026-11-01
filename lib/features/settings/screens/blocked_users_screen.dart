@@ -14,7 +14,11 @@ import '../../../shared/widgets/user_tile.dart';
 class BlockedUsersScreen extends ConsumerWidget {
   const BlockedUsersScreen({super.key});
 
-  Future<void> _unblock(BuildContext context, WidgetRef ref, String userId) async {
+  Future<void> _unblock(
+    BuildContext context,
+    WidgetRef ref,
+    String userId,
+  ) async {
     final l10n = AppLocalizations.of(context)!;
     final messenger = ScaffoldMessenger.of(context);
     try {
@@ -42,7 +46,10 @@ class BlockedUsersScreen extends ConsumerWidget {
           onRetry: () => ref.invalidate(blockedUsersProvider),
         ),
         data: (users) => users.isEmpty
-            ? DentLinkEmptyState(icon: Icons.block_outlined, title: l10n.blockedEmpty)
+            ? DentLinkEmptyState(
+                icon: Icons.block_outlined,
+                title: l10n.blockedEmpty,
+              )
             : ListView.builder(
                 itemCount: users.length,
                 itemBuilder: (context, i) {

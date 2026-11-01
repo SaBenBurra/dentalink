@@ -10,22 +10,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 QuestionPostModel _post(String id) => QuestionPostModel(
-      id: id,
-      userId: 'a',
-      title: 't$id',
-      content: 'c',
-      likeCount: 5,
-      isBookmarked: true,
-      createdAt: DateTime(2024),
-      updatedAt: DateTime(2024),
-      author: UserModel(
-        id: 'a',
-        fullName: 'A',
-        username: 'a',
-        title: UserTitle.disHekimi,
-        createdAt: DateTime(2024),
-      ),
-    );
+  id: id,
+  userId: 'a',
+  title: 't$id',
+  content: 'c',
+  likeCount: 5,
+  isBookmarked: true,
+  createdAt: DateTime(2024),
+  updatedAt: DateTime(2024),
+  author: UserModel(
+    id: 'a',
+    fullName: 'A',
+    username: 'a',
+    title: UserTitle.disHekimi,
+    createdAt: DateTime(2024),
+  ),
+);
 
 class _Repo implements PostRepository {
   final posts = [_post('p1'), _post('p2'), _post('p3')];
@@ -35,12 +35,14 @@ class _Repo implements PostRepository {
       (items: posts, next: null);
 
   @override
-  Future<PageResult<PostModel>> getBookmarkedPosts({PageCursor? before}) async =>
-      (items: posts, next: null);
+  Future<PageResult<PostModel>> getBookmarkedPosts({
+    PageCursor? before,
+  }) async => (items: posts, next: null);
 
   @override
-  Future<PostModel> likePost(String postId) async =>
-      posts.firstWhere((p) => p.id == postId).copyWith(isLiked: true, likeCount: 6);
+  Future<PostModel> likePost(String postId) async => posts
+      .firstWhere((p) => p.id == postId)
+      .copyWith(isLiked: true, likeCount: 6);
 
   @override
   Future<PostModel> unbookmarkPost(String postId) async =>
@@ -59,11 +61,13 @@ void main() {
 
   setUp(() async {
     final repo = _Repo();
-    container = ProviderContainer(overrides: [
-      feedRepositoryProvider.overrideWithValue(repo),
-      bookmarkRepositoryProvider.overrideWithValue(repo),
-      postActionRepositoryProvider.overrideWithValue(repo),
-    ]);
+    container = ProviderContainer(
+      overrides: [
+        feedRepositoryProvider.overrideWithValue(repo),
+        bookmarkRepositoryProvider.overrideWithValue(repo),
+        postActionRepositoryProvider.overrideWithValue(repo),
+      ],
+    );
     addTearDown(container.dispose);
     container.listen(feedProvider, (_, _) {});
     container.listen(bookmarkProvider, (_, _) {});

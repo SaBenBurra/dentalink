@@ -19,7 +19,10 @@ class SupabaseModerationRepository implements ModerationRepository {
 
   /// 23505 (zaten var) başarı sayılır; upsert reports/blocks'ta olmayan
   /// UPDATE yetkisini isterdi.
-  Future<void> _insertIgnoringDuplicate(String table, Map<String, dynamic> row) async {
+  Future<void> _insertIgnoringDuplicate(
+    String table,
+    Map<String, dynamic> row,
+  ) async {
     try {
       await client.from(table).insert(row);
     } on PostgrestException catch (e) {

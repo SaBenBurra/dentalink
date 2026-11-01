@@ -12,19 +12,22 @@ import '../../integration_test/mock_auth_for_test.dart';
 const _me = 'mock_test_user_id';
 
 UserModel _user(String id) => UserModel(
-      id: id,
-      fullName: id,
-      username: id,
-      title: UserTitle.disHekimi,
-      createdAt: DateTime(2024),
-    );
+  id: id,
+  fullName: id,
+  username: id,
+  title: UserTitle.disHekimi,
+  createdAt: DateTime(2024),
+);
 
 /// Kesişim DB'de (get_mutual_followers); burada yalnızca istenen profiller kaydedilir.
 class _FollowRepo implements FollowRepository {
   final asked = <String>[];
 
   @override
-  Future<MutualFollowers> getMutualFollowers(String userId, {int limit = 3}) async {
+  Future<MutualFollowers> getMutualFollowers(
+    String userId, {
+    int limit = 3,
+  }) async {
     asked.add(userId);
     return (users: [_user('y')], total: 4);
   }
@@ -39,10 +42,12 @@ void main() {
 
   setUp(() async {
     repo = _FollowRepo();
-    container = ProviderContainer(overrides: [
-      authRepositoryProvider.overrideWithValue(MockAuthForTest()),
-      followRepositoryProvider.overrideWithValue(repo),
-    ]);
+    container = ProviderContainer(
+      overrides: [
+        authRepositoryProvider.overrideWithValue(MockAuthForTest()),
+        followRepositoryProvider.overrideWithValue(repo),
+      ],
+    );
     addTearDown(container.dispose);
     await container.read(authProvider.future);
   });

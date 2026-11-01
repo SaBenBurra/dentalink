@@ -94,7 +94,9 @@ class RegisterHeader extends StatelessWidget {
                   borderRadius: BorderRadius.circular(3),
                   boxShadow: [
                     BoxShadow(
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.3),
                       blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),
@@ -117,7 +119,9 @@ class RegisterHeader extends StatelessWidget {
                 ),
               ),
               Text(
-                AppLocalizations.of(context)!.stepOf(currentStep + 1, totalSteps),
+                AppLocalizations.of(
+                  context,
+                )!.stepOf(currentStep + 1, totalSteps),
                 style: AppTextStyles.bodySmall.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,

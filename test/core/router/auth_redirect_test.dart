@@ -18,18 +18,23 @@ void main() {
     bool session = true,
     bool hold = false,
     required AsyncValue<UserModel?> auth,
-  }) =>
-      resolveAuthRedirect(
-        location: location,
-        hasSession: session,
-        hold: hold,
-        auth: auth,
-      );
+  }) => resolveAuthRedirect(
+    location: location,
+    hasSession: session,
+    hold: hold,
+    auth: auth,
+  );
 
   group('resolveAuthRedirect', () {
     test('oturum yoksa korumalı sayfadan /login\'e', () {
-      expect(go('/feed', session: false, auth: const AsyncData(null)), '/login');
-      expect(go('/auth-error', session: false, auth: const AsyncData(null)), '/login');
+      expect(
+        go('/feed', session: false, auth: const AsyncData(null)),
+        '/login',
+      );
+      expect(
+        go('/auth-error', session: false, auth: const AsyncData(null)),
+        '/login',
+      );
       expect(go('/login', session: false, auth: const AsyncData(null)), isNull);
     });
 
@@ -38,29 +43,41 @@ void main() {
       expect(go('/login', hold: true, auth: const AsyncData(null)), isNull);
     });
 
-    test('profil yükleme HATASI kayıt ekranına değil hata ekranına götürür (AUTH-1)', () {
-      final err = AsyncError<UserModel?>(Exception('network'), StackTrace.empty);
-      expect(go('/login', auth: err), '/auth-error');
-      expect(go('/feed', auth: err), '/auth-error');
-      expect(go('/auth-error', auth: err), isNull);
-      // Kayıt insert'ü hatası kayıt ekranında gösterilir.
-      expect(go('/register', auth: err), isNull);
-    });
+    test(
+      'profil yükleme HATASI kayıt ekranına değil hata ekranına götürür (AUTH-1)',
+      () {
+        final err = AsyncError<UserModel?>(
+          Exception('network'),
+          StackTrace.empty,
+        );
+        expect(go('/login', auth: err), '/auth-error');
+        expect(go('/feed', auth: err), '/auth-error');
+        expect(go('/auth-error', auth: err), isNull);
+        // Kayıt insert'ü hatası kayıt ekranında gösterilir.
+        expect(go('/register', auth: err), isNull);
+      },
+    );
 
     test('profil yoksa /register', () {
       expect(go('/feed', auth: const AsyncData(null)), '/register');
       expect(go('/register', auth: const AsyncData(null)), isNull);
     });
 
-    test('kayıtlı kullanıcı auth ekranlarından /feed\'e, diğer sayfalarda kalır', () {
-      expect(go('/login', auth: AsyncData(user)), '/feed');
-      expect(go('/register', auth: AsyncData(user)), '/feed');
-      expect(go('/auth-error', auth: AsyncData(user)), '/feed');
-      expect(go('/profile/abc', auth: AsyncData(user)), isNull);
-    });
+    test(
+      'kayıtlı kullanıcı auth ekranlarından /feed\'e, diğer sayfalarda kalır',
+      () {
+        expect(go('/login', auth: AsyncData(user)), '/feed');
+        expect(go('/register', auth: AsyncData(user)), '/feed');
+        expect(go('/auth-error', auth: AsyncData(user)), '/feed');
+        expect(go('/profile/abc', auth: AsyncData(user)), isNull);
+      },
+    );
 
     test('hukuk metinleri oturumsuz ve kayıt sırasında da açılır', () {
-      expect(go('/legal/terms', session: false, auth: const AsyncData(null)), isNull);
+      expect(
+        go('/legal/terms', session: false, auth: const AsyncData(null)),
+        isNull,
+      );
       expect(go('/legal/kvkk', auth: const AsyncData(null)), isNull);
     });
   });

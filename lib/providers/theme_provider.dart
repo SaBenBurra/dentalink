@@ -39,9 +39,9 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
   /// Eğer sistem modundaysa, mevcut parlaklığa göre karşıt moda geçer.
   void toggle(Brightness currentBrightness) {
     if (state == ThemeMode.system) {
-      setThemeMode(currentBrightness == Brightness.dark
-          ? ThemeMode.light
-          : ThemeMode.dark);
+      setThemeMode(
+        currentBrightness == Brightness.dark ? ThemeMode.light : ThemeMode.dark,
+      );
     } else {
       setThemeMode(state == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark);
     }

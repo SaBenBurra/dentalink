@@ -31,12 +31,15 @@ class ProfileScreen extends ConsumerWidget {
     final currentUserState = ref.watch(authProvider);
     final currentUser = currentUserState.valueOrNull;
 
-    final isCurrentUser = userId == null || (currentUser != null && userId == currentUser.id);
+    final isCurrentUser =
+        userId == null || (currentUser != null && userId == currentUser.id);
     final targetUserId = userId ?? currentUser?.id;
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     // Ana sayfayla aynı zemin.
-    final background = isDark ? AppColors.darkBackground : AppColors.bgGradientStart;
+    final background = isDark
+        ? AppColors.darkBackground
+        : AppColors.bgGradientStart;
 
     if (targetUserId == null) {
       return Scaffold(
@@ -124,7 +127,9 @@ class ProfileScreen extends ConsumerWidget {
                       target: ReportTarget.user,
                       targetId: targetUserId,
                       userId: targetUserId,
-                      onBlocked: () => context.canPop() ? context.pop() : context.go('/feed'),
+                      onBlocked: () => context.canPop()
+                          ? context.pop()
+                          : context.go('/feed'),
                     ),
                   ],
           ),
@@ -178,7 +183,9 @@ class _ProfileTopBar extends StatelessWidget {
                 if (canPop)
                   HeaderIconButton(
                     icon: Icons.arrow_back_rounded,
-                    tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                    tooltip: MaterialLocalizations.of(
+                      context,
+                    ).backButtonTooltip,
                     onTap: () => context.pop(),
                   ),
                 Expanded(
@@ -216,7 +223,11 @@ class _SegmentsHeaderDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => _height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     final tabs = DefaultTabController.of(context);
     return Container(
       color: background,
@@ -236,5 +247,6 @@ class _SegmentsHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant _SegmentsHeaderDelegate oldDelegate) =>
-      !listEquals(labels, oldDelegate.labels) || background != oldDelegate.background;
+      !listEquals(labels, oldDelegate.labels) ||
+      background != oldDelegate.background;
 }

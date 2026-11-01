@@ -49,24 +49,28 @@ class _CommentRepo implements CommentRepository {
   final unmarked = <String>[];
 
   @override
-  Future<void> unmarkBestAnswer(String commentId) async => unmarked.add(commentId);
+  Future<void> unmarkBestAnswer(String commentId) async =>
+      unmarked.add(commentId);
 
   @override
-  Future<PageResult<CommentModel>> getComments(String postId,
-          {PageCursor? after}) async =>
-      (items: <CommentModel>[], next: null);
+  Future<PageResult<CommentModel>> getComments(
+    String postId, {
+    PageCursor? after,
+  }) async => (items: <CommentModel>[], next: null);
 
   @override
-  Future<CommentModel> addComment(String postId, String content,
-          {String? parentId}) async =>
-      CommentModel(
-        id: 'c1',
-        postId: postId,
-        userId: 'b',
-        content: content,
-        createdAt: DateTime(2024),
-        updatedAt: DateTime(2024),
-      );
+  Future<CommentModel> addComment(
+    String postId,
+    String content, {
+    String? parentId,
+  }) async => CommentModel(
+    id: 'c1',
+    postId: postId,
+    userId: 'b',
+    content: content,
+    createdAt: DateTime(2024),
+    updatedAt: DateTime(2024),
+  );
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -75,10 +79,12 @@ class _CommentRepo implements CommentRepository {
 void main() {
   test('yorum eklenince detay ve feed sayacı yeniden çekmeden artar', () async {
     final repo = _PostRepo();
-    final container = ProviderContainer(overrides: [
-      feedRepositoryProvider.overrideWithValue(repo),
-      commentRepositoryProvider.overrideWithValue(_CommentRepo()),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        feedRepositoryProvider.overrideWithValue(repo),
+        commentRepositoryProvider.overrideWithValue(_CommentRepo()),
+      ],
+    );
     addTearDown(container.dispose);
     container.listen(feedProvider, (_, _) {});
     container.listen(postDetailProvider('p1'), (_, _) {});
@@ -98,15 +104,19 @@ void main() {
   test('en iyi cevap seçimini kaldırma RPC çağırır', () async {
     final comments = _CommentRepo();
     final repo = _PostRepo();
-    final container = ProviderContainer(overrides: [
-      feedRepositoryProvider.overrideWithValue(repo),
-      commentRepositoryProvider.overrideWithValue(comments),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        feedRepositoryProvider.overrideWithValue(repo),
+        commentRepositoryProvider.overrideWithValue(comments),
+      ],
+    );
     addTearDown(container.dispose);
     container.listen(commentsProvider('p1'), (_, _) {});
     await container.read(commentsProvider('p1').future);
 
-    await container.read(commentsProvider('p1').notifier).unmarkBestAnswer('c1');
+    await container
+        .read(commentsProvider('p1').notifier)
+        .unmarkBestAnswer('c1');
 
     expect(comments.unmarked, ['c1']);
   });

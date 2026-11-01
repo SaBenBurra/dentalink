@@ -44,9 +44,11 @@ class _NotificationListView extends ConsumerWidget {
     ref
         .read(notificationsProvider.notifier)
         .markRead(notification.id)
-        .catchError((Object e) => messenger.showSnackBar(
-              SnackBar(content: Text(getErrorMessage(l10n, e))),
-            ));
+        .catchError(
+          (Object e) => messenger.showSnackBar(
+            SnackBar(content: Text(getErrorMessage(l10n, e))),
+          ),
+        );
 
     final route = notificationRoute(
       type: notification.type,
@@ -80,7 +82,9 @@ class _NotificationListView extends ConsumerWidget {
         return RefreshIndicator(
           onRefresh: () => ref.refresh(notificationsProvider.future),
           child: ListView.separated(
-            padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing8),
+            padding: const EdgeInsets.symmetric(
+              vertical: AppDimensions.spacing8,
+            ),
             itemCount: notifications.length,
             separatorBuilder: (context, index) => Divider(
               height: 1,

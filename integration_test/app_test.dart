@@ -8,5 +8,8 @@ import 'app_flow.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('ana akış fake backend ile uçtan uca çalışır (TEST-2)', runAppFlow);
+  testWidgets(
+    'ana akış fake backend ile uçtan uca çalışır (TEST-2)',
+    runAppFlow,
+  );
 }

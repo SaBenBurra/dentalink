@@ -60,10 +60,12 @@ void main() {
 
   setUp(() async {
     repo = _Repo();
-    container = ProviderContainer(overrides: [
-      feedRepositoryProvider.overrideWithValue(repo),
-      postActionRepositoryProvider.overrideWithValue(repo),
-    ]);
+    container = ProviderContainer(
+      overrides: [
+        feedRepositoryProvider.overrideWithValue(repo),
+        postActionRepositoryProvider.overrideWithValue(repo),
+      ],
+    );
     addTearDown(container.dispose);
     container.listen(feedProvider, (_, _) {});
     await container.read(feedProvider.future);
@@ -97,17 +99,20 @@ void main() {
     expect(feedPost().isLiked, isFalse);
   });
 
-  test('tek sayıda seri dokunuşta yalnızca son hâl için tek istek gider', () async {
-    final notifier = container.read(feedProvider.notifier);
-    final taps = [for (var i = 0; i < 3; i++) notifier.toggleLike('p1')];
-    expect(feedPost().likeCount, 6);
+  test(
+    'tek sayıda seri dokunuşta yalnızca son hâl için tek istek gider',
+    () async {
+      final notifier = container.read(feedProvider.notifier);
+      final taps = [for (var i = 0; i < 3; i++) notifier.toggleLike('p1')];
+      expect(feedPost().likeCount, 6);
 
-    repo.likeCompleter.complete(_post.copyWith(isLiked: true, likeCount: 6));
-    await Future.wait(taps);
+      repo.likeCompleter.complete(_post.copyWith(isLiked: true, likeCount: 6));
+      await Future.wait(taps);
 
-    expect(repo.likeCalls, 1);
-    expect(feedPost().isLiked, isTrue);
-  });
+      expect(repo.likeCalls, 1);
+      expect(feedPost().isLiked, isTrue);
+    },
+  );
 
   test('hata olursa beğeni geri alınır ve hata fırlatılır', () async {
     final future = container.read(feedProvider.notifier).toggleLike('p1');
@@ -124,7 +129,9 @@ void main() {
     container.listen(postDetailProvider('p1'), (_, _) {});
     await container.read(postDetailProvider('p1').future);
 
-    final future = container.read(postDetailProvider('p1').notifier).toggleLike();
+    final future = container
+        .read(postDetailProvider('p1').notifier)
+        .toggleLike();
     repo.likeCompleter.complete(_post.copyWith(isLiked: true, likeCount: 6));
     await future;
 

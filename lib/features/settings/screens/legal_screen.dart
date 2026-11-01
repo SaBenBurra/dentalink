@@ -37,9 +37,13 @@ class LegalScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(doc.title(l10n))),
       body: FutureBuilder<String>(
-        future: rootBundle.loadString(doc.assetPath(Localizations.localeOf(context))),
+        future: rootBundle.loadString(
+          doc.assetPath(Localizations.localeOf(context)),
+        ),
         builder: (context, snapshot) {
-          if (snapshot.hasError) return DentLinkErrorWidget(message: l10n.unknownError);
+          if (snapshot.hasError) {
+            return DentLinkErrorWidget(message: l10n.unknownError);
+          }
           if (!snapshot.hasData) return const DentLinkLoadingSpinner();
           return SingleChildScrollView(
             padding: const EdgeInsets.all(AppDimensions.spacing16),

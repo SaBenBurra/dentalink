@@ -48,11 +48,13 @@ class RegisterStepThree extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final textPrimaryColor =
-        isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary;
+    final textPrimaryColor = isDark
+        ? AppColors.darkTextPrimary
+        : AppColors.lightTextPrimary;
 
-    final textSecondaryColor =
-        isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary;
+    final textSecondaryColor = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.lightTextSecondary;
 
     final glassBgColor = isDark
         ? Colors.black.withValues(alpha: 0.3)
@@ -93,9 +95,12 @@ class RegisterStepThree extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 54,
-                      backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                      backgroundImage:
-                          hasCustomImage ? FileImage(selectedImageFile!) : null,
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.2),
+                      backgroundImage: hasCustomImage
+                          ? FileImage(selectedImageFile!)
+                          : null,
                       child: hasCustomImage
                           ? null
                           : Icon(
@@ -112,7 +117,9 @@ class RegisterStepThree extends StatelessWidget {
                         color: Theme.of(context).colorScheme.primary,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isDark ? AppColors.darkBackground : Colors.white,
+                          color: isDark
+                              ? AppColors.darkBackground
+                              : Colors.white,
                           width: 2,
                         ),
                       ),
@@ -180,7 +187,9 @@ class RegisterStepThree extends StatelessWidget {
             focusNode: bioFocusNode,
             hintText: AppLocalizations.of(context)!.bioHint,
             icon: Icons.description_outlined,
-            inputFormatters: [LengthLimitingTextInputFormatter(ProfileLimits.bio)],
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(ProfileLimits.bio),
+            ],
             maxLines: 4,
           ),
           const SizedBox(height: AppDimensions.spacing32),
@@ -228,11 +237,7 @@ class _ActionButton extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: 18,
-              color: Theme.of(context).colorScheme.primary,
-            ),
+            Icon(icon, size: 18, color: Theme.of(context).colorScheme.primary),
             const SizedBox(width: AppDimensions.spacing8),
             Text(
               label,

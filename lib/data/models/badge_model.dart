@@ -26,7 +26,6 @@ class BadgeModel {
     );
   }
 
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) || other is BadgeModel && other.id == id;

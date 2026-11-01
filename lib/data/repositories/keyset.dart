@@ -16,8 +16,13 @@ extension KeysetQuery<T> on PostgrestFilterBuilder<T> {
   /// İmleçten sonraki satırlar. Fazladan `created_at` sınırı Postgres'in
   /// indeksi imleçten başlatmasını sağlar; `or` tek başına indeks koşulu olmaz
   /// ve derin sayfalarda baştan tarar.
-  PostgrestFilterBuilder<T> after(PageCursor cursor, {bool ascending = false}) =>
-      (ascending ? gte('created_at', _at(cursor)) : lte('created_at', _at(cursor)))
+  PostgrestFilterBuilder<T> after(
+    PageCursor cursor, {
+    bool ascending = false,
+  }) =>
+      (ascending
+              ? gte('created_at', _at(cursor))
+              : lte('created_at', _at(cursor)))
           .or(keysetFilter(cursor, ascending: ascending));
 
   /// En yeniden eskiye bir sayfa; [before] verilirse ondan eski satırlar.

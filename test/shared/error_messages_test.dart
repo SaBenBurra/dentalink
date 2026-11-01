@@ -8,7 +8,10 @@ void main() {
   test('görsel seçici izin reddi anlaşılır mesaja çevrilir', () {
     final tr = lookupAppLocalizations(const Locale('tr'));
     for (final code in ['camera_access_denied', 'photo_access_denied']) {
-      expect(getErrorMessage(tr, PlatformException(code: code)), contains('izin'));
+      expect(
+        getErrorMessage(tr, PlatformException(code: code)),
+        contains('izin'),
+      );
     }
     expect(
       getErrorMessage(tr, PlatformException(code: 'other')),
@@ -18,7 +21,9 @@ void main() {
 
   test('EN dilinde İngilizce mesaj döner (UX-12)', () {
     final en = lookupAppLocalizations(const Locale('en'));
-    expect(getErrorMessage(en, PlatformException(code: 'other')),
-        'An unexpected error occurred.');
+    expect(
+      getErrorMessage(en, PlatformException(code: 'other')),
+      'An unexpected error occurred.',
+    );
   });
 }

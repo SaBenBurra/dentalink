@@ -23,10 +23,13 @@ class ConversationsNotifier
     listenReconnect(ref, ref.invalidateSelf);
 
     final repo = ref.watch(messageRepositoryProvider);
-    final sub = repo.watchConversations(uid).listen(
-      _upsert,
-      onError: (Object e) => debugPrint('ConversationsNotifier realtime: $e'),
-    );
+    final sub = repo
+        .watchConversations(uid)
+        .listen(
+          _upsert,
+          onError: (Object e) =>
+              debugPrint('ConversationsNotifier realtime: $e'),
+        );
     ref.onDispose(sub.cancel);
 
     return repo.getConversations();
@@ -37,7 +40,11 @@ class ConversationsNotifier
     final current = state.valueOrNull;
     if (current == null) return;
     state = AsyncData(
-      [c, for (final x in current) if (x.id != c.id) x]..sort(_byLastMessageDesc),
+      [
+        c,
+        for (final x in current)
+          if (x.id != c.id) x,
+      ]..sort(_byLastMessageDesc),
     );
   }
 
@@ -67,11 +74,11 @@ final conversationsProvider =
 // Active Chat State & Notifier (peer kullanıcı ID'si ile anahtarlanır)
 // ─────────────────────────────────────────────────────────────────────────────
 
-final _peerConversationProvider = Provider.autoDispose.family<ConversationModel?, String>((ref, peerId) {
-  final list = ref.watch(conversationsProvider).valueOrNull ?? [];
-  return list.firstWhereOrNull((c) => c.otherUser.id == peerId);
-});
-
+final _peerConversationProvider = Provider.autoDispose
+    .family<ConversationModel?, String>((ref, peerId) {
+      final list = ref.watch(conversationsProvider).valueOrNull ?? [];
+      return list.firstWhereOrNull((c) => c.otherUser.id == peerId);
+    });
 
 class ActiveChatState {
   final String? conversationId;
@@ -91,9 +98,9 @@ class ActiveChatState {
 }
 
 /// id ile tekilleştirir (sonraki kazanır: realtime UPDATE eskiyi ezer), eski → yeni sıralar.
-List<MessageModel> _merge(List<MessageModel> a, Iterable<MessageModel> b) =>
-    {for (final m in [...a, ...b]) m.id: m}.values.toList()
-      ..sort((x, y) => x.createdAt.compareTo(y.createdAt));
+List<MessageModel> _merge(List<MessageModel> a, Iterable<MessageModel> b) => {
+  for (final m in [...a, ...b]) m.id: m,
+}.values.toList()..sort((x, y) => x.createdAt.compareTo(y.createdAt));
 
 class ActiveChatNotifier
     extends AutoDisposeFamilyAsyncNotifier<ActiveChatState, String> {
@@ -125,10 +132,12 @@ class ActiveChatNotifier
     // İlk yükleme sürerken gelen olaylar kaybolmasın diye tamponlanır.
     final early = <MessageModel>[];
     var loaded = false;
-    final sub = repo.watchMessages(conversationId).listen(
-      (m) => loaded ? _upsert(m) : early.add(m),
-      onError: (Object e) => debugPrint('ActiveChatNotifier realtime: $e'),
-    );
+    final sub = repo
+        .watchMessages(conversationId)
+        .listen(
+          (m) => loaded ? _upsert(m) : early.add(m),
+          onError: (Object e) => debugPrint('ActiveChatNotifier realtime: $e'),
+        );
     ref.onDispose(sub.cancel);
 
     final messages = _pager.first(await repo.getMessages(conversationId));
@@ -143,7 +152,9 @@ class ActiveChatNotifier
   void _upsert(MessageModel m) {
     final current = state.valueOrNull;
     if (current == null) return;
-    state = AsyncData(current.copyWith(messages: _merge(current.messages, [m])));
+    state = AsyncData(
+      current.copyWith(messages: _merge(current.messages, [m])),
+    );
   }
 
   /// Daha eski mesaj sayfasını başa ekler; ekrandaki (realtime ile güncellenmiş)
@@ -158,7 +169,9 @@ class ActiveChatNotifier
       (older) {
         final current = state.valueOrNull;
         if (current == null) return;
-        state = AsyncData(current.copyWith(messages: _merge(older, current.messages)));
+        state = AsyncData(
+          current.copyWith(messages: _merge(older, current.messages)),
+        );
       },
     );
   }
@@ -171,10 +184,14 @@ class ActiveChatNotifier
   }
 
   Future<void> sendMessage(String content) async {
-    final newMsg = await ref.read(messageRepositoryProvider).sendMessage(arg, content);
+    final newMsg = await ref
+        .read(messageRepositoryProvider)
+        .sendMessage(arg, content);
     // Yükleme sürerken gönderildiyse mesaj düşmesin.
     final current = await future;
-    state = AsyncData(current.copyWith(messages: _merge(current.messages, [newMsg])));
+    state = AsyncData(
+      current.copyWith(messages: _merge(current.messages, [newMsg])),
+    );
 
     // İlk mesaj: sohbet yeni oluştu. Liste yenilenince build bu sohbetin
     // kanalına abone olur ve mesajları baştan çeker.

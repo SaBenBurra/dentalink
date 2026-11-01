@@ -31,16 +31,24 @@ class _ConflictingAuth extends MockAuthForTest {
   }) async {
     usernames.add(username);
     if (usernames.length <= conflicts) {
-      throw ConflictFailure('duplicate key value violates unique constraint "$constraint"');
+      throw ConflictFailure(
+        'duplicate key value violates unique constraint "$constraint"',
+      );
     }
-    return super.completeRegistration(fullName: fullName, username: username, title: title);
+    return super.completeRegistration(
+      fullName: fullName,
+      username: username,
+      title: title,
+    );
   }
 }
 
 void main() {
   Future<_ConflictingAuth> register(int conflicts, String constraint) async {
     final repo = _ConflictingAuth(conflicts, constraint);
-    final container = ProviderContainer(overrides: [authRepositoryProvider.overrideWithValue(repo)]);
+    final container = ProviderContainer(
+      overrides: [authRepositoryProvider.overrideWithValue(repo)],
+    );
     addTearDown(container.dispose);
     await container.read(authProvider.future);
     await container
@@ -50,10 +58,13 @@ void main() {
     return repo;
   }
 
-  test('kullanıcı adı çakışırsa yeni adla en fazla 3 kez denenir (AUTH-4)', () async {
-    expect((await register(1, 'users_username_key')).usernames, hasLength(2));
-    expect((await register(5, 'users_username_key')).usernames, hasLength(3));
-  });
+  test(
+    'kullanıcı adı çakışırsa yeni adla en fazla 3 kez denenir (AUTH-4)',
+    () async {
+      expect((await register(1, 'users_username_key')).usernames, hasLength(2));
+      expect((await register(5, 'users_username_key')).usernames, hasLength(3));
+    },
+  );
 
   test('başka bir çakışma yeniden denenmez', () async {
     expect((await register(1, 'users_pkey')).usernames, hasLength(1));

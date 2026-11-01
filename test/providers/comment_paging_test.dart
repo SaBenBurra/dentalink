@@ -7,13 +7,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 CommentModel _c(String id) => CommentModel(
-      id: id,
-      postId: 'p1',
-      userId: 'u',
-      content: id,
-      createdAt: DateTime(2024),
-      updatedAt: DateTime(2024),
-    );
+  id: id,
+  postId: 'p1',
+  userId: 'u',
+  content: id,
+  createdAt: DateTime(2024),
+  updatedAt: DateTime(2024),
+);
 
 final _cursor = (createdAt: DateTime.utc(2024), id: 'c1');
 
@@ -22,8 +22,10 @@ class _Repo implements CommentRepository {
   final afters = <PageCursor?>[];
 
   @override
-  Future<PageResult<CommentModel>> getComments(String postId,
-      {PageCursor? after}) async {
+  Future<PageResult<CommentModel>> getComments(
+    String postId, {
+    PageCursor? after,
+  }) async {
     afters.add(after);
     return after == null
         ? (items: [_c('c1')], next: _cursor)
@@ -31,35 +33,44 @@ class _Repo implements CommentRepository {
   }
 
   @override
-  Future<CommentModel> addComment(String postId, String content,
-          {String? parentId}) async =>
-      _c('c3');
+  Future<CommentModel> addComment(
+    String postId,
+    String content, {
+    String? parentId,
+  }) async => _c('c3');
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 void main() {
-  test('sonraki sayfa eklenirken bu ekranda eklenen yorum çift görünmez', () async {
-    final repo = _Repo();
-    final container = ProviderContainer(
-      overrides: [commentRepositoryProvider.overrideWithValue(repo)],
-    );
-    addTearDown(container.dispose);
-    container.listen(commentsProvider('p1'), (_, _) {});
+  test(
+    'sonraki sayfa eklenirken bu ekranda eklenen yorum çift görünmez',
+    () async {
+      final repo = _Repo();
+      final container = ProviderContainer(
+        overrides: [commentRepositoryProvider.overrideWithValue(repo)],
+      );
+      addTearDown(container.dispose);
+      container.listen(commentsProvider('p1'), (_, _) {});
 
-    await container.read(commentsProvider('p1').future);
-    final notifier = container.read(commentsProvider('p1').notifier);
-    await notifier.addComment('c3');
-    expect(container.read(commentsProvider('p1')).value!.map((c) => c.id), ['c1', 'c3']);
+      await container.read(commentsProvider('p1').future);
+      final notifier = container.read(commentsProvider('p1').notifier);
+      await notifier.addComment('c3');
+      expect(container.read(commentsProvider('p1')).value!.map((c) => c.id), [
+        'c1',
+        'c3',
+      ]);
 
-    await notifier.loadMore();
+      await notifier.loadMore();
 
-    expect(repo.afters, [null, _cursor]);
-    expect(
-      container.read(commentsProvider('p1')).value!.map((c) => c.id),
-      ['c1', 'c2', 'c3'],
-    );
-    expect(notifier.hasMore, isFalse);
-  });
+      expect(repo.afters, [null, _cursor]);
+      expect(container.read(commentsProvider('p1')).value!.map((c) => c.id), [
+        'c1',
+        'c2',
+        'c3',
+      ]);
+      expect(notifier.hasMore, isFalse);
+    },
+  );
 }

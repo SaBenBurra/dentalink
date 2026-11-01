@@ -33,12 +33,12 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
   }
 
   Future<void> loadMore() => _pager.loadMore(
-        (before) => ref.read(feedRepositoryProvider).getFeed(before: before),
-        (items) {
-          final posts = state.valueOrNull;
-          if (posts != null) state = AsyncData([...posts, ...items]);
-        },
-      );
+    (before) => ref.read(feedRepositoryProvider).getFeed(before: before),
+    (items) {
+      final posts = state.valueOrNull;
+      if (posts != null) state = AsyncData([...posts, ...items]);
+    },
+  );
 
   /// Beğeniyi iyimser olarak çevirir; hata olursa geri alır.
   Future<void> toggleLike(String postId) => _toggle(postId, PostToggle.like);
@@ -60,14 +60,20 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
   void removePost(String postId) {
     final posts = state.valueOrNull;
     if (posts == null) return;
-    state = AsyncData([for (final p in posts) if (p.id != postId) p]);
+    state = AsyncData([
+      for (final p in posts)
+        if (p.id != postId) p,
+    ]);
   }
 
   /// Engellenen kullanıcının postları yüklenen sayfalardan düşer.
   void removeAuthor(String userId) {
     final posts = state.valueOrNull;
     if (posts == null) return;
-    state = AsyncData([for (final p in posts) if (p.userId != userId) p]);
+    state = AsyncData([
+      for (final p in posts)
+        if (p.userId != userId) p,
+    ]);
   }
 
   /// Başka cihazda silinmiş post (NotFound) listeden düşer; hata yine

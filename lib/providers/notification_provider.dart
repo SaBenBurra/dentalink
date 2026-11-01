@@ -19,10 +19,13 @@ class NotificationsNotifier
     listenReconnect(ref, ref.invalidateSelf);
 
     final repo = ref.watch(notificationRepositoryProvider);
-    final sub = repo.watchNew(uid).listen(
-      _prepend,
-      onError: (Object e) => debugPrint('NotificationsNotifier realtime: $e'),
-    );
+    final sub = repo
+        .watchNew(uid)
+        .listen(
+          _prepend,
+          onError: (Object e) =>
+              debugPrint('NotificationsNotifier realtime: $e'),
+        );
     ref.onDispose(sub.cancel);
 
     return repo.getNotifications();
@@ -34,7 +37,10 @@ class NotificationsNotifier
     state = AsyncData([n, ...current]);
   }
 
-  void _setRead(bool Function(NotificationModel) match, {required bool isRead}) {
+  void _setRead(
+    bool Function(NotificationModel) match, {
+    required bool isRead,
+  }) {
     final current = state.valueOrNull;
     if (current == null) return;
     state = AsyncData([
@@ -60,7 +66,9 @@ class NotificationsNotifier
 
   /// İyimser; hata olursa geri alınır ve hata fırlatılır.
   Future<void> markRead(String notificationId) async {
-    final target = state.valueOrNull?.where((n) => n.id == notificationId).firstOrNull;
+    final target = state.valueOrNull
+        ?.where((n) => n.id == notificationId)
+        .firstOrNull;
     if (target == null || target.isRead) return;
     _setRead((n) => n.id == notificationId, isRead: true);
     try {

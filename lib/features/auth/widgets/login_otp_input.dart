@@ -48,7 +48,6 @@ class LoginOtpInput extends StatefulWidget {
 
 class _LoginOtpInputState extends State<LoginOtpInput>
     with TickerProviderStateMixin {
-
   static const _scatterOffsets = [
     Offset(-42, -16),
     Offset(38, -22),
@@ -83,19 +82,20 @@ class _LoginOtpInputState extends State<LoginOtpInput>
     for (final controller in widget.otpControllers) {
       controller.addListener(_syncDigits);
     }
-    _scatterController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 520),
-    )..addStatusListener((status) {
-        if (status == AnimationStatus.completed && mounted) {
-          widget.onScatterComplete();
-          setState(() {
-            _scattering = false;
-            _displayDigits = List.filled(widget.otpControllers.length, '');
-          });
-          _scatterController.reset();
-        }
-      });
+    _scatterController =
+        AnimationController(
+          vsync: this,
+          duration: const Duration(milliseconds: 520),
+        )..addStatusListener((status) {
+          if (status == AnimationStatus.completed && mounted) {
+            widget.onScatterComplete();
+            setState(() {
+              _scattering = false;
+              _displayDigits = List.filled(widget.otpControllers.length, '');
+            });
+            _scatterController.reset();
+          }
+        });
     _successController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1100),
@@ -259,7 +259,9 @@ class _LoginOtpInputState extends State<LoginOtpInput>
               height: 24,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).colorScheme.primary,
+                ),
               ),
             )
           else
@@ -268,9 +270,13 @@ class _LoginOtpInputState extends State<LoginOtpInput>
               child: Text(
                 widget.canResend
                     ? AppLocalizations.of(context)!.resendCode
-                    : AppLocalizations.of(context)!.resendCodeIn(widget.resendCountdown),
+                    : AppLocalizations.of(
+                        context,
+                      )!.resendCodeIn(widget.resendCountdown),
                 style: TextStyle(
-                  color: widget.canResend ? Theme.of(context).colorScheme.primary : Colors.grey,
+                  color: widget.canResend
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.grey,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -352,7 +358,8 @@ class _OtpSuccessCelebration extends StatelessWidget {
                   children: List.generate(digits.length, (index) {
                     final pulse = 1.0 + (0.12 * math.sin(mergeT * math.pi));
                     return Transform.translate(
-                      offset: mergeOffsets[index % mergeOffsets.length] * mergeT,
+                      offset:
+                          mergeOffsets[index % mergeOffsets.length] * mergeT,
                       child: Transform.scale(
                         scale: pulse * (1.0 - 0.25 * mergeT),
                         child: Container(
@@ -366,15 +373,9 @@ class _OtpSuccessCelebration extends StatelessWidget {
                             borderRadius: BorderRadius.circular(
                               AppDimensions.radiusMedium,
                             ),
-                            border: Border.all(
-                              color: brandColor,
-                              width: 2,
-                            ),
+                            border: Border.all(color: brandColor, width: 2),
                           ),
-                          child: Text(
-                            digits[index],
-                            style: digitStyle,
-                          ),
+                          child: Text(digits[index], style: digitStyle),
                         ),
                       ),
                     );
@@ -505,124 +506,123 @@ class _OtpDigitBox extends StatelessWidget {
 
     return RepaintBoundary(
       child: AnimatedContainer(
-      duration: const Duration(milliseconds: 280),
-      curve: Curves.easeOutCubic,
-      width: 48,
-      height: 56,
-      decoration: BoxDecoration(
-        color: hasError
-            ? AppColors.error.withValues(alpha: isDark ? 0.12 : 0.06)
-            : glassBgColor,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-        border: Border.all(
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic,
+        width: 48,
+        height: 56,
+        decoration: BoxDecoration(
           color: hasError
-              ? AppColors.error.withValues(alpha: 0.85)
-              : hasFocus
-                  ? Theme.of(context).colorScheme.primary
-                  : glassBorderColor,
-          width: hasError || hasFocus ? 2.0 : 1.0,
+              ? AppColors.error.withValues(alpha: isDark ? 0.12 : 0.06)
+              : glassBgColor,
+          borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+          border: Border.all(
+            color: hasError
+                ? AppColors.error.withValues(alpha: 0.85)
+                : hasFocus
+                ? Theme.of(context).colorScheme.primary
+                : glassBorderColor,
+            width: hasError || hasFocus ? 2.0 : 1.0,
+          ),
         ),
-      ),
-      child: Stack(
-        clipBehavior: scattering ? Clip.none : Clip.hardEdge,
-        alignment: Alignment.center,
-        children: [
-          // Scatter yalnızca hata anında çalışır. Normal durumda (klavye
-          // açma/kapama gibi sık rebuild'ler dahil) scatterAnimation'ı
-          // dinlemeyiz; böylece klavye insets değişimi bu kutu için
-          // gereksiz repaint tetiklemez.
-          if (scattering)
-            AnimatedBuilder(
-              animation: scatterAnimation,
-              builder: (context, child) {
-                final t = Curves.easeInCubic.transform(scatterAnimation.value);
-                return Opacity(
-                  opacity: (1.0 - t).clamp(0.0, 1.0),
-                  child: Transform.translate(
-                    offset: scatterOffset * t,
-                    child: Transform.rotate(
-                      angle: scatterRotation * t * math.pi,
-                      child: Transform.scale(
-                        scale: 1.0 - (0.35 * t),
-                        child: child,
+        child: Stack(
+          clipBehavior: scattering ? Clip.none : Clip.hardEdge,
+          alignment: Alignment.center,
+          children: [
+            // Scatter yalnızca hata anında çalışır. Normal durumda (klavye
+            // açma/kapama gibi sık rebuild'ler dahil) scatterAnimation'ı
+            // dinlemeyiz; böylece klavye insets değişimi bu kutu için
+            // gereksiz repaint tetiklemez.
+            if (scattering)
+              AnimatedBuilder(
+                animation: scatterAnimation,
+                builder: (context, child) {
+                  final t = Curves.easeInCubic.transform(
+                    scatterAnimation.value,
+                  );
+                  return Opacity(
+                    opacity: (1.0 - t).clamp(0.0, 1.0),
+                    child: Transform.translate(
+                      offset: scatterOffset * t,
+                      child: Transform.rotate(
+                        angle: scatterRotation * t * math.pi,
+                        child: Transform.scale(
+                          scale: 1.0 - (0.35 * t),
+                          child: child,
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-              child: Text(digit, style: digitStyle),
-            )
-          else
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 280),
-              switchInCurve: Curves.easeOutCubic,
-              switchOutCurve: Curves.easeInCubic,
-              layoutBuilder: (currentChild, previousChildren) {
-                return Stack(
-                  alignment: Alignment.center,
-                  clipBehavior: Clip.hardEdge,
-                  children: [
-                    ...previousChildren,
-                    ?currentChild,
-                  ],
-                );
-              },
-              transitionBuilder: (child, animation) {
-                final offsetAnimation = Tween<Offset>(
-                  begin: Offset(0, fromTop ? -1.1 : 1.1),
-                  end: Offset.zero,
-                ).animate(animation);
-                return FadeTransition(
-                  opacity: animation,
-                  child: SlideTransition(
-                    position: offsetAnimation,
-                    child: child,
-                  ),
-                );
-              },
-              child: digit.isEmpty
-                  ? const SizedBox.shrink(key: ValueKey('empty'))
-                  : Text(
-                      digit,
-                      key: ValueKey('digit-$index-$digit'),
-                      style: digitStyle,
+                  );
+                },
+                child: Text(digit, style: digitStyle),
+              )
+            else
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 280),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                layoutBuilder: (currentChild, previousChildren) {
+                  return Stack(
+                    alignment: Alignment.center,
+                    clipBehavior: Clip.hardEdge,
+                    children: [...previousChildren, ?currentChild],
+                  );
+                },
+                transitionBuilder: (child, animation) {
+                  final offsetAnimation = Tween<Offset>(
+                    begin: Offset(0, fromTop ? -1.1 : 1.1),
+                    end: Offset.zero,
+                  ).animate(animation);
+                  return FadeTransition(
+                    opacity: animation,
+                    child: SlideTransition(
+                      position: offsetAnimation,
+                      child: child,
                     ),
+                  );
+                },
+                child: digit.isEmpty
+                    ? const SizedBox.shrink(key: ValueKey('empty'))
+                    : Text(
+                        digit,
+                        key: ValueKey('digit-$index-$digit'),
+                        style: digitStyle,
+                      ),
+              ),
+            TextField(
+              controller: controller,
+              focusNode: focusNode,
+              enabled: enabled,
+              keyboardType: TextInputType.number,
+              textInputAction: index == 5
+                  ? TextInputAction.done
+                  : TextInputAction.next,
+              textAlign: TextAlign.center,
+              textAlignVertical: TextAlignVertical.center,
+              showCursor: true,
+              cursorColor: Theme.of(context).colorScheme.primary,
+              style: digitStyle.copyWith(color: Colors.transparent),
+              // resizeToAvoidBottomInset kapalı; scroll ekran seviyesinde
+              // yönetiliyor, küçük tampon yeterli.
+              scrollPadding: const EdgeInsets.only(bottom: 24),
+              maxLength: 1,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              decoration: const InputDecoration(
+                counterText: '',
+                filled: true,
+                fillColor: Colors.transparent,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.zero,
+              ),
+              onChanged: onChanged,
             ),
-          TextField(
-            controller: controller,
-            focusNode: focusNode,
-            enabled: enabled,
-            keyboardType: TextInputType.number,
-            textInputAction: index == 5
-                ? TextInputAction.done
-                : TextInputAction.next,
-            textAlign: TextAlign.center,
-            textAlignVertical: TextAlignVertical.center,
-            showCursor: true,
-            cursorColor: Theme.of(context).colorScheme.primary,
-            style: digitStyle.copyWith(color: Colors.transparent),
-            // resizeToAvoidBottomInset kapalı; scroll ekran seviyesinde
-            // yönetiliyor, küçük tampon yeterli.
-            scrollPadding: const EdgeInsets.only(bottom: 24),
-            maxLength: 1,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            decoration: const InputDecoration(
-              counterText: '',
-              filled: true,
-              fillColor: Colors.transparent,
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              disabledBorder: InputBorder.none,
-              errorBorder: InputBorder.none,
-              focusedErrorBorder: InputBorder.none,
-              isDense: true,
-              contentPadding: EdgeInsets.zero,
-            ),
-            onChanged: onChanged,
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }

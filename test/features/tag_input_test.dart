@@ -14,11 +14,13 @@ void main() {
 
     Future<void> pump(WidgetTester tester) async {
       emitted = [];
-      await tester.pumpWidget(MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Scaffold(body: TagInput(onTagsChanged: (t) => emitted = t)),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(body: TagInput(onTagsChanged: (t) => emitted = t)),
+        ),
+      );
     }
 
     testWidgets('onaylanmamış etiket de üst bileşene iletilir', (tester) async {
@@ -27,13 +29,19 @@ void main() {
       expect(emitted, ['kanal']);
     });
 
-    testWidgets('yapıştırılan metin bölünür, en fazla 5 etiket', (tester) async {
+    testWidgets('yapıştırılan metin bölünür, en fazla 5 etiket', (
+      tester,
+    ) async {
       await pump(tester);
       await tester.enterText(find.byType(TextField), 'a,b c d e f g');
       await tester.pump();
 
       expect(emitted, ['a', 'b', 'c', 'd', 'e']);
-      expect(find.byType(TextField), findsNothing, reason: 'limit dolunca alan gizlenir');
+      expect(
+        find.byType(TextField),
+        findsNothing,
+        reason: 'limit dolunca alan gizlenir',
+      );
     });
   });
 
@@ -44,23 +52,27 @@ void main() {
     Future<void> pump(WidgetTester tester) async {
       emitted = [];
       queries = [];
-      await tester.pumpWidget(MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Scaffold(
-          body: TagInput(
-            initialTags: const ['implant-üstü-protez'],
-            onTagsChanged: (t) => emitted = t,
-            suggest: (q) async {
-              queries.add(q);
-              return ['implant', 'implant-üstü-protez'];
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: TagInput(
+              initialTags: const ['implant-üstü-protez'],
+              onTagsChanged: (t) => emitted = t,
+              suggest: (q) async {
+                queries.add(q);
+                return ['implant', 'implant-üstü-protez'];
+              },
+            ),
           ),
         ),
-      ));
+      );
     }
 
-    testWidgets('2 karakterden önce istek yok, sonra debounce ile tek istek', (tester) async {
+    testWidgets('2 karakterden önce istek yok, sonra debounce ile tek istek', (
+      tester,
+    ) async {
       await pump(tester);
       await tester.tap(find.byType(TextField));
       await tester.enterText(find.byType(TextField), 'i');
@@ -73,13 +85,25 @@ void main() {
       await tester.pump(TagInput.suggestDebounce);
       await tester.pump();
 
-      expect(queries, ['imp'], reason: 'normalize edilmiş son sorgu, ara harf istek atmaz');
+      expect(queries, [
+        'imp',
+      ], reason: 'normalize edilmiş son sorgu, ara harf istek atmaz');
       expect(find.text('#implant'), findsOneWidget);
-      expect(find.text('#implant-üstü-protez'), findsOneWidget, reason: 'zaten ekli olan çip');
-      expect(find.byType(ListTile), findsOneWidget, reason: 'ekli etiket önerilmez');
+      expect(
+        find.text('#implant-üstü-protez'),
+        findsOneWidget,
+        reason: 'zaten ekli olan çip',
+      );
+      expect(
+        find.byType(ListTile),
+        findsOneWidget,
+        reason: 'ekli etiket önerilmez',
+      );
     });
 
-    testWidgets('öneriye dokununca etiket eklenir, alan temizlenir', (tester) async {
+    testWidgets('öneriye dokununca etiket eklenir, alan temizlenir', (
+      tester,
+    ) async {
       await pump(tester);
       await tester.tap(find.byType(TextField));
       await tester.enterText(find.byType(TextField), 'imp');
@@ -89,7 +113,10 @@ void main() {
       await tester.pump();
 
       expect(emitted, ['implant-üstü-protez', 'implant']);
-      expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, isEmpty);
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        isEmpty,
+      );
       expect(find.byType(ListTile), findsNothing);
     });
 
@@ -104,7 +131,8 @@ void main() {
   group('sabit etiket (tedavi türü)', () {
     late List<String> emitted;
 
-    Widget app(String? locked, {List<String> initial = const []}) => MaterialApp(
+    Widget app(String? locked, {List<String> initial = const []}) =>
+        MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
@@ -116,7 +144,9 @@ void main() {
           ),
         );
 
-    testWidgets('silinemez, sınıra dahil, iletilmez, tekrar eklenmez', (tester) async {
+    testWidgets('silinemez, sınıra dahil, iletilmez, tekrar eklenmez', (
+      tester,
+    ) async {
       emitted = [];
       await tester.pumpWidget(app('kanal-tedavisi'));
 
@@ -124,23 +154,49 @@ void main() {
       expect(find.byType(InputChip), findsNothing, reason: 'silme düğmesi yok');
       expect(find.text('1/5'), findsOneWidget);
 
-      await tester.enterText(find.byType(TextField), 'kanal-tedavisi a b c d e ');
+      await tester.enterText(
+        find.byType(TextField),
+        'kanal-tedavisi a b c d e ',
+      );
       await tester.pump();
-      expect(emitted, ['a', 'b', 'c', 'd'], reason: 'sabit etiket bir yer kaplar');
+      expect(emitted, [
+        'a',
+        'b',
+        'c',
+        'd',
+      ], reason: 'sabit etiket bir yer kaplar');
       expect(find.text('5/5'), findsOneWidget);
     });
 
-    testWidgets('sabit etiket gelince fazla etiket düşer, eski sabit etiket kalkar', (tester) async {
-      emitted = [];
-      await tester.pumpWidget(app('kron', initial: ['kron', 'a', 'b', 'c', 'd']));
-      expect(find.text('5/5'), findsOneWidget, reason: 'başlangıçtaki sabit etiket tekrar sayılmaz');
+    testWidgets(
+      'sabit etiket gelince fazla etiket düşer, eski sabit etiket kalkar',
+      (tester) async {
+        emitted = [];
+        await tester.pumpWidget(
+          app('kron', initial: ['kron', 'a', 'b', 'c', 'd']),
+        );
+        expect(
+          find.text('5/5'),
+          findsOneWidget,
+          reason: 'başlangıçtaki sabit etiket tekrar sayılmaz',
+        );
 
-      await tester.pumpWidget(app('köprü', initial: ['kron', 'a', 'b', 'c', 'd']));
-      await tester.pump();
-      expect(emitted, ['a', 'b', 'c', 'd'], reason: 'eski tedavinin etiketi gider');
-    });
+        await tester.pumpWidget(
+          app('köprü', initial: ['kron', 'a', 'b', 'c', 'd']),
+        );
+        await tester.pump();
+        expect(emitted, [
+          'a',
+          'b',
+          'c',
+          'd',
+        ], reason: 'eski tedavinin etiketi gider');
+      },
+    );
 
-    testWidgets('5 serbest etiketli posta tedavi seçilince sondaki düşer', (tester) async {
+    testWidgets('5 serbest etiketli posta tedavi seçilince sondaki düşer', (
+      tester,
+    ) async {
       emitted = [];
       const initial = ['a', 'b', 'c', 'd', 'e'];
       await tester.pumpWidget(app(null, initial: initial));

@@ -10,20 +10,22 @@ typedef WebpEncoder = Future<Uint8List?> Function(String path);
 Future<List<File>> compressToWebp(
   List<File> files, {
   WebpEncoder encode = _encodeWebp,
-}) =>
-    Future.wait(files.map((f) async {
-      try {
-        final bytes = await encode(f.path);
-        if (bytes == null) return f;
-        return await File('${f.path}.webp').writeAsBytes(bytes, flush: true);
-      } catch (e) {
-        debugPrint('compressToWebp: ${f.path} kodlanamadı: $e');
-        return f;
-      }
-    }));
+}) => Future.wait(
+  files.map((f) async {
+    try {
+      final bytes = await encode(f.path);
+      if (bytes == null) return f;
+      return await File('${f.path}.webp').writeAsBytes(bytes, flush: true);
+    } catch (e) {
+      debugPrint('compressToWebp: ${f.path} kodlanamadı: $e');
+      return f;
+    }
+  }),
+);
 
 // Boyutlandırmayı picker yapar (uzun kenar 2048); min boyutlar burada küçültmeyi kapatır.
-Future<Uint8List?> _encodeWebp(String path) => FlutterImageCompress.compressWithFile(
+Future<Uint8List?> _encodeWebp(String path) =>
+    FlutterImageCompress.compressWithFile(
       path,
       minWidth: 2048,
       minHeight: 2048,

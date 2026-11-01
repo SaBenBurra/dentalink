@@ -104,6 +104,5 @@ void main() {
 
       verify(mockFilterBuilder.eq('id', '123')).called(1);
     });
-
   });
 }

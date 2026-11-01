@@ -15,7 +15,8 @@ class ConversationsScreen extends ConsumerStatefulWidget {
   const ConversationsScreen({super.key});
 
   @override
-  ConsumerState<ConversationsScreen> createState() => _ConversationsScreenState();
+  ConsumerState<ConversationsScreen> createState() =>
+      _ConversationsScreenState();
 }
 
 class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
@@ -89,7 +90,8 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
               loading: () => const DentLinkLoadingSpinner(),
               error: (err, st) => DentLinkErrorWidget(
                 message: l10n.conversationsLoadError,
-                onRetry: () => ref.read(conversationsProvider.notifier).refresh(),
+                onRetry: () =>
+                    ref.read(conversationsProvider.notifier).refresh(),
               ),
               data: (conversations) {
                 if (conversations.isEmpty) {
@@ -102,13 +104,13 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
                 // Arama Filtresi
                 final filteredConversations = conversations.where((c) {
                   if (_searchController.text.isNotEmpty) {
-                    return c.otherUser.fullName
-                        .toLowerCase()
-                        .contains(_searchController.text.toLowerCase());
+                    return c.otherUser.fullName.toLowerCase().contains(
+                      _searchController.text.toLowerCase(),
+                    );
                   }
                   return true;
                 }).toList();
-                
+
                 if (filteredConversations.isEmpty) {
                   return Center(child: Text(l10n.noResults));
                 }
@@ -124,7 +126,9 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
 
                       final timeStr = conversation.lastMessageAt != null
                           ? RelativeTimeText.format(
-                              conversation.lastMessageAt!, l10n)
+                              conversation.lastMessageAt!,
+                              l10n,
+                            )
                           : '';
 
                       return ConversationTile(
@@ -136,7 +140,9 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
                         onTap: () {
                           context.pushNamed(
                             'chat',
-                            pathParameters: {'userId': conversation.otherUser.id},
+                            pathParameters: {
+                              'userId': conversation.otherUser.id,
+                            },
                             queryParameters: {
                               'name': conversation.otherUser.fullName,
                               'avatar': conversation.otherUser.avatarUrl ?? '',

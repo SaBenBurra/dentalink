@@ -49,7 +49,9 @@ class RegisterBottomActions extends StatelessWidget {
                 ),
               ),
               child: Text(
-                currentStep == 0 ? AppLocalizations.of(context)!.backToLogin : AppLocalizations.of(context)!.backShort,
+                currentStep == 0
+                    ? AppLocalizations.of(context)!.backToLogin
+                    : AppLocalizations.of(context)!.backShort,
                 style: TextStyle(
                   color: isDark ? Colors.white70 : Colors.black87,
                   fontWeight: FontWeight.bold,
@@ -74,7 +76,9 @@ class RegisterBottomActions extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.25),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),
@@ -82,7 +86,9 @@ class RegisterBottomActions extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      isLastStep ? AppLocalizations.of(context)!.completeProfile : AppLocalizations.of(context)!.continueAction,
+                      isLastStep
+                          ? AppLocalizations.of(context)!.completeProfile
+                          : AppLocalizations.of(context)!.continueAction,
                       style: AppTextStyles.button.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

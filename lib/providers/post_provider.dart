@@ -6,6 +6,7 @@ import '../data/providers/repository_providers.dart';
 import 'feed_provider.dart';
 import 'post_toggle.dart';
 import 'search_provider.dart';
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Tek Post Detay Provider
 // ─────────────────────────────────────────────────────────────────────────────
@@ -25,7 +26,8 @@ class PostDetailNotifier
   }
 
   /// Post silindi: açık sayfa "bulunamadı" durumuna geçer (PostScreen kendini kapatır).
-  void markDeleted() => state = AsyncError(const NotFoundFailure(), StackTrace.current);
+  void markDeleted() =>
+      state = AsyncError(const NotFoundFailure(), StackTrace.current);
 
   Future<void> toggleLike() => _toggle(PostToggle.like);
 
@@ -54,7 +56,9 @@ class PostDetailNotifier
       }
     } on NotFoundFailure catch (e, st) {
       state = AsyncError(e, st);
-      if (ref.exists(feedProvider)) ref.read(feedProvider.notifier).removePost(arg);
+      if (ref.exists(feedProvider)) {
+        ref.read(feedProvider.notifier).removePost(arg);
+      }
       if (ref.exists(searchProvider)) {
         ref.read(searchProvider.notifier).removePost(arg);
       }
@@ -82,14 +86,13 @@ class UserPostsNotifier
       _pager.first(await ref.read(feedRepositoryProvider).getPostsByUser(arg));
 
   Future<void> loadMore() => _pager.loadMore(
-        (before) => ref
-            .read(feedRepositoryProvider)
-            .getPostsByUser(arg, before: before),
-        (items) {
-          final posts = state.valueOrNull;
-          if (posts != null) state = AsyncData([...posts, ...items]);
-        },
-      );
+    (before) =>
+        ref.read(feedRepositoryProvider).getPostsByUser(arg, before: before),
+    (items) {
+      final posts = state.valueOrNull;
+      if (posts != null) state = AsyncData([...posts, ...items]);
+    },
+  );
 
   /// Listedeki tek postu yeniden çekmeden günceller (yüklenen sayfalar kalır).
   void patchPost(String postId, PostModel Function(PostModel) update) {
@@ -101,10 +104,12 @@ class UserPostsNotifier
   void removePost(String postId) {
     final posts = state.valueOrNull;
     if (posts == null) return;
-    state = AsyncData([for (final p in posts) if (p.id != postId) p]);
+    state = AsyncData([
+      for (final p in posts)
+        if (p.id != postId) p,
+    ]);
   }
 }
 
 final userPostsProvider = AsyncNotifierProvider.autoDispose
     .family<UserPostsNotifier, List<PostModel>, String>(UserPostsNotifier.new);
-

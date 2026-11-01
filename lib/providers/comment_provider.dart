@@ -24,29 +24,33 @@ abstract class CommentThreadNotifier<A>
 
   String get postId;
 
-  Future<PageResult<CommentModel>> _fetch(CommentRepository repo, PageCursor? after);
+  Future<PageResult<CommentModel>> _fetch(
+    CommentRepository repo,
+    PageCursor? after,
+  );
 
   bool get hasMore => _pager.hasMore;
 
   @override
   Future<List<CommentModel>> build(A arg) async {
-    return _pager.first(await _fetch(ref.watch(commentRepositoryProvider), null));
+    return _pager.first(
+      await _fetch(ref.watch(commentRepositoryProvider), null),
+    );
   }
 
   /// Sonraki sayfayı ekler. Bu ekranda eklenen yorum kendi sayfası gelince
   /// listeden çıkıp sayfadaki yerine geçer (çift görünmez).
-  Future<void> loadMore() => _pager.loadMore(
-        (after) => _fetch(_repo, after),
-        (items) {
-          final current = state.valueOrNull;
-          if (current == null) return;
-          final ids = {for (final c in items) c.id};
-          state = AsyncData([
-            for (final c in current) if (!ids.contains(c.id)) c,
-            ...items,
-          ]);
-        },
-      );
+  Future<void> loadMore() =>
+      _pager.loadMore((after) => _fetch(_repo, after), (items) {
+        final current = state.valueOrNull;
+        if (current == null) return;
+        final ids = {for (final c in items) c.id};
+        state = AsyncData([
+          for (final c in current)
+            if (!ids.contains(c.id)) c,
+          ...items,
+        ]);
+      });
 
   Future<T> _keepingAlive<T>(Future<T> Function() action) async {
     final link = ref.keepAlive();
@@ -74,14 +78,19 @@ abstract class CommentThreadNotifier<A>
 
   /// Bu listedeki [parent]'a yanıt yazar: ebeveynin sayacı +1, yanıt listesi
   /// açıksa sonuna eklenir (kapalıysa açılınca sunucudan gelir).
-  Future<void> addReply(CommentModel parent, String content) => _keepingAlive(() async {
-    final reply = await _repo.addComment(postId, _validated(content), parentId: parent.id);
-    _bumpCommentCount();
-    final cur = _find(parent.id);
-    if (cur != null) _replace(cur.copyWith(replyCount: cur.replyCount + 1));
-    final replies = repliesProvider((postId: postId, parentId: parent.id));
-    if (ref.exists(replies)) ref.read(replies.notifier)._append(reply);
-  });
+  Future<void> addReply(CommentModel parent, String content) =>
+      _keepingAlive(() async {
+        final reply = await _repo.addComment(
+          postId,
+          _validated(content),
+          parentId: parent.id,
+        );
+        _bumpCommentCount();
+        final cur = _find(parent.id);
+        if (cur != null) _replace(cur.copyWith(replyCount: cur.replyCount + 1));
+        final replies = repliesProvider((postId: postId, parentId: parent.id));
+        if (ref.exists(replies)) ref.read(replies.notifier)._append(reply);
+      });
 
   /// Sayaç DB trigger'ıyla artar (yanıtlar dahil); ekrandaki kopyalar yeniden
   /// çekilmeden +1 olur.
@@ -90,15 +99,22 @@ abstract class CommentThreadNotifier<A>
     if (ref.exists(postDetailProvider(postId))) {
       ref.read(postDetailProvider(postId).notifier).patch(bump);
     }
-    if (ref.exists(feedProvider)) ref.read(feedProvider.notifier).patchPost(postId, bump);
-    if (ref.exists(searchProvider)) ref.read(searchProvider.notifier).patchPost(postId, bump);
+    if (ref.exists(feedProvider)) {
+      ref.read(feedProvider.notifier).patchPost(postId, bump);
+    }
+    if (ref.exists(searchProvider)) {
+      ref.read(searchProvider.notifier).patchPost(postId, bump);
+    }
   }
 
   /// Engellenen kullanıcının yorumları listeden düşer (sayaç DB'de değişmez).
   void removeAuthor(String userId) {
     final current = state.valueOrNull;
     if (current == null) return;
-    state = AsyncData([for (final c in current) if (c.userId != userId) c]);
+    state = AsyncData([
+      for (final c in current)
+        if (c.userId != userId) c,
+    ]);
   }
 
   CommentModel? _find(String id) =>
@@ -108,7 +124,9 @@ abstract class CommentThreadNotifier<A>
   void _replace(CommentModel updated) {
     final current = state.valueOrNull;
     if (current == null) return;
-    state = AsyncData([for (final c in current) c.id == updated.id ? updated : c]);
+    state = AsyncData([
+      for (final c in current) c.id == updated.id ? updated : c,
+    ]);
   }
 
   Future<void> toggleLike(String commentId) => _keepingAlive(() async {
@@ -120,10 +138,12 @@ abstract class CommentThreadNotifier<A>
       final wasLiked = original.isLiked;
 
       // Optimistic update
-      _replace(original.copyWith(
-        isLiked: !wasLiked,
-        likeCount: original.likeCount + (wasLiked ? -1 : 1),
-      ));
+      _replace(
+        original.copyWith(
+          isLiked: !wasLiked,
+          likeCount: original.likeCount + (wasLiked ? -1 : 1),
+        ),
+      );
 
       try {
         if (wasLiked) {
@@ -135,7 +155,12 @@ abstract class CommentThreadNotifier<A>
         // Rollback: Sadece değişen like alanlarını geri al, böylece markBestAnswer ile çakışmaz
         final cur = _find(commentId);
         if (cur != null) {
-          _replace(cur.copyWith(isLiked: original.isLiked, likeCount: original.likeCount));
+          _replace(
+            cur.copyWith(
+              isLiked: original.isLiked,
+              likeCount: original.likeCount,
+            ),
+          );
         }
         rethrow;
       }
@@ -151,8 +176,10 @@ class CommentsNotifier extends CommentThreadNotifier<String> {
   String get postId => arg;
 
   @override
-  Future<PageResult<CommentModel>> _fetch(CommentRepository repo, PageCursor? after) =>
-      repo.getComments(arg, after: after);
+  Future<PageResult<CommentModel>> _fetch(
+    CommentRepository repo,
+    PageCursor? after,
+  ) => repo.getComments(arg, after: after);
 
   Future<void> addComment(String content) => _keepingAlive(() async {
     final newComment = await _repo.addComment(arg, _validated(content));
@@ -166,7 +193,9 @@ class CommentsNotifier extends CommentThreadNotifier<String> {
   Future<void> unmarkBestAnswer(String commentId) =>
       _setBestAnswer(() => _repo.unmarkBestAnswer(commentId));
 
-  Future<void> _setBestAnswer(Future<void> Function() rpc) => _keepingAlive(() async {
+  Future<void> _setBestAnswer(
+    Future<void> Function() rpc,
+  ) => _keepingAlive(() async {
     await rpc();
 
     // İşlem başarılı, sorunun "çözüldü" (is_solved) state'ini yenile
@@ -189,8 +218,10 @@ class RepliesNotifier extends CommentThreadNotifier<ReplyThread> {
   String get postId => arg.postId;
 
   @override
-  Future<PageResult<CommentModel>> _fetch(CommentRepository repo, PageCursor? after) =>
-      repo.getReplies(arg.parentId, after: after);
+  Future<PageResult<CommentModel>> _fetch(
+    CommentRepository repo,
+    PageCursor? after,
+  ) => repo.getReplies(arg.parentId, after: after);
 }
 
 final commentsProvider = AsyncNotifierProvider.autoDispose
@@ -199,12 +230,22 @@ final commentsProvider = AsyncNotifierProvider.autoDispose
     });
 
 final repliesProvider = AsyncNotifierProvider.autoDispose
-    .family<RepliesNotifier, List<CommentModel>, ReplyThread>(RepliesNotifier.new);
+    .family<RepliesNotifier, List<CommentModel>, ReplyThread>(
+      RepliesNotifier.new,
+    );
 
 /// [comment]'in bulunduğu liste: üst seviye ya da ebeveyninin yanıtları.
-CommentThreadNotifier<Object> commentThreadOf(WidgetRef ref, CommentModel comment) {
+CommentThreadNotifier<Object> commentThreadOf(
+  WidgetRef ref,
+  CommentModel comment,
+) {
   final parentId = comment.parentId;
   return parentId == null
       ? ref.read(commentsProvider(comment.postId).notifier)
-      : ref.read(repliesProvider((postId: comment.postId, parentId: parentId)).notifier);
+      : ref.read(
+          repliesProvider((
+            postId: comment.postId,
+            parentId: parentId,
+          )).notifier,
+        );
 }

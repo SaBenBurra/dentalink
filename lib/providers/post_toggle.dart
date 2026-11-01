@@ -7,32 +7,34 @@ enum PostToggle { like, bookmark }
 
 extension PostToggleX on PostToggle {
   bool isOn(PostModel p) => switch (this) {
-        PostToggle.like => p.isLiked,
-        PostToggle.bookmark => p.isBookmarked,
-      };
+    PostToggle.like => p.isLiked,
+    PostToggle.bookmark => p.isBookmarked,
+  };
 
   /// İyimser durum: alanı ters çevirir, sayacı ±1 günceller.
   PostModel flip(PostModel p) => switch (this) {
-        PostToggle.like => p.copyWith(
-            isLiked: !p.isLiked,
-            likeCount: p.likeCount + (p.isLiked ? -1 : 1),
-          ),
-        PostToggle.bookmark => p.copyWith(
-            isBookmarked: !p.isBookmarked,
-            bookmarkCount: p.bookmarkCount + (p.isBookmarked ? -1 : 1),
-          ),
-      };
+    PostToggle.like => p.copyWith(
+      isLiked: !p.isLiked,
+      likeCount: p.likeCount + (p.isLiked ? -1 : 1),
+    ),
+    PostToggle.bookmark => p.copyWith(
+      isBookmarked: !p.isBookmarked,
+      bookmarkCount: p.bookmarkCount + (p.isBookmarked ? -1 : 1),
+    ),
+  };
 
   /// Yalnızca bu toggle'ın alanlarını [from]'dan [into]'ya kopyalar; tüm postu
   /// değiştirmek eşzamanlı diğer toggle'ın iyimser değerini ezerdi.
   PostModel copyFields(PostModel into, PostModel from) => switch (this) {
-        PostToggle.like =>
-          into.copyWith(isLiked: from.isLiked, likeCount: from.likeCount),
-        PostToggle.bookmark => into.copyWith(
-            isBookmarked: from.isBookmarked,
-            bookmarkCount: from.bookmarkCount,
-          ),
-      };
+    PostToggle.like => into.copyWith(
+      isLiked: from.isLiked,
+      likeCount: from.likeCount,
+    ),
+    PostToggle.bookmark => into.copyWith(
+      isBookmarked: from.isBookmarked,
+      bookmarkCount: from.bookmarkCount,
+    ),
+  };
 
   Future<PostModel> _send(Ref ref, PostModel original) {
     switch (this) {
@@ -95,7 +97,9 @@ Future<PostModel?> runPostToggle(
         final want = current();
         // base yoksa önceki senkron bu dokunuşu da kapsadı.
         final base = queue._confirmed[key];
-        if (want == null || base == null || toggle.isOn(want) == toggle.isOn(base)) {
+        if (want == null ||
+            base == null ||
+            toggle.isOn(want) == toggle.isOn(base)) {
           break;
         }
         server = await toggle._send(ref, base);

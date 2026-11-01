@@ -45,8 +45,7 @@ class BookmarksScreen extends ConsumerWidget {
             return DentLinkEmptyState(
               icon: Icons.bookmark_border_rounded,
               title: AppLocalizations.of(context)!.bookmarksEmptyTitle,
-              subtitle:
-                  AppLocalizations.of(context)!.bookmarksEmptySubtitle,
+              subtitle: AppLocalizations.of(context)!.bookmarksEmptySubtitle,
             );
           }
 
@@ -118,8 +117,9 @@ class BookmarksScreen extends ConsumerWidget {
     final messenger = ScaffoldMessenger.of(context);
     final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(bookmarkProvider.notifier);
-    void showError(Object e) =>
-        messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(l10n, e))));
+    void showError(Object e) => messenger.showSnackBar(
+      SnackBar(content: Text(getErrorMessage(l10n, e))),
+    );
 
     messenger.hideCurrentSnackBar();
     try {

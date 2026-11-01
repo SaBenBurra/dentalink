@@ -33,8 +33,12 @@ class RegisterState {
       currentStep: currentStep ?? this.currentStep,
       isCompleting: isCompleting ?? this.isCompleting,
       nameError: nameError != null ? nameError() : this.nameError,
-      selectedTitle: selectedTitle != null ? selectedTitle() : this.selectedTitle,
-      selectedImageFile: selectedImageFile != null ? selectedImageFile() : this.selectedImageFile,
+      selectedTitle: selectedTitle != null
+          ? selectedTitle()
+          : this.selectedTitle,
+      selectedImageFile: selectedImageFile != null
+          ? selectedImageFile()
+          : this.selectedImageFile,
       acceptedTerms: acceptedTerms ?? this.acceptedTerms,
     );
   }
@@ -56,9 +60,11 @@ class RegisterController extends AutoDisposeNotifier<RegisterState> {
 
   void nextStep(String name) {
     if (state.currentStep == 0) {
-      final error = name.trim().isEmpty ? ref.read(l10nProvider).validationNameRequired : null;
+      final error = name.trim().isEmpty
+          ? ref.read(l10nProvider).validationNameRequired
+          : null;
       state = state.copyWith(nameError: () => error);
-      
+
       if (error != null) return;
       if (state.selectedTitle == null) {
         throw StateError('title not selected');
@@ -67,7 +73,7 @@ class RegisterController extends AutoDisposeNotifier<RegisterState> {
         throw StateError('terms not accepted');
       }
     }
-    
+
     if (state.currentStep < totalSteps - 1) {
       state = state.copyWith(currentStep: state.currentStep + 1);
     }
@@ -110,7 +116,9 @@ class RegisterController extends AutoDisposeNotifier<RegisterState> {
     try {
       final expYears = int.tryParse(experienceYearsStr ?? '');
 
-      await ref.read(authProvider.notifier).completeRegistration(
+      await ref
+          .read(authProvider.notifier)
+          .completeRegistration(
             fullName: fullName,
             title: state.selectedTitle!,
             bio: bio?.isNotEmpty == true ? bio : null,
@@ -128,6 +136,7 @@ class RegisterController extends AutoDisposeNotifier<RegisterState> {
   }
 }
 
-final registerControllerProvider = AutoDisposeNotifierProvider<RegisterController, RegisterState>(() {
-  return RegisterController();
-});
+final registerControllerProvider =
+    AutoDisposeNotifierProvider<RegisterController, RegisterState>(() {
+      return RegisterController();
+    });

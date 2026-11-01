@@ -25,10 +25,11 @@ class SupabaseCommentRepository implements CommentRepository {
     my_likes:likes(id)
   ''';
 
-
-
   @override
-  Future<PageResult<CommentModel>> getComments(String postId, {PageCursor? after}) => guardSupabase(() async {
+  Future<PageResult<CommentModel>> getComments(
+    String postId, {
+    PageCursor? after,
+  }) => guardSupabase(() async {
     final uid = _uid;
 
     var query = _client
@@ -39,9 +40,7 @@ class SupabaseCommentRepository implements CommentRepository {
         .eq('my_likes.user_id', uid);
     // En iyi cevap ilk sayfanın başında; sonraki sayfalarda tekrar gelmez.
     if (after != null) {
-      query = query
-          .eq('is_best_answer', false)
-          .after(after, ascending: true);
+      query = query.eq('is_best_answer', false).after(after, ascending: true);
     }
 
     final rows = await query
@@ -50,11 +49,17 @@ class SupabaseCommentRepository implements CommentRepository {
         .order('id', ascending: true)
         .limit(pageSize);
 
-    return (items: rows.map(CommentModel.fromRow).toList(), next: nextCursor(rows));
+    return (
+      items: rows.map(CommentModel.fromRow).toList(),
+      next: nextCursor(rows),
+    );
   });
 
   @override
-  Future<PageResult<CommentModel>> getReplies(String parentId, {PageCursor? after}) => guardSupabase(() async {
+  Future<PageResult<CommentModel>> getReplies(
+    String parentId, {
+    PageCursor? after,
+  }) => guardSupabase(() async {
     final uid = _uid;
 
     var query = _client
@@ -69,11 +74,18 @@ class SupabaseCommentRepository implements CommentRepository {
         .order('id', ascending: true)
         .limit(pageSize);
 
-    return (items: rows.map(CommentModel.fromRow).toList(), next: nextCursor(rows));
+    return (
+      items: rows.map(CommentModel.fromRow).toList(),
+      next: nextCursor(rows),
+    );
   });
 
   @override
-  Future<CommentModel> addComment(String postId, String content, {String? parentId}) => guardSupabase(() async {
+  Future<CommentModel> addComment(
+    String postId,
+    String content, {
+    String? parentId,
+  }) => guardSupabase(() async {
     final uid = _uid;
 
     final row = await _client
@@ -86,7 +98,7 @@ class SupabaseCommentRepository implements CommentRepository {
         })
         .select(_fullCommentSelect)
         .single();
-        
+
     return CommentModel.fromRow(row);
   });
 
@@ -97,7 +109,10 @@ class SupabaseCommentRepository implements CommentRepository {
 
   @override
   Future<void> unmarkBestAnswer(String commentId) => guardSupabase(() async {
-    await _client.rpc('unmark_best_answer', params: {'p_comment_id': commentId});
+    await _client.rpc(
+      'unmark_best_answer',
+      params: {'p_comment_id': commentId},
+    );
   });
 
   @override

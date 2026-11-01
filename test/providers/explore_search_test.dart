@@ -19,16 +19,21 @@ final _author = UserModel(
 );
 
 PostModel _post(String id) => QuestionPostModel(
-      id: id,
-      userId: 'a',
-      title: 't',
-      content: 'c',
-      createdAt: DateTime(2024),
-      updatedAt: DateTime(2024),
-      author: _author,
-    );
+  id: id,
+  userId: 'a',
+  title: 't',
+  content: 'c',
+  createdAt: DateTime(2024),
+  updatedAt: DateTime(2024),
+  author: _author,
+);
 
-typedef _Call = ({String query, List<String> tags, DentalBranch? branch, int offset});
+typedef _Call = ({
+  String query,
+  List<String> tags,
+  DentalBranch? branch,
+  int offset,
+});
 
 /// İlk sayfa dolu (pageSize), ikinci sayfa tek post; çağrıları kaydeder.
 class _Repo implements PostRepository {
@@ -85,9 +90,23 @@ void main() {
     });
 
     test('compareTurkish Ç, Ö harflerini kendi yerine koyar', () {
-      final names = ['Restoratif', 'Çene Cerrahisi', 'Oral Diagnoz', 'Endodonti', 'Ön', 'Cerrahi'];
+      final names = [
+        'Restoratif',
+        'Çene Cerrahisi',
+        'Oral Diagnoz',
+        'Endodonti',
+        'Ön',
+        'Cerrahi',
+      ];
       names.sort(compareTurkish);
-      expect(names, ['Cerrahi', 'Çene Cerrahisi', 'Endodonti', 'Oral Diagnoz', 'Ön', 'Restoratif']);
+      expect(names, [
+        'Cerrahi',
+        'Çene Cerrahisi',
+        'Endodonti',
+        'Oral Diagnoz',
+        'Ön',
+        'Restoratif',
+      ]);
     });
   });
 
@@ -99,10 +118,12 @@ void main() {
     setUp(() async {
       repo = _Repo();
       users = _Users();
-      container = ProviderContainer(overrides: [
-        searchRepositoryProvider.overrideWithValue(repo),
-        userRepositoryProvider.overrideWithValue(users),
-      ]);
+      container = ProviderContainer(
+        overrides: [
+          searchRepositoryProvider.overrideWithValue(repo),
+          userRepositoryProvider.overrideWithValue(users),
+        ],
+      );
       container.listen(searchProvider, (_, _) {});
       await pumpEventQueue();
     });
@@ -121,17 +142,20 @@ void main() {
       expect(users.queries, isEmpty);
     });
 
-    test('arama ve branş birlikte uygulanır; kişi araması yalnızca metinle', () async {
-      notifier().setBranch(DentalBranch.endodonti);
-      notifier().search('kanal #eğe');
-      await pumpEventQueue();
-      final last = repo.calls.last;
-      expect(last.query, 'kanal');
-      expect(last.tags, ['eğe']);
-      expect(last.branch, DentalBranch.endodonti);
-      expect(users.queries, ['kanal']);
-      expect(state().users.value, hasLength(1));
-    });
+    test(
+      'arama ve branş birlikte uygulanır; kişi araması yalnızca metinle',
+      () async {
+        notifier().setBranch(DentalBranch.endodonti);
+        notifier().search('kanal #eğe');
+        await pumpEventQueue();
+        final last = repo.calls.last;
+        expect(last.query, 'kanal');
+        expect(last.tags, ['eğe']);
+        expect(last.branch, DentalBranch.endodonti);
+        expect(users.queries, ['kanal']);
+        expect(state().users.value, hasLength(1));
+      },
+    );
 
     test('popüler etiket: sorgu yalnızca etiket olur, branş Tümü', () async {
       notifier().setBranch(DentalBranch.ortodonti);
@@ -151,15 +175,17 @@ void main() {
       expect(state().isOnlyTag('şeffaf plak'), isFalse);
     });
 
-    test('loadMore offset ile ekler, tekrar eden postu atar, son sayfada durur', () async {
-      await notifier().loadMore();
-      expect(repo.calls.last.offset, pageSize);
-      expect(state().posts.value!.map((p) => p.id), [
-        for (var i = 0; i < pageSize; i++) 'p$i',
-        'last',
-      ]);
-      expect(state().hasMore, isFalse);
-    });
+    test(
+      'loadMore offset ile ekler, tekrar eden postu atar, son sayfada durur',
+      () async {
+        await notifier().loadMore();
+        expect(repo.calls.last.offset, pageSize);
+        expect(state().posts.value!.map((p) => p.id), [
+          for (var i = 0; i < pageSize; i++) 'p$i',
+          'last',
+        ]);
+        expect(state().hasMore, isFalse);
+      },
+    );
   });
-
 }

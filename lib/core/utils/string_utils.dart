@@ -12,8 +12,19 @@ String generateUsername(String fullName) {
   // Türkçe eşleme küçük harfe çevirmeden ve ASCII dışını silmeden ÖNCE yapılmalı;
   // aksi halde 'ç', 'İ' gibi harfler silinir ya da 'i̇' olur.
   const turkishMap = {
-    'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u',
-    'Ç': 'c', 'Ğ': 'g', 'İ': 'i', 'I': 'i', 'Ö': 'o', 'Ş': 's', 'Ü': 'u',
+    'ç': 'c',
+    'ğ': 'g',
+    'ı': 'i',
+    'ö': 'o',
+    'ş': 's',
+    'ü': 'u',
+    'Ç': 'c',
+    'Ğ': 'g',
+    'İ': 'i',
+    'I': 'i',
+    'Ö': 'o',
+    'Ş': 's',
+    'Ü': 'u',
   };
   var normalized = fullName.trim();
   turkishMap.forEach((tr, en) {
@@ -33,12 +44,18 @@ String generateUsername(String fullName) {
 
 /// Türkçe alfabetik karşılaştırma: Ç, Ğ, I, Ö, Ş, Ü kendi harflerinden sonra
 /// gelir (kod noktası sırasında Z'nin arkasına düşerlerdi).
-int compareTurkish(String a, String b) => _trSortKey(a).compareTo(_trSortKey(b));
+int compareTurkish(String a, String b) =>
+    _trSortKey(a).compareTo(_trSortKey(b));
 
 String _trSortKey(String s) {
   // Harfin hemen ardına U+007F: "ce" < "c\x7f…" yani C'li sözcükler Ç'lilerden önce.
   const after = {
-    'ç': 'c\x7f', 'ğ': 'g\x7f', 'ı': 'h\x7f', 'ö': 'o\x7f', 'ş': 's\x7f', 'ü': 'u\x7f',
+    'ç': 'c\x7f',
+    'ğ': 'g\x7f',
+    'ı': 'h\x7f',
+    'ö': 'o\x7f',
+    'ş': 's\x7f',
+    'ü': 'u\x7f',
   };
   final lower = s.replaceAll('I', 'ı').replaceAll('İ', 'i').toLowerCase();
   return lower.split('').map((c) => after[c] ?? c).join();

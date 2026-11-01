@@ -7,7 +7,7 @@ import '../../../shared/utils/error_messages.dart';
 
 class UserSearchDelegate extends SearchDelegate<UserModel?> {
   final WidgetRef ref;
-  
+
   // searchFieldLabel verilmez: MaterialLocalizations'ın yerelleştirilmiş "Ara" etiketi kullanılır.
   UserSearchDelegate(this.ref);
 
@@ -79,14 +79,14 @@ class UserSearchDelegate extends SearchDelegate<UserModel?> {
                     query = query; // trigger rebuild
                   },
                   child: Text(l10n.retry),
-                )
+                ),
               ],
             ),
           );
         }
-        
+
         final users = snapshot.data ?? [];
-        
+
         if (users.isEmpty) {
           return Center(child: Text(l10n.userNotFound));
         }
@@ -97,11 +97,12 @@ class UserSearchDelegate extends SearchDelegate<UserModel?> {
             final user = users[index];
             return ListTile(
               leading: CircleAvatar(
-                backgroundImage: user.avatarUrl != null && user.avatarUrl!.isNotEmpty 
-                    ? NetworkImage(user.avatarUrl!) 
+                backgroundImage:
+                    user.avatarUrl != null && user.avatarUrl!.isNotEmpty
+                    ? NetworkImage(user.avatarUrl!)
                     : null,
-                child: (user.avatarUrl == null || user.avatarUrl!.isEmpty) 
-                    ? const Icon(Icons.person) 
+                child: (user.avatarUrl == null || user.avatarUrl!.isEmpty)
+                    ? const Icon(Icons.person)
                     : null,
               ),
               title: Text(user.fullName),

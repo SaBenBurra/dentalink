@@ -60,10 +60,10 @@ class FollowingStateNotifier extends StateNotifier<Map<String, bool>> {
 
 final followingStateProvider =
     StateNotifierProvider<FollowingStateNotifier, Map<String, bool>>((ref) {
-  // Kullanıcı değişince (çıkış/başka hesap) önceki kullanıcının takip haritası sıfırlanır.
-  ref.watch(authProvider.select((s) => s.valueOrNull?.id));
-  return FollowingStateNotifier(ref);
-});
+      // Kullanıcı değişince (çıkış/başka hesap) önceki kullanıcının takip haritası sıfırlanır.
+      ref.watch(authProvider.select((s) => s.valueOrNull?.id));
+      return FollowingStateNotifier(ref);
+    });
 
 /// Belirli bir kullanıcının takip durumunu izlemek için
 /// kullanışlı bir selector provider.

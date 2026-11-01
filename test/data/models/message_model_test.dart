@@ -68,32 +68,47 @@ void main() {
 
     test('equality: same id means equal', () {
       final a = MessageModel(
-        id: 'msg-1', senderId: 'a', receiverId: 'b',
-        content: 'X', createdAt: DateTime(2024),
+        id: 'msg-1',
+        senderId: 'a',
+        receiverId: 'b',
+        content: 'X',
+        createdAt: DateTime(2024),
       );
       final b = MessageModel(
-        id: 'msg-1', senderId: 'c', receiverId: 'd',
-        content: 'Y', createdAt: DateTime(2025),
+        id: 'msg-1',
+        senderId: 'c',
+        receiverId: 'd',
+        content: 'Y',
+        createdAt: DateTime(2025),
       );
       expect(a, equals(b));
     });
 
     test('equality: different id means not equal', () {
       final a = MessageModel(
-        id: 'msg-1', senderId: 'a', receiverId: 'b',
-        content: 'X', createdAt: DateTime(2024),
+        id: 'msg-1',
+        senderId: 'a',
+        receiverId: 'b',
+        content: 'X',
+        createdAt: DateTime(2024),
       );
       final b = MessageModel(
-        id: 'msg-2', senderId: 'a', receiverId: 'b',
-        content: 'X', createdAt: DateTime(2024),
+        id: 'msg-2',
+        senderId: 'a',
+        receiverId: 'b',
+        content: 'X',
+        createdAt: DateTime(2024),
       );
       expect(a, isNot(equals(b)));
     });
 
     test('hashCode is based on id', () {
       final msg = MessageModel(
-        id: 'msg-abc', senderId: 'a', receiverId: 'b',
-        content: 'test', createdAt: DateTime(2024),
+        id: 'msg-abc',
+        senderId: 'a',
+        receiverId: 'b',
+        content: 'test',
+        createdAt: DateTime(2024),
       );
       expect(msg.hashCode, 'msg-abc'.hashCode);
     });

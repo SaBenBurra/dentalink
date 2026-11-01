@@ -23,11 +23,11 @@ class SupabaseAuthRepository implements AuthRepository {
     SupabaseClient? client,
     Duration otpCooldown = const Duration(seconds: 60),
     int maxDistinctDestinations = 2,
-  })  : _client = client ?? Supabase.instance.client,
-        _limiter = OtpSendLimiter(
-          cooldown: otpCooldown,
-          maxDistinctDestinations: maxDistinctDestinations,
-        );
+  }) : _client = client ?? Supabase.instance.client,
+       _limiter = OtpSendLimiter(
+         cooldown: otpCooldown,
+         maxDistinctDestinations: maxDistinctDestinations,
+       );
 
   final SupabaseClient _client;
   final OtpSendLimiter _limiter;
@@ -171,28 +171,28 @@ class SupabaseAuthRepository implements AuthRepository {
     // email/phone public.users'ta tutulmaz (KVKK); oturumdaki auth kullanıcısından gelir.
     final authUser = _client.auth.currentUser;
     return UserModel(
-        id: data['id'] as String,
-        email: authUser?.email,
-        phone: authUser?.phone,
-        fullName: data['full_name'] as String,
-        username: data['username'] as String,
-        avatarUrl: data['avatar_url'] as String?,
-        title: UserTitle.fromDbValue(data['title'] as String?),
-        bio: data['bio'] as String?,
-        university: data['university'] as String?,
-        city: data['city'] as String?,
-        experienceYears: data['experience_years'] as int?,
-        workplace: data['workplace'] as String?,
-        followersCount: (data['followers_count'] as int?) ?? 0,
-        followingCount: (data['following_count'] as int?) ?? 0,
-        postsCount: (data['posts_count'] as int?) ?? 0,
-        onboardingCompleted: (data['onboarding_completed'] as bool?) ?? false,
-        isVerified: (data['is_verified'] as bool?) ?? false,
-        lastSeenAt: data['last_seen_at'] != null
-            ? DateTime.parse(data['last_seen_at'] as String)
-            : null,
-        createdAt: DateTime.parse(data['created_at'] as String),
-      );
+      id: data['id'] as String,
+      email: authUser?.email,
+      phone: authUser?.phone,
+      fullName: data['full_name'] as String,
+      username: data['username'] as String,
+      avatarUrl: data['avatar_url'] as String?,
+      title: UserTitle.fromDbValue(data['title'] as String?),
+      bio: data['bio'] as String?,
+      university: data['university'] as String?,
+      city: data['city'] as String?,
+      experienceYears: data['experience_years'] as int?,
+      workplace: data['workplace'] as String?,
+      followersCount: (data['followers_count'] as int?) ?? 0,
+      followingCount: (data['following_count'] as int?) ?? 0,
+      postsCount: (data['posts_count'] as int?) ?? 0,
+      onboardingCompleted: (data['onboarding_completed'] as bool?) ?? false,
+      isVerified: (data['is_verified'] as bool?) ?? false,
+      lastSeenAt: data['last_seen_at'] != null
+          ? DateTime.parse(data['last_seen_at'] as String)
+          : null,
+      createdAt: DateTime.parse(data['created_at'] as String),
+    );
   }
 
   @override
@@ -255,10 +255,15 @@ class SupabaseAuthRepository implements AuthRepository {
 
   Future<String> _uploadAvatar(String userId, File file) async {
     final fileExt = file.path.split('.').last.toLowerCase();
-    final fileName = '$userId/avatar_${DateTime.now().millisecondsSinceEpoch}.$fileExt';
-    await _client.storage.from('avatars').upload(
-      fileName, file,
-      fileOptions: const FileOptions(cacheControl: '3600', upsert: true),
-    );
+    final fileName =
+        '$userId/avatar_${DateTime.now().millisecondsSinceEpoch}.$fileExt';
+    await _client.storage
+        .from('avatars')
+        .upload(
+          fileName,
+          file,
+          fileOptions: const FileOptions(cacheControl: '3600', upsert: true),
+        );
     return _client.storage.from('avatars').getPublicUrl(fileName);
-  }}
+  }
+}

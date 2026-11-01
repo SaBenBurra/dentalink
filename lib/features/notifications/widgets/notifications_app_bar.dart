@@ -56,9 +56,11 @@ class NotificationsAppBar extends ConsumerWidget
             ref
                 .read(notificationsProvider.notifier)
                 .markAllRead()
-                .catchError((Object e) => messenger.showSnackBar(
-                      SnackBar(content: Text(getErrorMessage(l10n, e))),
-                    ));
+                .catchError(
+                  (Object e) => messenger.showSnackBar(
+                    SnackBar(content: Text(getErrorMessage(l10n, e))),
+                  ),
+                );
           },
           child: Text(
             AppLocalizations.of(context)!.markAllRead,

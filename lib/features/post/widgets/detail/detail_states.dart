@@ -20,7 +20,9 @@ class PostDetailLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(leading: BackButton(onPressed: () => popOrGoFeed(context))),
+      appBar: AppBar(
+        leading: BackButton(onPressed: () => popOrGoFeed(context)),
+      ),
       body: const Center(child: CircularProgressIndicator()),
     );
   }
@@ -39,14 +41,20 @@ class PostDetailError extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(leading: BackButton(onPressed: () => popOrGoFeed(context))),
+      appBar: AppBar(
+        leading: BackButton(onPressed: () => popOrGoFeed(context)),
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(AppDimensions.spacing24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.error_outline, size: 48, color: colorScheme.onSurfaceVariant),
+              Icon(
+                Icons.error_outline,
+                size: 48,
+                color: colorScheme.onSurfaceVariant,
+              ),
               const SizedBox(height: AppDimensions.spacing16),
               Text(message, textAlign: TextAlign.center),
               const SizedBox(height: AppDimensions.spacing16),

@@ -129,19 +129,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final state = ref.read(loginControllerProvider);
     if (state.isLoading) return;
     final inputVal = _inputController.text.trim();
-    
+
     // Klavye kapansın
     FocusScope.of(context).unfocus();
-    
+
     await ref.read(loginControllerProvider.notifier).sendOtp(inputVal);
-    
+
     final newState = ref.read(loginControllerProvider);
     if (newState.step == LoginStep.otp) {
       for (final controller in _otpControllers) {
         controller.clear();
       }
       Future.delayed(_keyboardDismissDelay + _stepTransitionDuration, () {
-        if (mounted && ref.read(loginControllerProvider).step == LoginStep.otp) {
+        if (mounted &&
+            ref.read(loginControllerProvider).step == LoginStep.otp) {
           _otpFocusNodes[0].requestFocus();
         }
       });
@@ -168,7 +169,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     if (otp.length < _otpLength || state.isLoading || state.isSuccess) return;
 
     _setAuthRedirectHold(true);
-    
+
     final isRegistered = await ref
         .read(loginControllerProvider.notifier)
         .verifyOtp(_inputController.text.trim(), otp);
@@ -198,16 +199,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   Future<void> _handleResend() async {
-    await ref.read(loginControllerProvider.notifier).resendOtp(_inputController.text.trim());
+    await ref
+        .read(loginControllerProvider.notifier)
+        .resendOtp(_inputController.text.trim());
   }
 
   void _goBack() {
     _successNavTimer?.cancel();
     _releaseAuthRedirectHold();
     ref.read(loginControllerProvider.notifier).goBack();
-    
+
     Future.delayed(_stepTransitionDuration, () {
-      if (mounted && ref.read(loginControllerProvider).step == LoginStep.emailOrPhone) {
+      if (mounted &&
+          ref.read(loginControllerProvider).step == LoginStep.emailOrPhone) {
         _inputFocusNode.requestFocus();
       }
     });
@@ -225,9 +229,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final backgroundColor = isDark
         ? AppColors.darkBackground
         : AppColors.bgGradientStart;
-        
+
     final state = ref.watch(loginControllerProvider);
-    
+
     // Shake listener
     ref.listen<LoginState>(loginControllerProvider, (previous, next) {
       if (next.shouldShake && previous?.shouldShake != true) {
@@ -349,7 +353,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       otpFocusNodes: _otpFocusNodes,
       isLoading: state.isLoading,
       isSuccess: state.isSuccess,
-      successMessage: state.successMessage ?? AppLocalizations.of(context)!.success,
+      successMessage:
+          state.successMessage ?? AppLocalizations.of(context)!.success,
       canResend: state.canResend,
       resendCountdown: state.resendCountdown,
       errorText: state.errorText,

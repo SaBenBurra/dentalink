@@ -77,9 +77,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
       if (_other != null && _otherTag == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.otherTreatmentRequired,
-            ),
+            content: Text(AppLocalizations.of(context)!.otherTreatmentRequired),
           ),
         );
         return;

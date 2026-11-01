@@ -66,24 +66,25 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
     state = const AsyncLoading();
     try {
       // Kullanıcı adı çakışırsa (23505 users_username_key) yeni ekle tekrar dene.
-      for (var attempt = 1;; attempt++) {
+      for (var attempt = 1; ; attempt++) {
         try {
-          final user = await ref.read(authRepositoryProvider).completeRegistration(
-            fullName: fullName,
-            username: generateUsername(fullName),
-            title: title,
-            bio: bio,
-            university: university,
-            city: city,
-            workplace: workplace,
-            experienceYears: experienceYears,
-            avatarFile: avatarFile,
-          );
+          final user = await ref
+              .read(authRepositoryProvider)
+              .completeRegistration(
+                fullName: fullName,
+                username: generateUsername(fullName),
+                title: title,
+                bio: bio,
+                university: university,
+                city: city,
+                workplace: workplace,
+                experienceYears: experienceYears,
+                avatarFile: avatarFile,
+              );
           state = AsyncData(user);
           return;
         } on ConflictFailure catch (e) {
-          final usernameTaken =
-              e.message.contains('username');
+          final usernameTaken = e.message.contains('username');
           if (!usernameTaken || attempt >= 3) rethrow;
         }
       }
@@ -110,8 +111,6 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
       state = const AsyncData(null);
     }
   }
-
-
 }
 
 final authProvider = AsyncNotifierProvider<AuthNotifier, UserModel?>(() {

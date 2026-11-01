@@ -20,14 +20,14 @@ class SupabaseNotificationRepository implements NotificationRepository {
 
   @override
   Future<List<NotificationModel>> getNotifications() => guardSupabase(() async {
-        final rows = await _client
-            .from('notifications')
-            .select(_select)
-            .order('created_at', ascending: false)
-            .limit(100);
+    final rows = await _client
+        .from('notifications')
+        .select(_select)
+        .order('created_at', ascending: false)
+        .limit(100);
 
-        return [for (final r in rows) ?_fromRow(r)];
-      });
+    return [for (final r in rows) ?_fromRow(r)];
+  });
 
   @override
   Stream<NotificationModel> watchNew(String userId) {
@@ -36,11 +36,13 @@ class SupabaseNotificationRepository implements NotificationRepository {
 
     Future<void> emit(String id) async {
       try {
-        final row = await guardSupabase(() => _client
-            .from('notifications')
-            .select(_select)
-            .eq('id', id)
-            .maybeSingle());
+        final row = await guardSupabase(
+          () => _client
+              .from('notifications')
+              .select(_select)
+              .eq('id', id)
+              .maybeSingle(),
+        );
         final n = row == null ? null : _fromRow(row);
         if (n != null && !controller.isClosed) controller.add(n);
       } catch (e, st) {
@@ -91,25 +93,25 @@ class SupabaseNotificationRepository implements NotificationRepository {
 
   @override
   Future<int> getUnreadCount() => guardSupabase(() async {
-        return _client
-            .from('notifications')
-            .count(CountOption.exact)
-            .eq('is_read', false);
-      });
+    return _client
+        .from('notifications')
+        .count(CountOption.exact)
+        .eq('is_read', false);
+  });
 
   @override
   Future<void> markAllRead() => guardSupabase(() async {
-        await _client
-            .from('notifications')
-            .update({'is_read': true})
-            .eq('is_read', false);
-      });
+    await _client
+        .from('notifications')
+        .update({'is_read': true})
+        .eq('is_read', false);
+  });
 
   @override
   Future<void> markRead(String notificationId) => guardSupabase(() async {
-        await _client
-            .from('notifications')
-            .update({'is_read': true})
-            .eq('id', notificationId);
-      });
+    await _client
+        .from('notifications')
+        .update({'is_read': true})
+        .eq('id', notificationId);
+  });
 }

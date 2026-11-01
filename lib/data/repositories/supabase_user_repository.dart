@@ -18,12 +18,8 @@ class SupabaseUserRepository implements UserRepository {
 
   @override
   Future<UserModel> getUserById(String id) => guardSupabase(() async {
-    final response = await client
-        .from('users')
-        .select()
-        .eq('id', id)
-        .single();
-    
+    final response = await client.from('users').select().eq('id', id).single();
+
     return UserModel.fromJson(response);
   });
 
@@ -38,7 +34,12 @@ class SupabaseUserRepository implements UserRepository {
     if (currentUserId != null) request = request.neq('id', currentUserId);
 
     final response = await request
-        .textSearch('search_vector', q, type: TextSearchType.plain, config: 'turkish')
+        .textSearch(
+          'search_vector',
+          q,
+          type: TextSearchType.plain,
+          config: 'turkish',
+        )
         .limit(50);
 
     return (response as List<dynamic>)
@@ -46,23 +47,23 @@ class SupabaseUserRepository implements UserRepository {
         .toList();
   });
 
-
   @override
-  Future<List<BadgeModel>> getUserBadges(String userId) => guardSupabase(() async {
-    final response = await client
-        .from('user_badges')
-        .select('earned_at, badges(*)')
-        .eq('user_id', userId);
+  Future<List<BadgeModel>> getUserBadges(String userId) =>
+      guardSupabase(() async {
+        final response = await client
+            .from('user_badges')
+            .select('earned_at, badges(*)')
+            .eq('user_id', userId);
 
-    return (response as List<dynamic>)
-        .where((e) => e['badges'] != null)
-        .map((e) {
-          final badgeMap = Map<String, dynamic>.from(e['badges']);
-          badgeMap['earned_at'] = e['earned_at'];
-          return BadgeModel.fromJson(badgeMap);
-        })
-        .toList();
-  });
+        return (response as List<dynamic>)
+            .where((e) => e['badges'] != null)
+            .map((e) {
+              final badgeMap = Map<String, dynamic>.from(e['badges']);
+              badgeMap['earned_at'] = e['earned_at'];
+              return BadgeModel.fromJson(badgeMap);
+            })
+            .toList();
+      });
 
   @override
   Future<void> updateProfile(
@@ -76,7 +77,10 @@ class SupabaseUserRepository implements UserRepository {
     String? workplace,
   }) => guardSupabase(() async {
     if (client.auth.currentUser?.id != userId) {
-      throw const ServerFailure(message: 'Yetkisiz işlem: Sadece kendi profilinizi güncelleyebilirsiniz.');
+      throw const ServerFailure(
+        message:
+            'Yetkisiz işlem: Sadece kendi profilinizi güncelleyebilirsiniz.',
+      );
     }
 
     // updated_at DB trigger'ı (set_updated_at) tarafından yazılır.
@@ -96,9 +100,15 @@ class SupabaseUserRepository implements UserRepository {
   });
 
   @override
-  Future<String> uploadAvatar(String userId, File imageFile) => guardSupabase(() async {
+  Future<String> uploadAvatar(
+    String userId,
+    File imageFile,
+  ) => guardSupabase(() async {
     if (client.auth.currentUser?.id != userId) {
-      throw const ServerFailure(message: 'Yetkisiz işlem: Sadece kendi avatarınızı güncelleyebilirsiniz.');
+      throw const ServerFailure(
+        message:
+            'Yetkisiz işlem: Sadece kendi avatarınızı güncelleyebilirsiniz.',
+      );
     }
 
     // Eski dosyalar yeni avatar yüklenip profile yazıldıktan SONRA silinir;
@@ -106,24 +116,30 @@ class SupabaseUserRepository implements UserRepository {
     final oldFiles = await client.storage.from('avatars').list(path: userId);
 
     final ext = imageFile.path.split('.').last.toLowerCase();
-    final fileName = '$userId/avatar_${DateTime.now().millisecondsSinceEpoch}.$ext';
+    final fileName =
+        '$userId/avatar_${DateTime.now().millisecondsSinceEpoch}.$ext';
 
-    await client.storage.from('avatars').upload(
-      fileName,
-      imageFile,
-      fileOptions: const FileOptions(cacheControl: '3600'),
-    );
+    await client.storage
+        .from('avatars')
+        .upload(
+          fileName,
+          imageFile,
+          fileOptions: const FileOptions(cacheControl: '3600'),
+        );
 
     final publicUrl = client.storage.from('avatars').getPublicUrl(fileName);
 
-    await client.from('users').update({'avatar_url': publicUrl}).eq('id', userId);
+    await client
+        .from('users')
+        .update({'avatar_url': publicUrl})
+        .eq('id', userId);
 
     // En iyi çaba: avatar zaten değişti; silinemezse yetim dosya kalır, hata gösterilmez.
     if (oldFiles.isNotEmpty) {
       try {
-        await client.storage
-            .from('avatars')
-            .remove([for (final f in oldFiles) '$userId/${f.name}']);
+        await client.storage.from('avatars').remove([
+          for (final f in oldFiles) '$userId/${f.name}',
+        ]);
       } catch (e) {
         debugPrint('eski avatarlar silinemedi: $e');
       }
@@ -148,11 +164,18 @@ class SupabaseUserRepository implements UserRepository {
   Future<void> _emptyFolder(String bucket, String uid) async {
     final api = client.storage.from(bucket);
     while (true) {
-      final files = await api.list(path: uid, searchOptions: const SearchOptions(limit: 100));
+      final files = await api.list(
+        path: uid,
+        searchOptions: const SearchOptions(limit: 100),
+      );
       if (files.isEmpty) return;
-      final removed = await api.remove([for (final f in files) '$uid/${f.name}']);
+      final removed = await api.remove([
+        for (final f in files) '$uid/${f.name}',
+      ]);
       if (removed.isEmpty) {
-        throw const ServerFailure(message: 'storage files could not be removed');
+        throw const ServerFailure(
+          message: 'storage files could not be removed',
+        );
       }
     }
   }

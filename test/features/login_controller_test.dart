@@ -28,45 +28,58 @@ class _ThrowingAuth extends MockAuthForTest {
 
 ProviderContainer _container(_ThrowingAuth auth) {
   final c = ProviderContainer(
-      overrides: [
-    authRepositoryProvider.overrideWithValue(auth),
-    l10nProvider.overrideWithValue(lookupAppLocalizations(const Locale('tr'))),
-  ]);
+    overrides: [
+      authRepositoryProvider.overrideWithValue(auth),
+      l10nProvider.overrideWithValue(
+        lookupAppLocalizations(const Locale('tr')),
+      ),
+    ],
+  );
   addTearDown(c.dispose);
   c.listen(loginControllerProvider, (_, _) {});
   return c;
 }
 
 void main() {
-  test('reddedilen kod "hatalı", ağ hatası bağlantı mesajı gösterir (AUTH-10)',
-      () async {
-    final auth = _ThrowingAuth()
-      ..verifyError = const AuthApiException('bad', code: 'otp_expired');
-    final c = _container(auth);
-    final ctrl = c.read(loginControllerProvider.notifier);
+  test(
+    'reddedilen kod "hatalı", ağ hatası bağlantı mesajı gösterir (AUTH-10)',
+    () async {
+      final auth = _ThrowingAuth()
+        ..verifyError = const AuthApiException('bad', code: 'otp_expired');
+      final c = _container(auth);
+      final ctrl = c.read(loginControllerProvider.notifier);
 
-    await ctrl.verifyOtp('a@b.co', '123456');
-    expect(c.read(loginControllerProvider).errorText,
-        'Kod hatalı veya süresi dolmuş');
+      await ctrl.verifyOtp('a@b.co', '123456');
+      expect(
+        c.read(loginControllerProvider).errorText,
+        'Kod hatalı veya süresi dolmuş',
+      );
 
-    auth.verifyError = AuthRetryableFetchException();
-    await ctrl.verifyOtp('a@b.co', '123456');
-    expect(c.read(loginControllerProvider).errorText,
-        'İnternet bağlantınızı kontrol edin.');
-  });
+      auth.verifyError = AuthRetryableFetchException();
+      await ctrl.verifyOtp('a@b.co', '123456');
+      expect(
+        c.read(loginControllerProvider).errorText,
+        'İnternet bağlantınızı kontrol edin.',
+      );
+    },
+  );
 
-  test('gönderim hatasında ham Exception metni çıkmaz, geri sayım 60 sn',
-      () async {
-    final auth = _ThrowingAuth()..sendError = Exception('boom');
-    final c = _container(auth);
-    final ctrl = c.read(loginControllerProvider.notifier);
+  test(
+    'gönderim hatasında ham Exception metni çıkmaz, geri sayım 60 sn',
+    () async {
+      final auth = _ThrowingAuth()..sendError = Exception('boom');
+      final c = _container(auth);
+      final ctrl = c.read(loginControllerProvider.notifier);
 
-    await ctrl.sendOtp('a@b.co');
-    expect(c.read(loginControllerProvider).errorText,
-        isNot(contains('Exception')));
+      await ctrl.sendOtp('a@b.co');
+      expect(
+        c.read(loginControllerProvider).errorText,
+        isNot(contains('Exception')),
+      );
 
-    auth.sendError = null;
-    await ctrl.sendOtp('a@b.co');
-    expect(c.read(loginControllerProvider).resendCountdown, 60);
-  });
+      auth.sendError = null;
+      await ctrl.sendOtp('a@b.co');
+      expect(c.read(loginControllerProvider).resendCountdown, 60);
+    },
+  );
 }

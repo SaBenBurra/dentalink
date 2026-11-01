@@ -62,7 +62,8 @@ List<Override> fakeRepositoryOverrides({
   final posts = _FakePostRepository(feed ?? [seedCase]);
   return [
     supabaseClientProvider.overrideWith(
-      (_) => throw StateError('Testte gerçek Supabase istemcisi kullanılmamalı'),
+      (_) =>
+          throw StateError('Testte gerçek Supabase istemcisi kullanılmamalı'),
     ),
     authRepositoryProvider.overrideWithValue(auth ?? MockAuthForTest()),
     feedRepositoryProvider.overrideWithValue(posts),
@@ -72,10 +73,14 @@ List<Override> fakeRepositoryOverrides({
     createPostRepositoryProvider.overrideWithValue(posts),
     commentRepositoryProvider.overrideWithValue(_FakeCommentRepository()),
     messageRepositoryProvider.overrideWithValue(_FakeMessageRepository()),
-    notificationRepositoryProvider.overrideWithValue(_FakeNotificationRepository()),
+    notificationRepositoryProvider.overrideWithValue(
+      _FakeNotificationRepository(),
+    ),
     userRepositoryProvider.overrideWithValue(_FakeUserRepository()),
     followRepositoryProvider.overrideWithValue(_FakeFollowRepository()),
-    connectivityProvider.overrideWith((_) => Stream.value([ConnectivityResult.wifi])),
+    connectivityProvider.overrideWith(
+      (_) => Stream.value([ConnectivityResult.wifi]),
+    ),
   ];
 }
 
@@ -108,17 +113,21 @@ class _FakePostRepository implements PostRepository {
       (items: _feed, next: null);
 
   @override
-  Future<PostModel> getPostById(String id) async =>
-      id == seedCase.id ? seedCase : _created[id] ?? (throw const NotFoundFailure());
+  Future<PostModel> getPostById(String id) async => id == seedCase.id
+      ? seedCase
+      : _created[id] ?? (throw const NotFoundFailure());
 
   @override
-  Future<PageResult<PostModel>> getPostsByUser(String userId,
-          {PageCursor? before}) async =>
+  Future<PageResult<PostModel>> getPostsByUser(
+    String userId, {
+    PageCursor? before,
+  }) async =>
       (items: userId == otherUser.id ? [seedCase] : <PostModel>[], next: null);
 
   @override
-  Future<PageResult<PostModel>> getBookmarkedPosts({PageCursor? before}) async =>
-      (items: <PostModel>[], next: null);
+  Future<PageResult<PostModel>> getBookmarkedPosts({
+    PageCursor? before,
+  }) async => (items: <PostModel>[], next: null);
 
   @override
   Future<List<PostModel>> popularPosts({
@@ -127,8 +136,7 @@ class _FakePostRepository implements PostRepository {
     DentalBranch? branch,
     required DateTime now,
     int offset = 0,
-  }) async =>
-      offset == 0 ? _feed : <PostModel>[];
+  }) async => offset == 0 ? _feed : <PostModel>[];
 
   @override
   Future<List<TagModel>> popularTags({int limit = 5}) async => const [];
@@ -142,21 +150,24 @@ class _FakePostRepository implements PostRepository {
 
 class _FakeCommentRepository implements CommentRepository {
   @override
-  Future<PageResult<CommentModel>> getComments(String postId,
-          {PageCursor? after}) async =>
-      (items: <CommentModel>[], next: null);
+  Future<PageResult<CommentModel>> getComments(
+    String postId, {
+    PageCursor? after,
+  }) async => (items: <CommentModel>[], next: null);
 
   @override
-  Future<CommentModel> addComment(String postId, String content,
-          {String? parentId}) async =>
-      CommentModel(
-        id: 'c1',
-        postId: postId,
-        userId: 'me',
-        content: content,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
+  Future<CommentModel> addComment(
+    String postId,
+    String content, {
+    String? parentId,
+  }) async => CommentModel(
+    id: 'c1',
+    postId: postId,
+    userId: 'me',
+    content: content,
+    createdAt: DateTime.now(),
+    updatedAt: DateTime.now(),
+  );
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -167,24 +178,30 @@ class _FakeMessageRepository implements MessageRepository {
   Future<List<ConversationModel>> getConversations() async => [_conversation];
 
   @override
-  Future<PageResult<MessageModel>> getMessages(String conversationId,
-          {PageCursor? before}) async =>
-      (items: [
-        MessageModel(
-          id: 'm1',
-          senderId: otherUser.id,
-          receiverId: 'mock_test_user_id',
-          content: 'Merhaba',
-          isRead: true,
-          createdAt: DateTime(2024),
-        ),
-      ], next: null);
+  Future<PageResult<MessageModel>> getMessages(
+    String conversationId, {
+    PageCursor? before,
+  }) async => (
+    items: [
+      MessageModel(
+        id: 'm1',
+        senderId: otherUser.id,
+        receiverId: 'mock_test_user_id',
+        content: 'Merhaba',
+        isRead: true,
+        createdAt: DateTime(2024),
+      ),
+    ],
+    next: null,
+  );
 
   @override
-  Stream<MessageModel> watchMessages(String conversationId) => const Stream.empty();
+  Stream<MessageModel> watchMessages(String conversationId) =>
+      const Stream.empty();
 
   @override
-  Stream<ConversationModel> watchConversations(String userId) => const Stream.empty();
+  Stream<ConversationModel> watchConversations(String userId) =>
+      const Stream.empty();
 
   @override
   Future<void> markMessagesAsRead(String conversationId) async {}
@@ -196,13 +213,13 @@ class _FakeMessageRepository implements MessageRepository {
 class _FakeNotificationRepository implements NotificationRepository {
   @override
   Future<List<NotificationModel>> getNotifications() async => [
-        NotificationModel(
-          id: 'n1',
-          type: NotificationType.follow,
-          actor: otherUser,
-          createdAt: DateTime(2024),
-        ),
-      ];
+    NotificationModel(
+      id: 'n1',
+      type: NotificationType.follow,
+      actor: otherUser,
+      createdAt: DateTime(2024),
+    ),
+  ];
 
   @override
   Stream<NotificationModel> watchNew(String userId) => const Stream.empty();
@@ -243,18 +260,23 @@ class _FakeFollowRepository implements FollowRepository {
   Future<Set<String>> getFollowedUserIds(List<String> userIds) async => {};
 
   @override
-  Future<PageResult<UserModel>> getFollowers(String userId,
-          {PageCursor? before}) async =>
+  Future<PageResult<UserModel>> getFollowers(
+    String userId, {
+    PageCursor? before,
+  }) async =>
       (items: userId == otherUser.id ? <UserModel>[] : [otherUser], next: null);
 
   @override
-  Future<MutualFollowers> getMutualFollowers(String userId, {int limit = 3}) async =>
-      (users: <UserModel>[], total: 0);
+  Future<MutualFollowers> getMutualFollowers(
+    String userId, {
+    int limit = 3,
+  }) async => (users: <UserModel>[], total: 0);
 
   @override
-  Future<PageResult<UserModel>> getFollowing(String userId,
-          {PageCursor? before}) async =>
-      (items: <UserModel>[], next: null);
+  Future<PageResult<UserModel>> getFollowing(
+    String userId, {
+    PageCursor? before,
+  }) async => (items: <UserModel>[], next: null);
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

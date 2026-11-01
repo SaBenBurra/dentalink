@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-
 import '../repositories/auth_repository.dart';
 import '../repositories/supabase_auth_repository.dart';
 import '../repositories/comment_repository.dart';
@@ -36,11 +35,21 @@ final _basePostRepositoryProvider = Provider<PostRepository>((ref) {
   return SupabasePostRepository(ref.watch(supabaseClientProvider));
 });
 
-final feedRepositoryProvider = Provider<IFeedRepository>((ref) => ref.watch(_basePostRepositoryProvider));
-final bookmarkRepositoryProvider = Provider<IBookmarkRepository>((ref) => ref.watch(_basePostRepositoryProvider));
-final searchRepositoryProvider = Provider<ISearchRepository>((ref) => ref.watch(_basePostRepositoryProvider));
-final postActionRepositoryProvider = Provider<IPostActionRepository>((ref) => ref.watch(_basePostRepositoryProvider));
-final createPostRepositoryProvider = Provider<ICreatePostRepository>((ref) => ref.watch(_basePostRepositoryProvider));
+final feedRepositoryProvider = Provider<IFeedRepository>(
+  (ref) => ref.watch(_basePostRepositoryProvider),
+);
+final bookmarkRepositoryProvider = Provider<IBookmarkRepository>(
+  (ref) => ref.watch(_basePostRepositoryProvider),
+);
+final searchRepositoryProvider = Provider<ISearchRepository>(
+  (ref) => ref.watch(_basePostRepositoryProvider),
+);
+final postActionRepositoryProvider = Provider<IPostActionRepository>(
+  (ref) => ref.watch(_basePostRepositoryProvider),
+);
+final createPostRepositoryProvider = Provider<ICreatePostRepository>(
+  (ref) => ref.watch(_basePostRepositoryProvider),
+);
 
 // ─── Comment ───
 final commentRepositoryProvider = Provider<CommentRepository>((ref) {
@@ -54,7 +63,9 @@ final messageRepositoryProvider = Provider<MessageRepository>((ref) {
 
 // ─── Notification ───
 final notificationRepositoryProvider = Provider<NotificationRepository>((ref) {
-  return SupabaseNotificationRepository(client: ref.watch(supabaseClientProvider));
+  return SupabaseNotificationRepository(
+    client: ref.watch(supabaseClientProvider),
+  );
 });
 
 // ─── User ───
@@ -69,7 +80,9 @@ final followRepositoryProvider = Provider<FollowRepository>((ref) {
 
 // ─── Moderation ───
 final moderationRepositoryProvider = Provider<ModerationRepository>((ref) {
-  return SupabaseModerationRepository(client: ref.watch(supabaseClientProvider));
+  return SupabaseModerationRepository(
+    client: ref.watch(supabaseClientProvider),
+  );
 });
 
 // ─── Push ───

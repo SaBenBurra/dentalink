@@ -22,7 +22,10 @@ class BlockedUsersNotifier extends AutoDisposeAsyncNotifier<List<UserModel>> {
     final index = before?.indexWhere((u) => u.id == userId) ?? -1;
     if (index < 0 || !_pending.add(userId)) return;
     final user = before![index];
-    state = AsyncData([for (final u in before) if (u.id != userId) u]);
+    state = AsyncData([
+      for (final u in before)
+        if (u.id != userId) u,
+    ]);
     try {
       await ref.read(moderationRepositoryProvider).unblockUser(userId);
     } catch (_) {
@@ -38,5 +41,5 @@ class BlockedUsersNotifier extends AutoDisposeAsyncNotifier<List<UserModel>> {
 
 final blockedUsersProvider =
     AsyncNotifierProvider.autoDispose<BlockedUsersNotifier, List<UserModel>>(
-  BlockedUsersNotifier.new,
-);
+      BlockedUsersNotifier.new,
+    );

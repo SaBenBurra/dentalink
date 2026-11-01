@@ -9,8 +9,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   for (final isCase in [true, false]) {
-    testWidgets('uzun isim yorum kartında taşmaz (UX-9, isCase: $isCase)',
-        (tester) async {
+    testWidgets('uzun isim yorum kartında taşmaz (UX-9, isCase: $isCase)', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(320, 800);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
@@ -31,22 +32,24 @@ void main() {
           createdAt: DateTime(2024),
         ),
       );
-      await tester.pumpWidget(ProviderScope(
-        child: MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: CommentCard(
-                comment: comment,
-                postId: 'p1',
-                isPostOwner: false,
-                isCase: isCase,
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: CommentCard(
+                  comment: comment,
+                  postId: 'p1',
+                  isPostOwner: false,
+                  isCase: isCase,
+                ),
               ),
             ),
           ),
         ),
-      ));
+      );
 
       expect(tester.takeException(), isNull);
     });

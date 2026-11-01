@@ -21,25 +21,30 @@ class _FakeUserRepo implements UserRepository {
 }
 
 void main() {
-  testWidgets('hızlı yazınca yalnızca son sorgu için istek gider (BUG-22)',
-      (tester) async {
+  testWidgets('hızlı yazınca yalnızca son sorgu için istek gider (BUG-22)', (
+    tester,
+  ) async {
     final repo = _FakeUserRepo();
-    await tester.pumpWidget(ProviderScope(
-      overrides: [userRepositoryProvider.overrideWithValue(repo)],
-      child: MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Consumer(
-          builder: (context, ref, _) => Scaffold(
-            body: TextButton(
-              onPressed: () =>
-                  showSearch(context: context, delegate: UserSearchDelegate(ref)),
-              child: const Text('open'),
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [userRepositoryProvider.overrideWithValue(repo)],
+        child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Consumer(
+            builder: (context, ref, _) => Scaffold(
+              body: TextButton(
+                onPressed: () => showSearch(
+                  context: context,
+                  delegate: UserSearchDelegate(ref),
+                ),
+                child: const Text('open'),
+              ),
             ),
           ),
         ),
       ),
-    ));
+    );
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
 

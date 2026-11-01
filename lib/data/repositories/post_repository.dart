@@ -10,7 +10,10 @@ abstract class IFeedRepository {
   /// Kronolojik, en yeni önce; [before] verilirse sonraki sayfa.
   Future<PageResult<PostModel>> getFeed({PageCursor? before});
   Future<PostModel> getPostById(String id);
-  Future<PageResult<PostModel>> getPostsByUser(String userId, {PageCursor? before});
+  Future<PageResult<PostModel>> getPostsByUser(
+    String userId, {
+    PageCursor? before,
+  });
 }
 
 /// Keşfet: popülerlik sırası ve popüler etiketler

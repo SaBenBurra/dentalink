@@ -8,8 +8,8 @@ import '../../../data/providers/repository_providers.dart';
 /// (SRP uyumlu: UI katmanından backend ve validasyon mantığını ayırır).
 final createQuestionProvider =
     AutoDisposeAsyncNotifierProvider<CreateQuestionController, void>(() {
-  return CreateQuestionController();
-});
+      return CreateQuestionController();
+    });
 
 class CreateQuestionController extends AutoDisposeAsyncNotifier<void> {
   @override

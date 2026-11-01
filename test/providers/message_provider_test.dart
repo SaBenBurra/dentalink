@@ -20,20 +20,22 @@ import '../../integration_test/mock_auth_for_test.dart';
 const _me = 'mock_test_user_id';
 
 UserModel _user(String id) => UserModel(
-      id: id,
-      fullName: id,
-      username: id,
-      title: UserTitle.disHekimi,
-      createdAt: DateTime(2026),
-    );
+  id: id,
+  fullName: id,
+  username: id,
+  title: UserTitle.disHekimi,
+  createdAt: DateTime(2026),
+);
 
-ConversationModel _conv(String id, String peer, {int? minute}) => ConversationModel(
+ConversationModel _conv(String id, String peer, {int? minute}) =>
+    ConversationModel(
       id: id,
       otherUser: _user(peer),
       lastMessageAt: minute == null ? null : DateTime(2026, 1, 1, 0, minute),
     );
 
-MessageModel _msg(String id, int minute, {String content = 'x'}) => MessageModel(
+MessageModel _msg(String id, int minute, {String content = 'x'}) =>
+    MessageModel(
       id: id,
       senderId: 'peer',
       receiverId: _me,
@@ -57,8 +59,10 @@ class _FakeMessageRepo implements MessageRepository {
   }
 
   @override
-  Future<PageResult<MessageModel>> getMessages(String conversationId,
-      {PageCursor? before}) async {
+  Future<PageResult<MessageModel>> getMessages(
+    String conversationId, {
+    PageCursor? before,
+  }) async {
     befores.add(before);
     if (before != null) return (items: [_msg('m0', 0)], next: null);
     return (items: await messagesLoad.future, next: firstPageNext);
@@ -75,7 +79,8 @@ class _FakeMessageRepo implements MessageRepository {
   Stream<MessageModel> watchMessages(String conversationId) => msgLive.stream;
 
   @override
-  Stream<ConversationModel> watchConversations(String userId) => convLive.stream;
+  Stream<ConversationModel> watchConversations(String userId) =>
+      convLive.stream;
 
   @override
   Future<void> markMessagesAsRead(String conversationId) async {}
@@ -90,119 +95,165 @@ void main() {
     repo = _FakeMessageRepo();
     net = StreamController();
     addTearDown(net.close);
-    container = ProviderContainer(overrides: [
-      authRepositoryProvider.overrideWithValue(MockAuthForTest()),
-      messageRepositoryProvider.overrideWithValue(repo),
-      connectivityProvider.overrideWith((_) => net.stream),
-    ]);
+    container = ProviderContainer(
+      overrides: [
+        authRepositoryProvider.overrideWithValue(MockAuthForTest()),
+        messageRepositoryProvider.overrideWithValue(repo),
+        connectivityProvider.overrideWith((_) => net.stream),
+      ],
+    );
     addTearDown(container.dispose);
     await container.read(authProvider.future);
   });
 
-  test('realtime sohbet güncellemesi listeyi yeniden çekmeden günceller ve sıralar', () async {
-    repo.conversations = [_conv('a', 'p1', minute: 5), _conv('b', 'p2', minute: 3), _conv('c', 'p3')];
-    container.listen(conversationsProvider, (_, _) {});
-    await container.read(conversationsProvider.future);
+  test(
+    'realtime sohbet güncellemesi listeyi yeniden çekmeden günceller ve sıralar',
+    () async {
+      repo.conversations = [
+        _conv('a', 'p1', minute: 5),
+        _conv('b', 'p2', minute: 3),
+        _conv('c', 'p3'),
+      ];
+      container.listen(conversationsProvider, (_, _) {});
+      await container.read(conversationsProvider.future);
 
-    repo.convLive.add(_conv('b', 'p2', minute: 7)); // b'ye yeni mesaj
-    repo.convLive.add(_conv('d', 'p4', minute: 1)); // yeni sohbet
-    await pumpEventQueue();
+      repo.convLive.add(_conv('b', 'p2', minute: 7)); // b'ye yeni mesaj
+      repo.convLive.add(_conv('d', 'p4', minute: 1)); // yeni sohbet
+      await pumpEventQueue();
 
-    final ids = container.read(conversationsProvider).requireValue.map((c) => c.id);
-    expect(ids, ['b', 'a', 'd', 'c']); // mesajsız sohbet en altta
-    expect(repo.getConversationsCalls, 1);
-  });
+      final ids = container
+          .read(conversationsProvider)
+          .requireValue
+          .map((c) => c.id);
+      expect(ids, ['b', 'a', 'd', 'c']); // mesajsız sohbet en altta
+      expect(repo.getConversationsCalls, 1);
+    },
+  );
 
-  test('ilk yükleme sürerken gelen mesaj kaybolmaz, tekrar gelen çoğalmaz', () async {
-    repo.conversations = [_conv('a', 'peer', minute: 1)];
-    container.listen(conversationsProvider, (_, _) {});
-    await container.read(conversationsProvider.future);
-    container.listen(activeChatProvider('peer'), (_, _) {});
-    await pumpEventQueue();
+  test(
+    'ilk yükleme sürerken gelen mesaj kaybolmaz, tekrar gelen çoğalmaz',
+    () async {
+      repo.conversations = [_conv('a', 'peer', minute: 1)];
+      container.listen(conversationsProvider, (_, _) {});
+      await container.read(conversationsProvider.future);
+      container.listen(activeChatProvider('peer'), (_, _) {});
+      await pumpEventQueue();
 
-    repo.msgLive.add(_msg('m3', 3)); // yükleme bitmeden
-    await pumpEventQueue();
-    repo.messagesLoad.complete([_msg('m1', 1), _msg('m2', 2)]);
-    final state = await container.read(activeChatProvider('peer').future);
-    expect(state.messages.map((m) => m.id), ['m1', 'm2', 'm3']);
+      repo.msgLive.add(_msg('m3', 3)); // yükleme bitmeden
+      await pumpEventQueue();
+      repo.messagesLoad.complete([_msg('m1', 1), _msg('m2', 2)]);
+      final state = await container.read(activeChatProvider('peer').future);
+      expect(state.messages.map((m) => m.id), ['m1', 'm2', 'm3']);
 
-    repo.msgLive.add(_msg('m2', 2, content: 'güncel')); // UPDATE eskiyi ezer
-    repo.msgLive.add(_msg('m4', 4));
-    await pumpEventQueue();
-    final messages = container.read(activeChatProvider('peer')).requireValue.messages;
-    expect(messages.map((m) => m.id), ['m1', 'm2', 'm3', 'm4']);
-    expect(messages[1].content, 'güncel');
-  });
+      repo.msgLive.add(_msg('m2', 2, content: 'güncel')); // UPDATE eskiyi ezer
+      repo.msgLive.add(_msg('m4', 4));
+      await pumpEventQueue();
+      final messages = container
+          .read(activeChatProvider('peer'))
+          .requireValue
+          .messages;
+      expect(messages.map((m) => m.id), ['m1', 'm2', 'm3', 'm4']);
+      expect(messages[1].content, 'güncel');
+    },
+  );
 
-  test('ilk mesaj gönderilince sohbet oluşur ve sohbet kanalına geçilir', () async {
-    container.listen(conversationsProvider, (_, _) {});
-    await container.read(conversationsProvider.future);
-    container.listen(activeChatProvider('peer'), (_, _) {});
-    expect((await container.read(activeChatProvider('peer').future)).conversationId, isNull);
+  test(
+    'ilk mesaj gönderilince sohbet oluşur ve sohbet kanalına geçilir',
+    () async {
+      container.listen(conversationsProvider, (_, _) {});
+      await container.read(conversationsProvider.future);
+      container.listen(activeChatProvider('peer'), (_, _) {});
+      expect(
+        (await container.read(
+          activeChatProvider('peer').future,
+        )).conversationId,
+        isNull,
+      );
 
-    repo.messagesLoad.complete([_msg('sent', 9, content: 'merhaba')]);
-    await container.read(activeChatProvider('peer').notifier).sendMessage('merhaba');
-    await container.read(conversationsProvider.future);
-    await pumpEventQueue();
+      repo.messagesLoad.complete([_msg('sent', 9, content: 'merhaba')]);
+      await container
+          .read(activeChatProvider('peer').notifier)
+          .sendMessage('merhaba');
+      await container.read(conversationsProvider.future);
+      await pumpEventQueue();
 
-    final state = await container.read(activeChatProvider('peer').future);
-    expect(state.conversationId, 'new');
-    expect(state.messages.map((m) => m.content), ['merhaba']);
-  });
+      final state = await container.read(activeChatProvider('peer').future);
+      expect(state.conversationId, 'new');
+      expect(state.messages.map((m) => m.content), ['merhaba']);
+    },
+  );
 
-  test('yukarı kaydırınca daha eski sayfa başa eklenir, realtime kopya korunur', () async {
-    repo.conversations = [_conv('a', 'peer', minute: 1)];
-    repo.firstPageNext = (createdAt: DateTime.utc(2026), id: 'm1');
-    container.listen(conversationsProvider, (_, _) {});
-    await container.read(conversationsProvider.future);
-    container.listen(activeChatProvider('peer'), (_, _) {});
-    repo.messagesLoad.complete([_msg('m1', 1), _msg('m2', 2)]);
-    await container.read(activeChatProvider('peer').future);
-    final notifier = container.read(activeChatProvider('peer').notifier);
-    expect(notifier.hasMore, isTrue);
+  test(
+    'yukarı kaydırınca daha eski sayfa başa eklenir, realtime kopya korunur',
+    () async {
+      repo.conversations = [_conv('a', 'peer', minute: 1)];
+      repo.firstPageNext = (createdAt: DateTime.utc(2026), id: 'm1');
+      container.listen(conversationsProvider, (_, _) {});
+      await container.read(conversationsProvider.future);
+      container.listen(activeChatProvider('peer'), (_, _) {});
+      repo.messagesLoad.complete([_msg('m1', 1), _msg('m2', 2)]);
+      await container.read(activeChatProvider('peer').future);
+      final notifier = container.read(activeChatProvider('peer').notifier);
+      expect(notifier.hasMore, isTrue);
 
-    await notifier.loadMore();
+      await notifier.loadMore();
 
-    expect(repo.befores, [null, repo.firstPageNext]);
-    final messages = container.read(activeChatProvider('peer')).requireValue.messages;
-    expect(messages.map((m) => m.id), ['m0', 'm1', 'm2']);
-    expect(notifier.hasMore, isFalse);
-  });
-  test('bağlantı geri gelince sohbetler yeniden çekilir (kopukken kaçan olaylar)', () async {
-    container.listen(conversationsProvider, (_, _) {});
-    await container.read(conversationsProvider.future);
-    net.add([ConnectivityResult.none]);
-    await pumpEventQueue();
-    expect(repo.getConversationsCalls, 1); // çevrimdışı olmak tetiklemez
+      expect(repo.befores, [null, repo.firstPageNext]);
+      final messages = container
+          .read(activeChatProvider('peer'))
+          .requireValue
+          .messages;
+      expect(messages.map((m) => m.id), ['m0', 'm1', 'm2']);
+      expect(notifier.hasMore, isFalse);
+    },
+  );
+  test(
+    'bağlantı geri gelince sohbetler yeniden çekilir (kopukken kaçan olaylar)',
+    () async {
+      container.listen(conversationsProvider, (_, _) {});
+      await container.read(conversationsProvider.future);
+      net.add([ConnectivityResult.none]);
+      await pumpEventQueue();
+      expect(repo.getConversationsCalls, 1); // çevrimdışı olmak tetiklemez
 
-    repo.conversations = [_conv('a', 'p1', minute: 5)];
-    net.add([ConnectivityResult.wifi]);
-    await pumpEventQueue();
+      repo.conversations = [_conv('a', 'p1', minute: 5)];
+      net.add([ConnectivityResult.wifi]);
+      await pumpEventQueue();
 
-    expect(repo.getConversationsCalls, 2);
-    expect(container.read(conversationsProvider).requireValue.map((c) => c.id), ['a']);
-  });
+      expect(repo.getConversationsCalls, 2);
+      expect(
+        container.read(conversationsProvider).requireValue.map((c) => c.id),
+        ['a'],
+      );
+    },
+  );
 
-  test('uygulama ön plana dönünce sohbetler yeniden çekilir (arka planda kaçan mesaj)', () async {
-    final binding = TestWidgetsFlutterBinding.ensureInitialized();
-    container.listen(conversationsProvider, (_, _) {});
-    await container.read(conversationsProvider.future);
+  test(
+    'uygulama ön plana dönünce sohbetler yeniden çekilir (arka planda kaçan mesaj)',
+    () async {
+      final binding = TestWidgetsFlutterBinding.ensureInitialized();
+      container.listen(conversationsProvider, (_, _) {});
+      await container.read(conversationsProvider.future);
 
-    repo.conversations = [_conv('a', 'p1', minute: 5)];
-    // Gerçek cihazdaki sıra: arka plana git, geri gel.
-    for (final s in [
-      AppLifecycleState.inactive,
-      AppLifecycleState.hidden,
-      AppLifecycleState.paused,
-      AppLifecycleState.hidden,
-      AppLifecycleState.inactive,
-      AppLifecycleState.resumed,
-    ]) {
-      binding.handleAppLifecycleStateChanged(s);
-    }
-    await pumpEventQueue();
+      repo.conversations = [_conv('a', 'p1', minute: 5)];
+      // Gerçek cihazdaki sıra: arka plana git, geri gel.
+      for (final s in [
+        AppLifecycleState.inactive,
+        AppLifecycleState.hidden,
+        AppLifecycleState.paused,
+        AppLifecycleState.hidden,
+        AppLifecycleState.inactive,
+        AppLifecycleState.resumed,
+      ]) {
+        binding.handleAppLifecycleStateChanged(s);
+      }
+      await pumpEventQueue();
 
-    expect(repo.getConversationsCalls, 2);
-    expect(container.read(conversationsProvider).requireValue.map((c) => c.id), ['a']);
-  });
+      expect(repo.getConversationsCalls, 2);
+      expect(
+        container.read(conversationsProvider).requireValue.map((c) => c.id),
+        ['a'],
+      );
+    },
+  );
 }

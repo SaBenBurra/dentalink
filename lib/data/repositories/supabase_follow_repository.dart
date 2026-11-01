@@ -58,32 +58,43 @@ class SupabaseFollowRepository implements FollowRepository {
   });
 
   @override
-  Future<Set<String>> getFollowedUserIds(List<String> userIds) => guardSupabase(() async {
-    final currentUserId = client.auth.currentUser?.id;
-    if (currentUserId == null || userIds.isEmpty) return {};
+  Future<Set<String>> getFollowedUserIds(List<String> userIds) =>
+      guardSupabase(() async {
+        final currentUserId = client.auth.currentUser?.id;
+        if (currentUserId == null || userIds.isEmpty) return {};
 
-    final response = await client
-        .from('follows')
-        .select('following_id')
-        .eq('follower_id', currentUserId)
-        .inFilter('following_id', userIds);
+        final response = await client
+            .from('follows')
+            .select('following_id')
+            .eq('follower_id', currentUserId)
+            .inFilter('following_id', userIds);
 
-    return (response as List<dynamic>)
-        .map((e) => e['following_id'] as String)
-        .toSet();
-  });
+        return (response as List<dynamic>)
+            .map((e) => e['following_id'] as String)
+            .toSet();
+      });
 
   @override
   Future<PageResult<UserModel>> getFollowers(
     String userId, {
     PageCursor? before,
-  }) => _page('users!follows_follower_id_fkey(*)', 'following_id', userId, before);
+  }) => _page(
+    'users!follows_follower_id_fkey(*)',
+    'following_id',
+    userId,
+    before,
+  );
 
   @override
   Future<PageResult<UserModel>> getFollowing(
     String userId, {
     PageCursor? before,
-  }) => _page('users!follows_following_id_fkey(*)', 'follower_id', userId, before);
+  }) => _page(
+    'users!follows_following_id_fkey(*)',
+    'follower_id',
+    userId,
+    before,
+  );
 
   /// Takip satırları en yeni önce; imleç `follows` satırıdır.
   Future<PageResult<UserModel>> _page(

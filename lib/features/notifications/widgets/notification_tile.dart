@@ -127,7 +127,6 @@ class NotificationTile extends StatelessWidget {
     );
   }
 
-
   IconData _getIconForType(NotificationType type) {
     switch (type) {
       case NotificationType.like:

@@ -96,18 +96,15 @@ final routerProvider = Provider<GoRouter>((ref) {
 
     // ── Auth Redirect ─────────────────────────────────────────────────
     redirect: (context, state) => resolveAuthRedirect(
-          location: state.matchedLocation,
-          hasSession: ref.read(authRepositoryProvider).hasSession,
-          hold: ref.read(authRedirectHoldProvider),
-          auth: ref.read(authProvider),
-        ),
+      location: state.matchedLocation,
+      hasSession: ref.read(authRepositoryProvider).hasSession,
+      hold: ref.read(authRedirectHoldProvider),
+      auth: ref.read(authProvider),
+    ),
 
     routes: [
       // ── Auth ──────────────────────────────────────────────
-      GoRoute(
-        path: '/',
-        redirect: (context, state) => '/feed',
-      ),
+      GoRoute(path: '/', redirect: (context, state) => '/feed'),
       GoRoute(
         path: '/login',
         name: 'login',
@@ -200,7 +197,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/legal/:doc',
         redirect: (context, state) =>
-            LegalDoc.tryParse(state.pathParameters['doc']) == null ? '/settings' : null,
+            LegalDoc.tryParse(state.pathParameters['doc']) == null
+            ? '/settings'
+            : null,
         builder: (context, state) =>
             LegalScreen(doc: LegalDoc.tryParse(state.pathParameters['doc'])!),
       ),
@@ -223,8 +222,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/search',
             name: 'search',
-            pageBuilder: (context, state) =>
-                NoTransitionPage(
+            pageBuilder: (context, state) => NoTransitionPage(
               child: SearchScreen(
                 autofocus: state.uri.queryParameters['focus'] == '1',
               ),
@@ -254,7 +252,9 @@ final routerProvider = Provider<GoRouter>((ref) {
           children: [
             const Icon(Icons.error_outline, size: 48),
             const SizedBox(height: AppDimensions.spacing16),
-            Text(AppLocalizations.of(context)!.pageNotFound(state.uri.toString())),
+            Text(
+              AppLocalizations.of(context)!.pageNotFound(state.uri.toString()),
+            ),
             const SizedBox(height: AppDimensions.spacing16),
             TextButton(
               onPressed: () => context.go('/login'),

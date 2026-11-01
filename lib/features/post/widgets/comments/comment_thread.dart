@@ -10,10 +10,8 @@ import 'comment_card.dart';
 
 /// "Yanıtla"ya basılınca çağrılır; [onSent] yanıt gönderilince çağrılmalı
 /// (ebeveynin yanıtları açılır).
-typedef CommentReplyCallback = void Function(
-  CommentModel parent,
-  VoidCallback onSent,
-);
+typedef CommentReplyCallback =
+    void Function(CommentModel parent, VoidCallback onSent);
 
 /// Bir yorum ve (açıksa) altında girintili yanıtları; yanıtlar da aynı
 /// widget'la çizildiğinden derinlik sınırsızdır.
@@ -128,7 +126,9 @@ class _Replies extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    return ref.watch(repliesProvider(thread)).when(
+    return ref
+        .watch(repliesProvider(thread))
+        .when(
           data: (replies) {
             final notifier = ref.read(repliesProvider(thread).notifier);
             return Column(

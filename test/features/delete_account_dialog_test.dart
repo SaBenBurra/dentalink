@@ -32,77 +32,98 @@ void main() {
 
   Future<void> pump(WidgetTester tester) async {
     repo = _UserRepo();
-    container = ProviderContainer(overrides: [
-      authRepositoryProvider.overrideWithValue(MockAuthForTest()),
-      userRepositoryProvider.overrideWithValue(repo),
-    ]);
+    container = ProviderContainer(
+      overrides: [
+        authRepositoryProvider.overrideWithValue(MockAuthForTest()),
+        userRepositoryProvider.overrideWithValue(repo),
+      ],
+    );
     addTearDown(container.dispose);
     await container.read(authProvider.future);
-    await tester.pumpWidget(UncontrolledProviderScope(
-      container: container,
-      child: MaterialApp(
-        locale: const Locale('tr'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Builder(
-          builder: (context) => TextButton(
-            onPressed: () => showDialog<void>(
-              context: context,
-              builder: (_) => const DeleteAccountDialog(),
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          locale: const Locale('tr'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Builder(
+            builder: (context) => TextButton(
+              onPressed: () => showDialog<void>(
+                context: context,
+                builder: (_) => const DeleteAccountDialog(),
+              ),
+              child: const Text('open'),
             ),
-            child: const Text('open'),
           ),
         ),
       ),
-    ));
+    );
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
   }
 
   TextButton deleteButton(WidgetTester tester) => tester.widget<TextButton>(
-        find.ancestor(of: find.text('Hesabı Sil'), matching: find.byType(TextButton)),
+    find.ancestor(
+      of: find.text('Hesabı Sil'),
+      matching: find.byType(TextButton),
+    ),
+  );
+
+  testWidgets(
+    'onay kelimesi yazılmadan silinmez; silerken kilitli; başarıda oturum kapanır',
+    (tester) async {
+      await pump(tester);
+      expect(deleteButton(tester).onPressed, isNull);
+
+      await tester.enterText(find.byType(TextField), 'sil');
+      await tester.pump();
+      expect(
+        deleteButton(tester).onPressed,
+        isNull,
+        reason: 'büyük/küçük harf eşleşmeli',
       );
 
-  testWidgets('onay kelimesi yazılmadan silinmez; silerken kilitli; başarıda oturum kapanır',
-      (tester) async {
-    await pump(tester);
-    expect(deleteButton(tester).onPressed, isNull);
+      await tester.enterText(find.byType(TextField), 'SİL');
+      await tester.pump();
+      await tester.tap(find.text('Hesabı Sil'));
+      await tester.pump();
 
-    await tester.enterText(find.byType(TextField), 'sil');
-    await tester.pump();
-    expect(deleteButton(tester).onPressed, isNull, reason: 'büyük/küçük harf eşleşmeli');
+      // Silinirken: ikinci basış ve iptal yok.
+      final cancel = find.ancestor(
+        of: find.text('İptal'),
+        matching: find.byType(TextButton),
+      );
+      expect(tester.widget<TextButton>(cancel).onPressed, isNull);
+      expect(
+        find.byType(CircularProgressIndicator),
+        findsOneWidget,
+      ); // sil butonu kilitli
+      expect(repo.calls, 1);
 
-    await tester.enterText(find.byType(TextField), 'SİL');
-    await tester.pump();
-    await tester.tap(find.text('Hesabı Sil'));
-    await tester.pump();
+      repo.gate.complete();
+      await tester.pumpAndSettle();
+      expect(find.byType(DeleteAccountDialog), findsNothing);
+      expect(container.read(authProvider).value, isNull);
+    },
+  );
 
-    // Silinirken: ikinci basış ve iptal yok.
-    final cancel = find.ancestor(of: find.text('İptal'), matching: find.byType(TextButton));
-    expect(tester.widget<TextButton>(cancel).onPressed, isNull);
-    expect(find.byType(CircularProgressIndicator), findsOneWidget); // sil butonu kilitli
-    expect(repo.calls, 1);
+  testWidgets(
+    'hata olursa mesaj gösterilir, kullanıcı oturumda kalır, tekrar denenebilir',
+    (tester) async {
+      await pump(tester);
+      await tester.enterText(find.byType(TextField), 'SİL');
+      await tester.pump();
+      await tester.tap(find.text('Hesabı Sil'));
+      await tester.pump();
 
-    repo.gate.complete();
-    await tester.pumpAndSettle();
-    expect(find.byType(DeleteAccountDialog), findsNothing);
-    expect(container.read(authProvider).value, isNull);
-  });
+      repo.gate.completeError(const NetworkFailure());
+      await tester.pumpAndSettle();
 
-  testWidgets('hata olursa mesaj gösterilir, kullanıcı oturumda kalır, tekrar denenebilir',
-      (tester) async {
-    await pump(tester);
-    await tester.enterText(find.byType(TextField), 'SİL');
-    await tester.pump();
-    await tester.tap(find.text('Hesabı Sil'));
-    await tester.pump();
-
-    repo.gate.completeError(const NetworkFailure());
-    await tester.pumpAndSettle();
-
-    expect(find.byType(DeleteAccountDialog), findsOneWidget);
-    expect(find.textContaining('bağlantı', findRichText: true), findsWidgets);
-    expect(container.read(authProvider).value, isNotNull);
-    expect(deleteButton(tester).onPressed, isNotNull);
-  });
+      expect(find.byType(DeleteAccountDialog), findsOneWidget);
+      expect(find.textContaining('bağlantı', findRichText: true), findsWidgets);
+      expect(container.read(authProvider).value, isNotNull);
+      expect(deleteButton(tester).onPressed, isNotNull);
+    },
+  );
 }

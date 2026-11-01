@@ -79,8 +79,12 @@ class _FollowersScreenState extends ConsumerState<FollowersScreen>
 }
 
 class _UserListTab extends ConsumerStatefulWidget {
-  final AutoDisposeFamilyAsyncNotifierProvider<FollowListNotifier,
-      List<UserModel>, String> provider;
+  final AutoDisposeFamilyAsyncNotifierProvider<
+    FollowListNotifier,
+    List<UserModel>,
+    String
+  >
+  provider;
   final String emptyMessage;
 
   const _UserListTab({required this.provider, required this.emptyMessage});
@@ -106,14 +110,17 @@ class _UserListTabState extends ConsumerState<_UserListTab> {
         .read(followRepositoryProvider)
         .getFollowedUserIds(userIds)
         .then((followedIds) {
-      if (!mounted) return;
-      ref.read(followingStateProvider.notifier).setFollowStatuses({
-        for (final id in userIds) id: followedIds.contains(id),
-      });
-    }).catchError((Object e) {
-      debugPrint('Takip durumları yüklenemedi: $e');
-      if (mounted) _statusRequested.removeAll(userIds); // Yeniden deneme imkanı
-    });
+          if (!mounted) return;
+          ref.read(followingStateProvider.notifier).setFollowStatuses({
+            for (final id in userIds) id: followedIds.contains(id),
+          });
+        })
+        .catchError((Object e) {
+          debugPrint('Takip durumları yüklenemedi: $e');
+          if (mounted) {
+            _statusRequested.removeAll(userIds); // Yeniden deneme imkanı
+          }
+        });
   }
 
   @override
@@ -155,10 +162,7 @@ class _UserListTabState extends ConsumerState<_UserListTab> {
                 onTap: () => context.push('/profile/${user.id}'),
                 trailing: isMe
                     ? null
-                    : _FollowButton(
-                        key: ValueKey(user.id),
-                        userId: user.id,
-                      ),
+                    : _FollowButton(key: ValueKey(user.id), userId: user.id),
               );
             },
           ),
@@ -212,9 +216,7 @@ class _FollowButtonState extends ConsumerState<_FollowButton> {
       debugPrint('Follow action error: $e');
       if (mounted) {
         scaffoldMessenger.showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.errorServer),
-          ),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errorServer)),
         );
       }
     } finally {
@@ -244,8 +246,11 @@ class _FollowButtonState extends ConsumerState<_FollowButton> {
               height: 16,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : Text(isFollowing ? AppLocalizations.of(context)!.followingButton : AppLocalizations.of(context)!.followButton),
+          : Text(
+              isFollowing
+                  ? AppLocalizations.of(context)!.followingButton
+                  : AppLocalizations.of(context)!.followButton,
+            ),
     );
   }
 }
-

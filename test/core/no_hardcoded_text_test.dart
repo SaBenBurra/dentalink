@@ -7,10 +7,14 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('lib/features, lib/shared ve router içinde sabit Türkçe metin yok', () {
     final literal = RegExp(r"""'[^'\n]*[çğıöşüÇĞİÖŞÜ][^'\n]*'""");
-    const allowed = {"'Türkçe'"}; // Dil adı her dilde kendi yazımıyla gösterilir.
+    const allowed = {
+      "'Türkçe'",
+    }; // Dil adı her dilde kendi yazımıyla gösterilir.
     final offenders = <String>[];
     for (final dir in ['lib/features', 'lib/shared', 'lib/core/router']) {
-      for (final f in Directory(dir).listSync(recursive: true).whereType<File>()) {
+      for (final f in Directory(
+        dir,
+      ).listSync(recursive: true).whereType<File>()) {
         if (!f.path.endsWith('.dart')) continue;
         final lines = f.readAsLinesSync();
         for (var i = 0; i < lines.length; i++) {
@@ -18,7 +22,9 @@ void main() {
           if (line.startsWith('//') || line.contains('debugPrint(')) continue;
           for (final m in literal.allMatches(line.split(' //').first)) {
             // Tek karakterlik sabitler (ör. 'ı' normalizasyonu) metin değil.
-            if (m[0]!.length > 4 && !allowed.contains(m[0])) offenders.add('${f.path}:${i + 1} ${m[0]}');
+            if (m[0]!.length > 4 && !allowed.contains(m[0])) {
+              offenders.add('${f.path}:${i + 1} ${m[0]}');
+            }
           }
         }
       }

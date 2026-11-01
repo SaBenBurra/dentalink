@@ -17,8 +17,12 @@ class _Repo implements ModerationRepository {
   final gate = Completer<void>();
 
   @override
-  Future<void> report(ReportTarget target, String targetId, ReportReason reason,
-      {String? note}) async {
+  Future<void> report(
+    ReportTarget target,
+    String targetId,
+    ReportReason reason, {
+    String? note,
+  }) async {
     reports.add(reason);
     await gate.future;
   }
@@ -27,7 +31,8 @@ class _Repo implements ModerationRepository {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-Widget _app(Widget child, {List<Override> overrides = const []}) => ProviderScope(
+Widget _app(Widget child, {List<Override> overrides = const []}) =>
+    ProviderScope(
       overrides: overrides,
       child: MaterialApp(
         locale: const Locale('tr'),
@@ -55,68 +60,84 @@ void main() {
   );
 
   for (final isOwner in [true, false]) {
-    testWidgets('post menüsü: sahibine Düzenle/Sil, başkasına Raporla/Engelle (isOwner: $isOwner)',
-        (tester) async {
-      await tester.pumpWidget(_app(PostHeader(
-        post: post,
-        badge: const SizedBox(),
-        subtitle: '',
-        isOwner: isOwner,
-        onMenuSelected: (_) {},
-      )));
-      await tester.tap(find.byIcon(Icons.more_horiz));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'post menüsü: sahibine Düzenle/Sil, başkasına Raporla/Engelle (isOwner: $isOwner)',
+      (tester) async {
+        await tester.pumpWidget(
+          _app(
+            PostHeader(
+              post: post,
+              badge: const SizedBox(),
+              subtitle: '',
+              isOwner: isOwner,
+              onMenuSelected: (_) {},
+            ),
+          ),
+        );
+        await tester.tap(find.byIcon(Icons.more_horiz));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Düzenle'), isOwner ? findsOneWidget : findsNothing);
-      expect(find.text('Raporla'), isOwner ? findsNothing : findsOneWidget);
-      expect(find.text('Engelle'), isOwner ? findsNothing : findsOneWidget);
-    });
+        expect(find.text('Düzenle'), isOwner ? findsOneWidget : findsNothing);
+        expect(find.text('Raporla'), isOwner ? findsNothing : findsOneWidget);
+        expect(find.text('Engelle'), isOwner ? findsNothing : findsOneWidget);
+      },
+    );
   }
 
-  testWidgets('post başlığı: küçük rozet menünün solunda, unvan satırı rozete kadar uzanır',
-      (tester) async {
-    tester.view.physicalSize = const Size(360, 640);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    const title = 'Restoratif Diş Tedavisi Uzmanı';
-    await tester.pumpWidget(_app(PostHeader(
-      post: post,
-      badge: const Text('Vaka'),
-      subtitle: title,
-      isOwner: false,
-      onMenuSelected: (_) {},
-    )));
+  testWidgets(
+    'post başlığı: küçük rozet menünün solunda, unvan satırı rozete kadar uzanır',
+    (tester) async {
+      tester.view.physicalSize = const Size(360, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      const title = 'Restoratif Diş Tedavisi Uzmanı';
+      await tester.pumpWidget(
+        _app(
+          PostHeader(
+            post: post,
+            badge: const Text('Vaka'),
+            subtitle: title,
+            isOwner: false,
+            onMenuSelected: (_) {},
+          ),
+        ),
+      );
 
-    final badge = tester.getRect(find.text('Vaka'));
-    final menu = tester.getRect(find.byType(PopupMenuButton<PostMenuAction>));
-    expect(badge.right, menu.left);
-    expect(badge.center.dy, closeTo(menu.center.dy, 1));
-    // Zaman isim satırında; unvan satırı rozete kadar tüm genişliği alır.
-    expect(tester.getTopRight(find.text(title)).dx, badge.left - 8);
-  });
+      final badge = tester.getRect(find.text('Vaka'));
+      final menu = tester.getRect(find.byType(PopupMenuButton<PostMenuAction>));
+      expect(badge.right, menu.left);
+      expect(badge.center.dy, closeTo(menu.center.dy, 1));
+      // Zaman isim satırında; unvan satırı rozete kadar tüm genişliği alır.
+      expect(tester.getTopRight(find.text(title)).dx, badge.left - 8);
+    },
+  );
 
-  testWidgets('rapor: sebep seçilmeden gönderilemez, gönderirken buton kilitli',
-      (tester) async {
-    final repo = _Repo();
-    await tester.pumpWidget(_app(
-      const ReportSheet(target: ReportTarget.post, targetId: 'p1'),
-      overrides: [moderationRepositoryProvider.overrideWithValue(repo)],
-    ));
+  testWidgets(
+    'rapor: sebep seçilmeden gönderilemez, gönderirken buton kilitli',
+    (tester) async {
+      final repo = _Repo();
+      await tester.pumpWidget(
+        _app(
+          const ReportSheet(target: ReportTarget.post, targetId: 'p1'),
+          overrides: [moderationRepositoryProvider.overrideWithValue(repo)],
+        ),
+      );
 
-    FilledButton submit() => tester.widget(find.byType(FilledButton));
-    expect(submit().onPressed, isNull);
+      FilledButton submit() => tester.widget(find.byType(FilledButton));
+      expect(submit().onPressed, isNull);
 
-    await tester.tap(find.text('Spam veya reklam'));
-    await tester.pump();
-    expect(submit().onPressed, isNotNull);
+      await tester.tap(find.text('Spam veya reklam'));
+      await tester.pump();
+      expect(submit().onPressed, isNotNull);
 
-    await tester.tap(find.byType(FilledButton));
-    await tester.pump();
-    expect(submit().onPressed, isNull);
-    await tester.tap(find.byType(FilledButton), warnIfMissed: false);
-    expect(repo.reports, [ReportReason.spam]);
+      await tester.tap(find.byType(FilledButton));
+      await tester.pump();
+      expect(submit().onPressed, isNull);
+      await tester.tap(find.byType(FilledButton), warnIfMissed: false);
+      expect(repo.reports, [ReportReason.spam]);
 
-    repo.gate.complete();
-    await tester.pumpAndSettle();
-  });
+      repo.gate.complete();
+      await tester.pumpAndSettle();
+    },
+  );
 }

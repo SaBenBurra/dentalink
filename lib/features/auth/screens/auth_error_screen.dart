@@ -26,7 +26,11 @@ class AuthErrorScreen extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.cloud_off_rounded, size: 64, color: theme.colorScheme.error),
+                Icon(
+                  Icons.cloud_off_rounded,
+                  size: 64,
+                  color: theme.colorScheme.error,
+                ),
                 const SizedBox(height: AppDimensions.spacing16),
                 Text(
                   l10n.authProfileLoadError,

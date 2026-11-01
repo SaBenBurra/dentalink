@@ -4,11 +4,7 @@ import 'package:dentlink/data/models/tag_model.dart';
 void main() {
   group('TagModel -', () {
     test('constructor sets correct defaults', () {
-      final tag = TagModel(
-        id: 'tag-1',
-        name: 'endodonti',
-        slug: 'endodonti',
-      );
+      final tag = TagModel(id: 'tag-1', name: 'endodonti', slug: 'endodonti');
 
       expect(tag.id, 'tag-1');
       expect(tag.name, 'endodonti');

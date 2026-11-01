@@ -29,8 +29,8 @@ AppFailure _mapPostgrest(PostgrestException e) {
     case '42501':
       return const PermissionDeniedFailure();
     case 'PGRST116': // single() returned 0 rows
-    case 'P0002':    // rpc no_data_found
-    case '23503':    // foreign key violation
+    case 'P0002': // rpc no_data_found
+    case '23503': // foreign key violation
       return const NotFoundFailure();
     case 'PGRST301':
       return const AuthRequiredFailure();

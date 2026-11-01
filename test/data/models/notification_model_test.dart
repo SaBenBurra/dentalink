@@ -75,32 +75,43 @@ void main() {
 
     test('equality: same id means equal', () {
       final a = NotificationModel(
-        id: 'n-1', type: NotificationType.like,
-        actor: testActor, createdAt: DateTime(2024),
+        id: 'n-1',
+        type: NotificationType.like,
+        actor: testActor,
+        createdAt: DateTime(2024),
       );
       final b = NotificationModel(
-        id: 'n-1', type: NotificationType.comment,
-        actor: testActor, isRead: true, createdAt: DateTime(2025),
+        id: 'n-1',
+        type: NotificationType.comment,
+        actor: testActor,
+        isRead: true,
+        createdAt: DateTime(2025),
       );
       expect(a, equals(b));
     });
 
     test('equality: different id means not equal', () {
       final a = NotificationModel(
-        id: 'n-1', type: NotificationType.like,
-        actor: testActor, createdAt: DateTime(2024),
+        id: 'n-1',
+        type: NotificationType.like,
+        actor: testActor,
+        createdAt: DateTime(2024),
       );
       final b = NotificationModel(
-        id: 'n-2', type: NotificationType.like,
-        actor: testActor, createdAt: DateTime(2024),
+        id: 'n-2',
+        type: NotificationType.like,
+        actor: testActor,
+        createdAt: DateTime(2024),
       );
       expect(a, isNot(equals(b)));
     });
 
     test('hashCode is based on id', () {
       final notif = NotificationModel(
-        id: 'n-abc', type: NotificationType.badge,
-        actor: testActor, createdAt: DateTime(2024),
+        id: 'n-abc',
+        type: NotificationType.badge,
+        actor: testActor,
+        createdAt: DateTime(2024),
       );
       expect(notif.hashCode, 'n-abc'.hashCode);
     });

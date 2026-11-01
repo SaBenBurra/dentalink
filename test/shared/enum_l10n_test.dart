@@ -11,15 +11,19 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   Future<BuildContext> pumpLocale(WidgetTester tester, Locale locale) async {
     late BuildContext ctx;
-    await tester.pumpWidget(MaterialApp(
-      locale: locale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: Builder(builder: (c) {
-        ctx = c;
-        return const SizedBox();
-      }),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: locale,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Builder(
+          builder: (c) {
+            ctx = c;
+            return const SizedBox();
+          },
+        ),
+      ),
+    );
     return ctx;
   }
 
@@ -39,18 +43,31 @@ void main() {
     for (final b in DentalBranch.values) {
       expect(b.displayName(ctx), isNotEmpty);
     }
-    expect(TreatmentType.kanalTedavisi.displayName(ctx), 'Root canal treatment');
+    expect(
+      TreatmentType.kanalTedavisi.displayName(ctx),
+      'Root canal treatment',
+    );
     for (final t in TreatmentType.values) {
       expect(t.displayName(ctx), isNotEmpty);
     }
   });
 
-  testWidgets('yorum beğenisi "yorumunu beğendi" der, post beğenisi "gönderini"', (tester) async {
-    final ctx = await pumpLocale(tester, const Locale('tr'));
-    expect(NotificationType.like.getBodyText(ctx, 'Ayşe'), 'Ayşe gönderini beğendi.');
-    expect(NotificationType.like.getBodyText(ctx, 'Ayşe', onComment: true),
-        'Ayşe yorumunu beğendi.');
-    expect(NotificationType.comment.getBodyText(ctx, 'Ayşe', onComment: true),
-        'Ayşe gönderine yorum yaptı.');
-  });
+  testWidgets(
+    'yorum beğenisi "yorumunu beğendi" der, post beğenisi "gönderini"',
+    (tester) async {
+      final ctx = await pumpLocale(tester, const Locale('tr'));
+      expect(
+        NotificationType.like.getBodyText(ctx, 'Ayşe'),
+        'Ayşe gönderini beğendi.',
+      );
+      expect(
+        NotificationType.like.getBodyText(ctx, 'Ayşe', onComment: true),
+        'Ayşe yorumunu beğendi.',
+      );
+      expect(
+        NotificationType.comment.getBodyText(ctx, 'Ayşe', onComment: true),
+        'Ayşe gönderine yorum yaptı.',
+      );
+    },
+  );
 }

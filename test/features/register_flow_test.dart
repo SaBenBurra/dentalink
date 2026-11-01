@@ -39,37 +39,42 @@ class _NewUserAuth extends MockAuthForTest {
 
 void main() {
   testWidgets(
-      'kayıt sonrası başarı diyaloğu görünür, sonra feed açılır; hazır avatar yok '
-      '(BUG-21, AUTH-8)', (tester) async {
-    await pumpDentLink(tester, auth: _NewUserAuth());
+    'kayıt sonrası başarı diyaloğu görünür, sonra feed açılır; hazır avatar yok '
+    '(BUG-21, AUTH-8)',
+    (tester) async {
+      await pumpDentLink(tester, auth: _NewUserAuth());
 
-    await tester.enterText(find.byType(TextField).first, 'Ayşe Yılmaz');
-    await tester.tap(find.text('Öğrenci'));
-    await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).first, 'Ayşe Yılmaz');
+      await tester.tap(find.text('Öğrenci'));
+      await tester.pumpAndSettle();
 
-    // Koşullar onaylanmadan ilk adım geçilmez.
-    await tester.tap(find.text('Devam Et'));
-    await tester.pumpAndSettle();
-    expect(find.text('Devam etmek için kullanım koşullarını kabul etmelisin'), findsOneWidget);
-    await tester.ensureVisible(find.byType(CheckboxListTile));
-    await tester.tap(find.byType(CheckboxListTile));
-    await tester.pumpAndSettle();
+      // Koşullar onaylanmadan ilk adım geçilmez.
+      await tester.tap(find.text('Devam Et'));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Devam etmek için kullanım koşullarını kabul etmelisin'),
+        findsOneWidget,
+      );
+      await tester.ensureVisible(find.byType(CheckboxListTile));
+      await tester.tap(find.byType(CheckboxListTile));
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Devam Et'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Devam Et'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Devam Et'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Devam Et'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('veya bir avatar seçin'), findsNothing);
+      expect(find.text('veya bir avatar seçin'), findsNothing);
 
-    await tester.tap(find.text('Profilimi Tamamla'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 500));
-    expect(find.text('Kaydınız Tamamlandı!'), findsOneWidget);
+      await tester.tap(find.text('Profilimi Tamamla'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(find.text('Kaydınız Tamamlandı!'), findsOneWidget);
 
-    await tester.pump(const Duration(milliseconds: 1500));
-    await tester.pumpAndSettle();
-    expect(find.text('Kaydınız Tamamlandı!'), findsNothing);
-    expect(find.text(seedCase.title), findsOneWidget);
-  });
+      await tester.pump(const Duration(milliseconds: 1500));
+      await tester.pumpAndSettle();
+      expect(find.text('Kaydınız Tamamlandı!'), findsNothing);
+      expect(find.text(seedCase.title), findsOneWidget);
+    },
+  );
 }

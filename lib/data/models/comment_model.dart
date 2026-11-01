@@ -13,16 +13,16 @@ class CommentModel extends Equatable {
 
   /// Doğrudan yanıt sayısı (DB trigger'ı tutar).
   final int replyCount;
-  
+
   /// Soru gönderilerinde: bu yorum en iyi cevap mı?
   final bool isBestAnswer;
-  
+
   final int likeCount;
   final bool isLiked;
-  
+
   final DateTime createdAt;
   final DateTime updatedAt;
-  
+
   /// Embed: yorumu yazan kullanıcı.
   /// RLS kuralları sebebiyle yazar çekilemezse veya silinmişse null olabilir.
   final UserModel? author;
@@ -94,17 +94,17 @@ class CommentModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        postId,
-        userId,
-        content,
-        parentId,
-        replyCount,
-        isBestAnswer,
-        likeCount,
-        isLiked,
-        createdAt,
-        updatedAt,
-        author,
-      ];
+    id,
+    postId,
+    userId,
+    content,
+    parentId,
+    replyCount,
+    isBestAnswer,
+    likeCount,
+    isLiked,
+    createdAt,
+    updatedAt,
+    author,
+  ];
 }

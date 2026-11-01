@@ -8,9 +8,11 @@ void main() {
   test('tema tercihi kaydedilir ve açılışta okunur (UX-11)', () async {
     SharedPreferences.setMockInitialValues({'theme_mode': 'dark'});
     final prefs = await SharedPreferences.getInstance();
-    final container = ProviderContainer(overrides: [
-      themeModeProvider.overrideWith(() => ThemeModeNotifier(prefs)),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        themeModeProvider.overrideWith(() => ThemeModeNotifier(prefs)),
+      ],
+    );
     addTearDown(container.dispose);
 
     expect(container.read(themeModeProvider), ThemeMode.dark);

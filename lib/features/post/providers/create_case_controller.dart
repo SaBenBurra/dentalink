@@ -11,8 +11,8 @@ import '../../../data/providers/repository_providers.dart';
 /// (SRP uyumlu: UI katmanından backend ve validasyon mantığını ayırır).
 final createCaseProvider =
     AutoDisposeAsyncNotifierProvider<CreateCaseController, void>(() {
-  return CreateCaseController();
-});
+      return CreateCaseController();
+    });
 
 class CreateCaseController extends AutoDisposeAsyncNotifier<void> {
   @override

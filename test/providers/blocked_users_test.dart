@@ -11,19 +11,23 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../integration_test/mock_auth_for_test.dart';
 
 UserModel _user(String id) => UserModel(
-      id: id,
-      fullName: id,
-      username: id,
-      title: UserTitle.disHekimi,
-      createdAt: DateTime(2024),
-    );
+  id: id,
+  fullName: id,
+  username: id,
+  title: UserTitle.disHekimi,
+  createdAt: DateTime(2024),
+);
 
 class _ModerationRepo implements ModerationRepository {
   bool fail = false;
   final unblocked = <String>[];
 
   @override
-  Future<List<UserModel>> getBlockedUsers() async => [_user('a'), _user('b'), _user('c')];
+  Future<List<UserModel>> getBlockedUsers() async => [
+    _user('a'),
+    _user('b'),
+    _user('c'),
+  ];
 
   @override
   Future<void> unblockUser(String userId) async {
@@ -41,18 +45,23 @@ void main() {
 
   setUp(() async {
     repo = _ModerationRepo();
-    container = ProviderContainer(overrides: [
-      authRepositoryProvider.overrideWithValue(MockAuthForTest()),
-      moderationRepositoryProvider.overrideWithValue(repo),
-    ]);
+    container = ProviderContainer(
+      overrides: [
+        authRepositoryProvider.overrideWithValue(MockAuthForTest()),
+        moderationRepositoryProvider.overrideWithValue(repo),
+      ],
+    );
     addTearDown(container.dispose);
     await container.read(authProvider.future);
     container.listen(blockedUsersProvider, (_, _) {});
     await container.read(blockedUsersProvider.future);
   });
 
-  List<String> ids() =>
-      container.read(blockedUsersProvider).requireValue.map((u) => u.id).toList();
+  List<String> ids() => container
+      .read(blockedUsersProvider)
+      .requireValue
+      .map((u) => u.id)
+      .toList();
 
   test('engeli kaldırınca kişi listeden çıkar', () async {
     await container.read(blockedUsersProvider.notifier).unblock('b');

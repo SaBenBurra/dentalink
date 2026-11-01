@@ -11,10 +11,15 @@ class SupabasePushRepository implements PushRepository {
   SupabasePushRepository({required this._client});
 
   @override
-  Future<void> register(String token, String platform) => guardSupabase(() =>
-      _client.rpc('register_push_token', params: {'p_token': token, 'p_platform': platform}));
+  Future<void> register(String token, String platform) => guardSupabase(
+    () => _client.rpc(
+      'register_push_token',
+      params: {'p_token': token, 'p_platform': platform},
+    ),
+  );
 
   @override
   Future<void> unregister(String token) => guardSupabase(
-      () => _client.rpc('unregister_push_token', params: {'p_token': token}));
+    () => _client.rpc('unregister_push_token', params: {'p_token': token}),
+  );
 }

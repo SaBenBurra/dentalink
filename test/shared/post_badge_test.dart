@@ -7,17 +7,22 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   Future<Color?> labelColor(WidgetTester tester, PostType type) async {
-    await tester.pumpWidget(MaterialApp(
-      locale: const Locale('tr'),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      home: Scaffold(body: PostBadge(postType: type)),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('tr'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(body: PostBadge(postType: type)),
+      ),
+    );
     return tester.widget<Text>(find.byType(Text)).style?.color;
   }
 
   testWidgets('vaka rozeti mavi, soru rozeti teal; emoji yok', (tester) async {
-    expect(await labelColor(tester, PostType.casePost), AppColors.secondaryDark);
+    expect(
+      await labelColor(tester, PostType.casePost),
+      AppColors.secondaryDark,
+    );
     expect(find.text('Vaka'), findsOneWidget);
     expect(await labelColor(tester, PostType.question), AppColors.primaryDark);
     expect(find.text('Soru'), findsOneWidget);

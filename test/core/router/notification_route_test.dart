@@ -19,13 +19,17 @@ void main() {
     });
 
     test('mesaj sohbeti ad ve avatarla açar', () {
-      expect(route(NotificationType.message),
-          '/chat/a1?name=Ay%C5%9Fe+Y&avatar');
+      expect(
+        route(NotificationType.message),
+        '/chat/a1?name=Ay%C5%9Fe+Y&avatar',
+      );
     });
 
     test('yorumlu bildirim yorumları açık getirir', () {
-      expect(route(NotificationType.reply, postId: 'p1', commentId: 'c1'),
-          '/post/p1?comments=1');
+      expect(
+        route(NotificationType.reply, postId: 'p1', commentId: 'c1'),
+        '/post/p1?comments=1',
+      );
       expect(route(NotificationType.like, postId: 'p1'), '/post/p1');
     });
 
@@ -48,7 +52,12 @@ void main() {
         '/post/p1?comments=1',
       );
       expect(
-        pushRoute({'type': 'like', 'actor_id': 'a1', 'post_id': 'p1', 'comment_id': ''}),
+        pushRoute({
+          'type': 'like',
+          'actor_id': 'a1',
+          'post_id': 'p1',
+          'comment_id': '',
+        }),
         '/post/p1',
       );
     });

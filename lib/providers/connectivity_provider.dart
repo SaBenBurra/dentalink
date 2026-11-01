@@ -3,7 +3,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Cihazın bir ağa bağlı olup olmadığı. Testlerde override edilir.
-final connectivityProvider = StreamProvider<List<ConnectivityResult>>((ref) async* {
+final connectivityProvider = StreamProvider<List<ConnectivityResult>>((
+  ref,
+) async* {
   final connectivity = Connectivity();
   yield await connectivity.checkConnectivity();
   yield* connectivity.onConnectivityChanged;
@@ -19,7 +21,9 @@ final isOnlineProvider = Provider<bool>((ref) {
 /// Uygulama gizlendikten (arka plan) sonra her yeniden görünüşünde artar; izin
 /// diyaloğu gibi kısa inactive geçişleri saymaz. Arka planda realtime kanalı kopar ve
 /// aradaki olaylar (yeni mesaj, bildirim) kaçar.
-final appResumeProvider = NotifierProvider<AppResumeNotifier, int>(AppResumeNotifier.new);
+final appResumeProvider = NotifierProvider<AppResumeNotifier, int>(
+  AppResumeNotifier.new,
+);
 
 class AppResumeNotifier extends Notifier<int> {
   @override

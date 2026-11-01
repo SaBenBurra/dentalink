@@ -66,7 +66,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   Future<void> _saveProfile() async {
     if (_formKey.currentState!.validate()) {
-      await ref.read(editProfileProvider.notifier).saveProfile(
+      await ref
+          .read(editProfileProvider.notifier)
+          .saveProfile(
             fullName: _nameController.text,
             title: _selectedTitle!,
             bio: _bioController.text,
@@ -82,12 +84,16 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       final state = ref.read(editProfileProvider);
       if (state.hasError) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, state.error!))),
+          SnackBar(
+            content: Text(
+              getErrorMessage(AppLocalizations.of(context)!, state.error!),
+            ),
+          ),
         );
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.profileUpdated)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.profileUpdated)),
+        );
         context.pop();
       }
     }
@@ -131,8 +137,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, e))));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(getErrorMessage(AppLocalizations.of(context)!, e)),
+        ),
+      );
     }
   }
 
@@ -145,7 +154,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     if (user == null) {
       return Scaffold(
         appBar: AppBar(title: Text(AppLocalizations.of(context)!.editProfile)),
-        body: Center(child: Text(AppLocalizations.of(context)!.userInfoNotFound)),
+        body: Center(
+          child: Text(AppLocalizations.of(context)!.userInfoNotFound),
+        ),
       );
     }
 
@@ -206,7 +217,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                           bottom: 0,
                           right: 0,
                           child: Container(
-                            padding: const EdgeInsets.all(AppDimensions.spacing6),
+                            padding: const EdgeInsets.all(
+                              AppDimensions.spacing6,
+                            ),
                             decoration: BoxDecoration(
                               color: colorScheme.primary,
                               shape: BoxShape.circle,
@@ -232,11 +245,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 controller: _nameController,
                 maxLength: ProfileLimits.fullName,
                 decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.fullNameRequiredLabel,
+                  labelText: AppLocalizations.of(
+                    context,
+                  )!.fullNameRequiredLabel,
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) =>
-                    (value ?? '').trim().isEmpty ? AppLocalizations.of(context)!.validationNameRequired : null,
+                validator: (value) => (value ?? '').trim().isEmpty
+                    ? AppLocalizations.of(context)!.validationNameRequired
+                    : null,
               ),
               const SizedBox(height: AppDimensions.spacing16),
               DropdownButtonFormField<UserTitle>(
@@ -254,7 +270,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 onChanged: (val) {
                   setState(() => _selectedTitle = val);
                 },
-                validator: (value) => value == null ? AppLocalizations.of(context)!.validationTitleRequired : null,
+                validator: (value) => value == null
+                    ? AppLocalizations.of(context)!.validationTitleRequired
+                    : null,
               ),
               const SizedBox(height: AppDimensions.spacing16),
               TextFormField(
@@ -294,7 +312,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(ProfileLimits.experienceDigits),
+                  LengthLimitingTextInputFormatter(
+                    ProfileLimits.experienceDigits,
+                  ),
                 ],
                 validator: (value) {
                   final v = value?.trim() ?? '';

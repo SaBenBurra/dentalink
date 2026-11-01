@@ -7,38 +7,50 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../integration_test/mock_auth_for_test.dart';
 
 void main() {
-  test('çıkış yapınca önceki kullanıcının takip durumu temizlenir (AUTH-2)', () async {
-    final container = ProviderContainer(overrides: [
-      authRepositoryProvider.overrideWithValue(MockAuthForTest()),
-    ]);
-    addTearDown(container.dispose);
+  test(
+    'çıkış yapınca önceki kullanıcının takip durumu temizlenir (AUTH-2)',
+    () async {
+      final container = ProviderContainer(
+        overrides: [
+          authRepositoryProvider.overrideWithValue(MockAuthForTest()),
+        ],
+      );
+      addTearDown(container.dispose);
 
-    await container.read(authProvider.future);
-    container.listen(followingStateProvider, (_, _) {});
+      await container.read(authProvider.future);
+      container.listen(followingStateProvider, (_, _) {});
 
-    container.read(followingStateProvider.notifier).setFollowStatus('other', true);
-    expect(container.read(followingStateProvider), {'other': true});
+      container
+          .read(followingStateProvider.notifier)
+          .setFollowStatus('other', true);
+      expect(container.read(followingStateProvider), {'other': true});
 
-    await container.read(authProvider.notifier).signOut();
+      await container.read(authProvider.notifier).signOut();
 
-    expect(container.read(followingStateProvider), isEmpty);
-  });
+      expect(container.read(followingStateProvider), isEmpty);
+    },
+  );
 
-  test('sunucu oturumu düşürünce auth null olur, state temizlenir (AUTH-5)', () async {
-    final auth = MockAuthForTest();
-    final container = ProviderContainer(overrides: [
-      authRepositoryProvider.overrideWithValue(auth),
-    ]);
-    addTearDown(container.dispose);
+  test(
+    'sunucu oturumu düşürünce auth null olur, state temizlenir (AUTH-5)',
+    () async {
+      final auth = MockAuthForTest();
+      final container = ProviderContainer(
+        overrides: [authRepositoryProvider.overrideWithValue(auth)],
+      );
+      addTearDown(container.dispose);
 
-    expect(await container.read(authProvider.future), isNotNull);
-    container.listen(followingStateProvider, (_, _) {});
-    container.read(followingStateProvider.notifier).setFollowStatus('other', true);
+      expect(await container.read(authProvider.future), isNotNull);
+      container.listen(followingStateProvider, (_, _) {});
+      container
+          .read(followingStateProvider.notifier)
+          .setFollowStatus('other', true);
 
-    auth.expireSession();
-    await Future<void>.delayed(Duration.zero);
+      auth.expireSession();
+      await Future<void>.delayed(Duration.zero);
 
-    expect(container.read(authProvider).value, isNull);
-    expect(container.read(followingStateProvider), isEmpty);
-  });
+      expect(container.read(authProvider).value, isNull);
+      expect(container.read(followingStateProvider), isEmpty);
+    },
+  );
 }

@@ -55,10 +55,12 @@ void main() {
 
   test('feed hatadaysa bağlantı gelince kendiliğinden yeniden dener', () async {
     final repo = _FlakyFeedRepo();
-    final container = ProviderContainer(overrides: [
-      feedRepositoryProvider.overrideWithValue(repo),
-      connectivityProvider.overrideWith((_) => net.stream),
-    ]);
+    final container = ProviderContainer(
+      overrides: [
+        feedRepositoryProvider.overrideWithValue(repo),
+        connectivityProvider.overrideWith((_) => net.stream),
+      ],
+    );
     addTearDown(container.dispose);
     container.listen(feedProvider, (_, _) {});
     net.add([ConnectivityResult.none]);
@@ -72,34 +74,38 @@ void main() {
     expect(container.read(feedProvider).requireValue, isEmpty);
   });
 
-  testWidgets('çevrimdışıyken şerit görünür, bağlantı gelince kaybolur; sayfa korunur',
-      (tester) async {
-    await tester.pumpWidget(ProviderScope(
-      overrides: [connectivityProvider.overrideWith((_) => net.stream)],
-      child: MaterialApp(
-        locale: const Locale('tr'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        builder: (context, child) => OfflineBanner(child: child!),
-        home: const _Counter(),
-      ),
-    ));
-    await tester.tap(find.byType(_Counter));
-    await tester.pump();
-    expect(find.text('1'), findsOneWidget);
+  testWidgets(
+    'çevrimdışıyken şerit görünür, bağlantı gelince kaybolur; sayfa korunur',
+    (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [connectivityProvider.overrideWith((_) => net.stream)],
+          child: MaterialApp(
+            locale: const Locale('tr'),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            builder: (context, child) => OfflineBanner(child: child!),
+            home: const _Counter(),
+          ),
+        ),
+      );
+      await tester.tap(find.byType(_Counter));
+      await tester.pump();
+      expect(find.text('1'), findsOneWidget);
 
-    net.add([ConnectivityResult.none]);
-    await tester.pump();
-    await tester.pump(); // olay bir microtask sonra gelir
-    expect(find.text('İnternet bağlantısı yok'), findsOneWidget);
-    expect(find.text('1'), findsOneWidget); // state kaybolmadı
+      net.add([ConnectivityResult.none]);
+      await tester.pump();
+      await tester.pump(); // olay bir microtask sonra gelir
+      expect(find.text('İnternet bağlantısı yok'), findsOneWidget);
+      expect(find.text('1'), findsOneWidget); // state kaybolmadı
 
-    net.add([ConnectivityResult.wifi]);
-    await tester.pump();
-    await tester.pump(); // olay bir microtask sonra gelir
-    expect(find.text('İnternet bağlantısı yok'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
-  });
+      net.add([ConnectivityResult.wifi]);
+      await tester.pump();
+      await tester.pump(); // olay bir microtask sonra gelir
+      expect(find.text('İnternet bağlantısı yok'), findsNothing);
+      expect(find.text('1'), findsOneWidget);
+    },
+  );
 }
 
 /// Ağacın yeniden kurulup kurulmadığını görmek için yerel state tutar.
@@ -115,7 +121,7 @@ class _CounterState extends State<_Counter> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: () => setState(() => _n++),
-        child: Material(child: Text('$_n')),
-      );
+    onTap: () => setState(() => _n++),
+    child: Material(child: Text('$_n')),
+  );
 }

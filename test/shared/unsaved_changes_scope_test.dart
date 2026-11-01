@@ -4,34 +4,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-Future<void> _pump(WidgetTester tester, {required bool dirty, bool busy = false}) async {
-  final router = GoRouter(routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, _) => TextButton(
-        onPressed: () => context.push('/form'),
-        child: const Text('home'),
-      ),
-    ),
-    GoRoute(
-      path: '/form',
-      builder: (context, _) => UnsavedChangesScope(
-        dirty: dirty,
-        busy: busy,
-        child: Scaffold(
-          appBar: AppBar(),
-          // Kaydettikten sonraki programatik çıkış.
-          body: TextButton(onPressed: () => context.pop(), child: const Text('saved')),
+Future<void> _pump(
+  WidgetTester tester, {
+  required bool dirty,
+  bool busy = false,
+}) async {
+  final router = GoRouter(
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (context, _) => TextButton(
+          onPressed: () => context.push('/form'),
+          child: const Text('home'),
         ),
       ),
+      GoRoute(
+        path: '/form',
+        builder: (context, _) => UnsavedChangesScope(
+          dirty: dirty,
+          busy: busy,
+          child: Scaffold(
+            appBar: AppBar(),
+            // Kaydettikten sonraki programatik çıkış.
+            body: TextButton(
+              onPressed: () => context.pop(),
+              child: const Text('saved'),
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+  await tester.pumpWidget(
+    MaterialApp.router(
+      routerConfig: router,
+      locale: const Locale('tr'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
     ),
-  ]);
-  await tester.pumpWidget(MaterialApp.router(
-    routerConfig: router,
-    locale: const Locale('tr'),
-    localizationsDelegates: AppLocalizations.localizationsDelegates,
-    supportedLocales: AppLocalizations.supportedLocales,
-  ));
+  );
   await tester.tap(find.text('home'));
   await tester.pumpAndSettle();
 }
@@ -48,7 +59,9 @@ void main() {
     expect(find.text('home'), findsOneWidget);
   });
 
-  testWidgets('dolu formda geri onay ister; İptal kalır, Çık çıkar (UX-2)', (tester) async {
+  testWidgets('dolu formda geri onay ister; İptal kalır, Çık çıkar (UX-2)', (
+    tester,
+  ) async {
     await _pump(tester, dirty: true);
     await _back(tester);
     expect(find.text('Değişiklikler kaybolacak'), findsOneWidget);

@@ -331,9 +331,17 @@ void main() {
 
   test('ReportReason dbValue reports CHECK değerleriyle eşleşir (023)', () {
     expect(ReportReason.values.map((r) => r.dbValue), [
-      'spam', 'harassment', 'patient_privacy',
-      'misinformation', 'inappropriate', 'other',
+      'spam',
+      'harassment',
+      'patient_privacy',
+      'misinformation',
+      'inappropriate',
+      'other',
     ]);
-    expect(ReportTarget.values.map((t) => t.dbValue), ['post', 'comment', 'user']);
+    expect(ReportTarget.values.map((t) => t.dbValue), [
+      'post',
+      'comment',
+      'user',
+    ]);
   });
 }

@@ -3,18 +3,21 @@ import 'package:dentlink/core/utils/string_utils.dart';
 
 void main() {
   group('generateUsername', () {
-    test('generates username starting with normalized name and ending with numeric suffix', () {
-      // Arrange
-      const fullName = 'Ahmet Yilmaz';
+    test(
+      'generates username starting with normalized name and ending with numeric suffix',
+      () {
+        // Arrange
+        const fullName = 'Ahmet Yilmaz';
 
-      // Act
-      final username = generateUsername(fullName);
+        // Act
+        final username = generateUsername(fullName);
 
-      // Assert
-      expect(username, startsWith('ahmet_yilmaz_'));
-      final suffix = username.substring('ahmet_yilmaz_'.length);
-      expect(int.tryParse(suffix), isNotNull);
-    });
+        // Assert
+        expect(username, startsWith('ahmet_yilmaz_'));
+        final suffix = username.substring('ahmet_yilmaz_'.length);
+        expect(int.tryParse(suffix), isNotNull);
+      },
+    );
 
     test('generates username for single word name', () {
       // Arrange
@@ -49,43 +52,58 @@ void main() {
       expect(username, startsWith('user_'));
     });
 
-    test('defaults to user prefix when all characters are special characters', () {
-      // Arrange
-      const fullName = '!!!@@@';
+    test(
+      'defaults to user prefix when all characters are special characters',
+      () {
+        // Arrange
+        const fullName = '!!!@@@';
 
-      // Act
-      final username = generateUsername(fullName);
+        // Act
+        final username = generateUsername(fullName);
 
-      // Assert
-      expect(username, startsWith('user_'));
-    });
+        // Assert
+        expect(username, startsWith('user_'));
+      },
+    );
 
-    test('collapses multiple consecutive spaces between words into a single underscore', () {
-      // Arrange
-      const fullName = 'Ahmet    Yilmaz';
+    test(
+      'collapses multiple consecutive spaces between words into a single underscore',
+      () {
+        // Arrange
+        const fullName = 'Ahmet    Yilmaz';
 
-      // Act
-      final username = generateUsername(fullName);
+        // Act
+        final username = generateUsername(fullName);
 
-      // Assert
-      expect(username, startsWith('ahmet_yilmaz_'));
-    });
+        // Assert
+        expect(username, startsWith('ahmet_yilmaz_'));
+      },
+    );
 
-    test('matches pattern allowing only lowercase alphanumeric characters and underscores', () {
-      // Arrange
-      const fullName = 'Dr. Jane Doe-Smith 123!';
+    test(
+      'matches pattern allowing only lowercase alphanumeric characters and underscores',
+      () {
+        // Arrange
+        const fullName = 'Dr. Jane Doe-Smith 123!';
 
-      // Act
-      final username = generateUsername(fullName);
+        // Act
+        final username = generateUsername(fullName);
 
-      // Assert
-      expect(username, matches(RegExp(r'^[a-z0-9_]+$')));
-    });
+        // Assert
+        expect(username, matches(RegExp(r'^[a-z0-9_]+$')));
+      },
+    );
 
-    test('transliterates Turkish characters (upper and lower case) to ASCII', () {
-      expect(generateUsername('Çağla Öztürk'), startsWith('cagla_ozturk_'));
-      expect(generateUsername('İsmail IŞIK'), startsWith('ismail_isik_'));
-      expect(generateUsername('Şule Güneş'), matches(RegExp(r'^sule_gunes_\d{6}$')));
-    });
+    test(
+      'transliterates Turkish characters (upper and lower case) to ASCII',
+      () {
+        expect(generateUsername('Çağla Öztürk'), startsWith('cagla_ozturk_'));
+        expect(generateUsername('İsmail IŞIK'), startsWith('ismail_isik_'));
+        expect(
+          generateUsername('Şule Güneş'),
+          matches(RegExp(r'^sule_gunes_\d{6}$')),
+        );
+      },
+    );
   });
 }

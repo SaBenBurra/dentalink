@@ -34,7 +34,8 @@ class _DeletedPostRepo implements PostRepository {
   @override
   Future<PostModel> getPostById(String id) async => _post;
   @override
-  Future<PostModel> likePost(String postId) async => throw const NotFoundFailure();
+  Future<PostModel> likePost(String postId) async =>
+      throw const NotFoundFailure();
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -44,30 +45,41 @@ void main() {
 
   setUp(() {
     final repo = _DeletedPostRepo();
-    container = ProviderContainer(overrides: [
-      feedRepositoryProvider.overrideWithValue(repo),
-      postActionRepositoryProvider.overrideWithValue(repo),
-    ]);
+    container = ProviderContainer(
+      overrides: [
+        feedRepositoryProvider.overrideWithValue(repo),
+        postActionRepositoryProvider.overrideWithValue(repo),
+      ],
+    );
     addTearDown(container.dispose);
   });
 
-  test('detayda silinmiş postu beğenmek ekranı "bulunamadı" durumuna geçirir', () async {
-    container.listen(postDetailProvider('p1'), (_, _) {});
-    await container.read(postDetailProvider('p1').future);
+  test(
+    'detayda silinmiş postu beğenmek ekranı "bulunamadı" durumuna geçirir',
+    () async {
+      container.listen(postDetailProvider('p1'), (_, _) {});
+      await container.read(postDetailProvider('p1').future);
 
-    await container.read(postDetailProvider('p1').notifier).toggleLike();
+      await container.read(postDetailProvider('p1').notifier).toggleLike();
 
-    expect(container.read(postDetailProvider('p1')).error, isA<NotFoundFailure>());
-  });
+      expect(
+        container.read(postDetailProvider('p1')).error,
+        isA<NotFoundFailure>(),
+      );
+    },
+  );
 
-  test('feed\'de silinmiş postu beğenmek onu listeden çıkarır ve hatayı bildirir', () async {
-    container.listen(feedProvider, (_, _) {});
-    await container.read(feedProvider.future);
+  test(
+    'feed\'de silinmiş postu beğenmek onu listeden çıkarır ve hatayı bildirir',
+    () async {
+      container.listen(feedProvider, (_, _) {});
+      await container.read(feedProvider.future);
 
-    await expectLater(
-      container.read(feedProvider.notifier).toggleLike('p1'),
-      throwsA(isA<NotFoundFailure>()),
-    );
-    expect(container.read(feedProvider).value, isEmpty);
-  });
+      await expectLater(
+        container.read(feedProvider.notifier).toggleLike('p1'),
+        throwsA(isA<NotFoundFailure>()),
+      );
+      expect(container.read(feedProvider).value, isEmpty);
+    },
+  );
 }

@@ -31,12 +31,18 @@ abstract class FollowRepository {
   Future<Set<String>> getFollowedUserIds(List<String> userIds);
 
   /// Kullanıcının takipçileri, en son takip eden önce; [before] ile sonraki sayfa.
-  Future<PageResult<UserModel>> getFollowers(String userId, {PageCursor? before});
+  Future<PageResult<UserModel>> getFollowers(
+    String userId, {
+    PageCursor? before,
+  });
 
   /// [userId]'yi takip edenlerden oturumdaki kullanıcının takip ettikleri:
   /// en son takip eden önce en fazla [limit] kişi ve toplam sayı.
   Future<MutualFollowers> getMutualFollowers(String userId, {int limit = 3});
 
   /// Kullanıcının takip ettikleri, en son takip edilen önce; [before] ile sonraki sayfa.
-  Future<PageResult<UserModel>> getFollowing(String userId, {PageCursor? before});
+  Future<PageResult<UserModel>> getFollowing(
+    String userId, {
+    PageCursor? before,
+  });
 }

@@ -12,8 +12,8 @@ import '../../../core/error/app_failures.dart';
 /// ve form bekleme durumları (loading state) buraya taşınmıştır.
 final editProfileProvider =
     AutoDisposeAsyncNotifierProvider<EditProfileController, void>(() {
-  return EditProfileController();
-});
+      return EditProfileController();
+    });
 
 class EditProfileController extends AutoDisposeAsyncNotifier<void> {
   @override
@@ -37,20 +37,24 @@ class EditProfileController extends AutoDisposeAsyncNotifier<void> {
       final currentUserId = ref.read(currentUserProvider)?.id;
       if (currentUserId == null) throw const AuthRequiredFailure();
       if (avatarFile != null) {
-        await ref.read(userRepositoryProvider).uploadAvatar(currentUserId, avatarFile);
+        await ref
+            .read(userRepositoryProvider)
+            .uploadAvatar(currentUserId, avatarFile);
       }
 
-      await ref.read(userRepositoryProvider).updateProfile(
-        currentUserId,
-        fullName: fullName.trim(),
-        title: title,
-        bio: bio?.trim(),
-        university: university?.trim(),
-        city: city?.trim(),
-        // Form doğruladı; boşsa null.
-        experienceYears: int.tryParse(experience?.trim() ?? ''),
-        workplace: workplace?.trim(),
-      );
+      await ref
+          .read(userRepositoryProvider)
+          .updateProfile(
+            currentUserId,
+            fullName: fullName.trim(),
+            title: title,
+            bio: bio?.trim(),
+            university: university?.trim(),
+            city: city?.trim(),
+            // Form doğruladı; boşsa null.
+            experienceYears: int.tryParse(experience?.trim() ?? ''),
+            workplace: workplace?.trim(),
+          );
 
       // Kullanıcı profilinin UI'da güncellenmesi için provider'ı invalidate et
       ref.invalidate(authProvider);
