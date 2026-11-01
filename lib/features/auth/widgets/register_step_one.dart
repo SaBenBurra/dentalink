@@ -4,6 +4,7 @@ import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/constants/app_text_styles.dart';
 import 'package:dentlink/data/models/enums.dart';
 import 'package:dentlink/shared/extensions/user_title_ui.dart';
+import 'package:dentlink/shared/widgets/dental_icon.dart';
 import 'package:dentlink/shared/widgets/glass_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -74,7 +75,9 @@ class RegisterStepOne extends StatelessWidget {
             focusNode: nameFocusNode,
             hintText: AppLocalizations.of(context)!.fullName,
             icon: Icons.person_outline_rounded,
-            inputFormatters: [LengthLimitingTextInputFormatter(ProfileLimits.fullName)],
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(ProfileLimits.fullName),
+            ],
             errorText: nameError,
             onChanged: onNameChanged,
           ),
@@ -116,8 +119,12 @@ class RegisterStepOne extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? (isDark
-                              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)
-                              : Theme.of(context).colorScheme.primary.withValues(alpha: 0.08))
+                              ? Theme.of(
+                                  context,
+                                ).colorScheme.primary.withValues(alpha: 0.15)
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.primary.withValues(alpha: 0.08))
                         : glassBgColor,
                     borderRadius: BorderRadius.circular(
                       AppDimensions.radiusMedium,
@@ -131,7 +138,9 @@ class RegisterStepOne extends StatelessWidget {
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primary.withValues(alpha: 0.15),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -142,15 +151,15 @@ class RegisterStepOne extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          title.titleIcon,
-                          size: 16,
+                        DentalIcon(
+                          title.iconAsset,
+                          size: 20,
                           color: isSelected
                               ? Theme.of(context).colorScheme.primary
                               : (isDark ? Colors.white60 : Colors.black54),
                         ),
                         const SizedBox(width: AppDimensions.spacing8),
-                        Expanded(
+                        Flexible(
                           child: Text(
                             title.displayName(context),
                             style: AppTextStyles.bodySmall.copyWith(
@@ -163,7 +172,7 @@ class RegisterStepOne extends StatelessWidget {
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
+                            textAlign: TextAlign.start,
                           ),
                         ),
                       ],

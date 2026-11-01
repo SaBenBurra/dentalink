@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_dimensions.dart';
 import '../../data/models/enums.dart';
 import '../extensions/dental_branch_ui.dart';
+import 'dental_icon.dart';
 
 /// Diş hekimliği branşlarını görüntülemek için kullanılan chip widget'ı.
 ///
@@ -10,8 +11,8 @@ import '../extensions/dental_branch_ui.dart';
 /// branş renginin %15 opaklığında arka plan ve branş rengi metin;
 /// seçili olduğunda branş rengi arka plan ve beyaz metin kullanır.
 ///
-/// [showIcon] etkinleştirildiğinde metin öncesinde küçük bir renkli
-/// nokta (6px) gösterilir.
+/// [showIcon] etkinleştirildiğinde metin öncesinde branş ikonu (16px)
+/// gösterilir.
 ///
 /// ```dart
 /// BranchChip(
@@ -27,7 +28,7 @@ class BranchChip extends StatelessWidget {
   /// [branch] gösterilecek diş hekimliği branşıdır.
   /// [onTap] chip'e tıklandığında tetiklenir.
   /// [isSelected] seçili durumu belirler, varsayılan olarak `false`.
-  /// [showIcon] metin öncesinde renkli nokta göstermeyi kontrol eder.
+  /// [showIcon] metin öncesinde branş ikonunu göstermeyi kontrol eder.
   const BranchChip({
     super.key,
     required this.branch,
@@ -47,7 +48,7 @@ class BranchChip extends StatelessWidget {
   /// `true` olduğunda branş rengi arka plan ve beyaz metin kullanılır.
   final bool isSelected;
 
-  /// `true` olduğunda metin öncesinde küçük renkli bir nokta gösterir.
+  /// `true` olduğunda metin öncesinde branş ikonunu gösterir.
   final bool showIcon;
 
   @override
@@ -81,13 +82,10 @@ class BranchChip extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (showIcon) ...[
-                  Container(
-                    width: 6,
-                    height: 6,
-                    decoration: BoxDecoration(
-                      color: foregroundColor,
-                      shape: BoxShape.circle,
-                    ),
+                  DentalIcon(
+                    branch.iconAsset,
+                    size: 16,
+                    color: foregroundColor,
                   ),
                   const SizedBox(width: AppDimensions.spacing6),
                 ],

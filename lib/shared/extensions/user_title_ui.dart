@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/l10n/generated/app_localizations.dart';
 import '../../data/models/enums.dart';
+import 'dental_branch_ui.dart';
 
 /// UserTitle enum'u için UI katmanı extension'ları.
 ///
@@ -23,17 +24,20 @@ extension UserTitleUI on UserTitle {
     };
   }
 
-  /// Her unvan için özel Material ikonu.
-  IconData get titleIcon => switch (this) {
-    UserTitle.ogrenci => Icons.school_outlined,
-    UserTitle.disHekimi => Icons.medical_services_outlined,
-    UserTitle.endodontist => Icons.biotech_outlined,
-    UserTitle.ortodontist => Icons.align_horizontal_center_outlined,
-    UserTitle.periodontolog => Icons.layers_outlined,
-    UserTitle.protezUzmani => Icons.grid_view_outlined,
-    UserTitle.pedodontist => Icons.child_care_outlined,
-    UserTitle.agizDisCeneCerrahisi => Icons.healing_outlined,
-    UserTitle.agizDisCeneRadyoloji => Icons.settings_system_daydream_outlined,
-    UserTitle.restoratifDisTedavisi => Icons.auto_awesome_outlined,
+  /// Unvanın SVG ikonu; uzmanlar kendi branşının ikonunu kullanır.
+  String get iconAsset => switch (this) {
+    UserTitle.ogrenci => dentalIconAsset('student'),
+    UserTitle.disHekimi => dentalIconAsset('general_dentistry'),
+    UserTitle.endodontist => DentalBranch.endodonti.iconAsset,
+    UserTitle.ortodontist => DentalBranch.ortodonti.iconAsset,
+    UserTitle.periodontolog => DentalBranch.periodontoloji.iconAsset,
+    UserTitle.protezUzmani => DentalBranch.protetikDisTedavisi.iconAsset,
+    UserTitle.pedodontist => DentalBranch.pedodonti.iconAsset,
+    UserTitle.agizDisCeneCerrahisi =>
+      DentalBranch.agizDisCeneCerrahisi.iconAsset,
+    UserTitle.agizDisCeneRadyoloji =>
+      DentalBranch.agizDisCeneRadyolojisi.iconAsset,
+    UserTitle.restoratifDisTedavisi =>
+      DentalBranch.restoratifDisTedavisi.iconAsset,
   };
 }

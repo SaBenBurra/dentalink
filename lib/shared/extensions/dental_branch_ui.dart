@@ -3,6 +3,9 @@ import '../../core/constants/app_colors.dart';
 import '../../core/l10n/generated/app_localizations.dart';
 import '../../data/models/enums.dart';
 
+/// `assets/dental-icons/` altındaki SVG ikonun yolu.
+String dentalIconAsset(String name) => 'assets/dental-icons/$name.svg';
+
 /// DentalBranch enum'u için UI katmanı extension'ları.
 ///
 /// Branş renk eşleştirmesini presentation katmanında tutar (SRP/OCP).
@@ -50,4 +53,16 @@ extension DentalBranchUI on DentalBranch {
       AppColors.branchAgizDisCeneRadyolojisi,
     DentalBranch.restoratifDisTedavisi => AppColors.branchRestoratifDisTedavisi,
   };
+
+  /// Branşın SVG ikonu (`DentalIcon` ile çizilir).
+  String get iconAsset => dentalIconAsset(switch (this) {
+    DentalBranch.pedodonti => 'pediatric_dentistry',
+    DentalBranch.endodonti => 'endodontics',
+    DentalBranch.ortodonti => 'orthodontics',
+    DentalBranch.periodontoloji => 'periodontics',
+    DentalBranch.protetikDisTedavisi => 'prosthodontics',
+    DentalBranch.agizDisCeneCerrahisi => 'surgery',
+    DentalBranch.agizDisCeneRadyolojisi => 'radiology',
+    DentalBranch.restoratifDisTedavisi => 'restorative',
+  });
 }
