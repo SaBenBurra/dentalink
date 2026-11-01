@@ -190,16 +190,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get titlePedodontist => 'Pedodontist';
 
   @override
-  String get titleOralSurgeon => 'Oral and Maxillofacial Surgeon';
+  String get titleOralSurgeon => 'Surgeon';
 
   @override
-  String get titleOralRadiologist => 'Oral and Maxillofacial Radiologist';
+  String get titleOralRadiologist => 'Radiologist';
 
   @override
-  String get titleOralDiagnostics => 'Oral Diagnosis Specialist';
-
-  @override
-  String get titleRestorativeDentistry => 'Restorative Dentistry Specialist';
+  String get titleRestorativeDentistry => 'Restorative Specialist';
 
   @override
   String get profileTitle => 'Profile';
@@ -318,9 +315,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get branchOralRadiology => 'Oral and Maxillofacial Radiology';
 
   @override
-  String get branchOralDiagnosis => 'Oral Diagnosis';
-
-  @override
   String get branchRestorativeDentistry => 'Restorative Dentistry';
 
   @override
@@ -343,9 +337,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get branchShortOralRadiology => 'Radiology';
-
-  @override
-  String get branchShortOralDiagnosis => 'Diagnosis';
 
   @override
   String get branchShortRestorativeDentistry => 'Restorative';
@@ -655,9 +646,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get like => 'Like';
-
-  @override
-  String get titleUnknown => 'Unknown';
 
   @override
   String get errorAuthRequired =>
@@ -1443,24 +1431,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get treatmentSefalometrikRontgen => 'Cephalometric radiograph';
-
-  @override
-  String get treatmentBiyopsi => 'Biopsy';
-
-  @override
-  String get treatmentOralLezyon => 'Oral lesion diagnosis and follow-up';
-
-  @override
-  String get treatmentTmeBozuklugu => 'TMJ treatment';
-
-  @override
-  String get treatmentOrofasiyalAgri => 'Orofacial pain management';
-
-  @override
-  String get treatmentAyiriciTani => 'Differential diagnosis';
-
-  @override
-  String get treatmentBotoks => 'Botulinum toxin injection';
 
   @override
   String get treatmentOther => 'Other';

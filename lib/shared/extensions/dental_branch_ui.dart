@@ -18,7 +18,6 @@ extension DentalBranchUI on DentalBranch {
       DentalBranch.protetikDisTedavisi => l10n.branchProsthodontics,
       DentalBranch.agizDisCeneCerrahisi => l10n.branchOralSurgery,
       DentalBranch.agizDisCeneRadyolojisi => l10n.branchOralRadiology,
-      DentalBranch.oralDiagnoz => l10n.branchOralDiagnosis,
       DentalBranch.restoratifDisTedavisi => l10n.branchRestorativeDentistry,
     };
   }
@@ -34,7 +33,6 @@ extension DentalBranchUI on DentalBranch {
       DentalBranch.protetikDisTedavisi => l10n.branchShortProsthodontics,
       DentalBranch.agizDisCeneCerrahisi => l10n.branchShortOralSurgery,
       DentalBranch.agizDisCeneRadyolojisi => l10n.branchShortOralRadiology,
-      DentalBranch.oralDiagnoz => l10n.branchShortOralDiagnosis,
       DentalBranch.restoratifDisTedavisi =>
         l10n.branchShortRestorativeDentistry,
     };
@@ -50,7 +48,6 @@ extension DentalBranchUI on DentalBranch {
     DentalBranch.agizDisCeneCerrahisi => AppColors.branchAgizDisCeneCerrahisi,
     DentalBranch.agizDisCeneRadyolojisi =>
       AppColors.branchAgizDisCeneRadyolojisi,
-    DentalBranch.oralDiagnoz => AppColors.branchOralDiagnoz,
     DentalBranch.restoratifDisTedavisi => AppColors.branchRestoratifDisTedavisi,
   };
 }

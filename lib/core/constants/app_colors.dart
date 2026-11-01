@@ -145,7 +145,6 @@ abstract final class AppColors {
   static const Color branchProtetikDisTedavisi = Color(0xFFFF9800);
   static const Color branchAgizDisCeneCerrahisi = Color(0xFFF44336);
   static const Color branchAgizDisCeneRadyolojisi = Color(0xFF00BCD4);
-  static const Color branchOralDiagnoz = Color(0xFF795548);
   static const Color branchRestoratifDisTedavisi = Color(0xFF607D8B);
 
   // ────────────────────────────────────────────

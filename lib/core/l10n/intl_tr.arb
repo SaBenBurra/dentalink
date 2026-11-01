@@ -181,16 +181,14 @@
   "titlePedodontist": "Pedodontist",
   "@titlePedodontist": { "description": "Pedodontist unvanı" },
 
-  "titleOralSurgeon": "Ağız, Diş ve Çene Cerrahı",
-  "@titleOralSurgeon": { "description": "Ağız, Diş ve Çene Cerrahı unvanı" },
+  "titleOralSurgeon": "Cerrah",
+  "@titleOralSurgeon": { "description": "Cerrah unvanı" },
 
-  "titleOralRadiologist": "Ağız, Diş ve Çene Radyoloğu",
+  "titleOralRadiologist": "Radyolog",
   "@titleOralRadiologist": { "description": "Radyoloji uzmanı unvanı" },
 
-  "titleOralDiagnostics": "Oral Diagnoz Uzmanı",
-  "@titleOralDiagnostics": { "description": "Oral diagnoz uzmanı unvanı" },
 
-  "titleRestorativeDentistry": "Restoratif Diş Tedavisi Uzmanı",
+  "titleRestorativeDentistry": "Restoratif Uzmanı",
   "@titleRestorativeDentistry": { "description": "Restoratif uzmanı unvanı" },
 
   "profileTitle": "Profil",
@@ -305,8 +303,6 @@
   "branchOralRadiology": "Ağız, Diş ve Çene Radyolojisi",
   "@branchOralRadiology": { "description": "Ağız, Diş ve Çene Radyolojisi branşı" },
 
-  "branchOralDiagnosis": "Oral Diagnoz",
-  "@branchOralDiagnosis": { "description": "Oral Diagnoz branşı" },
 
   "branchRestorativeDentistry": "Restoratif Diş Tedavisi",
   "@branchRestorativeDentistry": { "description": "Restoratif Diş Tedavisi branşı" },
@@ -317,7 +313,6 @@
   "branchShortProsthodontics": "Protez",
   "branchShortOralSurgery": "Cerrahi",
   "branchShortOralRadiology": "Radyoloji",
-  "branchShortOralDiagnosis": "Diagnoz",
   "branchShortRestorativeDentistry": "Restoratif",
   "@branchShortPedodontics": { "description": "Keşfet branş çiplerinde kısa ad" },
 
@@ -562,7 +557,6 @@
   "like": "Beğen",
   "@discardChangesConfirm": { "description": "Kaydedilmemiş formdan çıkışı onaylayan buton" },
 
-  "titleUnknown": "Bilinmiyor",
   "errorAuthRequired": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",
   "errorPermissionDenied": "Bu işlem için yetkiniz yok.",
   "errorNotFound": "İçerik bulunamadı veya silinmiş.",
@@ -816,12 +810,6 @@
   "treatmentBitewing": "Bitewing",
   "treatmentCbct": "KIBT (CBCT)",
   "treatmentSefalometrikRontgen": "Sefalometrik röntgen",
-  "treatmentBiyopsi": "Biyopsi",
-  "treatmentOralLezyon": "Oral lezyon tanı ve takibi",
-  "treatmentTmeBozuklugu": "TME tedavisi",
-  "treatmentOrofasiyalAgri": "Orofasiyal ağrı yönetimi",
-  "treatmentAyiriciTani": "Ayırıcı tanı",
-  "treatmentBotoks": "Botoks uygulaması",
   "treatmentOther": "Diğer",
   "@treatmentOther": { "description": "Listede olmayan tedavi seçeneği" },
   "otherTreatmentLabel": "Tedavi adı",

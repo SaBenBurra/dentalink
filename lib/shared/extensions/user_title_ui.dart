@@ -10,7 +10,6 @@ extension UserTitleUI on UserTitle {
   String displayName(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return switch (this) {
-      UserTitle.unknown => l10n.titleUnknown,
       UserTitle.ogrenci => l10n.titleStudent,
       UserTitle.disHekimi => l10n.titleGeneralDentist,
       UserTitle.endodontist => l10n.titleEndodontist,
@@ -21,13 +20,11 @@ extension UserTitleUI on UserTitle {
       UserTitle.agizDisCeneCerrahisi => l10n.titleOralSurgeon,
       UserTitle.agizDisCeneRadyoloji => l10n.titleOralRadiologist,
       UserTitle.restoratifDisTedavisi => l10n.titleRestorativeDentistry,
-      UserTitle.oralDiagnoz => l10n.titleOralDiagnostics,
     };
   }
 
   /// Her unvan için özel Material ikonu.
   IconData get titleIcon => switch (this) {
-    UserTitle.unknown => Icons.person_outline,
     UserTitle.ogrenci => Icons.school_outlined,
     UserTitle.disHekimi => Icons.medical_services_outlined,
     UserTitle.endodontist => Icons.biotech_outlined,
@@ -37,7 +34,6 @@ extension UserTitleUI on UserTitle {
     UserTitle.pedodontist => Icons.child_care_outlined,
     UserTitle.agizDisCeneCerrahisi => Icons.healing_outlined,
     UserTitle.agizDisCeneRadyoloji => Icons.settings_system_daydream_outlined,
-    UserTitle.oralDiagnoz => Icons.medical_information_outlined,
     UserTitle.restoratifDisTedavisi => Icons.auto_awesome_outlined,
   };
 }

@@ -458,28 +458,22 @@ abstract class AppLocalizations {
   /// **'Pedodontist'**
   String get titlePedodontist;
 
-  /// Ağız, Diş ve Çene Cerrahı unvanı
+  /// Cerrah unvanı
   ///
   /// In tr, this message translates to:
-  /// **'Ağız, Diş ve Çene Cerrahı'**
+  /// **'Cerrah'**
   String get titleOralSurgeon;
 
   /// Radyoloji uzmanı unvanı
   ///
   /// In tr, this message translates to:
-  /// **'Ağız, Diş ve Çene Radyoloğu'**
+  /// **'Radyolog'**
   String get titleOralRadiologist;
-
-  /// Oral diagnoz uzmanı unvanı
-  ///
-  /// In tr, this message translates to:
-  /// **'Oral Diagnoz Uzmanı'**
-  String get titleOralDiagnostics;
 
   /// Restoratif uzmanı unvanı
   ///
   /// In tr, this message translates to:
-  /// **'Restoratif Diş Tedavisi Uzmanı'**
+  /// **'Restoratif Uzmanı'**
   String get titleRestorativeDentistry;
 
   /// Profil ekranı başlığı
@@ -710,12 +704,6 @@ abstract class AppLocalizations {
   /// **'Ağız, Diş ve Çene Radyolojisi'**
   String get branchOralRadiology;
 
-  /// Oral Diagnoz branşı
-  ///
-  /// In tr, this message translates to:
-  /// **'Oral Diagnoz'**
-  String get branchOralDiagnosis;
-
   /// Restoratif Diş Tedavisi branşı
   ///
   /// In tr, this message translates to:
@@ -763,12 +751,6 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Radyoloji'**
   String get branchShortOralRadiology;
-
-  /// No description provided for @branchShortOralDiagnosis.
-  ///
-  /// In tr, this message translates to:
-  /// **'Diagnoz'**
-  String get branchShortOralDiagnosis;
 
   /// No description provided for @branchShortRestorativeDentistry.
   ///
@@ -1303,12 +1285,6 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Beğen'**
   String get like;
-
-  /// No description provided for @titleUnknown.
-  ///
-  /// In tr, this message translates to:
-  /// **'Bilinmiyor'**
-  String get titleUnknown;
 
   /// No description provided for @errorAuthRequired.
   ///
@@ -2689,42 +2665,6 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Sefalometrik röntgen'**
   String get treatmentSefalometrikRontgen;
-
-  /// No description provided for @treatmentBiyopsi.
-  ///
-  /// In tr, this message translates to:
-  /// **'Biyopsi'**
-  String get treatmentBiyopsi;
-
-  /// No description provided for @treatmentOralLezyon.
-  ///
-  /// In tr, this message translates to:
-  /// **'Oral lezyon tanı ve takibi'**
-  String get treatmentOralLezyon;
-
-  /// No description provided for @treatmentTmeBozuklugu.
-  ///
-  /// In tr, this message translates to:
-  /// **'TME tedavisi'**
-  String get treatmentTmeBozuklugu;
-
-  /// No description provided for @treatmentOrofasiyalAgri.
-  ///
-  /// In tr, this message translates to:
-  /// **'Orofasiyal ağrı yönetimi'**
-  String get treatmentOrofasiyalAgri;
-
-  /// No description provided for @treatmentAyiriciTani.
-  ///
-  /// In tr, this message translates to:
-  /// **'Ayırıcı tanı'**
-  String get treatmentAyiriciTani;
-
-  /// No description provided for @treatmentBotoks.
-  ///
-  /// In tr, this message translates to:
-  /// **'Botoks uygulaması'**
-  String get treatmentBotoks;
 
   /// Listede olmayan tedavi seçeneği
   ///

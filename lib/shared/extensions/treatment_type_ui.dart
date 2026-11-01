@@ -65,12 +65,6 @@ extension TreatmentTypeUI on TreatmentType {
       TreatmentType.bitewing => l10n.treatmentBitewing,
       TreatmentType.cbct => l10n.treatmentCbct,
       TreatmentType.sefalometrikRontgen => l10n.treatmentSefalometrikRontgen,
-      TreatmentType.biyopsi => l10n.treatmentBiyopsi,
-      TreatmentType.oralLezyon => l10n.treatmentOralLezyon,
-      TreatmentType.tmeBozuklugu => l10n.treatmentTmeBozuklugu,
-      TreatmentType.orofasiyalAgri => l10n.treatmentOrofasiyalAgri,
-      TreatmentType.ayiriciTani => l10n.treatmentAyiriciTani,
-      TreatmentType.botoks => l10n.treatmentBotoks,
     };
   }
 }

@@ -190,16 +190,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get titlePedodontist => 'Pedodontist';
 
   @override
-  String get titleOralSurgeon => 'Ağız, Diş ve Çene Cerrahı';
+  String get titleOralSurgeon => 'Cerrah';
 
   @override
-  String get titleOralRadiologist => 'Ağız, Diş ve Çene Radyoloğu';
+  String get titleOralRadiologist => 'Radyolog';
 
   @override
-  String get titleOralDiagnostics => 'Oral Diagnoz Uzmanı';
-
-  @override
-  String get titleRestorativeDentistry => 'Restoratif Diş Tedavisi Uzmanı';
+  String get titleRestorativeDentistry => 'Restoratif Uzmanı';
 
   @override
   String get profileTitle => 'Profil';
@@ -318,9 +315,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get branchOralRadiology => 'Ağız, Diş ve Çene Radyolojisi';
 
   @override
-  String get branchOralDiagnosis => 'Oral Diagnoz';
-
-  @override
   String get branchRestorativeDentistry => 'Restoratif Diş Tedavisi';
 
   @override
@@ -343,9 +337,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get branchShortOralRadiology => 'Radyoloji';
-
-  @override
-  String get branchShortOralDiagnosis => 'Diagnoz';
 
   @override
   String get branchShortRestorativeDentistry => 'Restoratif';
@@ -654,9 +645,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get like => 'Beğen';
-
-  @override
-  String get titleUnknown => 'Bilinmiyor';
 
   @override
   String get errorAuthRequired =>
@@ -1427,24 +1415,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get treatmentSefalometrikRontgen => 'Sefalometrik röntgen';
-
-  @override
-  String get treatmentBiyopsi => 'Biyopsi';
-
-  @override
-  String get treatmentOralLezyon => 'Oral lezyon tanı ve takibi';
-
-  @override
-  String get treatmentTmeBozuklugu => 'TME tedavisi';
-
-  @override
-  String get treatmentOrofasiyalAgri => 'Orofasiyal ağrı yönetimi';
-
-  @override
-  String get treatmentAyiriciTani => 'Ayırıcı tanı';
-
-  @override
-  String get treatmentBotoks => 'Botoks uygulaması';
 
   @override
   String get treatmentOther => 'Diğer';

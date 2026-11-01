@@ -64,7 +64,7 @@ lib/
 
 ### Kullanıcılar
 - **Giriş:** e-posta veya telefon + 6 haneli OTP (şifresiz). İlk girişte 3 adımlı kayıt: (1) ad + unvan, (2) üniversite, şehir, klinik, deneyim, (3) avatar + biyografi.
-- **Unvanlar** (`UserTitle`): Öğrenci, Diş Hekimi, Endodontist, Ortodontist, Periodontolog, Protez Uzmanı, Pedodontist, Çene Cerrahı, Çene Radyoloğu, Oral Diagnoz Uzmanı, Restoratif Diş Tedavisi Uzmanı.
+- **Unvanlar** (`UserTitle`): Öğrenci, Diş Hekimi, Endodontist, Ortodontist, Periodontolog, Protez Uzmanı, Pedodontist, Cerrah, Radyolog, Restoratif Uzmanı.
 - `is_verified` yalnızca admin onayıyla değişir (Faz 4: diploma doğrulama).
 
 ### İçerik
@@ -74,7 +74,7 @@ lib/
 | **Soru** | başlık, detay, etiketler (görsel yükleme henüz yok) | Soru sahibi "En İyi Cevap" seçer (`mark_best_answer` RPC) |
 | İş ilanı, pazar yeri | — | Yayın sonrası |
 
-**Branşlar** (`DentalBranch`): Pedodonti, Endodonti, Ortodonti, Periodontoloji, Protetik, Çene Cerrahisi, Çene Radyolojisi, Oral Diagnoz, Restoratif.
+**Branşlar** (`DentalBranch`): Pedodonti, Endodonti, Ortodonti, Periodontoloji, Protetik, Çene Cerrahisi, Çene Radyolojisi, Restoratif.
 
 ### Sosyal
 - Beğeni (post ve yorum), yorum ve cevap, takip, kaydetme (bookmark), bire bir DM (realtime), bildirimler.

@@ -2,7 +2,6 @@
 /// Faz 3'te Supabase'in PostgreSQL enum'larıyla eşleştirilir.
 library;
 enum UserTitle {
-  unknown,
   ogrenci,
   disHekimi,
   endodontist,
@@ -12,11 +11,9 @@ enum UserTitle {
   pedodontist,
   agizDisCeneCerrahisi,
   agizDisCeneRadyoloji,
-  restoratifDisTedavisi,
-  oralDiagnoz;
+  restoratifDisTedavisi;
 
   String get dbValue => switch (this) {
-    UserTitle.unknown => 'unknown',
     UserTitle.ogrenci => 'ogrenci',
     UserTitle.disHekimi => 'dis_hekimi',
     UserTitle.endodontist => 'endodontist',
@@ -27,11 +24,10 @@ enum UserTitle {
     UserTitle.agizDisCeneCerrahisi => 'agiz_dis_cene_cerrahi',
     UserTitle.agizDisCeneRadyoloji => 'agiz_dis_cene_radyologu',
     UserTitle.restoratifDisTedavisi => 'restoratif_dis_tedavisi_uzmani',
-    UserTitle.oralDiagnoz => 'oral_diagnoz_uzmani',
   };
 
   static UserTitle fromDbValue(String? value) {
-    if (value == null) return UserTitle.unknown;
+    if (value == null) return UserTitle.disHekimi; // DB varsayılanı
     for (final e in UserTitle.values) {
       if (e.dbValue == value) return e;
     }
@@ -59,7 +55,6 @@ enum DentalBranch {
   protetikDisTedavisi,
   agizDisCeneCerrahisi,
   agizDisCeneRadyolojisi,
-  oralDiagnoz,
   restoratifDisTedavisi;
 
   /// Supabase'deki PostgreSQL ENUM değeriyle eşleşir.
@@ -71,7 +66,6 @@ enum DentalBranch {
     DentalBranch.protetikDisTedavisi => 'protez_uzmani',
     DentalBranch.agizDisCeneCerrahisi => 'agiz_dis_cene_cerrahi',
     DentalBranch.agizDisCeneRadyolojisi => 'agiz_dis_cene_radyologu',
-    DentalBranch.oralDiagnoz => 'oral_diagnoz_uzmani',
     DentalBranch.restoratifDisTedavisi => 'restoratif_dis_tedavisi_uzmani',
   };
 
@@ -164,14 +158,7 @@ enum TreatmentType {
   periapikalRontgen('periapikal-rontgen', 'periapikal-röntgen', DentalBranch.agizDisCeneRadyolojisi),
   bitewing('bitewing', 'bitewing', DentalBranch.agizDisCeneRadyolojisi),
   cbct('cbct', 'cbct', DentalBranch.agizDisCeneRadyolojisi),
-  sefalometrikRontgen('sefalometrik-rontgen', 'sefalometrik-röntgen', DentalBranch.agizDisCeneRadyolojisi),
-  // oralDiagnoz
-  biyopsi('biyopsi', 'biyopsi', DentalBranch.oralDiagnoz),
-  oralLezyon('oral-lezyon', 'oral-lezyon', DentalBranch.oralDiagnoz),
-  tmeBozuklugu('tme-bozuklugu', 'tme-bozukluğu', DentalBranch.oralDiagnoz),
-  orofasiyalAgri('orofasiyal-agri', 'orofasiyal-ağrı', DentalBranch.oralDiagnoz),
-  ayiriciTani('ayirici-tani', 'ayırıcı-tanı', DentalBranch.oralDiagnoz),
-  botoks('botoks', 'botoks', DentalBranch.oralDiagnoz);
+  sefalometrikRontgen('sefalometrik-rontgen', 'sefalometrik-röntgen', DentalBranch.agizDisCeneRadyolojisi);
 
   /// `treatment_types.code` (etiketin slug'ı).
   final String dbValue;
