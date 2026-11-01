@@ -100,7 +100,7 @@ class RegisterStepOne extends StatelessWidget {
               crossAxisCount: 2,
               mainAxisSpacing: 12,
               crossAxisSpacing: 12,
-              childAspectRatio: 3,
+              childAspectRatio: 2.6,
             ),
             itemCount: UserTitle.values.length,
             itemBuilder: (context, index) {
@@ -149,20 +149,21 @@ class RegisterStepOne extends StatelessWidget {
                   ),
                   child: Center(
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         DentalIcon(
                           title.iconAsset,
-                          size: 20,
+                          size: 24,
                           color: isSelected
                               ? Theme.of(context).colorScheme.primary
                               : (isDark ? Colors.white60 : Colors.black54),
                         ),
                         const SizedBox(width: AppDimensions.spacing8),
-                        Flexible(
+                        Expanded(
                           child: Text(
                             title.displayName(context),
                             style: AppTextStyles.bodySmall.copyWith(
+                              fontSize: 13,
                               fontWeight: isSelected
                                   ? FontWeight.bold
                                   : FontWeight.normal,
