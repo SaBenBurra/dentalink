@@ -28,11 +28,16 @@ class _FollowButtonState extends ConsumerState<FollowButton> {
     if (_busy) return;
     setState(() => _busy = true);
     try {
-      await ref.read(userProfileProvider(widget.userId).notifier).toggleFollow();
+      await ref
+          .read(userProfileProvider(widget.userId).notifier)
+          .toggleFollow();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(getErrorMessage(AppLocalizations.of(context)!, e))));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(getErrorMessage(AppLocalizations.of(context)!, e)),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);

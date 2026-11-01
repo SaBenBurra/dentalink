@@ -48,7 +48,9 @@ class GlassField extends StatelessWidget {
       bgOpacityColor = AppColors.error.withValues(alpha: isDark ? 0.08 : 0.03);
     } else if (hasFocus) {
       borderColor = AppColors.primary;
-      bgOpacityColor = AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.08);
+      bgOpacityColor = AppColors.primary.withValues(
+        alpha: isDark ? 0.15 : 0.08,
+      );
     }
 
     return AnimatedContainer(

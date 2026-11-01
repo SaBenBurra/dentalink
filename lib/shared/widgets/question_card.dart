@@ -1,4 +1,3 @@
-
 import 'package:dentlink/shared/extensions/user_title_ui.dart';
 import 'package:dentlink/data/models/enums.dart';
 import 'package:dentlink/providers/auth_provider.dart';
@@ -50,18 +49,26 @@ class QuestionCard extends ConsumerWidget {
             badge: PostBadge(postType: PostType.question),
             onMenuSelected: (action) => switch (action) {
               PostMenuAction.edit => context.push('/edit-post/${post.id}'),
-              PostMenuAction.delete => confirmAndDeletePost(context, ref, post.id),
-              PostMenuAction.report =>
-                showReportSheet(context, ReportTarget.post, post.id),
-              PostMenuAction.block => confirmAndBlockUser(context, ref, post.userId),
+              PostMenuAction.delete => confirmAndDeletePost(
+                context,
+                ref,
+                post.id,
+              ),
+              PostMenuAction.report => showReportSheet(
+                context,
+                ReportTarget.post,
+                post.id,
+              ),
+              PostMenuAction.block => confirmAndBlockUser(
+                context,
+                ref,
+                post.userId,
+              ),
             },
           ),
 
           // <-- 2. İçerik (uzunsa "Devamını oku")
-          PostBody(
-            title: post.title,
-            content: post.content,
-          ),
+          PostBody(title: post.title, content: post.content),
 
           // <-- 3. Ayırıcı çizgi (Soru postlarında görsel eki olmadığından daima gösterilir)
           Padding(

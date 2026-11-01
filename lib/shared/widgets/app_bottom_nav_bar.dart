@@ -66,10 +66,7 @@ class AppBottomNavBar extends StatelessWidget {
         ),
 
         // 2 — Oluştur (+) — Özel buton
-        _CreateButton(
-          colorScheme: colorScheme,
-          onTap: onCreateTap,
-        ),
+        _CreateButton(colorScheme: colorScheme, onTap: onCreateTap),
 
         // 3 — Mesajlar
         _NavItem(
@@ -163,10 +160,7 @@ class _NavItem extends StatelessWidget {
 
 /// Ortadaki "+" oluştur butonu.
 class _CreateButton extends StatelessWidget {
-  const _CreateButton({
-    required this.colorScheme,
-    required this.onTap,
-  });
+  const _CreateButton({required this.colorScheme, required this.onTap});
 
   final ColorScheme colorScheme;
   final VoidCallback onTap;
@@ -202,7 +196,11 @@ class _CreateButton extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(Icons.add_rounded, color: colorScheme.onPrimary, size: 22),
+              child: Icon(
+                Icons.add_rounded,
+                color: colorScheme.onPrimary,
+                size: 22,
+              ),
             ),
           ),
         ),
@@ -247,7 +245,10 @@ class _CreatePostSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppDimensions.spacing20),
-          Text(AppLocalizations.of(context)!.createSheetTitle, style: textTheme.titleLarge),
+          Text(
+            AppLocalizations.of(context)!.createSheetTitle,
+            style: textTheme.titleLarge,
+          ),
           const SizedBox(height: AppDimensions.spacing8),
           Text(
             AppLocalizations.of(context)!.createSheetSubtitle,
@@ -263,8 +264,7 @@ class _CreatePostSheet extends StatelessWidget {
             iconColor: colorScheme.primary,
             iconBg: colorScheme.primaryContainer.withValues(alpha: 0.3),
             title: AppLocalizations.of(context)!.createCase,
-            subtitle:
-                AppLocalizations.of(context)!.createCaseSubtitle,
+            subtitle: AppLocalizations.of(context)!.createCaseSubtitle,
             onTap: () {
               Navigator.pop(context);
               context.push('/create-case');
@@ -278,8 +278,7 @@ class _CreatePostSheet extends StatelessWidget {
             iconColor: colorScheme.secondary,
             iconBg: colorScheme.secondaryContainer.withValues(alpha: 0.3),
             title: AppLocalizations.of(context)!.createQuestion,
-            subtitle:
-                AppLocalizations.of(context)!.createQuestionSubtitle,
+            subtitle: AppLocalizations.of(context)!.createQuestionSubtitle,
             onTap: () {
               Navigator.pop(context);
               context.push('/create-question');

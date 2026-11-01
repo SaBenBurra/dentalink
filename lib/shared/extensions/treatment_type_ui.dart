@@ -25,7 +25,8 @@ extension TreatmentTypeUI on TreatmentType {
       TreatmentType.totalProtez => l10n.treatmentTotalProtez,
       TreatmentType.parsiyelProtez => l10n.treatmentParsiyelProtez,
       TreatmentType.implantUstuProtez => l10n.treatmentImplantUstuProtez,
-      TreatmentType.tamAgizRehabilitasyonu => l10n.treatmentTamAgizRehabilitasyonu,
+      TreatmentType.tamAgizRehabilitasyonu =>
+        l10n.treatmentTamAgizRehabilitasyonu,
       TreatmentType.gecePlagi => l10n.treatmentGecePlagi,
       TreatmentType.disCekimi => l10n.treatmentDisCekimi,
       TreatmentType.gomuluDis => l10n.treatmentGomuluDis,
@@ -39,7 +40,8 @@ extension TreatmentTypeUI on TreatmentType {
       TreatmentType.disTasi => l10n.treatmentDisTasi,
       TreatmentType.kokYuzeyiDuzlestirme => l10n.treatmentKokYuzeyiDuzlestirme,
       TreatmentType.flepOperasyonu => l10n.treatmentFlepOperasyonu,
-      TreatmentType.rejeneratifPeriodontalTedavi => l10n.treatmentRejeneratifPeriodontalTedavi,
+      TreatmentType.rejeneratifPeriodontalTedavi =>
+        l10n.treatmentRejeneratifPeriodontalTedavi,
       TreatmentType.bagDokusuGrefti => l10n.treatmentBagDokusuGrefti,
       TreatmentType.serbestDisetiGrefti => l10n.treatmentSerbestDisetiGrefti,
       TreatmentType.kronBoyuUzatma => l10n.treatmentKronBoyuUzatma,
@@ -48,7 +50,8 @@ extension TreatmentTypeUI on TreatmentType {
       TreatmentType.braket => l10n.treatmentBraket,
       TreatmentType.seffafPlak => l10n.treatmentSeffafPlak,
       TreatmentType.fonksiyonelAparey => l10n.treatmentFonksiyonelAparey,
-      TreatmentType.hizliUstCeneGenisletme => l10n.treatmentHizliUstCeneGenisletme,
+      TreatmentType.hizliUstCeneGenisletme =>
+        l10n.treatmentHizliUstCeneGenisletme,
       TreatmentType.interseptifOrtodonti => l10n.treatmentInterseptifOrtodonti,
       TreatmentType.miniVida => l10n.treatmentMiniVida,
       TreatmentType.pekistirme => l10n.treatmentPekistirme,

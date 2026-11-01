@@ -1,4 +1,3 @@
-
 import 'package:dentlink/shared/extensions/dental_branch_ui.dart';
 import 'package:dentlink/shared/extensions/user_title_ui.dart';
 import 'package:dentlink/data/models/enums.dart';
@@ -47,23 +46,33 @@ class CaseCard extends ConsumerWidget {
           // <-- 1. Header
           PostHeader(
             post: post,
-            subtitle: post.branch?.displayName(context) ?? post.author.title.displayName(context),
+            subtitle:
+                post.branch?.displayName(context) ??
+                post.author.title.displayName(context),
             isOwner: isOwner,
             badge: PostBadge(postType: PostType.casePost),
             onMenuSelected: (action) => switch (action) {
               PostMenuAction.edit => context.push('/edit-post/${post.id}'),
-              PostMenuAction.delete => confirmAndDeletePost(context, ref, post.id),
-              PostMenuAction.report =>
-                showReportSheet(context, ReportTarget.post, post.id),
-              PostMenuAction.block => confirmAndBlockUser(context, ref, post.userId),
+              PostMenuAction.delete => confirmAndDeletePost(
+                context,
+                ref,
+                post.id,
+              ),
+              PostMenuAction.report => showReportSheet(
+                context,
+                ReportTarget.post,
+                post.id,
+              ),
+              PostMenuAction.block => confirmAndBlockUser(
+                context,
+                ref,
+                post.userId,
+              ),
             },
           ),
 
           // <-- 2. İçerik (uzunsa "Devamını oku")
-          PostBody(
-            title: post.title,
-            content: post.content,
-          ),
+          PostBody(title: post.title, content: post.content),
 
           // <-- 3. Görsel (yoksa ayırıcı çizgi)
           if (post.imageUrls.isNotEmpty)

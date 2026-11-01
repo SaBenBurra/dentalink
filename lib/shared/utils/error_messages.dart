@@ -14,13 +14,13 @@ import '../../core/l10n/generated/app_localizations.dart';
 String getErrorMessage(AppLocalizations l10n, Object e) {
   if (e is AppFailure) {
     return switch (e) {
-      AuthRequiredFailure()     => l10n.errorAuthRequired,
+      AuthRequiredFailure() => l10n.errorAuthRequired,
       PermissionDeniedFailure() => l10n.errorPermissionDenied,
-      NotFoundFailure()         => l10n.errorNotFound,
-      NetworkFailure()          => l10n.networkError,
-      ValidationFailure()       => l10n.errorValidation,
-      ConflictFailure()         => l10n.errorConflict,
-      ServerFailure()           => l10n.errorServer,
+      NotFoundFailure() => l10n.errorNotFound,
+      NetworkFailure() => l10n.networkError,
+      ValidationFailure() => l10n.errorValidation,
+      ConflictFailure() => l10n.errorConflict,
+      ServerFailure() => l10n.errorServer,
     };
   }
   // guardSupabase'den geçmeyen repository çağrıları için.

@@ -71,8 +71,6 @@ class StatCount extends StatelessWidget {
   /// Aktif durumdaki renk. Sağlanmazsa tema'nın primary rengi kullanılır.
   final Color? activeColor;
 
-
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;

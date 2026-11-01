@@ -119,8 +119,12 @@ class ModerationMenuButton extends ConsumerWidget {
         if (action == PostMenuAction.report) {
           await showReportSheet(context, target, targetId);
         } else if (action == PostMenuAction.block) {
-          final blocked =
-              await confirmAndBlockUser(context, ref, userId, postId: postId);
+          final blocked = await confirmAndBlockUser(
+            context,
+            ref,
+            userId,
+            postId: postId,
+          );
           if (blocked) onBlocked?.call();
         }
       },
@@ -187,12 +191,9 @@ class _ReportSheetState extends ConsumerState<ReportSheet> {
     final messenger = ScaffoldMessenger.of(context);
     setState(() => _sending = true);
     try {
-      await ref.read(moderationRepositoryProvider).report(
-            widget.target,
-            widget.targetId,
-            reason,
-            note: _note.text,
-          );
+      await ref
+          .read(moderationRepositoryProvider)
+          .report(widget.target, widget.targetId, reason, note: _note.text);
       if (!mounted) return;
       Navigator.pop(context);
       messenger.showSnackBar(SnackBar(content: Text(l10n.reportSent)));
@@ -212,14 +213,18 @@ class _ReportSheetState extends ConsumerState<ReportSheet> {
           left: AppDimensions.spacing16,
           right: AppDimensions.spacing16,
           top: AppDimensions.spacing16,
-          bottom: MediaQuery.viewInsetsOf(context).bottom + AppDimensions.spacing16,
+          bottom:
+              MediaQuery.viewInsetsOf(context).bottom + AppDimensions.spacing16,
         ),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(l10n.reportTitle, style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                l10n.reportTitle,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               const SizedBox(height: AppDimensions.spacing8),
               RadioGroup<ReportReason>(
                 groupValue: _reason,
