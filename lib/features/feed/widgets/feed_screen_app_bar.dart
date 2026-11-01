@@ -201,8 +201,7 @@ class _NotificationBell extends ConsumerWidget {
   }
 }
 
-/// Uygulama logosu; dokununca başa kaydırır (assets/icon.svg'den üretilmiş PNG; flutter_svg `<style>`
-/// sınıflarını okumadığı için SVG doğrudan kullanılamıyor).
+/// Uygulama logosu; dokununca başa kaydırır (assets/icon.svg'den üretilmiş saydam PNG).
 class _AppLogo extends StatelessWidget {
   const _AppLogo({this.onTap});
 
@@ -220,14 +219,11 @@ class _AppLogo extends StatelessWidget {
           child: SizedBox.square(
             dimension: 48,
             child: Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-                child: Image.asset(
-                  'assets/logo.png',
-                  width: FeedScreenAppBar._logoSize,
-                  height: FeedScreenAppBar._logoSize,
-                  excludeFromSemantics: true,
-                ),
+              child: Image.asset(
+                'assets/logo.png',
+                width: FeedScreenAppBar._logoSize,
+                height: FeedScreenAppBar._logoSize,
+                excludeFromSemantics: true,
               ),
             ),
           ),
