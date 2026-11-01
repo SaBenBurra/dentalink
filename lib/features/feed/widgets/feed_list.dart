@@ -21,6 +21,7 @@ class FeedList extends StatelessWidget {
     required this.filterType,
     required this.l10n,
     required this.colorScheme,
+    this.controller,
   });
 
   final WidgetRef ref;
@@ -29,6 +30,9 @@ class FeedList extends StatelessWidget {
   final PostType? filterType;
   final AppLocalizations l10n;
   final ColorScheme colorScheme;
+
+  /// Post listesinin kaydırması (logo ile başa dönme).
+  final ScrollController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +68,7 @@ class FeedList extends StatelessWidget {
           }
 
           return ListView.separated(
+            controller: controller,
             physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.fromLTRB(
               0,

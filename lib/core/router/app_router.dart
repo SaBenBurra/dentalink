@@ -224,7 +224,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/search',
             name: 'search',
             pageBuilder: (context, state) =>
-                const NoTransitionPage(child: SearchScreen()),
+                NoTransitionPage(
+              child: SearchScreen(
+                autofocus: state.uri.queryParameters['focus'] == '1',
+              ),
+            ),
           ),
           GoRoute(
             path: '/messages',

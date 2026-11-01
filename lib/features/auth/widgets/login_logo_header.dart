@@ -29,12 +29,6 @@ class LoginLogoHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final glassBgColor = isDark
-        ? Colors.black.withValues(alpha: 0.4)
-        : Colors.white.withValues(alpha: 0.6);
-    final glassBorderColor = isDark
-        ? Colors.white.withValues(alpha: 0.12)
-        : Colors.white.withValues(alpha: 0.8);
     final textPrimaryColor = isDark
         ? AppColors.darkTextPrimary
         : AppColors.lightTextPrimary;
@@ -44,33 +38,11 @@ class LoginLogoHeader extends StatelessWidget {
 
     return Column(
       children: [
-        // Logo dairesi
-        Container(
-          width: 96,
+        // Logo (yalnızca diş, saydam arka plan)
+        Image.asset(
+          'assets/logo_tooth.png',
           height: 96,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: glassBgColor,
-            border: Border.all(color: glassBorderColor, width: 1),
-            boxShadow: const [
-              BoxShadow(
-                color: AppColors.glassShadow,
-                blurRadius: 40,
-                offset: Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Center(
-            child: CustomPaint(
-              size: const Size(48, 48),
-              painter: ToothPainter(
-                colors: [
-                  Theme.of(context).colorScheme.primary,
-                  Theme.of(context).colorScheme.secondary,
-                ],
-              ),
-            ),
-          ),
+          excludeFromSemantics: true,
         ),
 
         const SizedBox(height: AppDimensions.spacing24),
@@ -152,80 +124,4 @@ class LoginLogoHeader extends StatelessWidget {
       ],
     );
   }
-}
-
-/// Diş logosu çizen CustomPainter.
-class ToothPainter extends CustomPainter {
-  final List<Color> colors;
-
-  ToothPainter({required this.colors});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    final paint = Paint()
-      ..shader = LinearGradient(
-        colors: colors,
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ).createShader(rect)
-      ..style = PaintingStyle.fill;
-
-    final path = Path();
-    path.moveTo(size.width * 0.5, size.height * 0.28);
-    path.cubicTo(
-      size.width * 0.38,
-      size.height * 0.12,
-      size.width * 0.12,
-      size.height * 0.15,
-      size.width * 0.18,
-      size.height * 0.45,
-    );
-    path.cubicTo(
-      size.width * 0.20,
-      size.height * 0.60,
-      size.width * 0.22,
-      size.height * 0.85,
-      size.width * 0.32,
-      size.height * 0.88,
-    );
-    path.cubicTo(
-      size.width * 0.36,
-      size.height * 0.89,
-      size.width * 0.44,
-      size.height * 0.75,
-      size.width * 0.50,
-      size.height * 0.75,
-    );
-    path.cubicTo(
-      size.width * 0.56,
-      size.height * 0.75,
-      size.width * 0.64,
-      size.height * 0.89,
-      size.width * 0.68,
-      size.height * 0.88,
-    );
-    path.cubicTo(
-      size.width * 0.78,
-      size.height * 0.85,
-      size.width * 0.80,
-      size.height * 0.60,
-      size.width * 0.82,
-      size.height * 0.45,
-    );
-    path.cubicTo(
-      size.width * 0.88,
-      size.height * 0.15,
-      size.width * 0.62,
-      size.height * 0.12,
-      size.width * 0.50,
-      size.height * 0.28,
-    );
-
-    path.close();
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

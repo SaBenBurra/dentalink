@@ -3,6 +3,8 @@
 
   "appName": "DentLink",
   "@appName": { "description": "Uygulamanın adı" },
+  "scrollToTop": "Başa dön",
+  "@scrollToTop": { "description": "Feed logosunun ipucu: listeyi en üste kaydırır" },
 
   "appTagline": "Diş Hekimleri İçin Sosyal Platform",
   "@appTagline": { "description": "Uygulama sloganı" },

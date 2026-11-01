@@ -12,6 +12,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'DentLink';
 
   @override
+  String get scrollToTop => 'Back to top';
+
+  @override
   String get appTagline => 'Social Platform for Dentists';
 
   @override

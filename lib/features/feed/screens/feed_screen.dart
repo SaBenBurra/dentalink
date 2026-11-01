@@ -43,6 +43,9 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
   final _pagePosition = ValueNotifier<double>(0);
   bool _headerPinned = false;
 
+  // Liste sekmelerinin kaydırması (Tümü, Vakalar, Sorular); logo başa döndürür.
+  final _lists = List.generate(3, (_) => ScrollController());
+
   @override
   void initState() {
     super.initState();
@@ -51,6 +54,9 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
 
   @override
   void dispose() {
+    for (final c in _lists) {
+      c.dispose();
+    }
     _pagePosition.dispose();
     _reveal.dispose();
     _pageController.dispose();
@@ -75,6 +81,16 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
     return false;
   }
 
+  void _scrollToTop() {
+    final c = _index < _lists.length ? _lists[_index] : null;
+    if (c == null || !c.hasClients) return;
+    c.animateTo(
+      0,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
   Future<void> _select(int index) async {
     if (index == _index) return;
     setState(() => _index = index);
@@ -93,20 +109,21 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
     final feedState = ref.watch(feedProvider);
     final l10n = AppLocalizations.of(context)!;
 
-    Widget list(PostType? type) => FeedList(
+    Widget list(PostType? type, int tab) => FeedList(
       ref: ref,
       context: context,
       feedState: feedState,
       filterType: type,
       l10n: l10n,
       colorScheme: Theme.of(context).colorScheme,
+      controller: _lists[tab],
     );
 
     // Sekme sırası: (segment etiketi, sayfa). Yeni sekme = yeni satır.
     final tabs = <(String, Widget)>[
-      (l10n.feedFilterAll, list(null)),
-      (l10n.feedFilterCases, list(PostType.casePost)),
-      (l10n.feedFilterQuestions, list(PostType.question)),
+      (l10n.feedFilterAll, list(null, 0)),
+      (l10n.feedFilterCases, list(PostType.casePost, 1)),
+      (l10n.feedFilterQuestions, list(PostType.question, 2)),
       // İş ilanı türü henüz yok (yayın sonrası); sekme boş durum gösterir.
       (
         l10n.feedFilterJobs,
@@ -133,6 +150,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
             onSelected: _select,
             visibility: _headerVisibility,
             position: _pagePosition,
+            onLogoTap: _scrollToTop,
           ),
           Expanded(
             // Durum çubuğu payını üst bar aldı; listeler tekrar eklemesin.

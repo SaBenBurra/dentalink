@@ -8,12 +8,14 @@ class CustomSearchBar extends StatefulWidget {
     required this.onChanged,
     required this.hintText,
     this.onSubmitted,
+    this.autofocus = false,
   });
 
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
   final ValueChanged<String>? onSubmitted;
   final String hintText;
+  final bool autofocus;
 
   @override
   State<CustomSearchBar> createState() => _CustomSearchBarState();
@@ -47,6 +49,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
       ),
       child: TextField(
         controller: widget.controller,
+        autofocus: widget.autofocus,
         onChanged: widget.onChanged,
         onSubmitted: widget.onSubmitted,
         textInputAction: TextInputAction.search,

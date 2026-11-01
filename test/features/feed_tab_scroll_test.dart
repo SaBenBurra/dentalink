@@ -50,6 +50,40 @@ void main() {
     expect(offset(), allOffset);
   });
 
+  testWidgets('logo yalnızca açık sekmeyi başa kaydırır', (tester) async {
+    await pumpDentLink(tester, feed: _cases());
+    Finder visible(String title) => find.text(title).hitTestable();
+    double offset() => tester
+        .state<ScrollableState>(
+          find
+              .ancestor(
+                of: find.byType(PostGlassContainer).hitTestable().first,
+                matching: find.byType(Scrollable),
+              )
+              .first,
+        )
+        .position
+        .pixels;
+
+    await tester.drag(visible('Vaka 0'), const Offset(0, -1200));
+    await tester.pumpAndSettle();
+    final allOffset = offset();
+    await tester.drag(find.byType(PageView), const Offset(-500, 0));
+    await tester.pumpAndSettle();
+    await tester.drag(visible('Vaka 0'), const Offset(0, -600));
+    await tester.pumpAndSettle();
+    expect(offset(), greaterThan(0));
+
+    // Logo üst barla birlikte gizli olabilir; geri çağrı doğrudan tetiklenir.
+    tester.widget<FeedScreenAppBar>(find.byType(FeedScreenAppBar)).onLogoTap!();
+    await tester.pumpAndSettle();
+    expect(offset(), 0);
+
+    await tester.drag(find.byType(PageView), const Offset(500, 0));
+    await tester.pumpAndSettle();
+    expect(offset(), allOffset);
+  });
+
   testWidgets(
     'sekme kaydırması başlayınca gizli üst bar açılır, gösterge kaydırmayı izler; alt menü gizli kalır',
     (tester) async {

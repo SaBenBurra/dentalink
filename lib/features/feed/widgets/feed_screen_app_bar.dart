@@ -7,11 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../providers/auth_provider.dart';
 import '../../../providers/notification_provider.dart';
-import '../../../shared/widgets/user_avatar.dart';
 
-/// Feed üst barı: profil avatarı, tür segmentleri, arama ve bildirim.
+/// Feed üst barı: logo, tür segmentleri, arama ve bildirim.
 class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
   const FeedScreenAppBar({
     super.key,
@@ -20,6 +18,7 @@ class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.onSelected,
     this.visibility = kAlwaysCompleteAnimation,
     this.position,
+    this.onLogoTap,
   });
 
   final List<String> labels;
@@ -32,16 +31,20 @@ class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// Sayfa konumu (ör. 1.25); verilirse segment göstergesi onu izler.
   final ValueListenable<double>? position;
 
+  /// Logoya dokunuş (açık sekmeyi başa kaydırır).
+  final VoidCallback? onLogoTap;
+
   // Alt çizgiyle birlikte 56dp (Material toolbar); alt menüyle (~58dp) dengeli.
   static const double _height = 55;
   static const double _iconPad = (48 - AppDimensions.iconMedium) / 2;
   static const double _searchGap = AppDimensions.spacing10;
   // Sekmeler ekranda ortalıya yakın dursun: sağdaki alan (boşluk + iki 48dp
   // ikon) kadar solda da yer bırakılır, ray sonra sola 16dp uzatılır.
-  static const double _avatarGap =
-      _searchGap + 48 * 2 - _avatarLeftPad - 48 - AppDimensions.spacing16;
-  // 32dp avatarın 48dp alanında 8dp payı var; avatar kenardan 14dp görünür.
-  static const double _avatarLeftPad = _iconPad - (48 - 32) / 2;
+  static const double _logoGap =
+      _searchGap + 48 * 2 - _logoLeftPad - 48 - AppDimensions.spacing16;
+  static const double _logoSize = 40;
+  // Logo 48dp alanında ortalı; logo kenardan 14dp görünür.
+  static const double _logoLeftPad = _iconPad - (48 - _logoSize) / 2;
 
   @override
   Size get preferredSize => const Size.fromHeight(_height + 1); // + alt çizgi
@@ -76,7 +79,7 @@ class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Container(
               height: _height + 1,
               // 20dp ikonun 48dp alanında iki yanda 14dp payı var; sol kenar da 14dp.
-              padding: const EdgeInsets.only(left: _avatarLeftPad),
+              padding: const EdgeInsets.only(left: _logoLeftPad),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(color: colorScheme.surfaceContainerHigh),
@@ -84,8 +87,8 @@ class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
               child: Row(
                 children: [
-                  const _ProfileAvatarButton(),
-                  const SizedBox(width: _avatarGap),
+                  _AppLogo(onTap: onLogoTap),
+                  const SizedBox(width: _logoGap),
                   Expanded(
                     child: FeedFilterSegments(
                       labels: labels,
@@ -101,7 +104,7 @@ class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
                     alignment: Alignment.centerRight,
                     icon: Icons.search_rounded,
                     tooltip: l10n.searchHint,
-                    onTap: () => context.go('/search'),
+                    onTap: () => context.go('/search?focus=1'),
                   ),
                   const _NotificationBell(),
                 ],
@@ -198,28 +201,32 @@ class _NotificationBell extends ConsumerWidget {
   }
 }
 
-/// Oturumdaki kullanıcının avatarı; dokununca Profil sekmesine gider.
-class _ProfileAvatarButton extends ConsumerWidget {
-  const _ProfileAvatarButton();
+/// Uygulama logosu; dokununca başa kaydırır (assets/icon.svg'den üretilmiş PNG; flutter_svg `<style>`
+/// sınıflarını okumadığı için SVG doğrudan kullanılamıyor).
+class _AppLogo extends StatelessWidget {
+  const _AppLogo({this.onTap});
+
+  final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(currentUserProvider);
+  Widget build(BuildContext context) {
     return Tooltip(
-      message: AppLocalizations.of(context)!.navProfile,
+      message: AppLocalizations.of(context)!.scrollToTop,
       child: Semantics(
         button: true,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () => context.go('/profile'),
+          onTap: onTap,
           child: SizedBox.square(
             dimension: 48,
             child: Center(
-              child: ExcludeSemantics(
-                child: UserAvatar(
-                  name: user?.fullName ?? '',
-                  imageUrl: user?.avatarUrl,
-                  size: AvatarSize.small,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+                child: Image.asset(
+                  'assets/logo.png',
+                  width: FeedScreenAppBar._logoSize,
+                  height: FeedScreenAppBar._logoSize,
+                  excludeFromSemantics: true,
                 ),
               ),
             ),

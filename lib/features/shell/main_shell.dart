@@ -13,6 +13,13 @@ final bottomBarAnimationProvider = Provider<ProxyAnimation>(
 
 /// Barların açılıp kapanma yayı; feed üst barı da sekme kaydırırken aynısını
 /// kullanır.
+/// Alt menüyü koddan göstermek için (kaydırılamayan sayfada geri getirme).
+final bottomBarControllerProvider = Provider<BottomBarController>((ref) {
+  final controller = BottomBarController();
+  ref.onDispose(controller.dispose);
+  return controller;
+});
+
 const barMotionPreset = BottomBarCupertinoMotion.snappy;
 const barMotionDuration = Duration(milliseconds: 400);
 
@@ -37,6 +44,7 @@ class MainShell extends ConsumerWidget {
 
     return Scaffold(
       body: BottomBar(
+        controller: ref.watch(bottomBarControllerProvider),
         layout: BottomBarLayout(
           width: MediaQuery.of(context).size.width - 32,
           borderRadius: BorderRadius.circular(28),
@@ -95,7 +103,19 @@ class MainShell extends ConsumerWidget {
               ),
               child: child!,
             ),
-            child: SizedBox.expand(child: child),
+            // İçerik kaydırılamayacak kadar kısaldıysa (ör. boş liste) gizli
+            // bar bir daha kaydırmayla açılamaz; burada geri getirilir.
+            child: NotificationListener<ScrollMetricsNotification>(
+              onNotification: (n) {
+                final m = n.metrics;
+                if (m.axis == Axis.vertical &&
+                    m.maxScrollExtent <= m.minScrollExtent) {
+                  ref.read(bottomBarControllerProvider).show();
+                }
+                return false;
+              },
+              child: SizedBox.expand(child: child),
+            ),
           ),
         ),
         child: Padding(

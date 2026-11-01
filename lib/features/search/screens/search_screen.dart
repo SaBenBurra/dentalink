@@ -11,7 +11,10 @@ import '../widgets/search_results.dart';
 
 /// Keşfet: arama satırı (metin ve `#etiket`), branşlar, popüler konular ve gönderiler.
 class SearchScreen extends ConsumerStatefulWidget {
-  const SearchScreen({super.key});
+  const SearchScreen({super.key, this.autofocus = false});
+
+  /// Feed üst barındaki arama ikonundan gelindiyse arama satırı odaklanır.
+  final bool autofocus;
 
   @override
   ConsumerState<SearchScreen> createState() => _SearchScreenState();
@@ -105,6 +108,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               controller: _searchController,
               onChanged: _onSearchChanged,
               onSubmitted: _submit,
+              autofocus: widget.autofocus,
               hintText: AppLocalizations.of(context)!.searchHint,
             ),
             const BranchFilterChips(),

@@ -13,7 +13,8 @@ import '../../../shared/widgets/load_more_footer.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/shared/widgets/post_card_factory.dart';
 
-/// Keşfet gövdesi: popüler konular, (metin aranıyorsa) kişiler, popüler gönderiler.
+/// Keşfet gövdesi: popüler konular (arama yokken), (metin aranıyorsa) kişiler,
+/// popüler gönderiler.
 class ExploreResults extends ConsumerWidget {
   const ExploreResults({super.key, required this.onTagTap});
 
@@ -39,34 +40,38 @@ class ExploreResults extends ConsumerWidget {
       },
       child: CustomScrollView(
         slivers: [
-          ...tags.when(
-            data: (list) => [
-              if (list.isNotEmpty) _SectionHeader(l10n.explorePopularTags),
-              SliverList.list(
-                children: [
-                  for (final tag in list)
-                    ListTile(
-                      // Seçili etikete tekrar dokunmak seçimi kaldırır.
-                      selected: state.isOnlyTag(tag.name),
-                      selectedTileColor: colorScheme.primaryContainer,
-                      selectedColor: colorScheme.onPrimaryContainer,
-                      title: Text(
-                        '#${tag.name}',
-                        style: const TextStyle(fontWeight: FontWeight.w700),
+          // Arama varken etiketler sonuçları aşağı itmesin.
+          if (state.query.trim().isEmpty)
+            ...tags.when(
+              data: (list) => [
+                if (list.isNotEmpty) _SectionHeader(l10n.explorePopularTags),
+                SliverList.list(
+                  children: [
+                    for (final tag in list)
+                      ListTile(
+                        // Seçili etikete tekrar dokunmak seçimi kaldırır.
+                        selected: state.isOnlyTag(tag.name),
+                        selectedTileColor: colorScheme.primaryContainer,
+                        selectedColor: colorScheme.onPrimaryContainer,
+                        title: Text(
+                          '#${tag.name}',
+                          style: const TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                        subtitle: Text(
+                          l10n.exploreTagPostCount(tag.usageCount),
+                        ),
+                        trailing: state.isOnlyTag(tag.name)
+                            ? const Icon(Icons.close_rounded)
+                            : null,
+                        onTap: () => onTagTap(tag.name),
                       ),
-                      subtitle: Text(l10n.exploreTagPostCount(tag.usageCount)),
-                      trailing: state.isOnlyTag(tag.name)
-                          ? const Icon(Icons.close_rounded)
-                          : null,
-                      onTap: () => onTagTap(tag.name),
-                    ),
-                ],
-              ),
-            ],
-            loading: () => [const _SectionHeader(null)],
-            // Etiketler yardımcı bölüm; hata postları engellemesin, yenilemede tekrar denenir.
-            error: (_, _) => const [],
-          ),
+                  ],
+                ),
+              ],
+              loading: () => [const _SectionHeader(null)],
+              // Etiketler yardımcı bölüm; hata postları engellemesin, yenilemede tekrar denenir.
+              error: (_, _) => const [],
+            ),
           if (users.isNotEmpty) ...[
             _SectionHeader(l10n.explorePeople),
             SliverList.list(

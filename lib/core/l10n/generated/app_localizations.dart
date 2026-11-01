@@ -104,6 +104,12 @@ abstract class AppLocalizations {
   /// **'DentLink'**
   String get appName;
 
+  /// Feed logosunun ipucu: listeyi en üste kaydırır
+  ///
+  /// In tr, this message translates to:
+  /// **'Başa dön'**
+  String get scrollToTop;
+
   /// Uygulama sloganı
   ///
   /// In tr, this message translates to:

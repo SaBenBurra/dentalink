@@ -39,6 +39,7 @@ void main() {
     'app bar: segment dokunuşu index verir; arama /search\'e götürür',
     (tester) async {
       var index = 0;
+      var logoTaps = 0;
       final router = GoRouter(
         routes: [
           GoRoute(
@@ -49,13 +50,16 @@ void main() {
                   labels: const ['Tümü', 'Vakalar', 'Sorular'],
                   selectedIndex: index,
                   onSelected: (i) => setState(() => index = i),
+                  onLogoTap: () => logoTaps++,
                 ),
               ),
             ),
           ),
           GoRoute(
             path: '/search',
-            builder: (_, _) => const Text('search page'),
+            // Feed'den gelince arama satırı odaklansın (?focus=1).
+            builder: (_, state) =>
+                Text('search page ${state.uri.queryParameters['focus']}'),
           ),
           GoRoute(
             path: '/profile',
@@ -95,14 +99,14 @@ void main() {
 
       await tester.tap(find.byIcon(Icons.search_rounded));
       await tester.pumpAndSettle();
-      expect(find.text('search page'), findsOneWidget);
+      expect(find.text('search page 1'), findsOneWidget);
 
-      // Avatar → Profil sekmesi.
+      // Sol üstte profil avatarı yerine logo var.
       router.go('/');
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('Profil'));
-      await tester.pumpAndSettle();
-      expect(find.text('profile page'), findsOneWidget);
+      await tester.tap(find.byTooltip('Başa dön'));
+      expect(logoTaps, 1);
+      expect(find.byTooltip('Profil'), findsNothing);
     },
   );
 
