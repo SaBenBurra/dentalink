@@ -16,6 +16,11 @@ import 'shared/widgets/offline_banner.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Klavye açıkken arka plana alınınca bazı Android cihazlarda dönüşte klavye
+  // gelmiyor ama inset kalıyor (alt menü havada); odağı bırakmak bunu önler.
+  AppLifecycleListener(
+    onHide: () => FocusManager.instance.primaryFocus?.unfocus(),
+  );
   await Supabase.initialize(
     url: 'https://lknvufbxekceevdblgmq.supabase.co',
     publishableKey: 'sb_publishable_CGm0mMqcvUubeXazytJr-w_WK6CLfS5',
