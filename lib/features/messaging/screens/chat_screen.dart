@@ -296,12 +296,27 @@ bool isSameMessageGroup(MessageModel? a, MessageModel? b) =>
     DateUtils.isSameDay(a.createdAt, b.createdAt) &&
     b.createdAt.difference(a.createdAt).abs() < const Duration(minutes: 5);
 
+/// Sohbet listesindeki zaman (WhatsApp gibi): bugün "14:32", dün "Dün", son
+/// bir hafta gün adı "Pazartesi", daha eskisi "5.11.2026".
+String chatListTime(DateTime at, DateTime now, AppLocalizations l10n) {
+  final local = at.toLocal();
+  final days = _daysBetween(local, now);
+  if (days == 0) return _timeFormatter.format(local);
+  if (days == 1) return l10n.chatYesterday;
+  if (days < 7) return DateFormat.EEEE(l10n.localeName).format(local);
+  return DateFormat.yMd(l10n.localeName).format(local);
+}
+
+/// Takvim günü farkı; yaz saati geçişinde gün 23/25 saat olabilir, yuvarlanır.
+int _daysBetween(DateTime day, DateTime now) =>
+    (DateUtils.dateOnly(now).difference(DateUtils.dateOnly(day)).inHours / 24)
+        .round();
+
 /// Sohbetteki gün ayırıcısının metni: Bugün, Dün, aynı yıl "5 Mart", eski yıl "5 Mart 2025".
 String chatDayLabel(DateTime day, DateTime now, AppLocalizations l10n) {
   final today = DateUtils.dateOnly(now);
   final date = DateUtils.dateOnly(day);
-  // Yaz saati geçişinde gün 23/25 saat olabilir, yuvarla.
-  final days = (today.difference(date).inHours / 24).round();
+  final days = _daysBetween(date, today);
   if (days == 0) return l10n.chatToday;
   if (days == 1) return l10n.chatYesterday;
   // Gün/ay sırası dile göre: TR "5 Mart", EN "March 5".

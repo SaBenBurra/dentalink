@@ -54,7 +54,9 @@ class ConversationTile extends StatelessWidget {
                       Expanded(
                         child: Text(
                           name,
-                          style: textTheme.titleMedium?.copyWith(
+                          // titleSmall's theme color is secondary; keep the primary name color.
+                          style: textTheme.titleSmall?.copyWith(
+                            color: textTheme.titleMedium?.color,
                             fontWeight: unreadCount > 0
                                 ? FontWeight.bold
                                 : FontWeight.w600,
@@ -82,7 +84,7 @@ class ConversationTile extends StatelessWidget {
                       Expanded(
                         child: Text(
                           lastMessage,
-                          style: textTheme.bodyMedium?.copyWith(
+                          style: textTheme.bodySmall?.copyWith(
                             color: unreadCount > 0
                                 ? colorScheme.onSurface
                                 : colorScheme.onSurfaceVariant,
@@ -96,14 +98,19 @@ class ConversationTile extends StatelessWidget {
                       ),
                       if (unreadCount > 0) ...[
                         const SizedBox(width: AppDimensions.spacing8),
+                        // No vertical padding: badge stays within the text line so unread rows aren't taller.
                         Container(
-                          padding: const EdgeInsets.all(AppDimensions.spacing6),
-                          decoration: BoxDecoration(
+                          constraints: const BoxConstraints(minWidth: 16),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppDimensions.spacing4,
+                          ),
+                          decoration: ShapeDecoration(
                             color: colorScheme.primary,
-                            shape: BoxShape.circle,
+                            shape: const StadiumBorder(),
                           ),
                           child: Text(
                             unreadCount > 99 ? '99+' : unreadCount.toString(),
+                            textAlign: TextAlign.center,
                             style: textTheme.labelSmall?.copyWith(
                               color: colorScheme.onPrimary,
                               fontWeight: FontWeight.bold,

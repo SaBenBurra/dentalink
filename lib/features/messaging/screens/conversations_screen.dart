@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/conversation_tile.dart';
 import '../widgets/user_search_delegate.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
+import '../../search/widgets/search_bar.dart';
 import '../../../providers/message_provider.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/error_widget.dart';
 import '../../../shared/widgets/empty_state.dart';
-import '../../../shared/widgets/relative_time_text.dart';
+import 'chat_screen.dart' show chatListTime;
 import '../../../core/l10n/generated/app_localizations.dart';
 
 class ConversationsScreen extends ConsumerStatefulWidget {
@@ -30,7 +30,6 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final l10n = AppLocalizations.of(context)!;
 
@@ -64,26 +63,10 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.spacing16,
-              vertical: AppDimensions.spacing8,
-            ),
-            child: SearchBar(
-              controller: _searchController,
-              hintText: l10n.messagesSearchHint,
-              leading: const Icon(Icons.search),
-              elevation: WidgetStateProperty.all(0),
-              backgroundColor: WidgetStateProperty.all(
-                colorScheme.surfaceContainerHighest,
-              ),
-              padding: WidgetStateProperty.all(
-                const EdgeInsets.symmetric(horizontal: AppDimensions.spacing16),
-              ),
-              onChanged: (value) {
-                setState(() {});
-              },
-            ),
+          CustomSearchBar(
+            controller: _searchController,
+            hintText: l10n.messagesSearchHint,
+            onChanged: (_) => setState(() {}),
           ),
           Expanded(
             child: conversationsAsync.when(
@@ -125,8 +108,9 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
                       final conversation = filteredConversations[index];
 
                       final timeStr = conversation.lastMessageAt != null
-                          ? RelativeTimeText.format(
+                          ? chatListTime(
                               conversation.lastMessageAt!,
+                              DateTime.now(),
                               l10n,
                             )
                           : '';

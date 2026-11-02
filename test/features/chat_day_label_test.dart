@@ -22,4 +22,14 @@ void main() {
     expect(chatDayLabel(DateTime(2026, 3, 5), now, tr), '5 Mart');
     expect(chatDayLabel(DateTime(2025, 3, 5), now, en), 'March 5, 2025');
   });
+
+  test('sohbet listesi zamanı WhatsApp gibi', () {
+    final now = DateTime(2026, 11, 5, 10); // Perşembe
+    expect(chatListTime(DateTime(2026, 11, 5, 8, 7), now, tr), '08:07');
+    expect(chatListTime(DateTime(2026, 11, 4, 23), now, tr), 'Dün');
+    expect(chatListTime(DateTime(2026, 11, 2, 9), now, tr), 'Pazartesi');
+    expect(chatListTime(DateTime(2026, 11, 2, 9), now, en), 'Monday');
+    expect(chatListTime(DateTime(2026, 10, 29, 9), now, tr), '29.10.2026');
+    expect(chatListTime(DateTime(2026, 10, 29, 9), now, en), '10/29/2026');
+  });
 }
