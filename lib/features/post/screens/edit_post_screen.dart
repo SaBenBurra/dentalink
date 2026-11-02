@@ -7,14 +7,13 @@ import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../data/models/post_model.dart';
 import '../../../data/providers/repository_providers.dart';
 import '../../../core/error/app_failures.dart';
-import '../../../data/models/enums.dart';
+import '../../../data/models/case_treatment.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/feed_provider.dart';
 import '../../../providers/post_provider.dart';
 import '../../../shared/utils/error_messages.dart';
 import '../widgets/form_section_label.dart';
-import '../widgets/branch_selector.dart';
-import '../widgets/treatment_selector.dart';
+import '../widgets/treatments_field.dart';
 import '../widgets/detail/detail_states.dart';
 import '../widgets/tag_input.dart';
 import '../../../shared/widgets/unsaved_changes_scope.dart';
@@ -59,29 +58,20 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
   late final _contentController = TextEditingController(
     text: widget.post.content,
   );
-  late List<String> _tags = [for (final t in widget.post.tags) t.name];
-  late DentalBranch? _branch = switch (widget.post) {
-    CasePostModel(:final branch) => branch,
-    _ => null,
-  };
-  late TreatmentType? _treatment = switch (widget.post) {
-    CasePostModel(:final treatment) => treatment,
-    _ => null,
-  };
-
-  /// "Diğer" seçiliyse yazılan ad.
-  late String? _other = switch (widget.post) {
-    CasePostModel(:final otherTreatment) => otherTreatment,
-    _ => null,
+  // Tedavi etiketleri ayrı alanda; etiket alanında yalnızca serbest etiketler.
+  late List<String> _tags = [
+    for (final t in switch (widget.post) {
+      CasePostModel p => p.freeTags,
+      final p => p.tags,
+    })
+      t.name,
+  ];
+  late List<CaseTreatment> _treatments = switch (widget.post) {
+    CasePostModel(:final treatments) => treatments,
+    _ => const [],
   };
   bool _saving = false;
   bool _dirty = false; // UX-2
-
-  /// "Diğer" adının etiket hali; boşsa null.
-  String? get _otherTag {
-    final tag = TreatmentSelector.otherTag(_other ?? '');
-    return tag.isEmpty ? null : tag;
-  }
 
   @override
   void dispose() {
@@ -102,9 +92,7 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
             postId: widget.post.id,
             title: _titleController.text,
             content: _contentController.text,
-            branch: _branch,
-            treatment: _treatment,
-            otherTreatment: _otherTag,
+            treatments: _treatments,
             tags: _tags,
           );
       ref.read(feedProvider.notifier).replacePost(updated);
@@ -146,8 +134,7 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
           title: Text(l10n.editPost),
           actions: [
             TextButton(
-              onPressed:
-                  _saving || (isCase && _treatment == null && _otherTag == null)
+              onPressed: _saving || (isCase && _treatments.isEmpty)
                   ? null
                   : _save,
               child: _saving
@@ -192,43 +179,21 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
               ),
               if (isCase) ...[
                 const FormSectionDivider(),
-                BranchSelector(
-                  selectedBranch: _branch,
-                  onBranchSelected: (b) => setState(() {
-                    // Tedavi branşa bağlı: branş değişince seçim sıfırlanır.
-                    if (_branch != b) {
-                      _treatment = null;
-                      _other = null;
-                    }
-                    _branch = b;
+                TreatmentsField(
+                  treatments: _treatments,
+                  search: (q) => ref
+                      .read(searchRepositoryProvider)
+                      .listTreatments(query: q, limit: 10),
+                  onChanged: (t) => setState(() {
+                    _treatments = t;
                     _dirty = true;
                   }),
                 ),
-                if (_branch case final branch?) ...[
-                  const FormSectionDivider(),
-                  TreatmentSelector(
-                    branch: branch,
-                    selected: _treatment,
-                    other: _other,
-                    suggest: ref.read(createPostRepositoryProvider).suggestTags,
-                    onSelected: (t) => setState(() {
-                      _treatment = t;
-                      _other = null;
-                      _dirty = true;
-                    }),
-                    onOtherChanged: (v) => setState(() {
-                      _treatment = null;
-                      _other = v;
-                      _dirty = true;
-                    }),
-                  ),
-                ],
               ],
               const FormSectionDivider(),
               TagInput(
                 suggest: ref.read(createPostRepositoryProvider).suggestTags,
                 initialTags: _tags,
-                lockedTag: _treatment?.tag ?? _otherTag,
                 onTagsChanged: (tags) => setState(() {
                   _tags = tags;
                   _dirty = true;

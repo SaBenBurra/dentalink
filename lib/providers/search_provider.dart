@@ -115,6 +115,12 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
     _reload();
   }
 
+  /// Branş linki (post sayfası, arşiv): arama temizlenir, branş seçilir.
+  void selectBranch(DentalBranch branch) {
+    state = state.copyWith(query: '', branch: () => branch);
+    _reload();
+  }
+
   /// Popüler etikete dokunuş: sorgu yalnızca etiket olur, branş Tümü'ye döner.
   void selectTag(String name) {
     state = state.copyWith(query: hashtag(name), branch: () => null);

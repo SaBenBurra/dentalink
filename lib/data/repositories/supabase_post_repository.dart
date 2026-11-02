@@ -6,10 +6,12 @@ import 'package:flutter/foundation.dart' show debugPrint;
 import '../../core/error/app_failures.dart';
 import '../../core/utils/paging.dart';
 import '../../core/utils/supabase_error_mapper.dart';
+import '../models/case_treatment.dart';
 import '../models/enums.dart';
 import '../models/post_model.dart';
 import '../models/tag_model.dart';
 import '../models/user_model.dart';
+import '../../core/utils/string_utils.dart';
 import 'keyset.dart';
 import 'post_repository.dart';
 
@@ -34,7 +36,7 @@ class SupabasePostRepository implements PostRepository {
     users!posts_user_id_fkey(*),
     post_images(id, image_url, sort_order),
     post_tags(tags(id, name, slug, usage_count)),
-    other_treatment:tags!posts_other_treatment_tag_id_fkey(name),
+    post_treatments(branch, position, tags(name, slug)),
     likes(id, user_id),
     bookmarks(id, user_id)
   ''';
@@ -101,11 +103,7 @@ class SupabasePostRepository implements PostRepository {
           userId: row['user_id'] as String,
           title: row['title'] as String,
           content: row['content'] as String,
-          branch: DentalBranch.tryFromDbValue(row['branch'] as String?),
-          treatment: TreatmentType.tryFromDbValue(row['treatment'] as String?),
-          otherTreatment:
-              (row['other_treatment'] as Map<String, dynamic>?)?['name']
-                  as String?,
+          treatments: _treatments(row),
           imageUrls: imageUrls,
           tags: tags,
           likeCount: row['like_count'] as int? ?? 0,
@@ -137,6 +135,21 @@ class SupabasePostRepository implements PostRepository {
           author: author,
         );
     }
+  }
+
+  /// `post_treatments` satırları seçim sırasıyla; bilinmeyen branş atlanır.
+  static List<CaseTreatment> _treatments(Map<String, dynamic> row) {
+    final raw = [...row['post_treatments'] as List<dynamic>? ?? []]
+      ..sort((a, b) => (a['position'] as int).compareTo(b['position'] as int));
+    return [
+      for (final t in raw)
+        if (DentalBranch.tryFromDbValue(t['branch'] as String?) case final b?)
+          CaseTreatment(
+            slug: t['tags']['slug'] as String,
+            name: t['tags']['name'] as String,
+            branch: b,
+          ),
+    ];
   }
 
   /// Satırları post'a çevirir. `post-images` private (migration 020, SEC-9):
@@ -214,6 +227,8 @@ class SupabasePostRepository implements PostRepository {
     String query = '',
     List<String> tags = const [],
     DentalBranch? branch,
+    String? treatment,
+    bool recent = false,
     required DateTime now,
     int offset = 0,
   }) => guardSupabase(() async {
@@ -227,16 +242,63 @@ class SupabasePostRepository implements PostRepository {
                     'p_now': now.toUtc().toIso8601String(),
                     'p_limit': pageSize,
                     'p_offset': offset,
+                    'p_treatment': treatment,
+                    'p_recent': recent,
                   },
                 )
                 as List)
             .cast<String>();
+    return _postsInOrder(ids);
+  });
+
+  /// RPC sırası korunur; arada silinen post atlanır.
+  Future<List<PostModel>> _postsInOrder(List<String> ids) async {
     if (ids.isEmpty) return <PostModel>[];
     final rows = await _basePostQuery().inFilter('id', ids);
-    // RPC sırası korunur; arada silinen post atlanır.
     final byId = {for (final r in rows) r['id'] as String: r};
     return _mapRows([for (final id in ids) ?byId[id]]);
+  }
+
+  @override
+  Future<List<CaseTreatment>> listTreatments({
+    DentalBranch? branch,
+    String? query,
+    String? slug,
+    int limit = 50,
+  }) => guardSupabase(() async {
+    final rows =
+        await _client.rpc(
+              'list_treatments',
+              params: {
+                'p_branch': branch?.dbValue,
+                'p_query': query,
+                'p_slug': slug,
+                'p_limit': limit,
+              },
+            )
+            as List;
+    return [
+      for (final r in rows)
+        if (DentalBranch.tryFromDbValue(r['branch'] as String?) case final b?)
+          CaseTreatment(
+            slug: r['slug'] as String,
+            name: r['name'] as String,
+            branch: b,
+            caseCount: r['case_count'] as int,
+          ),
+    ];
   });
+
+  @override
+  Future<List<PostModel>> relatedCases(String postId) => guardSupabase(
+    () async {
+      final ids =
+          (await _client.rpc('related_case_ids', params: {'p_post_id': postId})
+                  as List)
+              .cast<String>();
+      return _postsInOrder(ids);
+    },
+  );
 
   @override
   Future<List<TagModel>> popularTags({int limit = 5}) =>
@@ -371,9 +433,7 @@ class SupabasePostRepository implements PostRepository {
   Future<PostModel> createCase({
     required String title,
     required String content,
-    required DentalBranch branch,
-    TreatmentType? treatment,
-    String? otherTreatment,
+    required List<CaseTreatment> treatments,
     required List<File> imageFiles,
     required List<String> tags,
   }) => guardSupabase(() async {
@@ -385,9 +445,7 @@ class SupabasePostRepository implements PostRepository {
         type: PostType.casePost,
         title: title,
         content: content,
-        branch: branch,
-        treatment: treatment,
-        otherTreatment: otherTreatment,
+        treatments: treatments,
         imagePaths: paths,
         tags: tags,
       );
@@ -421,9 +479,7 @@ class SupabasePostRepository implements PostRepository {
     required PostType type,
     required String title,
     required String content,
-    DentalBranch? branch,
-    TreatmentType? treatment,
-    String? otherTreatment,
+    List<CaseTreatment> treatments = const [],
     List<String> imagePaths = const [],
     required List<String> tags,
   }) async {
@@ -434,11 +490,9 @@ class SupabasePostRepository implements PostRepository {
                 'p_type': type.dbValue,
                 'p_title': title,
                 'p_content': content,
-                'p_branch': branch?.dbValue,
                 'p_image_paths': imagePaths,
                 'p_tags': _tagsPayload(tags),
-                'p_treatment': treatment?.dbValue,
-                'p_other_treatment': otherTreatment,
+                'p_treatments': [for (final t in treatments) t.toPayload()],
               },
             )
             as String;
@@ -450,9 +504,7 @@ class SupabasePostRepository implements PostRepository {
     required String postId,
     required String title,
     required String content,
-    DentalBranch? branch,
-    TreatmentType? treatment,
-    String? otherTreatment,
+    List<CaseTreatment> treatments = const [],
     required List<String> tags,
   }) => guardSupabase(() async {
     await _client.rpc(
@@ -461,10 +513,8 @@ class SupabasePostRepository implements PostRepository {
         'p_post_id': postId,
         'p_title': title,
         'p_content': content,
-        'p_branch': branch?.dbValue,
         'p_tags': _tagsPayload(tags),
-        'p_treatment': treatment?.dbValue,
-        'p_other_treatment': otherTreatment,
+        'p_treatments': [for (final t in treatments) t.toPayload()],
       },
     );
     return getPostById(postId);
@@ -545,38 +595,11 @@ class SupabasePostRepository implements PostRepository {
     final bySlug = <String, String>{};
     for (final name in tagNames) {
       final trimmedName = name.trim();
-      final slug = _slugify(trimmedName);
+      final slug = slugify(trimmedName);
       if (slug.isNotEmpty) bySlug.putIfAbsent(slug, () => trimmedName);
     }
     return [
       for (final e in bySlug.entries) {'name': e.value, 'slug': e.key},
     ];
-  }
-
-  /// Türkçe uyumlu basit slug oluşturma.
-  ///
-  /// Türkçe karakterleri ASCII eşdeğerlerine çevirir ve URL-güvenli hale getirir.
-  String _slugify(String input) {
-    const trMap = {
-      'ç': 'c',
-      'ğ': 'g',
-      'ı': 'i',
-      'ö': 'o',
-      'ş': 's',
-      'ü': 'u',
-      'Ç': 'c',
-      'Ğ': 'g',
-      'İ': 'i',
-      'Ö': 'o',
-      'Ş': 's',
-      'Ü': 'u',
-    };
-
-    var slug = input.toLowerCase();
-    trMap.forEach((key, value) => slug = slug.replaceAll(key, value));
-    slug = slug.replaceAll(RegExp(r'[^a-z0-9\s-]'), '');
-    slug = slug.replaceAll(RegExp(r'[\s-]+'), '-');
-    slug = slug.replaceAll(RegExp(r'^-+|-+$'), '');
-    return slug;
   }
 }

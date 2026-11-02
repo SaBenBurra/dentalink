@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../data/models/enums.dart';
+import '../../../data/models/case_treatment.dart';
 import '../../../core/utils/image_compress.dart';
 import '../../../data/models/post_model.dart';
 import '../../../data/providers/repository_providers.dart';
@@ -28,9 +28,7 @@ class CreateCaseController extends AutoDisposeAsyncNotifier<void> {
   Future<PostModel?> submit({
     required String title,
     required String content,
-    required DentalBranch branch,
-    TreatmentType? treatment,
-    String? otherTreatment,
+    required List<CaseTreatment> treatments,
     required List<File> imageFiles,
     required List<String> tags,
   }) async {
@@ -41,9 +39,7 @@ class CreateCaseController extends AutoDisposeAsyncNotifier<void> {
       final post = await repo.createCase(
         title: title,
         content: content,
-        branch: branch,
-        treatment: treatment,
-        otherTreatment: otherTreatment,
+        treatments: treatments,
         imageFiles: await compressToWebp(imageFiles),
         tags: tags,
       );

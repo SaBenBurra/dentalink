@@ -7,6 +7,7 @@ import 'package:dentlink/data/models/badge_model.dart';
 import 'package:dentlink/data/models/conversation_model.dart';
 import 'package:dentlink/data/models/message_model.dart';
 import 'package:dentlink/data/models/notification_model.dart';
+import 'package:dentlink/data/models/case_treatment.dart';
 import 'package:dentlink/data/models/post_model.dart';
 import 'package:dentlink/data/models/tag_model.dart';
 import 'package:dentlink/data/models/user_model.dart';
@@ -41,9 +42,10 @@ final seedCase = CasePostModel(
   userId: otherUser.id,
   title: 'Alt molar kanal tedavisi',
   content: 'Dört kanallı alt molar, kalsifiye mezyal kanallar.',
-  branch: DentalBranch.endodonti,
+  treatments: [CaseTreatment.listed(TreatmentType.kanalTedavisi)],
   tags: const [
-    TagModel(id: 't1', name: 'Kanal Tedavisi', slug: 'kanal-tedavisi'),
+    TagModel(id: 't1', name: 'kanal-tedavisi', slug: 'kanal-tedavisi'),
+    TagModel(id: 't2', name: 'Kalsifiye Kanal', slug: 'kalsifiye-kanal'),
   ],
   createdAt: DateTime(2024),
   updatedAt: DateTime(2024),
@@ -137,12 +139,34 @@ class _FakePostRepository implements PostRepository {
     String query = '',
     List<String> tags = const [],
     DentalBranch? branch,
+    String? treatment,
+    bool recent = false,
     required DateTime now,
     int offset = 0,
   }) async => offset == 0 ? _feed : <PostModel>[];
 
   @override
   Future<List<TagModel>> popularTags({int limit = 5}) async => const [];
+
+  @override
+  Future<List<CaseTreatment>> listTreatments({
+    DentalBranch? branch,
+    String? query,
+    String? slug,
+    int limit = 50,
+  }) async => [
+    for (final t in seedCase.treatments)
+      if (slug == null || t.slug == slug)
+        CaseTreatment(
+          slug: t.slug,
+          name: t.name,
+          branch: t.branch,
+          caseCount: 1,
+        ),
+  ];
+
+  @override
+  Future<List<PostModel>> relatedCases(String postId) async => const [];
 
   @override
   Future<void> incrementViewCount(String postId) async {}

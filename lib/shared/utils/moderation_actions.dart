@@ -9,6 +9,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/comment_provider.dart';
 import '../../providers/feed_provider.dart';
 import '../../providers/search_provider.dart';
+import '../../providers/treatment_archive_provider.dart';
 import 'error_messages.dart';
 
 /// Raporlama sheet'ini açar (post, yorum veya kullanıcı).
@@ -80,6 +81,8 @@ Future<bool> confirmAndBlockUser(
   }
   // Açık yanıt listeleri tek tek bilinmiyor; RLS engelliyi gizleyerek yeniden çeker.
   ref.invalidate(repliesProvider);
+  ref.invalidate(treatmentArchiveProvider);
+  ref.invalidate(relatedCasesProvider);
   ref.invalidate(authProvider); // takip sayıları DB'de düştü
   messenger.showSnackBar(SnackBar(content: Text(l10n.userBlocked)));
   return true;

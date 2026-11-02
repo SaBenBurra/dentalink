@@ -632,12 +632,6 @@ abstract class AppLocalizations {
   /// **'İçerik'**
   String get postSectionContent;
 
-  /// Branş seçim alanı
-  ///
-  /// In tr, this message translates to:
-  /// **'Branş'**
-  String get postBranch;
-
   /// Etiketler alanı
   ///
   /// In tr, this message translates to:
@@ -1634,12 +1628,6 @@ abstract class AppLocalizations {
   /// **'Mesleki tartışmaya katılın...'**
   String get joinDiscussionHint;
 
-  /// No description provided for @validationBranchRequired.
-  ///
-  /// In tr, this message translates to:
-  /// **'Lütfen bir branş seçin.'**
-  String get validationBranchRequired;
-
   /// No description provided for @caseImageRequired.
   ///
   /// In tr, this message translates to:
@@ -2300,23 +2288,17 @@ abstract class AppLocalizations {
   /// **'{chats, plural, other{{chats} sohbetten {messages} mesaj}}'**
   String messageNotificationSummary(int chats, int messages);
 
-  /// Vaka formunda branştan sonra seçilen tedavi türü
+  /// Vakanın 1–5 tedavisi (form alanı ve post sayfası bölümü)
   ///
   /// In tr, this message translates to:
-  /// **'Tedavi türü'**
+  /// **'Tedaviler'**
   String get postTreatment;
 
   /// No description provided for @validationTreatmentRequired.
   ///
   /// In tr, this message translates to:
-  /// **'Lütfen bir tedavi türü seçin.'**
+  /// **'En az bir tedavi seçin.'**
   String get validationTreatmentRequired;
-
-  /// No description provided for @treatmentTagLocked.
-  ///
-  /// In tr, this message translates to:
-  /// **'Tedavi türünün etiketi, kaldırılamaz'**
-  String get treatmentTagLocked;
 
   /// No description provided for @treatmentKanalTedavisi.
   ///
@@ -2666,35 +2648,95 @@ abstract class AppLocalizations {
   /// **'Sefalometrik röntgen'**
   String get treatmentSefalometrikRontgen;
 
-  /// Listede olmayan tedavi seçeneği
-  ///
-  /// In tr, this message translates to:
-  /// **'Diğer'**
-  String get treatmentOther;
-
   /// No description provided for @otherTreatmentLabel.
   ///
   /// In tr, this message translates to:
   /// **'Tedavi adı'**
   String get otherTreatmentLabel;
 
-  /// No description provided for @otherTreatmentHint.
+  /// No description provided for @treatmentAdd.
   ///
   /// In tr, this message translates to:
-  /// **'Örn. hemiseksiyon'**
-  String get otherTreatmentHint;
+  /// **'Tedavi ekle'**
+  String get treatmentAdd;
 
-  /// No description provided for @otherTreatmentRequired.
+  /// No description provided for @treatmentSearchHint.
   ///
   /// In tr, this message translates to:
-  /// **'Tedavi adını yazın.'**
-  String get otherTreatmentRequired;
+  /// **'Tedavi ara'**
+  String get treatmentSearchHint;
 
-  /// Diğer alanına yazılan tedavi listede varsa öneride gösterilir
+  /// No description provided for @treatmentBrowseByBranch.
   ///
   /// In tr, this message translates to:
-  /// **'listede var'**
-  String get treatmentInList;
+  /// **'Branşa göz at'**
+  String get treatmentBrowseByBranch;
+
+  /// No description provided for @treatmentAddCustom.
+  ///
+  /// In tr, this message translates to:
+  /// **'\"{name}\" ekle'**
+  String treatmentAddCustom(String name);
+
+  /// No description provided for @treatmentNotListed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Listede yok mu? Ekle'**
+  String get treatmentNotListed;
+
+  /// No description provided for @treatmentWhichBranch.
+  ///
+  /// In tr, this message translates to:
+  /// **'\"{name}\" hangi branşa ait?'**
+  String treatmentWhichBranch(String name);
+
+  /// No description provided for @treatmentCaseCount.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count, plural, other{{count} vaka}}'**
+  String treatmentCaseCount(int count);
+
+  /// Kartta sığmayan tedavi sayısı
+  ///
+  /// In tr, this message translates to:
+  /// **'+{count}'**
+  String treatmentMore(int count);
+
+  /// No description provided for @treatmentMoreLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'{count, plural, other{{count} tedavi daha}}'**
+  String treatmentMoreLabel(int count);
+
+  /// No description provided for @branchTreatments.
+  ///
+  /// In tr, this message translates to:
+  /// **'{branch} tedavileri'**
+  String branchTreatments(String branch);
+
+  /// No description provided for @archiveSortRecent.
+  ///
+  /// In tr, this message translates to:
+  /// **'En yeni'**
+  String get archiveSortRecent;
+
+  /// No description provided for @archiveSortPopular.
+  ///
+  /// In tr, this message translates to:
+  /// **'En popüler'**
+  String get archiveSortPopular;
+
+  /// No description provided for @archiveEmpty.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu tedaviyle paylaşılmış vaka yok.'**
+  String get archiveEmpty;
+
+  /// No description provided for @relatedCases.
+  ///
+  /// In tr, this message translates to:
+  /// **'Benzer vakalar'**
+  String get relatedCases;
 }
 
 class _AppLocalizationsDelegate

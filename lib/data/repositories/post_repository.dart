@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import '../../core/utils/paging.dart';
+import '../models/case_treatment.dart';
 import '../models/enums.dart';
 import '../models/post_model.dart';
 import '../models/tag_model.dart';
@@ -19,15 +20,32 @@ abstract class IFeedRepository {
 /// Keşfet: popülerlik sırası ve popüler etiketler
 abstract class ISearchRepository {
   /// Popülerlik sırasıyla (035, `post_hot_score`) en fazla [pageSize] post.
-  /// [query] metni, [tags] (hepsi bulunmalı) ve [branch] ile filtreler.
-  /// [now] sayfalar boyunca aynı kalmalı; [offset] atlanacak post sayısı.
+  /// [query] metni, [tags] (hepsi bulunmalı), [branch] (vakanın herhangi bir
+  /// tedavisinin branşı) ve [treatment] (tedavinin slug'ı, 040) ile filtreler;
+  /// [recent] ise en yeni önce. [now] sayfalar boyunca aynı kalmalı;
+  /// [offset] atlanacak post sayısı.
   Future<List<PostModel>> popularPosts({
     String query = '',
     List<String> tags = const [],
     DentalBranch? branch,
+    String? treatment,
+    bool recent = false,
     required DateTime now,
     int offset = 0,
   });
+
+  /// Tedaviler ve vaka sayıları (040, `list_treatments`): listedekiler ve en az
+  /// bir vakada geçen kullanıcı tedavileri. [branch], [query] (ad ya da eş
+  /// anlamlı) ve [slug] ile filtreler.
+  Future<List<CaseTreatment>> listTreatments({
+    DentalBranch? branch,
+    String? query,
+    String? slug,
+    int limit = 50,
+  });
+
+  /// Ortak tedavisi en çok olan vakalar (bu post hariç).
+  Future<List<PostModel>> relatedCases(String postId);
 
   /// En çok postta geçen [limit] etiket (`usageCount` = post sayısı).
   Future<List<TagModel>> popularTags({int limit = 5});
@@ -53,14 +71,12 @@ abstract class ICreatePostRepository {
   ///
   /// [imageFiles] Supabase Storage'a yüklenecek ham dosyalar.
   /// Etiketler (`tags`) varsa `tags` tablosuna upsert yapılır,
-  /// ardından `post_tags` junction tablosuna bağlanır. Tedavi: [treatment] ([branch]'a ait)
-  /// ya da "Diğer" adı [otherTreatment]; etiketi sunucuda posta zorunlu eklenir (033, 034).
+  /// ardından `post_tags` junction tablosuna bağlanır. [treatments] 1–5 tedavi
+  /// (040); etiketleri sunucuda posta eklenir, 5 etiket sınırına sayılmaz.
   Future<PostModel> createCase({
     required String title,
     required String content,
-    required DentalBranch branch,
-    TreatmentType? treatment,
-    String? otherTreatment,
+    required List<CaseTreatment> treatments,
     required List<File> imageFiles,
     required List<String> tags,
   });
@@ -72,15 +88,13 @@ abstract class ICreatePostRepository {
     required List<String> tags,
   });
 
-  /// Başlık, içerik, branş (yalnızca vaka), tedavi türü (vakada zorunlu) ve etiketleri günceller.
+  /// Başlık, içerik, tedaviler (yalnızca vaka, 1–5) ve etiketleri günceller.
   /// Görseller düzenlenmez. Post yoksa ya da başkasınınsa [NotFoundFailure].
   Future<PostModel> updatePost({
     required String postId,
     required String title,
     required String content,
-    DentalBranch? branch,
-    TreatmentType? treatment,
-    String? otherTreatment,
+    List<CaseTreatment> treatments = const [],
     required List<String> tags,
   });
 

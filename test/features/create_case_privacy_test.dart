@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:dentlink/core/error/app_failures.dart';
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+import 'package:dentlink/data/models/case_treatment.dart';
 import 'package:dentlink/data/models/enums.dart';
 import 'package:dentlink/data/models/post_model.dart';
 import 'package:dentlink/data/providers/repository_providers.dart';
@@ -28,18 +29,18 @@ class _FakePicker extends ImagePickerPlatform {
 
 class _PostRepo implements ICreatePostRepository {
   int calls = 0;
+  List<CaseTreatment>? treatments;
 
   @override
   Future<PostModel> createCase({
     required String title,
     required String content,
-    required DentalBranch branch,
-    TreatmentType? treatment,
-    String? otherTreatment,
+    required List<CaseTreatment> treatments,
     required List<File> imageFiles,
     required List<String> tags,
   }) async {
     calls++;
+    this.treatments = treatments;
     throw const NetworkFailure(); // gönderimin kapıdan geçtiğini görmek yeterli
   }
 
@@ -76,34 +77,26 @@ void main() {
     final fields = find.byType(TextFormField);
     await tester.enterText(fields.at(0), 'Vaka başlığı');
     await tester.enterText(fields.at(1), 'Vaka açıklaması');
-    await tester.ensureVisible(find.text('Endodonti'));
-    await tester.tap(find.text('Endodonti'));
-    await tester.pumpAndSettle();
-    // Tedavi türü seçilmeden gönderilmez.
+    // Tedavi seçilmeden gönderilmez.
     await tester.ensureVisible(find.text('Paylaş'));
     await tester.tap(find.text('Paylaş'));
     await tester.pumpAndSettle();
-    expect(find.text('Lütfen bir tedavi türü seçin.'), findsOneWidget);
+    expect(find.text('En az bir tedavi seçin.'), findsOneWidget);
     ScaffoldMessenger.of(
       tester.element(find.byType(CreateCaseScreen)),
     ).hideCurrentSnackBar();
     await tester.pumpAndSettle();
-    // "Diğer" seçilip ad yazılmadan gönderilmez.
-    await tester.ensureVisible(find.text('Diğer'));
+    // Tedavi penceresinde branşa göz atılıp seçilir.
+    await tester.ensureVisible(find.text('Tedavi ekle'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Diğer'));
+    await tester.tap(find.text('Tedavi ekle'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Paylaş'));
-    await tester.pumpAndSettle();
-    expect(find.text('Tedavi adını yazın.'), findsOneWidget);
-    ScaffoldMessenger.of(
-      tester.element(find.byType(CreateCaseScreen)),
-    ).hideCurrentSnackBar();
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Kanal tedavisi'));
+    await tester.tap(find.text('Endo'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Kanal tedavisi'));
     await tester.pumpAndSettle();
+    expect(find.text('Kanal tedavisi'), findsOneWidget, reason: 'formda çip');
+    expect(find.text('1/5'), findsOneWidget);
     await tester.ensureVisible(
       find.byIcon(Icons.add_photo_alternate_outlined).first,
     );
@@ -150,13 +143,9 @@ void main() {
     });
     await tester.pumpAndSettle();
     expect(repo.calls, 1);
-    // Tedavi türünün etiketi etiket alanında sabit.
-    await tester.scrollUntilVisible(
-      find.text('#kanal-tedavisi'),
-      100,
-      scrollable: find.byType(Scrollable).first,
-    );
-    expect(find.text('#kanal-tedavisi'), findsOneWidget);
+    expect(repo.treatments, [
+      CaseTreatment.listed(TreatmentType.kanalTedavisi),
+    ]);
   });
 }
 

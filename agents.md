@@ -70,7 +70,7 @@ lib/
 ### İçerik
 | Tür | Alanlar | Not |
 |---|---|---|
-| **Vaka** | başlık, açıklama, branş (zorunlu, `DentalBranch`), tedavi türü (zorunlu, branşa göre, `TreatmentType` ya da "Diğer" + ad; etiketi posta sabit eklenir), etiketler, en fazla 10 görsel | Hasta mahremiyeti: yüz ve kimlik bilgisi içermemeli (paylaşırken onay kutusu zorunlu) |
+| **Vaka** | başlık, açıklama, **tedaviler** (1–5, seçim sırasıyla; listedeki `TreatmentType` ya da kullanıcının eklediği ad + branş; ayrı branş alanı yok, branşlar tedavilerden çıkar), etiketler (5, tedaviler sayılmaz), en fazla 10 görsel | Hasta mahremiyeti: yüz ve kimlik bilgisi içermemeli (paylaşırken onay kutusu zorunlu) |
 | **Forum** | başlık, içerik, etiketler (görsel yükleme henüz yok) | Soru şartı yok, serbest paylaşım alanı. Kodda ve DB'de adı hâlâ `question`. "En İyi Cevap" (`mark_best_answer` RPC) forumda kapalı: `PostType.allowsBestAnswer`. |
 | İş ilanı, pazar yeri | — | Yayın sonrası |
 
@@ -78,6 +78,7 @@ lib/
 
 ### Sosyal
 - Beğeni (post ve yorum), yorum ve cevap, takip, kaydetme (bookmark), bire bir DM (realtime), bildirimler.
+- **Vaka arşivi (040):** tedavi, etiket değil sınıflandırma olarak gösterilir: branş renginde noktalı çip (`TreatmentChip`, `lib/shared/widgets/case_treatments.dart`), her yerde aynı görünür ve hep `/treatment/:slug` arşivine gider. Kartta başlığın üstünde ilk 2 tedavi + "+N"; post sayfasında branşa göre gruplu hepsi (branş adı Keşfet'i o branşla açar) ve "Benzer vakalar". Keşfet: branş seçilince o branşın tedavileri, metin aranınca eşleşen tedavi satırı. Vaka, tedavilerinin bütün arşivlerinde ve branş filtrelerinde görünür.
 - **Tek dokunma kuralı (vaka ve forum aynı):** karta dokun → `/post/:id`; yorum ikonu → aynı sayfa, yorumlara kaydırılmış (klavye açılmaz); görsel → tam ekran galeri; çift dokunma → beğeni. Yorum için bottom sheet yok, yorumlar yalnızca post sayfasında. Liste kartı sayfaya `extra` ile taşınır (yükleniyor ekranı yok), sayfadaki beğeni/yorum `patchPostCopies` ile tüm listelere yansır. Yardımcı: `openPost` (`lib/shared/utils/post_actions.dart`).
 - Feed sekmeleri: Tümü / Vakalar / Forum. Sıralama kronolojik (algoritmik feed yayından sonra).
 - Arama: Türkçe full-text (başlık + içerik), kullanıcı arama, branş ve tür filtresi.
@@ -86,13 +87,14 @@ lib/
 ### Navigasyon
 Alt menü: **Ana Sayfa** `/feed` · **Keşfet** `/search` · **Oluştur (+)** (vaka/forum seçimi) · **Mesajlar** `/messages` · **Profil** `/profile`.
 
-Diğer rotalar: `/post/:id` (tek post kartı; bildirim ve deep link hedefi), `/create-case`, `/create-question`, `/chat/:userId`, `/profile/:userId`, `/edit-profile`, `/network/:id`, `/notifications`, `/bookmarks`, `/settings`, `/settings/blocked`, `/legal/:doc`, `/login`, `/register`. Tam liste: `lib/core/router/app_router.dart`.
+Diğer rotalar: `/post/:id` (tek post kartı; bildirim ve deep link hedefi), `/treatment/:slug` (tedavi arşivi), `/create-case`, `/create-question`, `/chat/:userId`, `/profile/:userId`, `/edit-profile`, `/network/:id`, `/notifications`, `/bookmarks`, `/settings`, `/settings/blocked`, `/legal/:doc`, `/login`, `/register`. Tam liste: `lib/core/router/app_router.dart`.
 
 ---
 
 ## Tasarım sistemi
 
 - **Renkler:** `lib/core/constants/app_colors.dart`. Primary: Deep Teal `#0D9488` (light) / Cyan Mint `#2DD4BF` (dark). Secondary: Violet `#7C3AED` / Lavender `#A78BFA`.
+- **Branş renkleri:** `DentalBranchUI.colorOf(context)`; açık temada 600, koyu temada 400 tonu, ikisi de zemine karşı ≥ 4.5:1 (`test/shared/branch_colors_test.dart`).
 - **Glass:** `GlassThemeExtension` ile blur, tint ve frost border; widget'lar `PostGlassContainer`, `GlassField`, `GlassBackgroundEffect`.
 - **Tipografi:** `app_text_styles.dart` (Material 3 type scale). Font dosyaları henüz bundle'da değil (AUDIT `REL-3`).
 - **Ölçüler:** `app_dimensions.dart`. Minimum dokunma alanı 48dp. Metin kontrastı ≥ 4.5:1.

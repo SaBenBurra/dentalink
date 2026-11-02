@@ -8,6 +8,7 @@ import 'bookmark_provider.dart';
 import 'feed_provider.dart';
 import 'post_toggle.dart';
 import 'search_provider.dart';
+import 'treatment_archive_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Tek Post Detay Provider
@@ -19,7 +20,7 @@ import 'search_provider.dart';
 final postSeedsProvider = Provider<Map<String, PostModel>>((ref) => {});
 
 /// Aynı postun ekrandaki kopyalarını (feed, arama, kaydedilenler, yazarın
-/// profili) yeniden çekmeden günceller.
+/// profili, açık tedavi arşivleri) yeniden çekmeden günceller.
 void patchPostCopies(
   Ref ref,
   String postId,
@@ -38,6 +39,9 @@ void patchPostCopies(
   if (authorId != null && ref.exists(userPostsProvider(authorId))) {
     ref.read(userPostsProvider(authorId).notifier).patchPost(postId, update);
   }
+  for (final slug in ref.read(openArchivesProvider)) {
+    ref.read(treatmentArchiveProvider(slug).notifier).patchPost(postId, update);
+  }
 }
 
 void _removePostCopies(Ref ref, String postId, String? authorId) {
@@ -52,6 +56,9 @@ void _removePostCopies(Ref ref, String postId, String? authorId) {
   }
   if (authorId != null && ref.exists(userPostsProvider(authorId))) {
     ref.read(userPostsProvider(authorId).notifier).removePost(postId);
+  }
+  for (final slug in ref.read(openArchivesProvider)) {
+    ref.read(treatmentArchiveProvider(slug).notifier).removePost(postId);
   }
 }
 

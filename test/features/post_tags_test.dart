@@ -11,7 +11,7 @@ void main() {
     tester,
   ) async {
     await pumpDentLink(tester);
-    await tester.tap(find.text('#Kanal_Tedavisi'));
+    await tester.tap(find.text('#Kalsifiye_Kanal'));
     await tester.pumpAndSettle();
 
     final search = find.byType(SearchScreen);
@@ -19,12 +19,12 @@ void main() {
     final field = tester.widget<TextField>(
       find.descendant(of: search, matching: find.byType(TextField)).first,
     );
-    expect(field.controller!.text, '#Kanal_Tedavisi');
+    expect(field.controller!.text, '#Kalsifiye_Kanal');
     expect(
       ProviderScope.containerOf(
         tester.element(search),
       ).read(searchProvider).query,
-      '#Kanal_Tedavisi',
+      '#Kalsifiye_Kanal',
     );
   });
 }

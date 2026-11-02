@@ -44,6 +44,8 @@ class _Repo implements PostRepository {
     String query = '',
     List<String> tags = const [],
     DentalBranch? branch,
+    String? treatment,
+    bool recent = false,
     required DateTime now,
     int offset = 0,
   }) async {

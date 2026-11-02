@@ -146,7 +146,7 @@ rollback;
 begin;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
-select set_config('t.id', public.create_post('question', 'Başlık', 'içerik', null, null,
+select set_config('t.id', public.create_post('question', 'Başlık', 'içerik', null,
   '[{"name":"İmplant","slug":"implant"},{"name":"implant","slug":"implant"}]')::text, true);
 select (select count(*) from public.post_tags where post_id = current_setting('t.id')::uuid) n_tags, branch
 from public.posts where id = current_setting('t.id')::uuid;
@@ -157,9 +157,9 @@ rollback;
 begin;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
-select set_config('t.id', public.create_post('question', 'Eski', 'içerik', null, null,
+select set_config('t.id', public.create_post('question', 'Eski', 'içerik', null,
   '[{"name":"a","slug":"a"},{"name":"b","slug":"b"}]')::text, true);
-select public.update_post(current_setting('t.id')::uuid, 'Yeni', 'içerik', null, '[{"name":"b","slug":"b"}]');
+select public.update_post(current_setting('t.id')::uuid, 'Yeni', 'içerik', '[{"name":"b","slug":"b"}]');
 select title, (select count(*) from public.post_tags where post_id = p.id) n_tags
 from public.posts p where id = current_setting('t.id')::uuid;
 rollback;
@@ -188,7 +188,7 @@ rollback;
 begin;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
-select public.create_post('question', 'Soru', 'içerik', null, null,
+select public.create_post('question', 'Soru', 'içerik', null,
   '[{"name":"a","slug":"a"},{"name":"b","slug":"b"},{"name":"c","slug":"c"},
     {"name":"d","slug":"d"},{"name":"e","slug":"e"},{"name":"f","slug":"f"}]');
 rollback;
@@ -310,7 +310,7 @@ rollback;
 begin;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
-select set_config('t.id', public.create_post('question', 'Başlık', 'içerik', null, null,
+select set_config('t.id', public.create_post('question', 'Başlık', 'içerik', null,
   '[{"name":"emax","slug":"emax"},{"name":"e max","slug":"e-max"},
     {"name":"rct","slug":"rct"},{"name":"implantlar","slug":"implantlar"}]')::text, true);
 select count(*) n_tags, array_agg(t.name order by t.name) names
@@ -319,45 +319,67 @@ where pt.post_id = current_setting('t.id')::uuid;
 select public.suggest_tags('rct') rct, public.suggest_tags('zirkonyom') typo;
 rollback;
 
--- 23) Tedavi türü (033) → BEKLENEN: has_fixed = true (etiket gönderilmese de
---     kanal-tedavisi posta eklenir), treatment = 'kanal-tedavisi'.
---     Tedavisiz vaka ya da başka branşın tedavisi → invalid treatment (22023)
+-- 23) Çoklu tedavi (040) → BEKLENEN: branch = endodontist,
+--     treatments = {kanal-tedavisi:endodontist:0, kron:protez_uzmani:1, zirkonya-inley:protez_uzmani:2}
+--     ('RCT' eş anlamlı → kanal-tedavisi, tekrar atlanır; listedeki kron'un gönderilen branşı
+--     yok sayılır), n_tags = 8 (5 serbest etiket + 3 tedavi; tedaviler sınıra sayılmaz)
 begin;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
-select set_config('t.id', public.create_post('case', 'Vaka', 'içerik', 'endodontist', null,
-  '[{"name":"a","slug":"a"}]', 'kanal-tedavisi')::text, true);
-select p.treatment, exists (
-  select 1 from public.post_tags pt join public.tags t on t.id = pt.tag_id
-  where pt.post_id = p.id and t.slug = 'kanal-tedavisi') as has_fixed
-from public.posts p where p.id = current_setting('t.id')::uuid;
-rollback;
-begin;
-set local role authenticated;
-select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
-select public.create_post('case', 'Vaka', 'içerik', 'endodontist', null, '[]', 'braket');
+select set_config('t.id', public.create_post('case', 'Vaka', 'içerik', null,
+  '[{"name":"a","slug":"a"},{"name":"b","slug":"b"},{"name":"c","slug":"c"},
+    {"name":"d","slug":"d"},{"name":"e","slug":"e"}]',
+  '[{"name":"kanal-tedavisi","slug":"kanal-tedavisi"},{"name":"RCT","slug":"rct"},
+    {"name":"kron","slug":"kron","branch":"endodontist"},
+    {"name":"zirkonya-inley","slug":"zirkonya-inley","branch":"protez_uzmani"}]')::text, true);
+select p.branch,
+  array_agg(t.slug || ':' || pt.branch || ':' || pt.position order by pt.position) treatments,
+  (select count(*) from public.post_tags x where x.post_id = p.id) n_tags
+from public.posts p
+join public.post_treatments pt on pt.post_id = p.id
+join public.tags t on t.id = pt.tag_id
+where p.id = current_setting('t.id')::uuid
+group by p.id, p.branch;
 rollback;
 
--- 24) "Diğer" tedavi (034) → BEKLENEN: ilk sorgu treatment = null, other = 'hemiseksiyon',
---     has_fixed = true. İkincisi: Endodonti'de "Diğer"e 'RCT' yazılınca listedeki tür
---     seçilir → treatment = 'kanal-tedavisi', other = null. Boş ad → invalid treatment
+-- 24) Geçersiz tedavi (040) → BEKLENEN: üç blok da 22023
+--     (tedavisiz vaka; 6 tedavi; listede olmayan tedavi branşsız). Doğrudan
+--     insert into post_treatments → permission denied
 begin;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
-select set_config('t.a', public.create_post('case', 'Vaka', 'içerik', 'endodontist', null,
-  '[]', null, 'hemiseksiyon')::text, true);
-select set_config('t.b', public.create_post('case', 'Vaka', 'içerik', 'endodontist', null,
-  '[]', null, 'RCT')::text, true);
-select p.id = current_setting('t.a')::uuid as first, p.treatment, t.name as other,
-  exists (select 1 from public.post_tags pt where pt.post_id = p.id
-          and pt.tag_id = p.other_treatment_tag_id) as has_fixed
-from public.posts p left join public.tags t on t.id = p.other_treatment_tag_id
-where p.id in (current_setting('t.a')::uuid, current_setting('t.b')::uuid);
+select public.create_post('case', 'Vaka', 'içerik', null, '[]', '[]');
 rollback;
 begin;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
-select public.create_post('case', 'Vaka', 'içerik', 'endodontist', null, '[]', null, '  ');
+select public.create_post('case', 'Vaka', 'içerik', null, '[]',
+  '[{"name":"kron","slug":"kron"},{"name":"kopru","slug":"kopru"},{"name":"implant","slug":"implant"},
+    {"name":"braket","slug":"braket"},{"name":"kist","slug":"kist"},{"name":"cbct","slug":"cbct"}]');
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select public.create_post('case', 'Vaka', 'içerik', null, '[]', '[{"name":"lazer","slug":"lazer"}]');
+rollback;
+
+-- 25) Arşiv sorguları (040) → BEKLENEN: counted, in_archive, in_second_branch, related = true
+--     (vaka ikinci tedavisinin branşında da görünür; aynı tedaviyi paylaşan vaka benzer)
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select set_config('t.a', public.create_post('case', 'A', 'içerik', null, '[]',
+  '[{"name":"kron","slug":"kron"}]')::text, true);
+select set_config('t.b', public.create_post('case', 'B', 'içerik', null, '[]',
+  '[{"name":"kron","slug":"kron"},{"name":"implant","slug":"implant"}]')::text, true);
+select
+  (select case_count from public.list_treatments(p_slug => 'kron')) >= 2 counted,
+  current_setting('t.a')::uuid in
+    (select public.popular_post_ids(p_treatment => 'kron', p_recent => true)) in_archive,
+  current_setting('t.b')::uuid in
+    (select public.popular_post_ids(p_branch => 'agiz_dis_cene_cerrahi', p_recent => true)) in_second_branch,
+  current_setting('t.a')::uuid in
+    (select public.related_case_ids(current_setting('t.b')::uuid)) related;
 rollback;
 ```
 
@@ -479,18 +501,19 @@ order by u.usage_count desc, sim desc
 limit 100;
 ```
 
-### "Diğer" tedavileri listeye alma (033, 034)
+### Kullanıcı tedavilerini listeye alma (033, 040)
 
-Vakada listede olmayan tedavi "Diğer" ile yazılır; ad etiket olur ve `posts.other_treatment_tag_id`'de tutulur. Ayda bir sık yazılanlara bak:
+Vakada listede olmayan tedavi, tedavi penceresinde "ekle" ile yazılır ve kullanıcı branşını seçer; ad etiket olur, vaka `post_treatments`'a o etiketle bağlanır ve tedavinin arşivi hemen açılır. Ayda bir sık yazılanlara bak:
 
 ```sql
-select p.branch, t.name, t.slug, count(*) as cases
-from public.posts p join public.tags t on t.id = p.other_treatment_tag_id
+select pt.branch, t.name, t.slug, count(*) as cases
+from public.post_treatments pt join public.tags t on t.id = pt.tag_id
+where not exists (select 1 from public.treatment_types tt where tt.tag_id = pt.tag_id)
 group by 1, 2, 3 order by cases desc limit 50;
 ```
 
-Aynı kavramın farklı yazımları varsa önce `add_tag_alias` ile birleştir (sayılar toplanır). 5+ vakada geçen ve listeye girmesi gereken bir ad için (yalnızca onayla):
+Aynı kavramın farklı yazımları varsa önce `add_tag_alias` ile birleştir (sayılar toplanır, tedavi bağı da taşınır). 5+ vakada geçen ve listeye girmesi gereken bir ad için (yalnızca onayla):
 
-1. Yeni migration: `select public.promote_other_treatment('<slug>', '<branch>');` (o branştaki vakalar türe taşınır, etiket tanımlı olur).
+1. Yeni migration: `select public.promote_other_treatment('<slug>', '<branch>');` (etiket tanımlı olur; bu tedaviyi farklı branşla girmiş vakaların branşı listedekine eşitlenir).
 2. İstemci: `TreatmentType` enum'una `('<slug>', '<etiket adı>', DentalBranch.x)` ve TR/EN ARB metni. `treatment_type_test` ikisinin aynılığını denetler.
-3. Migration'ı uygulama sürümüyle birlikte yayınla. Eski sürüm yeni türü tanımaz; düzenlemede türü yeniden seçtirir.
+3. Migration'ı uygulama sürümüyle birlikte yayınla. Eski sürüm yeni türü kullanıcı tedavisi gibi (etiket adıyla) gösterir.

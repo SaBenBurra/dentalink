@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dentlink/core/error/app_failures.dart';
 import 'package:dentlink/data/repositories/supabase_post_repository.dart';
+import 'package:dentlink/data/models/case_treatment.dart';
 import 'package:dentlink/data/models/enums.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -32,8 +33,7 @@ void main() {
   Future<void> createCase() => repository.createCase(
     title: 't',
     content: 'c',
-    branch: DentalBranch.endodonti,
-    treatment: TreatmentType.kanalTedavisi,
+    treatments: [CaseTreatment.listed(TreatmentType.kanalTedavisi)],
     imageFiles: [File('a.JPG'), File('b.png')],
     tags: const [],
   );
@@ -87,8 +87,14 @@ void main() {
           postId: 'p1',
           title: 't',
           content: 'c',
-          branch: DentalBranch.endodonti,
-          treatment: TreatmentType.kanalTedavisi,
+          treatments: [
+            CaseTreatment.listed(TreatmentType.kanalTedavisi),
+            const CaseTreatment(
+              slug: 'zirkonya-inley',
+              name: 'zirkonya-inley',
+              branch: DentalBranch.protetikDisTedavisi,
+            ),
+          ],
           tags: const ['İmplant', 'implant'],
         ),
         throwsA(isA<NotFoundFailure>()),
@@ -100,9 +106,15 @@ void main() {
               ).captured.single
               as Map<String, dynamic>;
       expect(params['p_post_id'], 'p1');
-      expect(params['p_branch'], 'endodontist');
-      expect(params['p_treatment'], 'kanal-tedavisi');
-      expect(params['p_other_treatment'], isNull);
+      // Listedekinin branşını sunucu bilir; kullanıcı tedavisinde branş gider.
+      expect(params['p_treatments'], [
+        {'name': 'kanal-tedavisi', 'slug': 'kanal-tedavisi'},
+        {
+          'name': 'zirkonya-inley',
+          'slug': 'zirkonya-inley',
+          'branch': 'protez_uzmani',
+        },
+      ]);
       expect(params['p_tags'], [
         {'name': 'İmplant', 'slug': 'implant'},
       ]);

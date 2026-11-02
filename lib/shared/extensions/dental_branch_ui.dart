@@ -41,18 +41,30 @@ extension DentalBranchUI on DentalBranch {
     };
   }
 
-  /// Her branşa özgü tema rengi.
-  Color get color => switch (this) {
-    DentalBranch.pedodonti => AppColors.branchPedodonti,
-    DentalBranch.endodonti => AppColors.branchEndodonti,
-    DentalBranch.ortodonti => AppColors.branchOrtodonti,
-    DentalBranch.periodontoloji => AppColors.branchPeriodontoloji,
-    DentalBranch.protetikDisTedavisi => AppColors.branchProtetikDisTedavisi,
-    DentalBranch.agizDisCeneCerrahisi => AppColors.branchAgizDisCeneCerrahisi,
-    DentalBranch.agizDisCeneRadyolojisi =>
-      AppColors.branchAgizDisCeneRadyolojisi,
-    DentalBranch.restoratifDisTedavisi => AppColors.branchRestoratifDisTedavisi,
-  };
+  /// Branş rengi; koyu temada açık tonu (ikisi de zemine karşı ≥ 4.5:1).
+  Color colorOf(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return switch (this) {
+      DentalBranch.endodonti =>
+        dark ? AppColors.branchEndodontiDark : AppColors.branchEndodonti,
+      DentalBranch.restoratifDisTedavisi =>
+        dark ? AppColors.branchRestoratifDark : AppColors.branchRestoratif,
+      DentalBranch.protetikDisTedavisi =>
+        dark ? AppColors.branchProtetikDark : AppColors.branchProtetik,
+      DentalBranch.agizDisCeneCerrahisi =>
+        dark ? AppColors.branchCerrahiDark : AppColors.branchCerrahi,
+      DentalBranch.periodontoloji =>
+        dark
+            ? AppColors.branchPeriodontolojiDark
+            : AppColors.branchPeriodontoloji,
+      DentalBranch.ortodonti =>
+        dark ? AppColors.branchOrtodontiDark : AppColors.branchOrtodonti,
+      DentalBranch.pedodonti =>
+        dark ? AppColors.branchPedodontiDark : AppColors.branchPedodonti,
+      DentalBranch.agizDisCeneRadyolojisi =>
+        dark ? AppColors.branchRadyolojiDark : AppColors.branchRadyoloji,
+    };
+  }
 
   /// Branşın SVG ikonu (`DentalIcon` ile çizilir).
   String get iconAsset => dentalIconAsset(switch (this) {

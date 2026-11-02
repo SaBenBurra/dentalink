@@ -1,3 +1,4 @@
+import 'case_treatment.dart';
 import 'enums.dart';
 import 'tag_model.dart';
 import 'user_model.dart';
@@ -72,11 +73,15 @@ sealed class PostModel {
 
 /// Vaka gönderisi
 class CasePostModel extends PostModel {
-  final DentalBranch? branch;
-  final TreatmentType? treatment;
+  /// Seçim sırasıyla 1–5 tedavi (040). Vakanın branşları bunlardan çıkar.
+  final List<CaseTreatment> treatments;
 
-  /// "Diğer" tedavinin adı (sabit etiketin adı); listeden türde null.
-  final String? otherTreatment;
+  /// Tedavi olmayan (serbest) etiketler; tedaviler kartta ayrı satırda.
+  List<TagModel> get freeTags => [
+    for (final t in tags)
+      if (!treatments.any((c) => c.slug == t.slug)) t,
+  ];
+
   final List<String> imageUrls;
 
   const CasePostModel({
@@ -85,9 +90,7 @@ class CasePostModel extends PostModel {
     super.type = PostType.casePost,
     required super.title,
     required super.content,
-    this.branch,
-    this.treatment,
-    this.otherTreatment,
+    this.treatments = const [],
     this.imageUrls = const [],
     super.tags,
     super.likeCount,
@@ -108,9 +111,7 @@ class CasePostModel extends PostModel {
     PostType? type,
     String? title,
     String? content,
-    DentalBranch? branch,
-    TreatmentType? treatment,
-    String? otherTreatment,
+    List<CaseTreatment>? treatments,
     List<String>? imageUrls,
     List<TagModel>? tags,
     int? likeCount,
@@ -129,9 +130,7 @@ class CasePostModel extends PostModel {
       type: type ?? this.type,
       title: title ?? this.title,
       content: content ?? this.content,
-      branch: branch ?? this.branch,
-      treatment: treatment ?? this.treatment,
-      otherTreatment: otherTreatment ?? this.otherTreatment,
+      treatments: treatments ?? this.treatments,
       imageUrls: imageUrls ?? this.imageUrls,
       tags: tags ?? this.tags,
       likeCount: likeCount ?? this.likeCount,

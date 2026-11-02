@@ -4,6 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../providers/search_provider.dart';
+import '../../../providers/treatment_archive_provider.dart';
+import '../../../data/models/case_treatment.dart';
+import '../../../shared/extensions/dental_branch_ui.dart';
+import '../../../shared/extensions/treatment_type_ui.dart';
+import '../../../shared/widgets/case_treatments.dart';
 import '../../../shared/utils/error_messages.dart';
 import '../../../shared/widgets/error_widget.dart';
 import '../../../shared/widgets/user_tile.dart';
@@ -32,14 +37,66 @@ class ExploreResults extends ConsumerWidget {
     final tags = ref.watch(popularTagsProvider);
     final users = state.users.valueOrNull ?? const [];
     final colorScheme = Theme.of(context).colorScheme;
+    final branch = state.branch;
+    final text = parseExploreQuery(state.query).text;
+    // Yardımcı bölümler: hata postları engellemesin, yenilemede tekrar denenir.
+    final branchTreatments = branch == null || state.query.trim().isNotEmpty
+        ? const <CaseTreatment>[]
+        : ref.watch(branchTreatmentsProvider(branch)).valueOrNull ?? const [];
+    final treatments = text.isEmpty
+        ? const <CaseTreatment>[]
+        : ref.watch(treatmentSearchProvider(text)).valueOrNull ?? const [];
 
     return RefreshIndicator(
       onRefresh: () {
         ref.invalidate(popularTagsProvider);
+        ref.invalidate(branchTreatmentsProvider);
+        ref.invalidate(treatmentSearchProvider);
         return notifier.refresh();
       },
       child: CustomScrollView(
         slivers: [
+          if (branch != null && branchTreatments.isNotEmpty) ...[
+            _SectionHeader(l10n.branchTreatments(branch.displayName(context))),
+            // Hepsi bir bakışta görünsün: yana kaydırma yok, satıra sığmayan alta iner.
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.spacing16,
+                ),
+                child: Wrap(
+                  spacing: AppDimensions.spacing6,
+                  children: [
+                    for (final t in branchTreatments)
+                      TreatmentChip(treatment: t, showCount: true),
+                  ],
+                ),
+              ),
+            ),
+          ],
+          // Aranan metin bir tedaviyse arşivine kısa yol.
+          if (treatments.isNotEmpty)
+            SliverList.list(
+              children: [
+                for (final t in treatments)
+                  ListTile(
+                    leading: Icon(
+                      Icons.folder_open_rounded,
+                      color: t.branch.colorOf(context),
+                    ),
+                    title: Text(
+                      t.displayName(context),
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    subtitle: Text(
+                      '${t.branch.displayName(context)} · '
+                      '${l10n.treatmentCaseCount(t.caseCount)}',
+                    ),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => openTreatment(context, t),
+                  ),
+              ],
+            ),
           // Arama varken etiketler sonuçları aşağı itmesin.
           if (state.query.trim().isEmpty)
             ...tags.when(

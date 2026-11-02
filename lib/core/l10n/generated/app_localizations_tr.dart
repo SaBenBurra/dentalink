@@ -277,9 +277,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get postSectionContent => 'İçerik';
 
   @override
-  String get postBranch => 'Branş';
-
-  @override
   String get postTags => 'Etiketler';
 
   @override
@@ -839,9 +836,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get joinDiscussionHint => 'Mesleki tartışmaya katılın...';
 
   @override
-  String get validationBranchRequired => 'Lütfen bir branş seçin.';
-
-  @override
   String get caseImageRequired => 'Vaka için en az bir görsel eklemelisiniz.';
 
   @override
@@ -1233,13 +1227,10 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get postTreatment => 'Tedavi türü';
+  String get postTreatment => 'Tedaviler';
 
   @override
-  String get validationTreatmentRequired => 'Lütfen bir tedavi türü seçin.';
-
-  @override
-  String get treatmentTagLocked => 'Tedavi türünün etiketi, kaldırılamaz';
+  String get validationTreatmentRequired => 'En az bir tedavi seçin.';
 
   @override
   String get treatmentKanalTedavisi => 'Kanal tedavisi';
@@ -1417,17 +1408,69 @@ class AppLocalizationsTr extends AppLocalizations {
   String get treatmentSefalometrikRontgen => 'Sefalometrik röntgen';
 
   @override
-  String get treatmentOther => 'Diğer';
-
-  @override
   String get otherTreatmentLabel => 'Tedavi adı';
 
   @override
-  String get otherTreatmentHint => 'Örn. hemiseksiyon';
+  String get treatmentAdd => 'Tedavi ekle';
 
   @override
-  String get otherTreatmentRequired => 'Tedavi adını yazın.';
+  String get treatmentSearchHint => 'Tedavi ara';
 
   @override
-  String get treatmentInList => 'listede var';
+  String get treatmentBrowseByBranch => 'Branşa göz at';
+
+  @override
+  String treatmentAddCustom(String name) {
+    return '\"$name\" ekle';
+  }
+
+  @override
+  String get treatmentNotListed => 'Listede yok mu? Ekle';
+
+  @override
+  String treatmentWhichBranch(String name) {
+    return '\"$name\" hangi branşa ait?';
+  }
+
+  @override
+  String treatmentCaseCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count vaka',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String treatmentMore(int count) {
+    return '+$count';
+  }
+
+  @override
+  String treatmentMoreLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tedavi daha',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String branchTreatments(String branch) {
+    return '$branch tedavileri';
+  }
+
+  @override
+  String get archiveSortRecent => 'En yeni';
+
+  @override
+  String get archiveSortPopular => 'En popüler';
+
+  @override
+  String get archiveEmpty => 'Bu tedaviyle paylaşılmış vaka yok.';
+
+  @override
+  String get relatedCases => 'Benzer vakalar';
 }

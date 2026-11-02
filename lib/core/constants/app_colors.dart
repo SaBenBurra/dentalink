@@ -138,16 +138,26 @@ abstract final class AppColors {
   static const Color bestAnswer = Color(0xFF22C55E); // Green
 
   // ────────────────────────────────────────────
-  // Branş Renkleri (DentalBranchUI.color)
+  // Branş Renkleri (DentalBranchUI.colorOf)
   // ────────────────────────────────────────────
-  static const Color branchPedodonti = Color(0xFFE91E63);
-  static const Color branchEndodonti = Color(0xFF2196F3);
-  static const Color branchOrtodonti = Color(0xFF9C27B0);
-  static const Color branchPeriodontoloji = Color(0xFF4CAF50);
-  static const Color branchProtetikDisTedavisi = Color(0xFFFF9800);
-  static const Color branchAgizDisCeneCerrahisi = Color(0xFFF44336);
-  static const Color branchAgizDisCeneRadyolojisi = Color(0xFF00BCD4);
-  static const Color branchRestoratifDisTedavisi = Color(0xFF607D8B);
+  // Tedavi çipindeki nokta ve zemin tonu. Açık temada beyaza, koyu temada
+  // darkSurface'a karşı ≥ 4.5:1 (test/shared/branch_colors_test.dart).
+  static const Color branchEndodonti = Color(0xFF2563EB);
+  static const Color branchEndodontiDark = Color(0xFF60A5FA);
+  static const Color branchRestoratif = Color(0xFF475569);
+  static const Color branchRestoratifDark = Color(0xFF94A3B8);
+  static const Color branchProtetik = Color(0xFFB45309);
+  static const Color branchProtetikDark = Color(0xFFFBBF24);
+  static const Color branchCerrahi = Color(0xFFDC2626);
+  static const Color branchCerrahiDark = Color(0xFFF87171);
+  static const Color branchPeriodontoloji = Color(0xFF15803D);
+  static const Color branchPeriodontolojiDark = Color(0xFF4ADE80);
+  static const Color branchOrtodonti = Color(0xFF9333EA);
+  static const Color branchOrtodontiDark = Color(0xFFC084FC);
+  static const Color branchPedodonti = Color(0xFFDB2777);
+  static const Color branchPedodontiDark = Color(0xFFF472B6);
+  static const Color branchRadyoloji = Color(0xFF0E7490);
+  static const Color branchRadyolojiDark = Color(0xFF22D3EE);
 
   // ────────────────────────────────────────────
   // Rozet Renkleri

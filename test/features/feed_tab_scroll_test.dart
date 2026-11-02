@@ -1,4 +1,3 @@
-import 'package:dentlink/data/models/enums.dart';
 import 'package:dentlink/data/models/post_model.dart';
 import 'package:dentlink/shared/widgets/post_glass_container.dart';
 import 'package:dentlink/features/feed/screens/feed_screen.dart';
@@ -161,7 +160,6 @@ List<CasePostModel> _cases() => [
       userId: otherUser.id,
       title: 'Vaka $i',
       content: 'İçerik $i',
-      branch: DentalBranch.endodonti,
       createdAt: DateTime(2024, 1, 20 - i),
       updatedAt: DateTime(2024),
       author: otherUser,

@@ -8,13 +8,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/form_section_label.dart';
 import '../widgets/share_submit.dart';
-import '../widgets/branch_selector.dart';
-import '../widgets/treatment_selector.dart';
+import '../widgets/treatments_field.dart';
 import '../widgets/image_picker_grid.dart';
 import '../widgets/tag_input.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import '../../../shared/widgets/unsaved_changes_scope.dart';
-import '../../../data/models/enums.dart';
+import '../../../data/models/case_treatment.dart';
 import '../providers/create_case_controller.dart';
 
 class CreateCaseScreen extends ConsumerStatefulWidget {
@@ -28,20 +27,12 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
-  DentalBranch? _selectedBranch;
-  TreatmentType? _treatment;
-  String? _other; // "Diğer" seçiliyse yazılan ad
+  List<CaseTreatment> _treatments = const [];
   List<File> _images = [];
   List<String> _tags = [];
   bool _dirty = false; // UX-2
   String? _sharedPostId;
   bool _privacyConfirmed = false;
-
-  /// "Diğer" adının etiket hali; boşsa null.
-  String? get _otherTag {
-    final tag = TreatmentSelector.otherTag(_other ?? '');
-    return tag.isEmpty ? null : tag;
-  }
 
   @override
   void dispose() {
@@ -52,32 +43,12 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
 
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
-      if (_selectedBranch == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.validationBranchRequired,
-            ),
-          ),
-        );
-        return;
-      }
-
-      if (_treatment == null && _other == null) {
+      if (_treatments.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               AppLocalizations.of(context)!.validationTreatmentRequired,
             ),
-          ),
-        );
-        return;
-      }
-
-      if (_other != null && _otherTag == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.otherTreatmentRequired),
           ),
         );
         return;
@@ -106,9 +77,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
           .submit(
             title: _titleController.text,
             content: _contentController.text,
-            branch: _selectedBranch!,
-            treatment: _treatment,
-            otherTreatment: _otherTag,
+            treatments: _treatments,
             imageFiles: _images,
             tags: _tags,
           );
@@ -206,41 +175,17 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
               ),
               const FormSectionDivider(),
 
-              // Branş Seçimi
-              BranchSelector(
-                selectedBranch: _selectedBranch,
-                onBranchSelected: (branch) {
-                  setState(() {
-                    _dirty = true;
-                    // Tedavi branşa bağlı: branş değişince seçim sıfırlanır.
-                    if (_selectedBranch != branch) {
-                      _treatment = null;
-                      _other = null;
-                    }
-                    _selectedBranch = branch;
-                  });
-                },
+              // Tedaviler (branşlar bunlardan çıkar)
+              TreatmentsField(
+                treatments: _treatments,
+                search: (q) => ref
+                    .read(searchRepositoryProvider)
+                    .listTreatments(query: q, limit: 10),
+                onChanged: (t) => setState(() {
+                  _dirty = true;
+                  _treatments = t;
+                }),
               ),
-              // Tedavi türü: branştan sonra; etiketi posta sabitlenir.
-              if (_selectedBranch case final branch?) ...[
-                const FormSectionDivider(),
-                TreatmentSelector(
-                  branch: branch,
-                  selected: _treatment,
-                  other: _other,
-                  suggest: ref.read(createPostRepositoryProvider).suggestTags,
-                  onSelected: (t) => setState(() {
-                    _dirty = true;
-                    _treatment = t;
-                    _other = null;
-                  }),
-                  onOtherChanged: (v) => setState(() {
-                    _dirty = true;
-                    _treatment = null;
-                    _other = v;
-                  }),
-                ),
-              ],
               const FormSectionDivider(),
 
               // Görseller
@@ -288,7 +233,6 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
               // Etiketler
               TagInput(
                 suggest: ref.read(createPostRepositoryProvider).suggestTags,
-                lockedTag: _treatment?.tag ?? _otherTag,
                 onTagsChanged: (tags) {
                   setState(() {
                     _dirty = true;

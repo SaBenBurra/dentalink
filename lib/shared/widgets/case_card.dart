@@ -1,4 +1,3 @@
-import 'package:dentlink/shared/extensions/dental_branch_ui.dart';
 import 'package:dentlink/shared/extensions/user_title_ui.dart';
 import 'package:dentlink/data/models/enums.dart';
 import 'package:dentlink/providers/auth_provider.dart';
@@ -8,6 +7,7 @@ import 'package:dentlink/shared/widgets/post_body.dart';
 import 'package:dentlink/shared/widgets/post_glass_container.dart';
 import 'package:dentlink/shared/widgets/post_header.dart';
 import 'package:dentlink/shared/widgets/post_tags.dart';
+import 'package:dentlink/shared/widgets/case_treatments.dart';
 import 'package:dentlink/shared/widgets/post_media.dart';
 import 'package:dentlink/shared/utils/post_actions.dart';
 import 'package:dentlink/shared/utils/moderation_actions.dart';
@@ -51,9 +51,8 @@ class CaseCard extends ConsumerWidget {
           // <-- 1. Header
           PostHeader(
             post: post,
-            subtitle:
-                post.branch?.displayName(context) ??
-                post.author.title.displayName(context),
+            // Branş kartta yazılmaz; tedavi çiplerinin renginde görünür.
+            subtitle: post.author.title.displayName(context),
             isOwner: isOwner,
             badge: PostBadge(postType: PostType.casePost),
             onMenuSelected: (action) => switch (action) {
@@ -76,13 +75,18 @@ class CaseCard extends ConsumerWidget {
             },
           ),
 
+          // Listede tedaviler başlığın üstünde: vakanın "rafı".
+          if (!expanded)
+            CaseTreatmentsRow(treatments: post.treatments, onMore: onTap),
+
           // <-- 2. İçerik (uzunsa "Devamını oku")
           PostBody(
             title: post.title,
             content: post.content,
             expanded: expanded,
           ),
-          PostTags(tags: post.tags),
+          if (expanded) CaseTreatmentsSection(treatments: post.treatments),
+          PostTags(tags: post.freeTags),
 
           // <-- 3. Görsel (yoksa ayırıcı çizgi)
           if (post.imageUrls.isNotEmpty)

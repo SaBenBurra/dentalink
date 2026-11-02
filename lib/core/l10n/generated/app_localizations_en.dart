@@ -277,9 +277,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get postSectionContent => 'Content';
 
   @override
-  String get postBranch => 'Branch';
-
-  @override
   String get postTags => 'Tags';
 
   @override
@@ -839,9 +836,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get joinDiscussionHint => 'Join the professional discussion...';
 
   @override
-  String get validationBranchRequired => 'Please select a branch.';
-
-  @override
   String get caseImageRequired => 'Add at least one image for the case.';
 
   @override
@@ -1248,13 +1242,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get postTreatment => 'Treatment type';
+  String get postTreatment => 'Treatments';
 
   @override
-  String get validationTreatmentRequired => 'Please select a treatment type.';
-
-  @override
-  String get treatmentTagLocked => 'Treatment type tag, cannot be removed';
+  String get validationTreatmentRequired => 'Select at least one treatment.';
 
   @override
   String get treatmentKanalTedavisi => 'Root canal treatment';
@@ -1433,17 +1424,71 @@ class AppLocalizationsEn extends AppLocalizations {
   String get treatmentSefalometrikRontgen => 'Cephalometric radiograph';
 
   @override
-  String get treatmentOther => 'Other';
-
-  @override
   String get otherTreatmentLabel => 'Treatment name';
 
   @override
-  String get otherTreatmentHint => 'e.g. hemisection';
+  String get treatmentAdd => 'Add treatment';
 
   @override
-  String get otherTreatmentRequired => 'Enter the treatment name.';
+  String get treatmentSearchHint => 'Search treatments';
 
   @override
-  String get treatmentInList => 'in the list';
+  String get treatmentBrowseByBranch => 'Browse by specialty';
+
+  @override
+  String treatmentAddCustom(String name) {
+    return 'Add \"$name\"';
+  }
+
+  @override
+  String get treatmentNotListed => 'Not listed? Add it';
+
+  @override
+  String treatmentWhichBranch(String name) {
+    return 'Which specialty is \"$name\"?';
+  }
+
+  @override
+  String treatmentCaseCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cases',
+      one: '1 case',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String treatmentMore(int count) {
+    return '+$count';
+  }
+
+  @override
+  String treatmentMoreLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count more treatments',
+      one: '1 more treatment',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String branchTreatments(String branch) {
+    return '$branch treatments';
+  }
+
+  @override
+  String get archiveSortRecent => 'Newest';
+
+  @override
+  String get archiveSortPopular => 'Most popular';
+
+  @override
+  String get archiveEmpty => 'No cases with this treatment yet.';
+
+  @override
+  String get relatedCases => 'Similar cases';
 }

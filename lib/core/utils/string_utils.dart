@@ -60,3 +60,30 @@ String _trSortKey(String s) {
   final lower = s.replaceAll('I', 'ı').replaceAll('İ', 'i').toLowerCase();
   return lower.split('').map((c) => after[c] ?? c).join();
 }
+
+/// Etiket slug'ı; sunucu yazım farklarını `tag_match_key` ile tek etikete eşler (032).
+///
+/// Türkçe karakterleri ASCII eşdeğerlerine çevirir ve URL-güvenli hale getirir.
+String slugify(String input) {
+  const trMap = {
+    'ç': 'c',
+    'ğ': 'g',
+    'ı': 'i',
+    'ö': 'o',
+    'ş': 's',
+    'ü': 'u',
+    'Ç': 'c',
+    'Ğ': 'g',
+    'İ': 'i',
+    'Ö': 'o',
+    'Ş': 's',
+    'Ü': 'u',
+  };
+
+  var slug = input.toLowerCase();
+  trMap.forEach((key, value) => slug = slug.replaceAll(key, value));
+  slug = slug.replaceAll(RegExp(r'[^a-z0-9\s-]'), '');
+  slug = slug.replaceAll(RegExp(r'[\s-]+'), '-');
+  slug = slug.replaceAll(RegExp(r'^-+|-+$'), '');
+  return slug;
+}

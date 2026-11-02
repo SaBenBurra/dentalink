@@ -2,6 +2,7 @@ import 'package:dentlink/core/l10n/generated/app_localizations.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../data/models/enums.dart';
 import '../../../data/providers/repository_providers.dart';
 import '../../../providers/search_provider.dart';
 import '../../post/widgets/tag_input.dart';
@@ -11,13 +12,22 @@ import '../widgets/search_results.dart';
 
 /// Keşfet: arama satırı (metin ve `#etiket`), branşlar, popüler konular ve gönderiler.
 class SearchScreen extends ConsumerStatefulWidget {
-  const SearchScreen({super.key, this.autofocus = false, this.tag});
+  const SearchScreen({
+    super.key,
+    this.autofocus = false,
+    this.tag,
+    this.branch,
+  });
 
   /// Feed üst barındaki arama ikonundan gelindiyse arama satırı odaklanır.
   final bool autofocus;
 
   /// `?tag=`: post kartındaki etikete dokunuldu; arama o etiketle açılır.
   final String? tag;
+
+  /// `?branch=`: post sayfasında ya da arşivde branş adına dokunuldu; Keşfet
+  /// o branş seçili, arama boş açılır.
+  final String? branch;
 
   @override
   ConsumerState<SearchScreen> createState() => _SearchScreenState();
@@ -40,12 +50,23 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
     _focusNode.addListener(() => setState(() {}));
     WidgetsBinding.instance.addObserver(this);
     _applyTag();
+    _applyBranch();
   }
 
   @override
   void didUpdateWidget(SearchScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.tag != oldWidget.tag) _applyTag();
+    if (widget.branch != oldWidget.branch) _applyBranch();
+  }
+
+  void _applyBranch() {
+    final branch = DentalBranch.tryFromDbValue(widget.branch);
+    if (branch == null) return;
+    _searchController.clear();
+    Future.microtask(() {
+      if (mounted) _notifier.selectBranch(branch);
+    });
   }
 
   void _applyTag() {

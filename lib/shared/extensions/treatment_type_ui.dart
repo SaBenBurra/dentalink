@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import '../../core/l10n/generated/app_localizations.dart';
+import '../../data/models/case_treatment.dart';
 import '../../data/models/enums.dart';
 
 /// TreatmentType için aktif dilde ad.
@@ -70,4 +71,23 @@ extension TreatmentTypeUI on TreatmentType {
       TreatmentType.sefalometrikRontgen => l10n.treatmentSefalometrikRontgen,
     };
   }
+}
+
+/// Vaka tedavisinin aktif dildeki adı: listedekinin çevirisi, kullanıcının
+/// eklediğinde etiket adı ("zirkonya-inley" → "Zirkonya inley").
+extension CaseTreatmentUI on CaseTreatment {
+  String displayName(BuildContext context) =>
+      listed?.displayName(context) ?? humanizeTag(name);
+}
+
+/// Etiket adını cümle biçimine çevirir (tire boşluk, ilk harf Türkçe büyük).
+String humanizeTag(String tag) {
+  final text = tag.replaceAll('-', ' ').trim();
+  if (text.isEmpty) return text;
+  final first = switch (text[0]) {
+    'i' => 'İ',
+    'ı' => 'I',
+    final c => c.toUpperCase(),
+  };
+  return first + text.substring(1);
 }

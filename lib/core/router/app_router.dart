@@ -10,6 +10,8 @@ import '../../features/feed/screens/feed_screen.dart';
 import '../../features/messaging/screens/conversations_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/search/screens/search_screen.dart';
+import '../../features/treatments/screens/treatment_archive_screen.dart';
+import '../../data/models/case_treatment.dart';
 import '../../features/shell/main_shell.dart';
 import '../../features/post/screens/post_screen.dart';
 import '../../features/post/screens/create_case_screen.dart';
@@ -79,6 +81,7 @@ String? resolveAuthRedirect({
 ///   ShellRoute        → MainShell (bottom nav)
 ///     /feed           → FeedScreen
 ///     /search         → SearchScreen
+///     /treatment/:slug → TreatmentArchiveScreen (alt menü gizli)
 ///     /messages       → ConversationsScreen
 ///     /profile        → ProfileScreen
 ///
@@ -134,6 +137,22 @@ final routerProvider = Provider<GoRouter>((ref) {
           scrollToComments: state.uri.queryParameters['comments'] == '1',
           highlightCommentId: state.uri.queryParameters['comment'],
         ),
+      ),
+      // Tedavi arşivi; karttan gelince tedavi ve Hero etiketi extra ile taşınır.
+      GoRoute(
+        path: '/treatment/:slug',
+        name: 'treatment',
+        builder: (context, state) {
+          final extra =
+              state.extra is ({CaseTreatment treatment, Object? heroTag})
+              ? state.extra as ({CaseTreatment treatment, Object? heroTag})
+              : null;
+          return TreatmentArchiveScreen(
+            slug: state.pathParameters['slug']!,
+            initial: extra?.treatment,
+            heroTag: extra?.heroTag,
+          );
+        },
       ),
       GoRoute(
         path: '/create-case',
@@ -231,6 +250,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               child: SearchScreen(
                 autofocus: state.uri.queryParameters['focus'] == '1',
                 tag: state.uri.queryParameters['tag'],
+                branch: state.uri.queryParameters['branch'],
               ),
             ),
           ),

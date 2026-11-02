@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:dentlink/data/models/case_treatment.dart';
 import 'package:dentlink/data/models/post_model.dart';
 import 'package:dentlink/data/models/enums.dart';
 import 'package:dentlink/data/models/tag_model.dart';
@@ -41,7 +42,7 @@ void main() {
       expect(post.isLiked, isFalse);
       expect(post.isBookmarked, isFalse);
       expect(post.tags, isEmpty);
-      expect(post.branch, isNull);
+      expect(post.treatments, isEmpty);
       expect(post.imageUrls, isEmpty);
     });
 
@@ -51,7 +52,7 @@ void main() {
         userId: 'author-1',
         title: 'Full Case',
         content: 'Full content',
-        branch: DentalBranch.endodonti,
+        treatments: [CaseTreatment.listed(TreatmentType.kanalTedavisi)],
         imageUrls: ['url1.jpg', 'url2.jpg'],
         tags: [testTag],
         likeCount: 10,
@@ -65,7 +66,7 @@ void main() {
         author: testAuthor,
       );
 
-      expect(post.branch, DentalBranch.endodonti);
+      expect(post.treatments.single.branch, DentalBranch.endodonti);
       expect(post.imageUrls, hasLength(2));
       expect(post.tags, hasLength(1));
       expect(post.likeCount, 10);
@@ -107,7 +108,7 @@ void main() {
         userId: 'author-1',
         title: 'Title',
         content: 'Content',
-        branch: DentalBranch.ortodonti,
+        treatments: [CaseTreatment.listed(TreatmentType.braket)],
         createdAt: DateTime(2024, 6, 1),
         updatedAt: DateTime(2024, 6, 1),
         author: testAuthor,
@@ -116,7 +117,7 @@ void main() {
       final copied = original.copyWith();
       expect(copied.id, original.id);
       expect(copied.title, original.title);
-      expect(copied.branch, original.branch);
+      expect(copied.treatments, original.treatments);
     });
 
     test('is PostModel (sealed class hierarchy)', () {
