@@ -120,7 +120,7 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
                   child: ListView.separated(
                     itemCount: filteredConversations.length,
                     separatorBuilder: (context, index) =>
-                        const Divider(height: 1, indent: 88),
+                        const Divider(height: 1),
                     itemBuilder: (context, index) {
                       final conversation = filteredConversations[index];
 
