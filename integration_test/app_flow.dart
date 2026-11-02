@@ -66,7 +66,7 @@ Future<void> runAppFlow(WidgetTester tester) async {
   await _tapAndSettle(tester, find.byIcon(CupertinoIcons.chat_bubble).first);
   expect(find.text('Tartışma'), findsOneWidget);
   await tester.enterText(find.byType(TextField).last, 'Harika vaka');
-  await _tapAndSettle(tester, find.byTooltip('Gönder'));
+  await _tapAndSettle(tester, find.text('Paylaş'));
   expect(find.text('Harika vaka'), findsOneWidget);
   // Tam ekran: dışarısı yok, aşağı sürükleyince kapanır.
   await tester.fling(find.text('Tartışma'), const Offset(0, 500), 1500);

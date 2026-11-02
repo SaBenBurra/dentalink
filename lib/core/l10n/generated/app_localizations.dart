@@ -848,6 +848,18 @@ abstract class AppLocalizations {
   /// **'En İyi Cevap'**
   String get bestAnswer;
 
+  /// Vaka sahibinin yorumunda isim yanındaki rozet
+  ///
+  /// In tr, this message translates to:
+  /// **'Vaka Sahibi'**
+  String get caseOwnerBadge;
+
+  /// Forum postu sahibinin yorumunda isim yanındaki rozet
+  ///
+  /// In tr, this message translates to:
+  /// **'Yazar'**
+  String get postAuthorBadge;
+
   /// En iyi cevap işaretle butonu
   ///
   /// In tr, this message translates to:

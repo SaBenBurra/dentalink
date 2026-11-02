@@ -155,6 +155,8 @@
   },
 
   "bestAnswer": "Best Answer",
+  "caseOwnerBadge": "Case owner",
+  "postAuthorBadge": "Author",
   "markAsBestAnswer": "Mark as Best Answer",
   "writeComment": "Write a comment...",
   "sendMessage": "Send",

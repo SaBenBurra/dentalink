@@ -10,6 +10,7 @@ import '../../../../providers/auth_provider.dart';
 import '../../../../providers/comment_provider.dart';
 import '../../../../shared/utils/error_messages.dart';
 import '../../../../shared/widgets/load_more_footer.dart';
+import '../../../../shared/widgets/user_avatar.dart';
 import 'comment_card.dart';
 import 'comment_thread.dart';
 
@@ -107,8 +108,9 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
     final textTheme = Theme.of(context).textTheme;
     final postId = widget.post.id;
     final commentsAsync = ref.watch(commentsProvider(postId));
-    final isPostOwner =
-        ref.watch(currentUserProvider)?.id == widget.post.userId;
+    final me = ref.watch(currentUserProvider);
+    final isPostOwner = me?.id == widget.post.userId;
+    final colorScheme = Theme.of(context).colorScheme;
 
     final title = Text(
       _isCase ? l10n.discussion : l10n.commentsTitle,
@@ -161,19 +163,10 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
                   return ListView.separated(
                     physics: const AlwaysScrollableScrollPhysics(),
                     itemCount: offset + comments.length + (hasMore ? 1 : 0),
-                    // Yalnızca alt pay: üstteki boşluğu beğeni satırının iç payı (12dp) veriyor,
-                    // böylece çizgiden yoruma iki yönde de 12dp kalıyor.
+                    // Kutusuz akış: yorumlar arasında yalnızca boşluk.
                     separatorBuilder: (_, i) => i < offset
                         ? const SizedBox.shrink()
-                        : const Padding(
-                            padding: EdgeInsets.fromLTRB(
-                              AppDimensions.spacing16,
-                              0,
-                              AppDimensions.spacing16,
-                              AppDimensions.spacing8,
-                            ),
-                            child: Divider(height: 1),
-                          ),
+                        : const SizedBox(height: AppDimensions.spacing16),
                     itemBuilder: (context, i) {
                       if (i < offset) return leading[i];
                       final index = i - offset;
@@ -190,6 +183,10 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
                                 allowsBestAnswer:
                                     widget.post.type.allowsBestAnswer,
                                 onReply: _startReply,
+                                postAuthorId: widget.post.userId,
+                                authorBadge: _isCase
+                                    ? l10n.caseOwnerBadge
+                                    : l10n.postAuthorBadge,
                               ),
                       );
                     },
@@ -262,12 +259,20 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
                   AppDimensions.spacing16,
-                  AppDimensions.spacing4,
-                  AppDimensions.spacing4,
-                  AppDimensions.spacing4,
+                  AppDimensions.spacing8,
+                  AppDimensions.spacing8,
+                  AppDimensions.spacing8,
                 ),
                 child: Row(
                   children: [
+                    if (me != null) ...[
+                      UserAvatar(
+                        name: me.fullName,
+                        imageUrl: me.avatarUrl,
+                        size: AvatarSize.small,
+                      ),
+                      const SizedBox(width: AppDimensions.spacing10),
+                    ],
                     Expanded(
                       child: TextField(
                         controller: _controller,
@@ -282,17 +287,36 @@ class _CommentsSheetState extends ConsumerState<CommentsSheet> {
                               : _isCase
                               ? l10n.joinDiscussionHint
                               : l10n.writeComment,
-                          border: InputBorder.none,
+                          hintStyle: textTheme.bodySmall,
+                          isDense: true,
+                          // En az 48dp dokunma alanı (UX-14).
+                          constraints: const BoxConstraints(minHeight: 48),
+                          filled: true,
+                          fillColor: colorScheme.surfaceContainerHighest,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: AppDimensions.spacing16,
+                            vertical: AppDimensions.spacing12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.radiusRound,
+                            ),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
+                        style: textTheme.bodyMedium,
                         textInputAction: TextInputAction.send,
                         onSubmitted: (_) => _submit(),
                       ),
                     ),
-                    IconButton(
-                      tooltip: l10n.sendMessage,
-                      icon: const Icon(Icons.send_rounded),
-                      color: Theme.of(context).colorScheme.primary,
+                    TextButton(
                       onPressed: _isSubmitting ? null : _submit,
+                      style: TextButton.styleFrom(
+                        textStyle: textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      child: Text(l10n.share),
                     ),
                   ],
                 ),

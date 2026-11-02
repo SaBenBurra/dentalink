@@ -405,6 +405,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bestAnswer => 'Best Answer';
 
   @override
+  String get caseOwnerBadge => 'Case owner';
+
+  @override
+  String get postAuthorBadge => 'Author';
+
+  @override
   String get markAsBestAnswer => 'Mark as Best Answer';
 
   @override

@@ -405,6 +405,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get bestAnswer => 'En İyi Cevap';
 
   @override
+  String get caseOwnerBadge => 'Vaka Sahibi';
+
+  @override
+  String get postAuthorBadge => 'Yazar';
+
+  @override
   String get markAsBestAnswer => 'En İyi Cevap Seç';
 
   @override

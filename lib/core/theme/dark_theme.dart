@@ -210,6 +210,18 @@ ThemeData buildDarkTheme() {
     ),
 
     // ── BottomSheet ──
+    // ── Popup menü ──
+    // Şemada surfaceContainer yok; varsayılan renk surface olup sayfayla karışıyordu.
+    popupMenuTheme: PopupMenuThemeData(
+      color: colorScheme.surfaceContainerHighest,
+      surfaceTintColor: Colors.transparent,
+      elevation: 6,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
+        side: BorderSide(color: colorScheme.outlineVariant),
+      ),
+    ),
+
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: AppColors.darkSurface,
       surfaceTintColor: Colors.transparent,

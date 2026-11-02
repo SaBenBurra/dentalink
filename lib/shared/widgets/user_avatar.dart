@@ -8,6 +8,9 @@ import '../../core/constants/app_text_styles.dart';
 ///
 /// Her değer [AppDimensions] içindeki avatar boyutlarına karşılık gelir.
 enum AvatarSize {
+  /// 24px — Yorum yanıtları.
+  xSmall(AppDimensions.avatarXSmall),
+
   /// 32px — Yorum listesi, küçük kullanıcı referansları.
   small(AppDimensions.avatarSmall),
 

@@ -366,6 +366,10 @@
 
   "bestAnswer": "En İyi Cevap",
   "@bestAnswer": { "description": "En iyi cevap rozeti" },
+  "caseOwnerBadge": "Vaka Sahibi",
+  "@caseOwnerBadge": { "description": "Vaka sahibinin yorumunda isim yanındaki rozet" },
+  "postAuthorBadge": "Yazar",
+  "@postAuthorBadge": { "description": "Forum postu sahibinin yorumunda isim yanındaki rozet" },
 
   "markAsBestAnswer": "En İyi Cevap Seç",
   "@markAsBestAnswer": { "description": "En iyi cevap işaretle butonu" },

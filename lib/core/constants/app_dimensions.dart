@@ -33,6 +33,7 @@ abstract final class AppDimensions {
   // ────────────────────────────────────────────
   // Avatar Boyutları
   // ────────────────────────────────────────────
+  static const double avatarXSmall = 24;
   static const double avatarSmall = 32;
   static const double avatarMedium = 40;
   static const double avatarLarge = 56;

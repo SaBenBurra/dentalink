@@ -94,7 +94,11 @@ class ModerationMenuButton extends ConsumerWidget {
     required this.userId,
     this.postId,
     this.onBlocked,
+    this.compact = false,
   });
+
+  /// Yorum aksiyon satırı için küçük yatay ikon.
+  final bool compact;
 
   final ReportTarget target;
   final String targetId;
@@ -109,7 +113,16 @@ class ModerationMenuButton extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     return PopupMenuButton<PostMenuAction>(
       tooltip: l10n.moreOptions,
-      icon: const Icon(Icons.more_vert),
+      icon: compact
+          ? const Icon(Icons.more_horiz, size: 16)
+          : const Icon(Icons.more_vert),
+      style: compact
+          ? IconButton.styleFrom(
+              minimumSize: const Size(32, 32),
+              padding: EdgeInsets.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            )
+          : null,
       // Varsayılan 300ms küçük bir menü için ağır geliyor.
       popUpAnimationStyle: const AnimationStyle(
         duration: Duration(milliseconds: 150),
@@ -137,24 +150,32 @@ class ModerationMenuButton extends ConsumerWidget {
 List<PopupMenuEntry<PostMenuAction>> moderationMenuItems(BuildContext context) {
   final l10n = AppLocalizations.of(context)!;
   final error = Theme.of(context).colorScheme.error;
+  final textStyle = Theme.of(context).textTheme.bodyMedium;
+  // Varsayılan 48dp yükseklik ve 20px ikon iki öğelik menüde iri duruyor.
+  const height = 40.0;
+  const padding = EdgeInsets.symmetric(horizontal: AppDimensions.spacing12);
   return [
     PopupMenuItem(
       value: PostMenuAction.report,
+      height: height,
+      padding: padding,
       child: Row(
         children: [
-          const Icon(Icons.flag_outlined, size: 20),
+          const Icon(Icons.flag_outlined, size: 18),
           const SizedBox(width: AppDimensions.spacing8),
-          Text(l10n.report),
+          Text(l10n.report, style: textStyle),
         ],
       ),
     ),
     PopupMenuItem(
       value: PostMenuAction.block,
+      height: height,
+      padding: padding,
       child: Row(
         children: [
-          Icon(Icons.block_outlined, size: 20, color: error),
+          Icon(Icons.block_outlined, size: 18, color: error),
           const SizedBox(width: AppDimensions.spacing8),
-          Text(l10n.blockUser, style: TextStyle(color: error)),
+          Text(l10n.blockUser, style: textStyle?.copyWith(color: error)),
         ],
       ),
     ),

@@ -22,6 +22,8 @@ class CommentThread extends StatefulWidget {
     required this.isPostOwner,
     required this.allowsBestAnswer,
     required this.onReply,
+    this.postAuthorId,
+    this.authorBadge,
     this.depth = 0,
   });
 
@@ -32,6 +34,8 @@ class CommentThread extends StatefulWidget {
   final bool isPostOwner;
   final bool allowsBestAnswer;
   final CommentReplyCallback onReply;
+  final String? postAuthorId;
+  final String? authorBadge;
   final int depth;
 
   @override
@@ -61,6 +65,8 @@ class _CommentThreadState extends State<CommentThread>
       postId: comment.postId,
       isPostOwner: widget.isPostOwner,
       allowsBestAnswer: widget.allowsBestAnswer,
+      postAuthorId: widget.postAuthorId,
+      authorBadge: widget.authorBadge,
       onReply: () => widget.onReply(comment, () {
         if (mounted) _setExpanded(true);
       }),
@@ -75,14 +81,17 @@ class _CommentThreadState extends State<CommentThread>
       children: [
         card,
         Padding(
-          // Çizgi ebeveynin avatar merkezinden iner (kart iç boşluğu + avatar/2).
+          // Yanıtlar ebeveynin metin sütununun hizasından başlar (avatar + boşluk).
           padding: EdgeInsets.only(
-            left: indent
-                ? AppDimensions.spacing8 + AppDimensions.avatarSmall / 2 - 1
-                : 0,
+            left: !indent
+                ? 0
+                : comment.parentId == null
+                ? AppDimensions.avatarSmall + AppDimensions.spacing12
+                : AppDimensions.avatarXSmall + AppDimensions.spacing10,
+            top: AppDimensions.spacing4,
           ),
           child: DecoratedBox(
-            // Reddit tarzı thread çizgisi.
+            // İnce thread çizgisi.
             decoration: BoxDecoration(
               border: Border(
                 left: BorderSide(
@@ -92,12 +101,14 @@ class _CommentThreadState extends State<CommentThread>
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.only(left: AppDimensions.spacing8),
+              padding: const EdgeInsets.only(left: AppDimensions.spacing12),
               child: _Replies(
                 thread: (postId: comment.postId, parentId: comment.id),
                 isPostOwner: widget.isPostOwner,
                 allowsBestAnswer: widget.allowsBestAnswer,
                 onReply: widget.onReply,
+                postAuthorId: widget.postAuthorId,
+                authorBadge: widget.authorBadge,
                 depth: widget.depth + 1,
               ),
             ),
@@ -114,6 +125,8 @@ class _Replies extends ConsumerWidget {
     required this.isPostOwner,
     required this.allowsBestAnswer,
     required this.onReply,
+    required this.postAuthorId,
+    required this.authorBadge,
     required this.depth,
   });
 
@@ -121,6 +134,8 @@ class _Replies extends ConsumerWidget {
   final bool isPostOwner;
   final bool allowsBestAnswer;
   final CommentReplyCallback onReply;
+  final String? postAuthorId;
+  final String? authorBadge;
   final int depth;
 
   @override
@@ -135,13 +150,20 @@ class _Replies extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 for (final reply in replies)
-                  CommentThread(
+                  Padding(
                     key: ValueKey(reply.id),
-                    comment: reply,
-                    isPostOwner: isPostOwner,
-                    allowsBestAnswer: allowsBestAnswer,
-                    onReply: onReply,
-                    depth: depth,
+                    padding: const EdgeInsets.only(
+                      bottom: AppDimensions.spacing12,
+                    ),
+                    child: CommentThread(
+                      comment: reply,
+                      isPostOwner: isPostOwner,
+                      allowsBestAnswer: allowsBestAnswer,
+                      onReply: onReply,
+                      postAuthorId: postAuthorId,
+                      authorBadge: authorBadge,
+                      depth: depth,
+                    ),
                   ),
                 if (notifier.hasMore)
                   LoadMoreFooter(onLoadMore: notifier.loadMore, auto: false),

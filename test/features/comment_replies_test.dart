@@ -111,7 +111,7 @@ void main() {
     expect(find.text('Replying to Bora'), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'deep reply');
-    await tester.tap(find.byIcon(Icons.send_rounded));
+    await tester.tap(find.text('Share'));
     await tester.pumpAndSettle();
 
     expect(repo.added, ['r1']);

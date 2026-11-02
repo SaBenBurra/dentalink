@@ -14,6 +14,7 @@ import '../../../../../shared/utils/moderation_actions.dart';
 import '../../../../../providers/auth_provider.dart';
 import '../../../../../data/models/enums.dart';
 
+/// Yorumun sağındaki kalp; sayı aksiyon satırında "N beğeni" olarak yazılır.
 class CommentLikeButton extends StatelessWidget {
   const CommentLikeButton({
     super.key,
@@ -26,73 +27,117 @@ class CommentLikeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final color = comment.isLiked ? AppColors.like : cs.onSurfaceVariant;
-    return Semantics(
-      button: true,
-      label: comment.isLiked
+    return IconButton(
+      tooltip: comment.isLiked
           ? AppLocalizations.of(context)!.unlike
           : AppLocalizations.of(context)!.like,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 40, minWidth: 40),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                comment.isLiked
-                    ? Icons.favorite_rounded
-                    : Icons.favorite_border_rounded,
-                size: 16,
-                color: color,
-              ),
-              const SizedBox(width: AppDimensions.spacing4),
-              Text(
-                '${comment.likeCount}',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: color,
-                  fontWeight: comment.isLiked
-                      ? FontWeight.bold
-                      : FontWeight.normal,
-                ),
-              ),
-            ],
-          ),
-        ),
+      onPressed: onTap,
+      icon: Icon(
+        comment.isLiked
+            ? Icons.favorite_rounded
+            : Icons.favorite_border_rounded,
+        size: comment.parentId == null ? 16 : 14,
+        color: comment.isLiked ? AppColors.like : cs.outline,
+      ),
+      constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+      padding: EdgeInsets.zero,
+      style: IconButton.styleFrom(
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
     );
   }
 }
 
-/// Yorumun aksiyon satırındaki küçük metinli buton (Yanıtla, yanıtları göster).
+/// Aksiyon satırındaki küçük metin butonu (Yanıtla, En İyi Cevap…).
 class _CommentTextAction extends StatelessWidget {
   const _CommentTextAction({
-    required this.icon,
     required this.label,
     required this.onPressed,
     this.color,
   });
 
-  final IconData icon;
   final String label;
   final VoidCallback onPressed;
   final Color? color;
 
   @override
   Widget build(BuildContext context) {
-    return TextButton.icon(
+    return TextButton(
       onPressed: onPressed,
-      icon: Icon(icon, size: 16),
-      label: Text(label, style: const TextStyle(fontSize: 11)),
       style: TextButton.styleFrom(
         foregroundColor:
             color ?? Theme.of(context).colorScheme.onSurfaceVariant,
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing8),
-        minimumSize: const Size(40, 40), // 40px touch target
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap, // satır 48'e şişmesin
+        textStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing6),
+        minimumSize: const Size(32, 32),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap, // satır şişmesin
+      ),
+      child: Text(label),
+    );
+  }
+}
+
+/// Instagram tarzı "—— N yanıtı göster" satırı.
+class _RepliesToggle extends StatelessWidget {
+  const _RepliesToggle({required this.label, required this.onPressed});
+
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 32),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(width: 24, height: 1, color: cs.outlineVariant),
+            const SizedBox(width: AppDimensions.spacing8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: cs.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// "Vaka Sahibi" / "Yazar" rozeti: yorumu postun sahibi yazdıysa.
+class _AuthorBadge extends StatelessWidget {
+  const _AuthorBadge(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.spacing6,
+        vertical: 1,
+      ),
+      decoration: BoxDecoration(
+        color: cs.primaryContainer.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: cs.primary.withValues(alpha: 0.25)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 9,
+          fontWeight: FontWeight.bold,
+          color: cs.primary,
+        ),
       ),
     );
   }
@@ -172,12 +217,18 @@ class CommentCard extends ConsumerWidget {
   final bool repliesExpanded;
   final VoidCallback? onToggleReplies;
 
+  /// Yorumu postun sahibi yazdıysa isminin yanında [authorBadge] gösterilir.
+  final String? postAuthorId;
+  final String? authorBadge;
+
   const CommentCard({
     super.key,
     required this.comment,
     required this.postId,
     required this.isPostOwner,
     this.allowsBestAnswer = false,
+    this.postAuthorId,
+    this.authorBadge,
     this.onReply,
     this.repliesExpanded = false,
     this.onToggleReplies,
@@ -225,85 +276,101 @@ class CommentCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
     final showBest = comment.isBestAnswer && allowsBestAnswer;
+    final isReply = comment.parentId != null;
 
-    final authorName = comment.author?.fullName ?? l10n.deletedUser;
-    final titleName = comment.author?.title.displayName(context) ?? '';
+    final author = comment.author;
+    final authorName = author?.fullName ?? l10n.deletedUser;
+    final titleName = author?.title.displayName(context) ?? '';
     final isMine = ref.watch(currentUserProvider)?.id == comment.userId;
-    final metaStyle = textTheme.bodySmall?.copyWith(
+    final isAuthor =
+        authorBadge != null &&
+        postAuthorId != null &&
+        comment.userId == postAuthorId;
+    final metaStyle = TextStyle(
+      fontSize: isReply ? 10 : 11,
       color: colorScheme.onSurfaceVariant,
-      fontSize: 11,
+    );
+    void openProfile() => context.push('/profile/${author!.id}');
+
+    final avatar = UserAvatar(
+      name: authorName,
+      imageUrl: author?.avatarUrl,
+      size: isReply ? AvatarSize.xSmall : AvatarSize.small,
     );
 
-    // Tek satırlık başlık: avatar, isim · unvan · zaman ve menü aynı eksende ortalı.
-    final header = SizedBox(
-      height: 40, // aksiyon butonlarıyla aynı dokunma alanı
-      child: Row(
-        children: [
-          // Dokunulabilir avatar 48dp alanda ortalı; fotoğrafı metnin sol kenarına çek.
-          Transform.translate(
-            offset: Offset(
-              comment.author == null
-                  ? 0
-                  : -(AppDimensions.spacing48 - AppDimensions.avatarSmall) / 2,
-              0,
-            ),
-            child: UserAvatar(
-              name: authorName,
-              imageUrl: comment.author?.avatarUrl,
-              size: AvatarSize.small,
-              onTap: comment.author == null
-                  ? null
-                  : () => context.push('/profile/${comment.author!.id}'),
+    final header = Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppDimensions.spacing6,
+      children: [
+        GestureDetector(
+          onTap: author == null ? null : openProfile,
+          child: Text(
+            authorName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: isReply ? 11 : 12,
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
             ),
           ),
-          // Dokunulabilir avatarda bu boşluğu 48dp alanın sağ payı veriyor.
-          if (comment.author == null)
-            const SizedBox(width: AppDimensions.spacing16),
-          Expanded(
-            child: Row(
-              children: [
-                // Uzun isim önce unvanı keser; zaman her zaman görünür.
-                Flexible(
-                  child: Text.rich(
-                    TextSpan(
-                      text: authorName,
-                      style: textTheme.labelMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onSurface,
-                      ),
-                      children: [
-                        if (titleName.isNotEmpty)
-                          TextSpan(text: ' · $titleName', style: metaStyle),
-                      ],
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Text(' · ', style: metaStyle),
-                RelativeTimeText(dateTime: comment.createdAt, style: metaStyle),
-              ],
+        ),
+        if (isAuthor) _AuthorBadge(authorBadge!),
+        if (titleName.isNotEmpty)
+          Text(
+            '· $titleName',
+            style: metaStyle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+      ],
+    );
+
+    final actions = Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: AppDimensions.spacing6),
+          child: RelativeTimeText(
+            dateTime: comment.createdAt,
+            style: metaStyle,
+          ),
+        ),
+        if (comment.likeCount > 0)
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.spacing6,
+            ),
+            child: Text(
+              l10n.likesCount(comment.likeCount),
+              style: metaStyle.copyWith(fontWeight: FontWeight.w500),
             ),
           ),
-          if (!isMine)
-            ModerationMenuButton(
-              target: ReportTarget.comment,
-              targetId: comment.id,
-              userId: comment.userId,
-              postId: postId,
-            ),
-        ],
-      ),
+        if (onReply != null)
+          _CommentTextAction(label: l10n.reply, onPressed: onReply!),
+        // En iyi cevap yalnızca üst seviye yorum olabilir (026).
+        if (isPostOwner && allowsBestAnswer && !isReply)
+          _CommentTextAction(
+            label: showBest ? l10n.unmarkSelection : l10n.markAsBestAnswer,
+            onPressed: () => _handleMarkBest(context, ref),
+            color: showBest ? colorScheme.onSurfaceVariant : AppColors.success,
+          ),
+        if (!isMine)
+          ModerationMenuButton(
+            target: ReportTarget.comment,
+            targetId: comment.id,
+            userId: comment.userId,
+            postId: postId,
+            compact: true,
+          ),
+      ],
     );
 
     return Container(
-      // Üst seviyede boşluğu ayırıcı veriyor (comments_sheet).
-      margin: EdgeInsets.only(
-        bottom: comment.parentId == null ? 0 : AppDimensions.spacing8,
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing8),
+      padding: showBest
+          ? const EdgeInsets.all(AppDimensions.spacing8)
+          : EdgeInsets.zero,
       decoration: showBest
           ? BoxDecoration(
               color: AppColors.success.withValues(alpha: 0.08),
@@ -313,66 +380,53 @@ class CommentCard extends ConsumerWidget {
               ),
             )
           : null,
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          header,
-          if (showBest)
-            const Padding(
-              padding: EdgeInsets.only(bottom: AppDimensions.spacing4),
-              child: _BestAnswerBadge(),
-            ),
-          Text(
-            comment.content,
-            style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurface,
-              height: 1.4,
+          Semantics(
+            button: author != null,
+            label: authorName,
+            child: GestureDetector(
+              onTap: author == null ? null : openProfile,
+              child: avatar,
             ),
           ),
-          Row(
-            children: [
-              // Derin yanıtlarda dar kalınca alt satıra geçer.
-              Expanded(
-                child: Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    CommentLikeButton(
-                      comment: comment,
-                      onTap: () => _handleToggleLike(context, ref),
-                    ),
-                    if (onReply != null)
-                      _CommentTextAction(
-                        icon: Icons.reply_rounded,
-                        label: l10n.reply,
-                        onPressed: onReply!,
-                      ),
-                    if (comment.replyCount > 0 && onToggleReplies != null)
-                      _CommentTextAction(
-                        icon: repliesExpanded
-                            ? Icons.expand_less_rounded
-                            : Icons.expand_more_rounded,
-                        label: repliesExpanded
-                            ? l10n.hideReplies
-                            : l10n.showReplies(comment.replyCount),
-                        onPressed: onToggleReplies!,
-                        color: colorScheme.primary,
-                      ),
-                  ],
+          SizedBox(
+            width: isReply ? AppDimensions.spacing10 : AppDimensions.spacing12,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                header,
+                if (showBest)
+                  const Padding(
+                    padding: EdgeInsets.only(top: AppDimensions.spacing4),
+                    child: _BestAnswerBadge(),
+                  ),
+                const SizedBox(height: AppDimensions.spacing2),
+                Text(
+                  comment.content,
+                  style: TextStyle(
+                    fontSize: isReply ? 11 : 12,
+                    height: 1.6,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
-              ),
-              // En iyi cevap yalnızca üst seviye yorum olabilir (026).
-              if (isPostOwner && allowsBestAnswer && comment.parentId == null)
-                _CommentTextAction(
-                  icon: showBest ? Icons.close_rounded : Icons.verified_rounded,
-                  label: showBest
-                      ? l10n.unmarkSelection
-                      : l10n.markAsBestAnswer,
-                  onPressed: () => _handleMarkBest(context, ref),
-                  color: showBest
-                      ? colorScheme.onSurfaceVariant
-                      : AppColors.success,
-                ),
-            ],
+                actions,
+                if (comment.replyCount > 0 && onToggleReplies != null)
+                  _RepliesToggle(
+                    label: repliesExpanded
+                        ? l10n.hideReplies
+                        : l10n.showReplies(comment.replyCount),
+                    onPressed: onToggleReplies!,
+                  ),
+              ],
+            ),
+          ),
+          CommentLikeButton(
+            comment: comment,
+            onTap: () => _handleToggleLike(context, ref),
           ),
         ],
       ),
