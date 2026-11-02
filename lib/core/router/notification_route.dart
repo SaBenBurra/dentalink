@@ -19,9 +19,11 @@ String? notificationRoute({
   }
   if (postId == null || postId.isEmpty) return null;
   // Yükleme, "bulunamadı" ve hata durumlarını PostScreen gösterir.
-  // Yorum, cevap, yorum beğenisi ve en iyi cevap bildirimleri yorumları açık getirir.
-  final comments = commentId != null && commentId.isNotEmpty
-      ? '?comments=1'
-      : '';
-  return '/post/$postId$comments';
+  // Yorum, cevap, yorum beğenisi ve en iyi cevap bildirimleri yorumlara kaydırıp
+  // ilgili yorumu vurgular.
+  if (commentId == null || commentId.isEmpty) return '/post/$postId';
+  return Uri(
+    path: '/post/$postId',
+    queryParameters: {'comments': '1', 'comment': commentId},
+  ).toString();
 }

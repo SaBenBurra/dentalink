@@ -60,7 +60,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noResults => 'No results found.';
 
   @override
-  String get postNotFound => 'Post not found.';
+  String get postNotFound => 'This post is no longer available.';
 
   @override
   String get postLoadError => 'Error loading post.';

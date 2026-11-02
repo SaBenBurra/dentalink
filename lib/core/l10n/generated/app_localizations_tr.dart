@@ -60,7 +60,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get noResults => 'Sonuç bulunamadı.';
 
   @override
-  String get postNotFound => 'Gönderi bulunamadı.';
+  String get postNotFound => 'Bu gönderi artık mevcut değil.';
 
   @override
   String get postLoadError => 'Gönderi yüklenirken hata oluştu.';

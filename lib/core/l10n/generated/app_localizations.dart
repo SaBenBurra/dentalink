@@ -203,7 +203,7 @@ abstract class AppLocalizations {
   /// Gönderi bulunamadı hata mesajı
   ///
   /// In tr, this message translates to:
-  /// **'Gönderi bulunamadı.'**
+  /// **'Bu gönderi artık mevcut değil.'**
   String get postNotFound;
 
   /// Gönderi yükleme hata mesajı

@@ -25,6 +25,7 @@ import '../../features/settings/screens/legal_screen.dart';
 import '../../features/bookmarks/screens/bookmarks_screen.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import '../../providers/auth_provider.dart';
+import '../../data/models/post_model.dart';
 import '../../data/models/user_model.dart';
 
 /// Auth durumu değişince GoRouter redirect'ini yeniden çalıştırır.
@@ -73,7 +74,7 @@ String? resolveAuthRedirect({
 /// Navigasyon yapısı:
 ///   /login            → LoginScreen
 ///   /register         → RegisterScreen
-///   /post/:id         → PostScreen (tek post kartı)
+///   /post/:id         → PostScreen (post + yorumlar; ?comments=1, ?comment=<id>)
 ///   /                 → redirect → /login
 ///   ShellRoute        → MainShell (bottom nav)
 ///     /feed           → FeedScreen
@@ -127,7 +128,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'post',
         builder: (context, state) => PostScreen(
           postId: state.pathParameters['id']!,
-          openComments: state.uri.queryParameters['comments'] == '1',
+          initialPost: state.extra is PostModel
+              ? state.extra as PostModel
+              : null,
+          scrollToComments: state.uri.queryParameters['comments'] == '1',
+          highlightCommentId: state.uri.queryParameters['comment'],
         ),
       ),
       GoRoute(

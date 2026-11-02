@@ -5,9 +5,8 @@ import '../data/providers/repository_providers.dart';
 import '../core/error/app_failures.dart';
 import '../core/utils/paging.dart';
 import '../data/models/post_model.dart';
-import 'feed_provider.dart';
+import 'auth_provider.dart';
 import 'post_provider.dart';
-import 'search_provider.dart';
 
 /// Bir yorumun yanıt listesinin anahtarı.
 typedef ReplyThread = ({String postId, String parentId});
@@ -96,15 +95,13 @@ abstract class CommentThreadNotifier<A>
   /// çekilmeden +1 olur.
   void _bumpCommentCount() {
     PostModel bump(PostModel p) => p.copyWith(commentCount: p.commentCount + 1);
+    String? authorId;
     if (ref.exists(postDetailProvider(postId))) {
-      ref.read(postDetailProvider(postId).notifier).patch(bump);
+      final detail = ref.read(postDetailProvider(postId).notifier);
+      authorId = detail.state.valueOrNull?.userId;
+      detail.patch(bump);
     }
-    if (ref.exists(feedProvider)) {
-      ref.read(feedProvider.notifier).patchPost(postId, bump);
-    }
-    if (ref.exists(searchProvider)) {
-      ref.read(searchProvider.notifier).patchPost(postId, bump);
-    }
+    patchPostCopies(ref, postId, authorId, bump);
   }
 
   /// Engellenen kullanıcının yorumları listeden düşer (sayaç DB'de değişmez).
@@ -249,3 +246,10 @@ CommentThreadNotifier<Object> commentThreadOf(
           )).notifier,
         );
 }
+
+/// Gönderilmemiş yorum taslakları (post id → metin): post sayfasından çıkıp
+/// geri gelince yarım yorum kaybolmaz. Kullanıcı değişince (çıkış) temizlenir.
+final commentDraftsProvider = Provider<Map<String, String>>((ref) {
+  ref.watch(currentUserProvider.select((u) => u?.id));
+  return {};
+});

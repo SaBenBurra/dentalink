@@ -1,5 +1,5 @@
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/features/post/widgets/comments/comments_sheet.dart';
+import 'package:dentlink/shared/utils/post_actions.dart';
 import 'package:flutter/material.dart';
 import '../../../shared/utils/error_messages.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -87,8 +87,8 @@ class BookmarksScreen extends ConsumerWidget {
                       () => notifier.toggleLike(post.id),
                     ),
                     onBookmarkToggle: () => _remove(context, ref, post, index),
-                    onCommentTap: () => openComments(context, post),
-                    onTap: () => context.push('/post/${post.id}'),
+                    onCommentTap: () => openPost(context, post, comments: true),
+                    onTap: () => openPost(context, post),
                   ),
                 );
               },

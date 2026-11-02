@@ -51,7 +51,7 @@
   "noResults": "Sonuç bulunamadı.",
   "@noResults": { "description": "Boş sonuç mesajı" },
 
-  "postNotFound": "Gönderi bulunamadı.",
+  "postNotFound": "Bu gönderi artık mevcut değil.",
   "@postNotFound": { "description": "Gönderi bulunamadı hata mesajı" },
 
   "postLoadError": "Gönderi yüklenirken hata oluştu.",

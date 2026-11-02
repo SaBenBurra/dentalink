@@ -14,6 +14,7 @@ class PostCardFactory {
     required VoidCallback onBookmarkToggle,
     VoidCallback? onCommentTap,
     VoidCallback? onTap,
+    bool expanded = false,
   }) {
     return switch (post.type) {
       PostType.casePost => CaseCard(
@@ -22,6 +23,7 @@ class PostCardFactory {
         onBookmarkToggle: onBookmarkToggle,
         onCommentTap: onCommentTap, // <-- Parametreden gelen değer
         onTap: onTap, // <-- Parametreden gelen değer
+        expanded: expanded,
       ),
       PostType.question => QuestionCard(
         post: post as QuestionPostModel,
@@ -29,6 +31,7 @@ class PostCardFactory {
         onBookmarkToggle: onBookmarkToggle,
         onCommentTap: onCommentTap, // <-- Parametreden gelen değer
         onTap: onTap,
+        expanded: expanded,
       ),
     };
   }

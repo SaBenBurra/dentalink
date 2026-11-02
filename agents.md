@@ -71,13 +71,14 @@ lib/
 | Tür | Alanlar | Not |
 |---|---|---|
 | **Vaka** | başlık, açıklama, branş (zorunlu, `DentalBranch`), tedavi türü (zorunlu, branşa göre, `TreatmentType` ya da "Diğer" + ad; etiketi posta sabit eklenir), etiketler, en fazla 10 görsel | Hasta mahremiyeti: yüz ve kimlik bilgisi içermemeli (paylaşırken onay kutusu zorunlu) |
-| **Forum** | başlık, içerik, etiketler (görsel yükleme henüz yok) | Soru şartı yok, serbest paylaşım alanı. Kodda ve DB'de adı hâlâ `question`. Kartına dokununca `/post/:id` açılır, yorumlar pencerede değil postun altında. "En İyi Cevap" (`mark_best_answer` RPC) forumda kapalı: `PostType.allowsBestAnswer`. |
+| **Forum** | başlık, içerik, etiketler (görsel yükleme henüz yok) | Soru şartı yok, serbest paylaşım alanı. Kodda ve DB'de adı hâlâ `question`. "En İyi Cevap" (`mark_best_answer` RPC) forumda kapalı: `PostType.allowsBestAnswer`. |
 | İş ilanı, pazar yeri | — | Yayın sonrası |
 
 **Branşlar** (`DentalBranch`): Pedodonti, Endodonti, Ortodonti, Periodontoloji, Protetik, Çene Cerrahisi, Çene Radyolojisi, Restoratif.
 
 ### Sosyal
 - Beğeni (post ve yorum), yorum ve cevap, takip, kaydetme (bookmark), bire bir DM (realtime), bildirimler.
+- **Tek dokunma kuralı (vaka ve forum aynı):** karta dokun → `/post/:id`; yorum ikonu → aynı sayfa, yorumlara kaydırılmış (klavye açılmaz); görsel → tam ekran galeri; çift dokunma → beğeni. Yorum için bottom sheet yok, yorumlar yalnızca post sayfasında. Liste kartı sayfaya `extra` ile taşınır (yükleniyor ekranı yok), sayfadaki beğeni/yorum `patchPostCopies` ile tüm listelere yansır. Yardımcı: `openPost` (`lib/shared/utils/post_actions.dart`).
 - Feed sekmeleri: Tümü / Vakalar / Forum. Sıralama kronolojik (algoritmik feed yayından sonra).
 - Arama: Türkçe full-text (başlık + içerik), kullanıcı arama, branş ve tür filtresi.
 - Moderasyon: raporla (post, yorum, kullanıcı), engelle (iki yönlü gizler), hesap silme. Kuyruk: `docs/SUPABASE.md` §6.

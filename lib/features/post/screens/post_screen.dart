@@ -2,8 +2,8 @@ import 'package:dentlink/core/constants/app_colors.dart';
 import 'package:dentlink/core/constants/app_dimensions.dart';
 import 'package:dentlink/core/error/app_failures.dart';
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/features/post/widgets/comments/comments_sheet.dart';
-import 'package:dentlink/data/models/enums.dart';
+import 'package:dentlink/data/models/post_model.dart';
+import 'package:dentlink/features/post/widgets/comments/post_comments.dart';
 import 'package:dentlink/features/post/widgets/detail/detail_states.dart';
 import 'package:dentlink/providers/comment_provider.dart';
 import 'package:dentlink/providers/post_provider.dart';
@@ -13,28 +13,44 @@ import 'package:dentlink/shared/widgets/post_card_factory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Tek postu feed'deki kartıyla gösterir (`/post/:id`): bildirimden, profilden,
-/// aramadan, kaydedilenlerden ve ileride deep link'ten açılır. Forum postunda
-/// yorumlar pencere yerine doğrudan kartın altında listelenir.
+/// Tek postu kartıyla ve yorumlarıyla gösterir (`/post/:id`): feed'de karta ya
+/// da yorum ikonuna dokununca, bildirimden ve linkten açılır. Vaka ve forum aynı
+/// davranır; yorumlar her zaman postun altında.
 class PostScreen extends ConsumerStatefulWidget {
   const PostScreen({
     super.key,
     required this.postId,
-    this.openComments = false,
+    this.initialPost,
+    this.scrollToComments = false,
+    this.highlightCommentId,
   });
 
   final String postId;
 
-  /// `?comments=1`: post yüklenince yorumlar penceresi bir kez açılır
-  /// (forum postunda yorumlar zaten açık).
-  final bool openComments;
+  /// Listeden açılınca elde olan kopya: sayfa yükleniyor ekranı olmadan çizilir.
+  final PostModel? initialPost;
+
+  /// `?comments=1`: açılışta yorumlara kaydırılır.
+  final bool scrollToComments;
+
+  /// `?comment=<id>`: bildirimdeki yorum vurgulanır.
+  final String? highlightCommentId;
 
   @override
   ConsumerState<PostScreen> createState() => _PostScreenState();
 }
 
 class _PostScreenState extends ConsumerState<PostScreen> {
-  late bool _commentsPending = widget.openComments;
+  final _commentsKey = GlobalKey<PostCommentsState>();
+
+  @override
+  void initState() {
+    super.initState();
+    final seed = widget.initialPost;
+    if (seed != null && !ref.exists(postDetailProvider(widget.postId))) {
+      ref.read(postSeedsProvider)[widget.postId] = seed;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,31 +69,16 @@ class _PostScreenState extends ConsumerState<PostScreen> {
         .when(
           loading: () => const PostDetailLoading(),
           error: (e, _) => PostDetailError(
-            message: getErrorMessage(l10n, e),
+            // Silinmiş ya da yazarı engellenmiş post aynı mesajı verir.
+            message: e is NotFoundFailure
+                ? l10n.postNotFound
+                : getErrorMessage(l10n, e),
             onRetry: e is NotFoundFailure
                 ? null
                 : () => ref.invalidate(provider),
           ),
           data: (post) {
             final notifier = ref.read(provider.notifier);
-            final inlineComments = post.type == PostType.question;
-            if (_commentsPending && !inlineComments) {
-              _commentsPending = false;
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted) openComments(context, post);
-              });
-            }
-            final card = PostCardFactory.build(
-              post,
-              onLikeToggle: () => runOrShowError(context, notifier.toggleLike),
-              onBookmarkToggle: () =>
-                  runOrShowError(context, notifier.toggleBookmark),
-              // Forum postunda yorumlar zaten kartın altında.
-              onCommentTap: inlineComments
-                  ? null
-                  : () => openComments(context, post),
-            );
-            Future<void> refresh() => ref.refresh(provider.future);
             final isDark = Theme.of(context).brightness == Brightness.dark;
             return Scaffold(
               backgroundColor: isDark
@@ -90,35 +91,31 @@ class _PostScreenState extends ConsumerState<PostScreen> {
                 titleSpacing: 0,
                 title: Text(post.type.getBadgeLabel(context)),
               ),
-              body: inlineComments
-                  ? RefreshIndicator(
-                      onRefresh: () {
-                        ref.invalidate(commentsProvider(post.id));
-                        return refresh();
-                      },
-                      child: CommentsSheet(
-                        post: post,
-                        header: Padding(
-                          padding: const EdgeInsets.only(
-                            top: AppDimensions.spacing8,
-                          ),
-                          child: card,
-                        ),
-                      ),
-                    )
-                  : RefreshIndicator(
-                      onRefresh: refresh,
-                      child: ListView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        padding: EdgeInsets.only(
-                          top: AppDimensions.spacing8,
-                          bottom:
-                              AppDimensions.spacing8 +
-                              MediaQuery.paddingOf(context).bottom,
-                        ),
-                        children: [card],
-                      ),
+              body: RefreshIndicator(
+                onRefresh: () {
+                  ref.invalidate(commentsProvider(post.id));
+                  return ref.refresh(provider.future);
+                },
+                child: PostComments(
+                  key: _commentsKey,
+                  post: post,
+                  scrollToComments: widget.scrollToComments,
+                  highlightCommentId: widget.highlightCommentId,
+                  header: Padding(
+                    padding: const EdgeInsets.only(top: AppDimensions.spacing8),
+                    child: PostCardFactory.build(
+                      post,
+                      expanded: true,
+                      onLikeToggle: () =>
+                          runOrShowError(context, notifier.toggleLike),
+                      onBookmarkToggle: () =>
+                          runOrShowError(context, notifier.toggleBookmark),
+                      onCommentTap: () =>
+                          _commentsKey.currentState?.focusInput(),
                     ),
+                  ),
+                ),
+              ),
             );
           },
         );

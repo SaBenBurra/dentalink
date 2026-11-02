@@ -1,8 +1,7 @@
 import 'package:dentlink/shared/widgets/post_card_factory.dart';
-import 'package:dentlink/features/post/widgets/comments/comments_sheet.dart';
+import 'package:dentlink/shared/utils/post_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../data/models/post_model.dart';
 import '../../../data/providers/repository_providers.dart';
@@ -81,8 +80,6 @@ class ProfilePostsTab extends ConsumerWidget {
               }
               final post = posts[index];
 
-              final routePath = '/post/${post.id}';
-
               return PostCardFactory.build(
                 post,
                 onLikeToggle: () => _run(context, ref, () {
@@ -97,8 +94,8 @@ class ProfilePostsTab extends ConsumerWidget {
                       ? repo.unbookmarkPost(post.id)
                       : repo.bookmarkPost(post.id);
                 }),
-                onCommentTap: () => openComments(context, post),
-                onTap: () => context.push(routePath),
+                onCommentTap: () => openPost(context, post, comments: true),
+                onTap: () => openPost(context, post),
               );
             },
           ),

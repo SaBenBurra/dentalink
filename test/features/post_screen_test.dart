@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
-import 'package:flutter/material.dart' show AppBar;
+import 'package:flutter/material.dart';
 import 'package:dentlink/features/post/screens/post_screen.dart';
-import 'package:dentlink/features/post/widgets/comments/comments_sheet.dart';
+import 'package:dentlink/features/post/widgets/comments/post_comments.dart';
+import 'package:dentlink/features/post/widgets/detail/detail_states.dart';
 import 'package:dentlink/data/providers/repository_providers.dart';
 import 'package:dentlink/providers/post_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,46 +21,64 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('/post/:id postu kartıyla gösterir, yorumlar pencerede açılır', (
+  Finder inPage(Finder f) =>
+      find.descendant(of: find.byType(PostScreen), matching: f);
+
+  TextField commentField(WidgetTester tester) =>
+      tester.widget<TextField>(inPage(find.byType(TextField)).last);
+
+  testWidgets('/post/:id postu kartıyla ve altında yorumlarıyla gösterir', (
     tester,
   ) async {
     await openPost(tester);
-    final page = find.byType(PostScreen);
-    expect(page, findsOneWidget);
     expect(
       find.descendant(of: find.byType(AppBar), matching: find.text('Vaka')),
       findsOneWidget,
     );
-    expect(
-      find.descendant(of: page, matching: find.text(seedCase.title)),
-      findsOneWidget,
-    );
-
-    await tester.tap(
-      find.descendant(
-        of: page,
-        matching: find.byIcon(CupertinoIcons.chat_bubble),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.byType(CommentsSheet), findsOneWidget);
+    expect(inPage(find.text(seedCase.title)), findsOneWidget);
+    expect(inPage(find.byType(PostComments)), findsOneWidget);
+    expect(find.byType(BottomSheet), findsNothing);
   });
 
-  testWidgets('?comments=1 ile yorumlar penceresi kendiliğinden açılır', (
+  testWidgets('feed kartına dokununca sayfa yükleniyor ekranı olmadan açılır', (
     tester,
   ) async {
     await pumpDentLink(tester);
-    GoRouter.of(
-      tester.element(find.text(seedCase.title)),
-    ).push('/post/${seedCase.id}?comments=1');
+    await tester.tap(find.text(seedCase.title));
+    await tester.pump();
+    await tester.pump(); // geçiş başladı
+    expect(find.byType(PostDetailLoading), findsNothing);
+    expect(inPage(find.text(seedCase.title)), findsOneWidget);
     await tester.pumpAndSettle();
     expect(find.byType(PostScreen), findsOneWidget);
-    expect(find.byType(CommentsSheet), findsOneWidget);
   });
 
-  testWidgets('parametresiz açılışta yorumlar kapalı', (tester) async {
+  testWidgets('feed yorum ikonu sayfayı açar, klavye açılmaz', (tester) async {
+    await pumpDentLink(tester);
+    await tester.tap(find.byIcon(CupertinoIcons.chat_bubble).first);
+    await tester.pumpAndSettle();
+    expect(find.byType(PostScreen), findsOneWidget);
+    expect(find.byType(BottomSheet), findsNothing);
+    expect(commentField(tester).focusNode!.hasFocus, isFalse);
+  });
+
+  testWidgets('sayfadaki yorum ikonu giriş alanına odaklanır', (tester) async {
     await openPost(tester);
-    expect(find.byType(CommentsSheet), findsNothing);
+    await tester.tap(inPage(find.byIcon(CupertinoIcons.chat_bubble)));
+    await tester.pumpAndSettle();
+    expect(commentField(tester).focusNode!.hasFocus, isTrue);
+  });
+
+  testWidgets('yarım yorum sayfadan çıkıp dönünce korunur', (tester) async {
+    await openPost(tester);
+    await tester.enterText(inPage(find.byType(TextField)).last, 'yarım');
+    GoRouter.of(tester.element(find.byType(PostScreen))).pop();
+    await tester.pumpAndSettle();
+    GoRouter.of(
+      tester.element(find.text(seedCase.title)),
+    ).push('/post/${seedCase.id}');
+    await tester.pumpAndSettle();
+    expect(commentField(tester).controller!.text, 'yarım');
   });
 
   testWidgets('açık post silinince sayfa kapanır', (tester) async {
@@ -71,7 +90,15 @@ void main() {
     expect(find.byType(PostScreen), findsNothing);
   });
 
-  testWidgets('forum postunda yorumlar pencere değil, kartın altında', (
+  testWidgets('olmayan post: "mevcut değil" ve geri butonu', (tester) async {
+    await pumpDentLink(tester);
+    GoRouter.of(tester.element(find.text(seedCase.title))).push('/post/yok');
+    await tester.pumpAndSettle();
+    expect(find.text('Bu gönderi artık mevcut değil.'), findsOneWidget);
+    expect(find.text('Geri Dön'), findsOneWidget);
+  });
+
+  testWidgets('forum postu da aynı sayfada, yorumlar kartın altında', (
     tester,
   ) async {
     await pumpDentLink(tester);
@@ -82,17 +109,12 @@ void main() {
     GoRouter.of(anchor).push('/post/${post.id}?comments=1');
     await tester.pumpAndSettle();
 
-    final page = find.byType(PostScreen);
-    final inline = find.descendant(
-      of: page,
-      matching: find.byType(CommentsSheet),
-    );
+    final inline = inPage(find.byType(PostComments));
     expect(inline, findsOneWidget);
     expect(
       find.descendant(of: inline, matching: find.text('Forum başlığı')),
       findsOneWidget,
     );
-    // Pencere açılmadı: tek CommentsSheet sayfanın içindeki.
-    expect(find.byType(CommentsSheet), findsOneWidget);
+    expect(find.byType(BottomSheet), findsNothing);
   });
 }

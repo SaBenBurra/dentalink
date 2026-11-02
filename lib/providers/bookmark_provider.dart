@@ -107,6 +107,19 @@ class BookmarkNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
     }
   }
 
+  /// Listedeki tek postu yeniden çekmeden günceller.
+  void patchPost(String postId, PostModel Function(PostModel) update) {
+    final posts = state.valueOrNull;
+    if (posts == null) return;
+    state = AsyncData([for (final p in posts) p.id == postId ? update(p) : p]);
+  }
+
+  void removePost(String postId) {
+    final posts = state.valueOrNull;
+    if (posts == null) return;
+    state = AsyncData(posts.where((p) => p.id != postId).toList());
+  }
+
   void _syncOthers(String postId, PostModel Function(PostModel) update) {
     if (ref.exists(feedProvider)) {
       ref.read(feedProvider.notifier).patchPost(postId, update);

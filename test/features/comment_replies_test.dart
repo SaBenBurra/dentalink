@@ -7,7 +7,7 @@ import 'package:dentlink/data/models/user_model.dart';
 import 'package:dentlink/data/providers/repository_providers.dart';
 import 'package:dentlink/data/repositories/comment_repository.dart';
 import 'package:dentlink/features/post/widgets/comments/comment_card.dart';
-import 'package:dentlink/features/post/widgets/comments/comments_sheet.dart';
+import 'package:dentlink/features/post/widgets/comments/post_comments.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -93,7 +93,7 @@ void main() {
           locale: const Locale('en'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(body: CommentsSheet(post: post)),
+          home: Scaffold(body: PostComments(post: post)),
         ),
       ),
     );

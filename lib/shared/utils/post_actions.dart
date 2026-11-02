@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/l10n/generated/app_localizations.dart';
+import '../../data/models/post_model.dart';
 import '../../data/providers/repository_providers.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/feed_provider.dart';
@@ -73,3 +75,12 @@ Future<bool> confirmAndDeletePost(
   messenger.showSnackBar(SnackBar(content: Text(l10n.postDeleted)));
   return true;
 }
+
+/// Feed, profil, arama ve kaydedilenlerdeki kartın tek davranışı: karta
+/// dokununca post sayfası, yorum ikonunda yorumlara kaydırılmış post sayfası.
+/// Eldeki post sayfaya taşınır; sayfa yükleniyor ekranı olmadan açılır.
+void openPost(BuildContext context, PostModel post, {bool comments = false}) =>
+    context.push(
+      comments ? '/post/${post.id}?comments=1' : '/post/${post.id}',
+      extra: post,
+    );

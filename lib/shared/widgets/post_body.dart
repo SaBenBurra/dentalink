@@ -1,13 +1,9 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../../core/constants/app_dimensions.dart';
 import '../../core/l10n/generated/app_localizations.dart';
 
 /// Kartta ilk gösterilen içerik uzunluğu (karakter, ~5 satır).
 const int postPreviewChars = 300;
-
-/// "Devamını oku"ya her basışta eklenen karakter sayısı (~16 satır).
-const int postReadMoreStep = 1000;
 
 /// [text]'in ilk [limit] karakteri; kesilirse kelime ortasında bölmez, sonuna … ekler.
 /// Emoji gibi çok kod birimli karakterleri bölmemek için grapheme bazında sayar.
@@ -23,34 +19,28 @@ String truncateAtWord(String text, int limit) {
 
 /// Post kartlarında başlık ve içerik alanlarını render eden
 /// ortak widget. `CaseCard` ve `QuestionCard` bu widget'ı paylaşır.
-/// Uzun içerik kısaltılır, "Devamını oku" ile kademeli açılır.
-class PostBody extends StatefulWidget {
-  const PostBody({super.key, required this.title, required this.content});
+/// Feed'de uzun içerik kısaltılır; "Devamını oku" ayrı bir dokunma hedefi değil,
+/// karta dokununca açılan post sayfası ([expanded]) metnin tamamını gösterir.
+class PostBody extends StatelessWidget {
+  const PostBody({
+    super.key,
+    required this.title,
+    required this.content,
+    this.expanded = false,
+  });
 
   final String title;
   final String content;
-
-  @override
-  State<PostBody> createState() => _PostBodyState();
-}
-
-class _PostBodyState extends State<PostBody> {
-  int _visibleChars = postPreviewChars;
-  late final _readMore = TapGestureRecognizer()
-    ..onTap = () => setState(() => _visibleChars += postReadMoreStep);
-
-  @override
-  void dispose() {
-    _readMore.dispose();
-    super.dispose();
-  }
+  final bool expanded;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final shown = truncateAtWord(widget.content, _visibleChars);
-    final isTruncated = shown != widget.content;
+    final shown = expanded
+        ? content
+        : truncateAtWord(content, postPreviewChars);
+    final isTruncated = shown != content;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing16),
@@ -58,13 +48,13 @@ class _PostBodyState extends State<PostBody> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.title,
+            title,
             style: textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
               color: colorScheme.onSurface,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+            maxLines: expanded ? null : 2,
+            overflow: expanded ? null : TextOverflow.ellipsis,
           ),
           const SizedBox(height: AppDimensions.spacing8),
           Text.rich(
@@ -78,7 +68,6 @@ class _PostBodyState extends State<PostBody> {
                       color: colorScheme.primary,
                       fontWeight: FontWeight.w600,
                     ),
-                    recognizer: _readMore,
                   ),
               ],
             ),

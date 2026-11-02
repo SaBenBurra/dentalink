@@ -25,10 +25,10 @@ void main() {
       );
     });
 
-    test('yorumlu bildirim yorumları açık getirir', () {
+    test('yorumlu bildirim yorumlara kaydırır ve yorumu vurgular', () {
       expect(
         route(NotificationType.reply, postId: 'p1', commentId: 'c1'),
-        '/post/p1?comments=1',
+        '/post/p1?comments=1&comment=c1',
       );
       expect(route(NotificationType.like, postId: 'p1'), '/post/p1');
     });
@@ -49,7 +49,7 @@ void main() {
           'post_id': 'p1',
           'comment_id': 'c1',
         }),
-        '/post/p1?comments=1',
+        '/post/p1?comments=1&comment=c1',
       );
       expect(
         pushRoute({

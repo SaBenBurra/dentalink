@@ -22,37 +22,31 @@ void main() {
     });
   });
 
-  testWidgets('Devamını oku her basışta içeriği uzatır, bitince kaybolur', (
+  Widget wrap(Widget child) => MaterialApp(
+    locale: const Locale('tr'),
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: Scaffold(body: SingleChildScrollView(child: child)),
+  );
+
+  final content = List.filled(200, 'kelime').join(' '); // 1399 karakter
+  String plain(WidgetTester tester) => tester
+      .widget<Text>(find.textContaining('kelime'))
+      .textSpan!
+      .toPlainText();
+
+  testWidgets('kartta kısaltılır, "Devamını oku" yalnızca işaret', (
     tester,
   ) async {
-    final content = List.filled(200, 'kelime').join(' '); // 1399 karakter
+    await tester.pumpWidget(wrap(PostBody(title: 'Başlık', content: content)));
+    expect(plain(tester), endsWith('… Devamını oku'));
+    expect(plain(tester).length, lessThanOrEqualTo(postPreviewChars + 14));
+  });
+
+  testWidgets('post sayfasında metnin tamamı gösterilir', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        locale: const Locale('tr'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Scaffold(
-          body: SingleChildScrollView(
-            child: PostBody(title: 'Başlık', content: content),
-          ),
-        ),
-      ),
+      wrap(PostBody(title: 'Başlık', content: content, expanded: true)),
     );
-
-    final body = find.textContaining('kelime');
-    String plain() => tester.widget<Text>(body).textSpan!.toPlainText();
-    final readMore = find.textRange.ofSubstring('Devamını oku');
-
-    expect(plain(), endsWith('… Devamını oku')); // metnin bittiği yerde
-    expect(plain().length, lessThanOrEqualTo(postPreviewChars + 14));
-    var previous = plain().length;
-    while (plain().endsWith('Devamını oku')) {
-      await tester.ensureVisible(body);
-      await tester.tapOnText(readMore);
-      await tester.pump();
-      expect(plain().length, greaterThan(previous));
-      previous = plain().length;
-    }
-    expect(plain(), content);
+    expect(plain(tester), content);
   });
 }

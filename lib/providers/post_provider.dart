@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/error/app_failures.dart';
 import '../core/utils/paging.dart';
 import '../data/models/post_model.dart';
 import '../data/providers/repository_providers.dart';
+import 'bookmark_provider.dart';
 import 'feed_provider.dart';
 import 'post_toggle.dart';
 import 'search_provider.dart';
@@ -11,11 +13,87 @@ import 'search_provider.dart';
 // Tek Post Detay Provider
 // ─────────────────────────────────────────────────────────────────────────────
 
+/// Listeden açılan postun elde olan kopyası (post id → post). Post sayfası
+/// bunu bırakır, [PostDetailNotifier] ilk karede alıp yükleniyor ekranı
+/// göstermeden çizer; sunucudaki güncel hâl arkadan gelir.
+final postSeedsProvider = Provider<Map<String, PostModel>>((ref) => {});
+
+/// Aynı postun ekrandaki kopyalarını (feed, arama, kaydedilenler, yazarın
+/// profili) yeniden çekmeden günceller.
+void patchPostCopies(
+  Ref ref,
+  String postId,
+  String? authorId,
+  PostModel Function(PostModel) update,
+) {
+  if (ref.exists(feedProvider)) {
+    ref.read(feedProvider.notifier).patchPost(postId, update);
+  }
+  if (ref.exists(searchProvider)) {
+    ref.read(searchProvider.notifier).patchPost(postId, update);
+  }
+  if (ref.exists(bookmarkProvider)) {
+    ref.read(bookmarkProvider.notifier).patchPost(postId, update);
+  }
+  if (authorId != null && ref.exists(userPostsProvider(authorId))) {
+    ref.read(userPostsProvider(authorId).notifier).patchPost(postId, update);
+  }
+}
+
+void _removePostCopies(Ref ref, String postId, String? authorId) {
+  if (ref.exists(feedProvider)) {
+    ref.read(feedProvider.notifier).removePost(postId);
+  }
+  if (ref.exists(searchProvider)) {
+    ref.read(searchProvider.notifier).removePost(postId);
+  }
+  if (ref.exists(bookmarkProvider)) {
+    ref.read(bookmarkProvider.notifier).removePost(postId);
+  }
+  if (authorId != null && ref.exists(userPostsProvider(authorId))) {
+    ref.read(userPostsProvider(authorId).notifier).removePost(postId);
+  }
+}
+
 class PostDetailNotifier
     extends AutoDisposeFamilyAsyncNotifier<PostModel, String> {
+  bool _disposed = false;
+
   @override
-  Future<PostModel> build(String arg) async {
-    return ref.read(feedRepositoryProvider).getPostById(arg);
+  FutureOr<PostModel> build(String arg) {
+    ref.onDispose(() => _disposed = true);
+    final seed = ref.read(postSeedsProvider).remove(arg);
+    if (seed == null) return ref.read(feedRepositoryProvider).getPostById(arg);
+    _revalidate(seed);
+    return seed;
+  }
+
+  /// Listeden gelen kopyayı sunucudakiyle değiştirir. Bu arada yapılan
+  /// beğeni/kaydetmenin iyimser değeri korunur.
+  Future<void> _revalidate(PostModel seed) async {
+    final PostModel fresh;
+    try {
+      fresh = await ref.read(feedRepositoryProvider).getPostById(arg);
+    } on NotFoundFailure catch (e, st) {
+      if (_disposed) return;
+      state = AsyncError(e, st);
+      _removePostCopies(ref, arg, seed.userId);
+      return;
+    } catch (_) {
+      // Elde geçerli bir kopya var; ağ hatasında o gösterilmeye devam eder,
+      // yorumların kendi hata/yeniden dene durumu var.
+      return;
+    }
+    if (_disposed) return;
+    final current = state.valueOrNull;
+    state = AsyncData(
+      current == null || identical(current, seed)
+          ? fresh
+          : PostToggle.bookmark.copyFields(
+              PostToggle.like.copyFields(fresh, current),
+              current,
+            ),
+    );
   }
 
   final _pending = PostToggleQueue();
@@ -34,9 +112,10 @@ class PostDetailNotifier
   Future<void> toggleBookmark() => _toggle(PostToggle.bookmark);
 
   /// Post başka cihazda silinmişse ekran "bulunamadı" durumuna geçer;
-  /// diğer hatalar UI'ın göstermesi için fırlatılır. Feed ve arama listesindeki
-  /// aynı post yeniden çekilmeden güncellenir.
+  /// diğer hatalar UI'ın göstermesi için fırlatılır. Listelerdeki aynı post
+  /// yeniden çekilmeden güncellenir.
   Future<void> _toggle(PostToggle toggle) async {
+    final authorId = state.valueOrNull?.userId;
     try {
       final server = await runPostToggle(
         ref,
@@ -47,21 +126,10 @@ class PostDetailNotifier
         patch: patch,
       );
       if (server == null) return;
-      PostModel sync(PostModel p) => toggle.copyFields(p, server);
-      if (ref.exists(feedProvider)) {
-        ref.read(feedProvider.notifier).patchPost(arg, sync);
-      }
-      if (ref.exists(searchProvider)) {
-        ref.read(searchProvider.notifier).patchPost(arg, sync);
-      }
+      patchPostCopies(ref, arg, authorId, (p) => toggle.copyFields(p, server));
     } on NotFoundFailure catch (e, st) {
       state = AsyncError(e, st);
-      if (ref.exists(feedProvider)) {
-        ref.read(feedProvider.notifier).removePost(arg);
-      }
-      if (ref.exists(searchProvider)) {
-        ref.read(searchProvider.notifier).removePost(arg);
-      }
+      _removePostCopies(ref, arg, authorId);
     }
   }
 }

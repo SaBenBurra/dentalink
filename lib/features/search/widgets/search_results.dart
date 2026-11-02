@@ -1,5 +1,5 @@
 import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/features/post/widgets/comments/comments_sheet.dart';
+import 'package:dentlink/shared/utils/post_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -117,8 +117,9 @@ class ExploreResults extends ConsumerWidget {
                           context,
                           () => notifier.toggleBookmark(post.id),
                         ),
-                        onCommentTap: () => openComments(context, post),
-                        onTap: () => context.push('/post/${post.id}'),
+                        onCommentTap: () =>
+                            openPost(context, post, comments: true),
+                        onTap: () => openPost(context, post),
                       );
                     },
                   ),

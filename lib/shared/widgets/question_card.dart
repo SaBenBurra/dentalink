@@ -22,6 +22,7 @@ class QuestionCard extends ConsumerWidget {
     required this.onBookmarkToggle,
     this.onCommentTap,
     this.onTap,
+    this.expanded = false,
   });
 
   final QuestionPostModel post;
@@ -29,6 +30,9 @@ class QuestionCard extends ConsumerWidget {
   final VoidCallback onBookmarkToggle;
   final VoidCallback? onCommentTap;
   final VoidCallback? onTap;
+
+  /// Post sayfasında metnin tamamı gösterilir.
+  final bool expanded;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -68,7 +72,11 @@ class QuestionCard extends ConsumerWidget {
           ),
 
           // <-- 2. İçerik (uzunsa "Devamını oku")
-          PostBody(title: post.title, content: post.content),
+          PostBody(
+            title: post.title,
+            content: post.content,
+            expanded: expanded,
+          ),
 
           // <-- 3. Ayırıcı çizgi (Soru postlarında görsel eki olmadığından daima gösterilir)
           Padding(

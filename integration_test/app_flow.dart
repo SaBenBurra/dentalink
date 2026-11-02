@@ -2,7 +2,6 @@ import 'package:dentlink/data/repositories/auth_repository.dart';
 import 'package:dentlink/data/models/post_model.dart';
 import 'package:dentlink/main.dart';
 import 'package:dentlink/providers/locale_provider.dart';
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -60,18 +59,15 @@ Future<void> runAppFlow(WidgetTester tester) async {
   // Feed: oturum açık, örnek vaka listede.
   expect(find.text(seedCase.title), findsOneWidget);
 
-  // Kart tıklanınca sayfa açılmaz; yorum ikonu yorumlar penceresini açar.
+  // Karta dokununca post sayfası açılır; yorumlar postun altında.
   await _tapAndSettle(tester, find.text(seedCase.title));
-  expect(find.text('Tümü'), findsOneWidget); // hâlâ feed'deyiz
-  await _tapAndSettle(tester, find.byIcon(CupertinoIcons.chat_bubble).first);
+  expect(find.text('Tümü'), findsNothing); // feed'den çıktık
   expect(find.text('Tartışma'), findsOneWidget);
   await tester.enterText(find.byType(TextField).last, 'Harika vaka');
   await _tapAndSettle(tester, find.text('Paylaş'));
   expect(find.text('Harika vaka'), findsOneWidget);
-  // Tam ekran: dışarısı yok, aşağı sürükleyince kapanır.
-  await tester.fling(find.text('Tartışma'), const Offset(0, 500), 1500);
-  await tester.pumpAndSettle();
-  expect(find.text('Tartışma'), findsNothing);
+  await _goBack(tester);
+  expect(find.text('Tümü'), findsOneWidget);
   expect(find.text(seedCase.title), findsOneWidget);
 
   // Feed sekmeleri: sola kaydır → Vakalar (vaka görünür) → Forum (görünmez);
