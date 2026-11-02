@@ -11,10 +11,13 @@ import '../widgets/search_results.dart';
 
 /// Keşfet: arama satırı (metin ve `#etiket`), branşlar, popüler konular ve gönderiler.
 class SearchScreen extends ConsumerStatefulWidget {
-  const SearchScreen({super.key, this.autofocus = false});
+  const SearchScreen({super.key, this.autofocus = false, this.tag});
 
   /// Feed üst barındaki arama ikonundan gelindiyse arama satırı odaklanır.
   final bool autofocus;
+
+  /// `?tag=`: post kartındaki etikete dokunuldu; arama o etiketle açılır.
+  final String? tag;
 
   @override
   ConsumerState<SearchScreen> createState() => _SearchScreenState();
@@ -36,6 +39,23 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
     super.initState();
     _focusNode.addListener(() => setState(() {}));
     WidgetsBinding.instance.addObserver(this);
+    _applyTag();
+  }
+
+  @override
+  void didUpdateWidget(SearchScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.tag != oldWidget.tag) _applyTag();
+  }
+
+  void _applyTag() {
+    final tag = widget.tag;
+    if (tag == null || tag.isEmpty) return;
+    _searchController.text = hashtag(tag);
+    // Provider build sırasında değiştirilemez.
+    Future.microtask(() {
+      if (mounted) _notifier.selectTag(tag);
+    });
   }
 
   @override

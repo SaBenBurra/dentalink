@@ -42,6 +42,9 @@ final seedCase = CasePostModel(
   title: 'Alt molar kanal tedavisi',
   content: 'Dört kanallı alt molar, kalsifiye mezyal kanallar.',
   branch: DentalBranch.endodonti,
+  tags: const [
+    TagModel(id: 't1', name: 'Kanal Tedavisi', slug: 'kanal-tedavisi'),
+  ],
   createdAt: DateTime(2024),
   updatedAt: DateTime(2024),
   author: otherUser,

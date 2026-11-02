@@ -74,7 +74,7 @@ String? resolveAuthRedirect({
 /// Navigasyon yapısı:
 ///   /login            → LoginScreen
 ///   /register         → RegisterScreen
-///   /post/:id         → PostScreen (post + yorumlar; ?comments=1, ?comment=<id>)
+///   /post/:id         → PostScreen (post + yorumlar; `?comments=1`, `?comment=<id>`)
 ///   /                 → redirect → /login
 ///   ShellRoute        → MainShell (bottom nav)
 ///     /feed           → FeedScreen
@@ -230,6 +230,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             pageBuilder: (context, state) => NoTransitionPage(
               child: SearchScreen(
                 autofocus: state.uri.queryParameters['focus'] == '1',
+                tag: state.uri.queryParameters['tag'],
               ),
             ),
           ),
