@@ -28,23 +28,15 @@ class SupabaseUserRepository implements UserRepository {
     final q = query.trim();
     if (q.isEmpty) return [];
 
-    var request = client.from('users').select();
-    // Oturum yokken '' uuid'e cast edilemez (DATA-20); kendini dışlama yalnızca oturumla.
-    final currentUserId = client.auth.currentUser?.id;
-    if (currentUserId != null) request = request.neq('id', currentUserId);
-
-    final response = await request
-        .textSearch(
-          'search_vector',
-          q,
-          type: TextSearchType.plain,
-          config: 'turkish',
-        )
-        .limit(50);
-
-    return (response as List<dynamic>)
-        .map((e) => UserModel.fromJson(e))
-        .toList();
+    // Önek + aksan duyarsız; kendini ve engellenenleri dışlar (038).
+    final ids =
+        (await client.rpc('search_user_ids', params: {'p_query': q}) as List)
+            .cast<String>();
+    if (ids.isEmpty) return <UserModel>[];
+    final rows = await client.from('users').select().inFilter('id', ids);
+    // RPC sırası (alaka) korunur.
+    final byId = {for (final r in rows) r['id'] as String: r};
+    return [for (final id in ids) ?byId[id]].map(UserModel.fromJson).toList();
   });
 
   @override
