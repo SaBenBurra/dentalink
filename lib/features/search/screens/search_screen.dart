@@ -20,7 +20,8 @@ class SearchScreen extends ConsumerStatefulWidget {
   ConsumerState<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends ConsumerState<SearchScreen> {
+class _SearchScreenState extends ConsumerState<SearchScreen>
+    with WidgetsBindingObserver {
   Timer? _debounce;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
@@ -28,18 +29,30 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   /// `#` ile yazılan etiketin önerileri; doluyken gövdenin yerine gösterilir.
   List<String> _suggestions = const [];
 
+  double _keyboardInset = 0;
+
   @override
   void initState() {
     super.initState();
     _focusNode.addListener(() => setState(() {}));
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _debounce?.cancel();
     _searchController.dispose();
     _focusNode.dispose();
     super.dispose();
+  }
+
+  /// Klavye geri tuşuyla kapanınca odak da bırakılır, keşfet içeriği geri gelir.
+  @override
+  void didChangeMetrics() {
+    final inset = View.of(context).viewInsets.bottom;
+    if (inset == 0 && _keyboardInset > 0) _focusNode.unfocus();
+    _keyboardInset = inset;
   }
 
   SearchNotifier get _notifier => ref.read(searchProvider.notifier);
@@ -50,6 +63,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     // Etiket yazılırken arama beklenir; boşluk ya da öneri seçimi bitirir.
     if (tag != null) return _suggest(tag);
     if (_suggestions.isNotEmpty) setState(() => _suggestions = const []);
+    // Silinen sorgu beklemeden keşfete döner.
+    if (query.isEmpty) return _submit(query);
     _debounce = Timer(
       const Duration(milliseconds: 500),
       () => _notifier.search(query),

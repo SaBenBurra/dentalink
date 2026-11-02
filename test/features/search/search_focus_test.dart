@@ -55,4 +55,25 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets('odakta boşken çarpı görünür, basınca odak bırakılır', (
+    tester,
+  ) async {
+    await _pump(tester, '');
+    await tester.tap(find.byIcon(Icons.clear_rounded));
+    await tester.pumpAndSettle();
+    expect(find.text('#implant').hitTestable(), findsOneWidget);
+    expect(find.byIcon(Icons.clear_rounded), findsNothing);
+  });
+
+  testWidgets('klavye kapanınca odak bırakılır', (tester) async {
+    await _pump(tester, '');
+    tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+    await tester.pump();
+    expect(find.text('#implant').hitTestable(), findsNothing);
+
+    tester.view.resetViewInsets();
+    await tester.pumpAndSettle();
+    expect(find.text('#implant').hitTestable(), findsOneWidget);
+  });
 }

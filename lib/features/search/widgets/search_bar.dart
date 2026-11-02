@@ -28,11 +28,13 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
   void initState() {
     super.initState();
     widget.controller.addListener(_onTextChanged);
+    widget.focusNode?.addListener(_onTextChanged);
   }
 
   @override
   void dispose() {
     widget.controller.removeListener(_onTextChanged);
+    widget.focusNode?.removeListener(_onTextChanged);
     super.dispose();
   }
 
@@ -61,13 +63,16 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
           counterText: '',
           hintText: widget.hintText,
           prefixIcon: const Icon(Icons.search_rounded),
-          suffixIcon: widget.controller.text.isNotEmpty
+          suffixIcon:
+              widget.controller.text.isNotEmpty ||
+                  (widget.focusNode?.hasFocus ?? false)
               ? IconButton(
                   tooltip: MaterialLocalizations.of(context).clearButtonTooltip,
                   icon: const Icon(Icons.clear_rounded),
                   onPressed: () {
                     widget.controller.clear();
                     widget.onChanged('');
+                    widget.focusNode?.unfocus();
                   },
                 )
               : null,
