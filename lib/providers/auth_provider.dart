@@ -94,8 +94,13 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
     }
   }
 
+  // pushProvider oturumdaki kullanıcıyı izlediği için ref.read debug'da
+  // CircularDependencyError verir; tek seferlik okuma bağımlılık kurmaz.
+  Future<void> _unregisterPush() async =>
+      ref.container.read(pushProvider)?.unregister();
+
   Future<void> signOut() async {
-    await ref.read(pushProvider)?.unregister();
+    await _unregisterPush();
     await ref.read(authRepositoryProvider).signOut();
     state = const AsyncData(null);
   }
@@ -104,7 +109,7 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
   /// hata verse bile kullanıcı uygulamada oturumlu kalmaz.
   Future<void> deleteAccount() async {
     await ref.read(userRepositoryProvider).deleteAccount();
-    await ref.read(pushProvider)?.unregister();
+    await _unregisterPush();
     try {
       await ref.read(authRepositoryProvider).signOut();
     } finally {

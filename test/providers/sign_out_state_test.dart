@@ -1,6 +1,7 @@
 import 'package:dentlink/data/providers/repository_providers.dart';
 import 'package:dentlink/providers/auth_provider.dart';
 import 'package:dentlink/providers/following_provider.dart';
+import 'package:dentlink/providers/push_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -53,4 +54,24 @@ void main() {
       expect(container.read(followingStateProvider), isEmpty);
     },
   );
+
+  test('push açıkken çıkış CircularDependencyError vermez', () async {
+    final container = ProviderContainer(
+      overrides: [
+        authRepositoryProvider.overrideWithValue(MockAuthForTest()),
+        // Gerçek pushProvider gibi oturumdaki kullanıcıyı izler.
+        pushProvider.overrideWith((ref) {
+          ref.watch(currentUserProvider);
+          return null;
+        }),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container.read(authProvider.future);
+    container.listen(pushProvider, (_, _) {});
+
+    await container.read(authProvider.notifier).signOut();
+    expect(container.read(authProvider).value, isNull);
+  });
 }

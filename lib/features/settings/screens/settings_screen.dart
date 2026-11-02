@@ -10,8 +10,8 @@ import '../../../providers/locale_provider.dart';
 import '../../../providers/theme_provider.dart';
 import '../widgets/settings_section.dart';
 import '../widgets/delete_account_dialog.dart';
+import '../widgets/sign_out_dialog.dart';
 import '../widgets/settings_tile.dart';
-import '../../../providers/auth_provider.dart';
 
 /// Ayarlar ekranı.
 ///
@@ -341,31 +341,6 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _confirmSignOut(BuildContext context, WidgetRef ref) async {
-    final l10n = AppLocalizations.of(context)!;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.logoutConfirmTitle),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(ctx).colorScheme.error,
-            ),
-            child: Text(l10n.settingsLogout),
-          ),
-        ],
-      ),
-    );
-    // Router oturum kapanınca /login'e yönlendirir.
-    if (confirmed == true) await ref.read(authProvider.notifier).signOut();
-  }
-
   // ─── Hakkında ───────────────────────────────────────────────────────────
 
   Widget _buildAboutSection(BuildContext context, WidgetRef ref, bool isDark) {
@@ -399,7 +374,11 @@ class SettingsScreen extends ConsumerWidget {
             horizontal: AppDimensions.spacing24,
           ),
           child: OutlinedButton.icon(
-            onPressed: () => _confirmSignOut(context, ref),
+            onPressed: () => showDialog<void>(
+              context: context,
+              barrierDismissible: false,
+              builder: (_) => const SignOutDialog(),
+            ),
             icon: const Icon(Icons.logout_rounded, color: AppColors.error),
             label: Text(
               AppLocalizations.of(context)!.settingsLogout,
