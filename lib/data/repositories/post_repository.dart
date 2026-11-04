@@ -5,6 +5,7 @@ import '../models/case_treatment.dart';
 import '../models/enums.dart';
 import '../models/post_model.dart';
 import '../models/tag_model.dart';
+import '../models/user_model.dart';
 
 /// Feed odaklı işlemler (Listeleme)
 abstract class IFeedRepository {
@@ -62,6 +63,12 @@ abstract class IBookmarkRepository {
 abstract class IPostActionRepository {
   Future<PostModel> likePost(String postId);
   Future<PostModel> unlikePost(String postId);
+
+  /// Postu beğenenler, en yeni beğeni önce; engellenenler görünmez (042).
+  Future<PageResult<UserModel>> getPostLikers(
+    String postId, {
+    PageCursor? before,
+  });
   Future<void> incrementViewCount(String postId);
 }
 

@@ -117,6 +117,7 @@ class CaseCard extends ConsumerWidget {
               compact: true,
               post: post,
               onLikeToggle: onLikeToggle,
+              onLikesTap: () => context.push('/post/${post.id}/likes'),
               onBookmarkToggle: onBookmarkToggle,
               onCommentTap: onCommentTap,
             ),

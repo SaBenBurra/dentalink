@@ -558,6 +558,8 @@
   "discardChangesConfirm": "Çık",
   "newMessage": "Yeni mesaj",
   "like": "Beğen",
+  "likersTitle": "Beğenenler",
+  "noLikersYet": "Henüz beğenen yok.",
   "@discardChangesConfirm": { "description": "Kaydedilmemiş formdan çıkışı onaylayan buton" },
 
   "errorAuthRequired": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",

@@ -268,6 +268,8 @@
   "discardChangesConfirm": "Discard",
   "newMessage": "New message",
   "like": "Like",
+  "likersTitle": "Likes",
+  "noLikersYet": "No likes yet.",
 
   "errorAuthRequired": "Your session has expired. Please sign in again.",
   "errorPermissionDenied": "You are not allowed to do this.",

@@ -77,7 +77,7 @@ lib/
 **Branşlar** (`DentalBranch`): Pedodonti, Endodonti, Ortodonti, Periodontoloji, Protetik, Çene Cerrahisi, Çene Radyolojisi, Restoratif.
 
 ### Sosyal
-- Beğeni (post ve yorum), yorum ve cevap, takip, kaydetme (bookmark), bire bir DM (realtime), bildirimler.
+- Beğeni (post ve yorum; post beğeni sayısına dokununca ya da kalbe basılı tutunca `/post/:id/likes` beğenenler listesi, sayı 0 iken dokunuş beğenir), yorum ve cevap, takip, kaydetme (bookmark), bire bir DM (realtime), bildirimler.
 - **Vaka arşivi (040):** tedavi, etiket değil sınıflandırma olarak gösterilir: branş renginde noktalı çip (`TreatmentChip`, `lib/shared/widgets/case_treatments.dart`), her yerde aynı görünür ve hep `/treatment/:slug` arşivine gider. Kartta başlığın üstünde ilk 2 tedavi + "+N" (ana sayfa kartlarında tedavi yok); post sayfasında aksiyon çubuğunun altında branşa göre gruplu hepsi (branş adı Keşfet'i o branşla açar) ve "Benzer vakalar". Keşfet: branş seçilince o branşın tedavileri, metin aranınca eşleşen tedavi satırı. Vaka, tedavilerinin bütün arşivlerinde ve branş filtrelerinde görünür.
 - **Tek dokunma kuralı (vaka ve forum aynı):** karta dokun → `/post/:id` ("Devamını oku" hariç: metni kartın içinde açar); yorum ikonu → aynı sayfa, yorumlara kaydırılmış (klavye açılmaz); görsel → tam ekran galeri; çift dokunma → beğeni. Yorum için bottom sheet yok, yorumlar yalnızca post sayfasında. Liste kartı sayfaya `extra` ile taşınır (yükleniyor ekranı yok), sayfadaki beğeni/yorum `patchPostCopies` ile tüm listelere yansır. Yardımcı: `openPost` (`lib/shared/utils/post_actions.dart`).
 - **Etiketler:** kartlarda görünmez, yalnızca post sayfasında metnin bir alt satırında, metnin parçası gibi (`PostBody.tags`); dokununca Keşfet o etiketle açılır.
@@ -88,7 +88,7 @@ lib/
 ### Navigasyon
 Alt menü: **Ana Sayfa** `/feed` · **Keşfet** `/search` · **Oluştur (+)** (vaka/forum seçimi) · **Mesajlar** `/messages` · **Profil** `/profile`.
 
-Diğer rotalar: `/post/:id` (tek post kartı; bildirim ve deep link hedefi), `/treatment/:slug` (tedavi arşivi), `/create-case`, `/create-question`, `/chat/:userId`, `/profile/:userId`, `/edit-profile`, `/network/:id`, `/notifications`, `/bookmarks`, `/settings`, `/settings/blocked`, `/legal/:doc`, `/login`, `/register`. Tam liste: `lib/core/router/app_router.dart`.
+Diğer rotalar: `/post/:id` (tek post kartı; bildirim ve deep link hedefi), `/post/:id/likes` (beğenenler), `/treatment/:slug` (tedavi arşivi), `/create-case`, `/create-question`, `/chat/:userId`, `/profile/:userId`, `/edit-profile`, `/network/:id`, `/notifications`, `/bookmarks`, `/settings`, `/settings/blocked`, `/legal/:doc`, `/login`, `/register`. Tam liste: `lib/core/router/app_router.dart`.
 
 ---
 

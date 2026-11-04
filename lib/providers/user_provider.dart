@@ -71,47 +71,56 @@ final userProfileProvider = AsyncNotifierProvider.autoDispose
 // Followers / Following Providers
 // ─────────────────────────────────────────────────────────────────────────────
 
-typedef _FollowPageFetch =
+typedef _UserPageFetch =
     Future<PageResult<UserModel>> Function(
-      FollowRepository repo,
-      String userId,
+      Ref ref,
+      String id,
       PageCursor? before,
     );
 
-/// Takipçi ya da takip edilen listesi; sayfalar [loadMore] ile eklenir.
-class FollowListNotifier
+/// Takipçi, takip edilen ya da beğenen listesi; sayfalar [loadMore] ile eklenir.
+class UserListNotifier
     extends AutoDisposeFamilyAsyncNotifier<List<UserModel>, String> {
-  FollowListNotifier(this._fetch);
+  UserListNotifier(this._fetch);
 
-  final _FollowPageFetch _fetch;
+  final _UserPageFetch _fetch;
   final _pager = Pager<UserModel>();
 
   bool get hasMore => _pager.hasMore;
 
-  FollowRepository get _repo => ref.read(followRepositoryProvider);
-
   @override
   Future<List<UserModel>> build(String arg) async =>
-      _pager.first(await _fetch(_repo, arg, null));
+      _pager.first(await _fetch(ref, arg, null));
 
   Future<void> loadMore() =>
-      _pager.loadMore((before) => _fetch(_repo, arg, before), (items) {
+      _pager.loadMore((before) => _fetch(ref, arg, before), (items) {
         final users = state.valueOrNull;
         if (users != null) state = AsyncData([...users, ...items]);
       });
 }
 
 final followersProvider = AsyncNotifierProvider.autoDispose
-    .family<FollowListNotifier, List<UserModel>, String>(
-      () => FollowListNotifier(
-        (r, id, before) => r.getFollowers(id, before: before),
+    .family<UserListNotifier, List<UserModel>, String>(
+      () => UserListNotifier(
+        (ref, id, before) =>
+            ref.read(followRepositoryProvider).getFollowers(id, before: before),
       ),
     );
 
 final followingProvider = AsyncNotifierProvider.autoDispose
-    .family<FollowListNotifier, List<UserModel>, String>(
-      () => FollowListNotifier(
-        (r, id, before) => r.getFollowing(id, before: before),
+    .family<UserListNotifier, List<UserModel>, String>(
+      () => UserListNotifier(
+        (ref, id, before) =>
+            ref.read(followRepositoryProvider).getFollowing(id, before: before),
+      ),
+    );
+
+final postLikersProvider = AsyncNotifierProvider.autoDispose
+    .family<UserListNotifier, List<UserModel>, String>(
+      () => UserListNotifier(
+        (ref, id, before) => ref
+            .read(postActionRepositoryProvider)
+            .getPostLikers(id, before: before),
       ),
     );
 

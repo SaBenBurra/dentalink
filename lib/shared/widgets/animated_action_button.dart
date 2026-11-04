@@ -20,6 +20,8 @@ class AnimatedActionButton extends StatefulWidget {
     this.size = AppDimensions.iconDefault,
     this.showCount = false,
     this.count = 0,
+    this.onCountTap,
+    this.countTooltip,
   });
 
   final bool isActive;
@@ -33,6 +35,13 @@ class AnimatedActionButton extends StatefulWidget {
   final double size;
   final bool showCount;
   final int count;
+
+  /// Sayaca dokununca ya da ikona basılı tutunca çağrılır. Sayaç 0 iken
+  /// dokunuş [onToggle]'a gider, basılı tutmak bir şey yapmaz.
+  final VoidCallback? onCountTap;
+
+  /// Sayacın ekran okuyucu etiketi ve uzun basma ipucu.
+  final String? countTooltip;
 
   @override
   State<AnimatedActionButton> createState() => _AnimatedActionButtonState();
@@ -74,6 +83,13 @@ class _AnimatedActionButtonState extends State<AnimatedActionButton>
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    final count = Text(
+      formatCount(widget.count),
+      style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+    );
+
+    final openList = widget.count > 0 ? widget.onCountTap : null;
+
     final pad = ((AppDimensions.spacing48 - widget.size) / 2).clamp(
       0.0,
       double.infinity,
@@ -81,11 +97,14 @@ class _AnimatedActionButtonState extends State<AnimatedActionButton>
 
     return Tooltip(
       message: widget.tooltip,
+      // Basılı tutma listeyi açıyorsa ipucu onunla yarışmasın.
+      triggerMode: openList != null ? TooltipTriggerMode.manual : null,
       child: InkWell(
         customBorder: widget.showCount
             ? const StadiumBorder()
             : const CircleBorder(),
         onTap: _handleTap,
+        onLongPress: openList,
         // Dokunma alanı en az 48dp (UX-14). Sayaç da dokunma alanında:
         // ikonla arası yorum sayacındaki gibi 4dp kalır.
         child: ConstrainedBox(
@@ -119,12 +138,29 @@ class _AnimatedActionButtonState extends State<AnimatedActionButton>
                 ),
                 if (widget.showCount) ...[
                   const SizedBox(width: AppDimensions.spacing4),
-                  Text(
-                    formatCount(widget.count),
-                    style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                  if (widget.onCountTap == null)
+                    count
+                  else
+                    Tooltip(
+                      message: widget.countTooltip,
+                      triggerMode: TooltipTriggerMode.manual,
+                      child: InkWell(
+                        customBorder: const StadiumBorder(),
+                        onTap: openList ?? _handleTap,
+                        // Sayaç ayrı dokunma hedefi: en az 48dp (UX-14).
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            minWidth: AppDimensions.spacing48,
+                            minHeight: AppDimensions.spacing48,
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            widthFactor: 1,
+                            child: count,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
                 ],
               ],
             ),

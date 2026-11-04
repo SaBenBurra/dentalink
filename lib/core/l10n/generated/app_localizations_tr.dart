@@ -650,6 +650,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get like => 'Beğen';
 
   @override
+  String get likersTitle => 'Beğenenler';
+
+  @override
+  String get noLikersYet => 'Henüz beğenen yok.';
+
+  @override
   String get errorAuthRequired =>
       'Oturumunuz sona erdi. Lütfen tekrar giriş yapın.';
 

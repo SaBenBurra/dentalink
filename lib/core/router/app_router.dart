@@ -13,6 +13,7 @@ import '../../features/search/screens/search_screen.dart';
 import '../../features/treatments/screens/treatment_archive_screen.dart';
 import '../../data/models/case_treatment.dart';
 import '../../features/shell/main_shell.dart';
+import '../../features/post/screens/post_likers_screen.dart';
 import '../../features/post/screens/post_screen.dart';
 import '../../features/post/screens/create_case_screen.dart';
 import '../../features/post/screens/create_question_screen.dart';
@@ -77,6 +78,7 @@ String? resolveAuthRedirect({
 ///   /login            → LoginScreen
 ///   /register         → RegisterScreen
 ///   /post/:id         → PostScreen (post + yorumlar; `?comments=1`, `?comment=<id>`)
+///   /post/:id/likes   → PostLikersScreen
 ///   /                 → redirect → /login
 ///   ShellRoute        → MainShell (bottom nav)
 ///     /feed           → FeedScreen
@@ -137,6 +139,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           scrollToComments: state.uri.queryParameters['comments'] == '1',
           highlightCommentId: state.uri.queryParameters['comment'],
         ),
+      ),
+      GoRoute(
+        path: '/post/:id/likes',
+        name: 'postLikers',
+        builder: (context, state) =>
+            PostLikersScreen(postId: state.pathParameters['id']!),
       ),
       // Tedavi arşivi; karttan gelince tedavi ve Hero etiketi extra ile taşınır.
       GoRoute(

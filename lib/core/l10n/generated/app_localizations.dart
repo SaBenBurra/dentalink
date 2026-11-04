@@ -1292,6 +1292,18 @@ abstract class AppLocalizations {
   /// **'Beğen'**
   String get like;
 
+  /// No description provided for @likersTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Beğenenler'**
+  String get likersTitle;
+
+  /// No description provided for @noLikersYet.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz beğenen yok.'**
+  String get noLikersYet;
+
   /// No description provided for @errorAuthRequired.
   ///
   /// In tr, this message translates to:

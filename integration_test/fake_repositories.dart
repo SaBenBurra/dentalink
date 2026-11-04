@@ -96,6 +96,12 @@ class _FakePostRepository implements PostRepository {
   final _created = <String, PostModel>{};
 
   @override
+  Future<PageResult<UserModel>> getPostLikers(
+    String postId, {
+    PageCursor? before,
+  }) async => (items: <UserModel>[], next: null);
+
+  @override
   Future<PostModel> createQuestion({
     required String title,
     required String content,

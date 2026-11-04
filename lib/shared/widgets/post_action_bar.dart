@@ -33,6 +33,7 @@ class PostActionBar extends StatelessWidget {
     super.key,
     required PostModel post,
     this.onLikeToggle,
+    this.onLikesTap,
     this.onBookmarkToggle,
     this.onCommentTap,
     this.compact = false,
@@ -50,6 +51,7 @@ class PostActionBar extends StatelessWidget {
     required this.isLiked,
     required this.isBookmarked,
     this.onLikeToggle,
+    this.onLikesTap,
     this.onBookmarkToggle,
     this.onCommentTap,
     this.bookmarkCount = 0,
@@ -70,6 +72,9 @@ class PostActionBar extends StatelessWidget {
 
   /// Beğeni durumu değiştirildiğinde çağrılır.
   final VoidCallback? onLikeToggle;
+
+  /// Beğeni sayısına dokunulduğunda çağrılır (beğenenler listesi).
+  final VoidCallback? onLikesTap;
 
   /// Kaydetme durumu değiştirildiğinde çağrılır.
   final VoidCallback? onBookmarkToggle;
@@ -99,9 +104,11 @@ class PostActionBar extends StatelessWidget {
             isLiked: isLiked,
             likeCount: likeCount,
             onToggle: onLikeToggle,
+            onCountTap: onLikesTap,
             size: iconSize,
           ),
-          SizedBox(width: gap),
+          // Sayacın 48dp'lik dokunma alanı boşluğun yerini tutar.
+          if (onLikesTap == null) SizedBox(width: gap),
           StatCount(
             icon: CupertinoIcons.chat_bubble,
             count: commentCount,

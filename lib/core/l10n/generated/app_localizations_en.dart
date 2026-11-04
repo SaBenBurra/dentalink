@@ -651,6 +651,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get like => 'Like';
 
   @override
+  String get likersTitle => 'Likes';
+
+  @override
+  String get noLikersYet => 'No likes yet.';
+
+  @override
   String get errorAuthRequired =>
       'Your session has expired. Please sign in again.';
 

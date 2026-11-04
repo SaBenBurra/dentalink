@@ -420,6 +420,23 @@ class SupabasePostRepository implements PostRepository {
   });
 
   @override
+  Future<PageResult<UserModel>> getPostLikers(
+    String postId, {
+    PageCursor? before,
+  }) => guardSupabase(() async {
+    final rows = await _client
+        .from('likes')
+        .select('id, created_at, users(*)')
+        .eq('post_id', postId)
+        .pageBefore(before);
+
+    return (
+      items: [for (final row in rows) UserModel.fromJson(row['users'])],
+      next: nextCursor(rows),
+    );
+  });
+
+  @override
   Future<void> incrementViewCount(String postId) => guardSupabase(() async {
     // Race condition önlemek için RPC fonksiyonu kullanıyoruz.
     await _client.rpc('increment_view_count', params: {'p_post_id': postId});

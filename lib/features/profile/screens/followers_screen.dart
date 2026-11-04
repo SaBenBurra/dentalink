@@ -64,11 +64,11 @@ class _FollowersScreenState extends ConsumerState<FollowersScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          _UserListTab(
+          UserListView(
             provider: followersProvider(widget.userId),
             emptyMessage: AppLocalizations.of(context)!.noFollowersYet,
           ),
-          _UserListTab(
+          UserListView(
             provider: followingProvider(widget.userId),
             emptyMessage: AppLocalizations.of(context)!.noFollowingYet,
           ),
@@ -78,22 +78,27 @@ class _FollowersScreenState extends ConsumerState<FollowersScreen>
   }
 }
 
-class _UserListTab extends ConsumerStatefulWidget {
+/// Takip butonlu, sayfalı kullanıcı listesi (takipçiler, beğenenler).
+class UserListView extends ConsumerStatefulWidget {
   final AutoDisposeFamilyAsyncNotifierProvider<
-    FollowListNotifier,
+    UserListNotifier,
     List<UserModel>,
     String
   >
   provider;
   final String emptyMessage;
 
-  const _UserListTab({required this.provider, required this.emptyMessage});
+  const UserListView({
+    super.key,
+    required this.provider,
+    required this.emptyMessage,
+  });
 
   @override
-  ConsumerState<_UserListTab> createState() => _UserListTabState();
+  ConsumerState<UserListView> createState() => _UserListViewState();
 }
 
-class _UserListTabState extends ConsumerState<_UserListTab> {
+class _UserListViewState extends ConsumerState<UserListView> {
   /// Takip durumu istenmiş kullanıcılar; rebuild'lerde tekrar istenmez.
   final _statusRequested = <String>{};
 
