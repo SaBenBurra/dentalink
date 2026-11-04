@@ -1,5 +1,5 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/features/messaging/screens/chat_screen.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/features/messaging/screens/chat_screen.dart';
 import 'package:flutter/material.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';

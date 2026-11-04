@@ -1,4 +1,4 @@
-// DentLink — push Edge Function (REL-6)
+// Dentigo — push Edge Function (REL-6)
 //
 // Migration 027'deki trigger, notifications/messages INSERT'inde
 // { kind: 'notification' | 'message', id } gönderir. Fonksiyon satırı okur,

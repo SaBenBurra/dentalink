@@ -1,8 +1,8 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/data/models/comment_model.dart';
-import 'package:dentlink/data/models/user_model.dart';
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/features/post/widgets/comments/comment_card.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/data/models/comment_model.dart';
+import 'package:dentigo/data/models/user_model.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/features/post/widgets/comments/comment_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

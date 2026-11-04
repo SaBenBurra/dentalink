@@ -1,7 +1,7 @@
-import 'package:dentlink/core/constants/app_dimensions.dart';
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/core/utils/string_utils.dart';
-import 'package:dentlink/shared/extensions/dental_branch_ui.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/utils/string_utils.dart';
+import 'package:dentigo/shared/extensions/dental_branch_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/models/enums.dart';

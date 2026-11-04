@@ -1,15 +1,15 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dentlink/core/error/app_failures.dart';
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/core/utils/paging.dart';
-import 'package:dentlink/data/models/post_model.dart';
-import 'package:dentlink/data/providers/repository_providers.dart';
-import 'package:dentlink/data/repositories/post_repository.dart';
-import 'package:dentlink/providers/connectivity_provider.dart';
-import 'package:dentlink/providers/feed_provider.dart';
-import 'package:dentlink/shared/widgets/offline_banner.dart';
+import 'package:dentigo/core/error/app_failures.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/utils/paging.dart';
+import 'package:dentigo/data/models/post_model.dart';
+import 'package:dentigo/data/providers/repository_providers.dart';
+import 'package:dentigo/data/repositories/post_repository.dart';
+import 'package:dentigo/providers/connectivity_provider.dart';
+import 'package:dentigo/providers/feed_provider.dart';
+import 'package:dentigo/shared/widgets/offline_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

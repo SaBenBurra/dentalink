@@ -1,4 +1,4 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -137,7 +137,7 @@ class _UserListViewState extends ConsumerState<UserListView> {
         final notifier = ref.read(widget.provider.notifier);
         final hasMore = notifier.hasMore;
         if (users.isEmpty && !hasMore) {
-          return DentLinkEmptyState(
+          return DentigoEmptyState(
             icon: Icons.people_outline,
             title: AppLocalizations.of(context)!.userNotFound,
             subtitle: widget.emptyMessage,
@@ -173,8 +173,8 @@ class _UserListViewState extends ConsumerState<UserListView> {
           ),
         );
       },
-      loading: () => const Center(child: DentLinkLoadingSpinner()),
-      error: (error, stack) => DentLinkErrorWidget(
+      loading: () => const Center(child: DentigoLoadingSpinner()),
+      error: (error, stack) => DentigoErrorWidget(
         message: AppLocalizations.of(context)!.usersLoadError,
         onRetry: () => ref.invalidate(widget.provider),
       ),

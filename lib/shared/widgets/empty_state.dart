@@ -7,7 +7,7 @@ import '../../core/constants/app_dimensions.dart';
 /// Tüm renkler temadan alınır, aydınlık ve karanlık tema ile uyumludur.
 ///
 /// ```dart
-/// DentLinkEmptyState(
+/// DentigoEmptyState(
 ///   icon: Icons.article_outlined,
 ///   title: 'Henüz gönderi yok',
 ///   subtitle: 'İlk gönderiyi sen paylaş!',
@@ -15,8 +15,8 @@ import '../../core/constants/app_dimensions.dart';
 ///   onAction: () => context.push('/feed/create'),
 /// )
 /// ```
-class DentLinkEmptyState extends StatelessWidget {
-  const DentLinkEmptyState({
+class DentigoEmptyState extends StatelessWidget {
+  const DentigoEmptyState({
     super.key,
     this.icon = Icons.inbox_outlined,
     required this.title,

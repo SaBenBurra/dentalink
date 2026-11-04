@@ -1,6 +1,6 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/features/profile/screens/followers_screen.dart';
-import 'package:dentlink/providers/user_provider.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/features/profile/screens/followers_screen.dart';
+import 'package:dentigo/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 
 /// Postu beğenenler (`/post/:id/likes`).

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:dentlink/data/repositories/supabase_post_repository.dart';
+import 'package:dentigo/data/repositories/supabase_post_repository.dart';
 
 import '../../mocks/generate_mocks.mocks.dart';
 

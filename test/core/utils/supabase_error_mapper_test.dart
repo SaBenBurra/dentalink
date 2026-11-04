@@ -1,5 +1,5 @@
-import 'package:dentlink/core/error/app_failures.dart';
-import 'package:dentlink/core/utils/supabase_error_mapper.dart';
+import 'package:dentigo/core/error/app_failures.dart';
+import 'package:dentigo/core/utils/supabase_error_mapper.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

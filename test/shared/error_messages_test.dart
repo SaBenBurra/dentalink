@@ -1,5 +1,5 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/shared/utils/error_messages.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/shared/utils/error_messages.dart';
 import 'package:flutter/material.dart' show Locale;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';

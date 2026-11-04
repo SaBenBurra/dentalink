@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:dentlink/data/models/post_model.dart';
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/shared/widgets/case_card.dart';
-import 'package:dentlink/shared/widgets/question_card.dart';
+import 'package:dentigo/data/models/post_model.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/shared/widgets/case_card.dart';
+import 'package:dentigo/shared/widgets/question_card.dart';
 
 class PostCardFactory {
   const PostCardFactory._();

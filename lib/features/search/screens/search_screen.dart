@@ -1,4 +1,4 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

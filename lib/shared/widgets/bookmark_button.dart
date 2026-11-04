@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_dimensions.dart';

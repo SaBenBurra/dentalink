@@ -1,9 +1,9 @@
-import 'package:dentlink/data/models/case_treatment.dart';
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/data/models/post_model.dart';
-import 'package:dentlink/data/models/tag_model.dart';
-import 'package:dentlink/data/models/user_model.dart';
-import 'package:dentlink/shared/extensions/treatment_type_ui.dart';
+import 'package:dentigo/data/models/case_treatment.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/data/models/post_model.dart';
+import 'package:dentigo/data/models/tag_model.dart';
+import 'package:dentigo/data/models/user_model.dart';
+import 'package:dentigo/shared/extensions/treatment_type_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

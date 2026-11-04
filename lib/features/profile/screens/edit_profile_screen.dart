@@ -1,4 +1,4 @@
-import 'package:dentlink/shared/extensions/user_title_ui.dart';
+import 'package:dentigo/shared/extensions/user_title_ui.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -13,8 +13,8 @@ import '../../../providers/auth_provider.dart';
 import '../providers/edit_profile_controller.dart';
 import '../../../shared/widgets/unsaved_changes_scope.dart';
 import '../../../shared/widgets/user_avatar.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
-import 'package:dentlink/core/constants/profile_limits.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
+import 'package:dentigo/core/constants/profile_limits.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});

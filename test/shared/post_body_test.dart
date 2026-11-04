@@ -1,6 +1,6 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/data/models/tag_model.dart';
-import 'package:dentlink/shared/widgets/post_body.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/data/models/tag_model.dart';
+import 'package:dentigo/shared/widgets/post_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

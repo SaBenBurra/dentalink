@@ -1,4 +1,4 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../data/providers/repository_providers.dart';
 import '../../../shared/utils/error_messages.dart';
@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../widgets/form_section_label.dart';
 import '../widgets/share_submit.dart';
 import '../widgets/tag_input.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
 import '../../../shared/widgets/unsaved_changes_scope.dart';
 import '../providers/create_question_controller.dart';
 

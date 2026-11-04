@@ -1,6 +1,6 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
-import 'package:dentlink/core/constants/app_text_styles.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
+import 'package:dentigo/core/constants/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
 class RegisterBottomActions extends StatelessWidget {

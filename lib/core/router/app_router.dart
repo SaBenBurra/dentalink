@@ -1,4 +1,4 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -26,7 +26,7 @@ import '../../features/settings/screens/settings_screen.dart';
 import '../../features/settings/screens/blocked_users_screen.dart';
 import '../../features/settings/screens/legal_screen.dart';
 import '../../features/bookmarks/screens/bookmarks_screen.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
 import '../../providers/auth_provider.dart';
 import '../../data/models/post_model.dart';
 import '../../data/models/user_model.dart';
@@ -72,7 +72,7 @@ String? resolveAuthRedirect({
   return isAuthRoute ? '/feed' : null;
 }
 
-/// DentLink uygulama router'ı.
+/// Dentigo uygulama router'ı.
 ///
 /// Navigasyon yapısı:
 ///   /login            → LoginScreen

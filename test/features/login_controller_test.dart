@@ -1,8 +1,8 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/data/models/user_model.dart';
-import 'package:dentlink/data/providers/repository_providers.dart';
-import 'package:dentlink/features/auth/providers/login_controller.dart';
-import 'package:dentlink/providers/locale_provider.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/data/models/user_model.dart';
+import 'package:dentigo/data/providers/repository_providers.dart';
+import 'package:dentigo/features/auth/providers/login_controller.dart';
+import 'package:dentigo/providers/locale_provider.dart';
 import 'package:flutter/material.dart' show Locale;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

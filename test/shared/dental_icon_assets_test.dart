@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/shared/extensions/dental_branch_ui.dart';
-import 'package:dentlink/shared/extensions/user_title_ui.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/shared/extensions/dental_branch_ui.dart';
+import 'package:dentigo/shared/extensions/user_title_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dentlink/features/settings/screens/legal_screen.dart';
+import 'package:dentigo/features/settings/screens/legal_screen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 

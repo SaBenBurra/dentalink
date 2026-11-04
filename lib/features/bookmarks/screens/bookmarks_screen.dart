@@ -1,5 +1,5 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/shared/utils/post_actions.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/shared/utils/post_actions.dart';
 import 'package:flutter/material.dart';
 import '../../../shared/utils/error_messages.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,7 +42,7 @@ class BookmarksScreen extends ConsumerWidget {
           final notifier = ref.read(bookmarkProvider.notifier);
           final hasMore = notifier.hasMore;
           if (posts.isEmpty && !hasMore) {
-            return DentLinkEmptyState(
+            return DentigoEmptyState(
               icon: Icons.bookmark_border_rounded,
               title: AppLocalizations.of(context)!.bookmarksEmptyTitle,
               subtitle: AppLocalizations.of(context)!.bookmarksEmptySubtitle,
@@ -97,7 +97,7 @@ class BookmarksScreen extends ConsumerWidget {
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(
-          child: DentLinkErrorWidget(
+          child: DentigoErrorWidget(
             message: AppLocalizations.of(context)!.bookmarksLoadError,
             onRetry: () => ref.refresh(bookmarkProvider),
           ),

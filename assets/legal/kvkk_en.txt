@@ -5,7 +5,7 @@ PRIVACY NOTICE UNDER THE TURKISH PERSONAL DATA PROTECTION LAW (KVKK)
 Last updated: [DD.MM.YYYY]
 
 1. Data controller
-Under Law No. 6698 on the Protection of Personal Data ("KVKK"), your personal data is processed by [COMPANY NAME / FULL NAME], [ADDRESS], [REGISTRY / TAX NO] ("DentLink") as data controller, as described below.
+Under Law No. 6698 on the Protection of Personal Data ("KVKK"), your personal data is processed by [COMPANY NAME / FULL NAME], [ADDRESS], [REGISTRY / TAX NO] ("Dentigo") as data controller, as described below.
 Contact: [EMAIL]
 
 2. Personal data we process
@@ -15,7 +15,7 @@ Contact: [EMAIL]
 - Security and moderation: session records, reports you submit, users you block.
 - Technical data: device and app version, error logs, IP address.
 
-Patient data: Case images and descriptions shared on the platform must not contain information that identifies the patient (face, name, ID number, file number, etc.). Anonymising this data is the responsibility of the clinician who posts it. DentLink does not intend to process identifiable patient health data; such content is removed when noticed.
+Patient data: Case images and descriptions shared on the platform must not contain information that identifies the patient (face, name, ID number, file number, etc.). Anonymising this data is the responsibility of the clinician who posts it. Dentigo does not intend to process identifiable patient health data; such content is removed when noticed.
 
 3. Purposes
 - Creating your account and signing you in (with a one-time code).
@@ -40,7 +40,7 @@ Your personal data is collected electronically through the information you enter
 Your data is kept while your account is open. When you delete your account in Settings → Delete Account, your profile, posts, comments, messages and uploaded images are permanently deleted. Records that must be kept by law are retained for the statutory period and then deleted.
 
 8. Your rights (KVKK Art. 11)
-You may apply to DentLink to:
+You may apply to Dentigo to:
 - learn whether your personal data is processed,
 - request information about the processing,
 - learn the purpose of processing and whether data is used accordingly,

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:dentlink/data/repositories/otp_send_limiter.dart';
-import 'package:dentlink/data/repositories/otp_cooldown_exception.dart';
+import 'package:dentigo/data/repositories/otp_send_limiter.dart';
+import 'package:dentigo/data/repositories/otp_cooldown_exception.dart';
 
 void main() {
   late OtpSendLimiter limiter;

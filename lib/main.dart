@@ -59,7 +59,7 @@ class MainApp extends ConsumerWidget {
     ref.watch(pushProvider);
 
     return MaterialApp.router(
-      title: 'DentLink',
+      title: 'Dentigo',
       debugShowCheckedModeBanner: false,
 
       // Router

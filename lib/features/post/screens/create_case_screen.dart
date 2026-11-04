@@ -1,4 +1,4 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../../data/providers/repository_providers.dart';
@@ -11,7 +11,7 @@ import '../widgets/share_submit.dart';
 import '../widgets/treatments_field.dart';
 import '../widgets/image_picker_grid.dart';
 import '../widgets/tag_input.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
 import '../../../shared/widgets/unsaved_changes_scope.dart';
 import '../../../data/models/case_treatment.dart';
 import '../providers/create_case_controller.dart';

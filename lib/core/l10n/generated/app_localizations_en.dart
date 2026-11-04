@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appName => 'DentLink';
+  String get appName => 'Dentigo';
 
   @override
   String get scrollToTop => 'Back to top';
@@ -744,7 +744,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get registerDoneMessage =>
-      'Welcome to DentLink. Your profile has been created.';
+      'Welcome to Dentigo. Your profile has been created.';
 
   @override
   String get skip => 'Skip';

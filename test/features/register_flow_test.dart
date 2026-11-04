@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:dentlink/data/models/user_model.dart';
-import 'package:dentlink/data/models/enums.dart';
+import 'package:dentigo/data/models/user_model.dart';
+import 'package:dentigo/data/models/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -42,7 +42,7 @@ void main() {
     'kayıt sonrası başarı diyaloğu görünür, sonra feed açılır; hazır avatar yok '
     '(BUG-21, AUTH-8)',
     (tester) async {
-      await pumpDentLink(tester, auth: _NewUserAuth());
+      await pumpDentigo(tester, auth: _NewUserAuth());
 
       await tester.enterText(find.byType(TextField).first, 'Ayşe Yılmaz');
       await tester.tap(find.text('Öğrenci'));

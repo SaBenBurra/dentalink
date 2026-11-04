@@ -2,8 +2,8 @@ import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 
 /// Gönderi formlarının altındaki geniş paylaş butonu.
 ///

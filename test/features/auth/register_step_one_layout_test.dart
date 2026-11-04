@@ -1,6 +1,6 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/features/auth/widgets/register_step_one.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/features/auth/widgets/register_step_one.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

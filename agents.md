@@ -1,6 +1,8 @@
-# DentLink — Proje Rehberi (insanlar ve AI ajanları için)
+# Dentigo — Proje Rehberi (insanlar ve AI ajanları için)
 
 > Diş hekimleri ve diş hekimliği öğrencileri için mobil sosyal platform: vaka paylaşımı, serbest forum, takip, DM ve bildirimler. "Diş hekimliğine özel LinkedIn."
+
+> **Ad:** Uygulama Dentigo. `com.atlas.dentlink`, Firebase `dentlink-ea0f2` ve Supabase `dentlink_backend` kimlikleri bilerek eski adla kalır (kimlik değişirse FCM ve mağaza kaydı yenilenir).
 
 **Önce şunları oku:**
 - [`docs/ROADMAP.md`](docs/ROADMAP.md): ne yapılıyor, sıradaki iş ne. **İlk açık fazdan devam et.**

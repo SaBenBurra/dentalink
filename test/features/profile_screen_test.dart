@@ -1,9 +1,9 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/data/models/user_model.dart';
-import 'package:dentlink/features/profile/widgets/profile_header.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/data/models/user_model.dart';
+import 'package:dentigo/features/profile/widgets/profile_header.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dentlink/features/profile/screens/profile_screen.dart';
+import 'package:dentigo/features/profile/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +16,7 @@ void main() {
     tester,
   ) async {
     final handle = tester.ensureSemantics();
-    await pumpDentLink(tester);
+    await pumpDentigo(tester);
     await tester.tap(find.text('Profil').last);
     await tester.pumpAndSettle();
 
@@ -38,7 +38,7 @@ void main() {
   });
 
   testWidgets('başka profil: ad, mesaj ve geri', (tester) async {
-    await pumpDentLink(tester);
+    await pumpDentigo(tester);
     GoRouter.of(
       tester.element(find.text(seedCase.title)),
     ).push('/profile/${otherUser.id}');

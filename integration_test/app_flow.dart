@@ -1,7 +1,7 @@
-import 'package:dentlink/data/repositories/auth_repository.dart';
-import 'package:dentlink/data/models/post_model.dart';
-import 'package:dentlink/main.dart';
-import 'package:dentlink/providers/locale_provider.dart';
+import 'package:dentigo/data/repositories/auth_repository.dart';
+import 'package:dentigo/data/models/post_model.dart';
+import 'package:dentigo/main.dart';
+import 'package:dentigo/providers/locale_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,7 +10,7 @@ import 'fake_repositories.dart';
 
 /// Uygulamayı fake repository'lerle açar. Cihazda (integration_test/) ve
 /// headless (test/, CI) aynı akış çalışır.
-Future<void> pumpDentLink(
+Future<void> pumpDentigo(
   WidgetTester tester, {
   AuthRepository? auth,
   List<PostModel>? feed,
@@ -54,7 +54,7 @@ Future<void> _tapAndSettle(WidgetTester tester, Finder finder) async {
 }
 
 Future<void> runAppFlow(WidgetTester tester) async {
-  await pumpDentLink(tester);
+  await pumpDentigo(tester);
 
   // Feed: oturum açık, örnek vaka listede.
   expect(find.text(seedCase.title), findsOneWidget);

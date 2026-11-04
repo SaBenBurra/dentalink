@@ -1,8 +1,8 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/user_provider.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
 
 class BadgeShowcase extends ConsumerWidget {
   final String userId;

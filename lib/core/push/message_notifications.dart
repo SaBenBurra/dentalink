@@ -34,7 +34,7 @@ Future<Map<String, dynamic>?> initMessageNotifications(
   if (!Platform.isAndroid) return null;
   await _plugin.initialize(
     settings: const InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      android: AndroidInitializationSettings('ic_notification'),
     ),
     onDidReceiveNotificationResponse: (r) {
       final data = _decodePayload(r.payload);
@@ -115,7 +115,7 @@ Future<void> _ensureInitialized() async {
   // Arka plan isolate'i: dokunuş ana isolate'te getNotificationAppLaunchDetails ile okunur.
   await _plugin.initialize(
     settings: const InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      android: AndroidInitializationSettings('ic_notification'),
     ),
   );
   _initialized = true;

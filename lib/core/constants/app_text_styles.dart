@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// DentLink tipografi sistemi — Stitch "Clinical Glass" tasarımından.
+/// Dentigo tipografi sistemi — Stitch "Clinical Glass" tasarımından.
 ///
 /// Çift font ailesi yaklaşımı:
 /// - **Outfit**: Başlıklar ve büyük metinler (geometrik, modern, cerrahi)

@@ -1,8 +1,8 @@
-import 'package:dentlink/core/utils/paging.dart';
-import 'package:dentlink/data/providers/repository_providers.dart';
-import 'package:dentlink/data/models/comment_model.dart';
-import 'package:dentlink/data/repositories/comment_repository.dart';
-import 'package:dentlink/providers/comment_provider.dart';
+import 'package:dentigo/core/utils/paging.dart';
+import 'package:dentigo/data/providers/repository_providers.dart';
+import 'package:dentigo/data/models/comment_model.dart';
+import 'package:dentigo/data/repositories/comment_repository.dart';
+import 'package:dentigo/providers/comment_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 

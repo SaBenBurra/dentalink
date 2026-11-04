@@ -70,15 +70,15 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
           ),
           Expanded(
             child: conversationsAsync.when(
-              loading: () => const DentLinkLoadingSpinner(),
-              error: (err, st) => DentLinkErrorWidget(
+              loading: () => const DentigoLoadingSpinner(),
+              error: (err, st) => DentigoErrorWidget(
                 message: l10n.conversationsLoadError,
                 onRetry: () =>
                     ref.read(conversationsProvider.notifier).refresh(),
               ),
               data: (conversations) {
                 if (conversations.isEmpty) {
-                  return DentLinkEmptyState(
+                  return DentigoEmptyState(
                     icon: Icons.chat_bubble_outline_rounded,
                     title: l10n.noMessages,
                   );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// DentLink renk paleti — Stitch "Clinical Glass" tasarım sisteminden.
+/// Dentigo renk paleti — Stitch "Clinical Glass" tasarım sisteminden.
 ///
 /// Kaynak: Stitch → Dentist Connect - Soft Tech - PRD
 /// Tasarım Sistemi: "Dentist Connect Glass"

@@ -1,6 +1,6 @@
-import 'package:dentlink/core/router/notification_route.dart';
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/providers/push_provider.dart';
+import 'package:dentigo/core/router/notification_route.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/providers/push_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

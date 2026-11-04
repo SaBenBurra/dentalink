@@ -5,7 +5,7 @@ KİŞİSEL VERİLERİN KORUNMASI KANUNU KAPSAMINDA AYDINLATMA METNİ
 Son güncelleme: [GG.AA.YYYY]
 
 1. Veri sorumlusu
-6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca kişisel verileriniz, veri sorumlusu sıfatıyla [ŞİRKET UNVANI / AD SOYAD], [ADRES], [MERSİS / VERGİ NO] ("DentLink") tarafından aşağıda açıklanan kapsamda işlenir.
+6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca kişisel verileriniz, veri sorumlusu sıfatıyla [ŞİRKET UNVANI / AD SOYAD], [ADRES], [MERSİS / VERGİ NO] ("Dentigo") tarafından aşağıda açıklanan kapsamda işlenir.
 İletişim: [E-POSTA]
 
 2. İşlenen kişisel veriler
@@ -15,7 +15,7 @@ Son güncelleme: [GG.AA.YYYY]
 - Güvenlik ve moderasyon: oturum kayıtları, gönderdiğiniz raporlar, engellediğiniz kullanıcılar.
 - Teknik veriler: cihaz ve uygulama sürümü, hata kayıtları, IP adresi.
 
-Hasta verileri: Platformda paylaşılan vaka görsellerinin ve açıklamalarının hastanın kimliğini belirlemeye yarayacak bilgi (yüz, ad, kimlik numarası, dosya numarası vb.) içermemesi zorunludur. Bu verileri anonimleştirmek, içeriği paylaşan hekimin sorumluluğundadır. DentLink, hastalara ait kimliği belirli sağlık verisi işlemeyi amaçlamaz; bu tür içerik fark edildiğinde kaldırılır.
+Hasta verileri: Platformda paylaşılan vaka görsellerinin ve açıklamalarının hastanın kimliğini belirlemeye yarayacak bilgi (yüz, ad, kimlik numarası, dosya numarası vb.) içermemesi zorunludur. Bu verileri anonimleştirmek, içeriği paylaşan hekimin sorumluluğundadır. Dentigo, hastalara ait kimliği belirli sağlık verisi işlemeyi amaçlamaz; bu tür içerik fark edildiğinde kaldırılır.
 
 3. İşleme amaçları
 - Hesabınızı oluşturmak, oturum açmanızı sağlamak (tek kullanımlık kod ile).
@@ -40,7 +40,7 @@ Kişisel verileriniz, uygulamaya girdiğiniz bilgiler ve uygulamayı kullanımı
 Verileriniz hesabınız açık olduğu sürece saklanır. Hesabınızı Ayarlar → Hesabı Sil ile sildiğinizde profiliniz, paylaşımlarınız, yorumlarınız, mesajlarınız ve yüklediğiniz görseller kalıcı olarak silinir. Hukuki yükümlülük gereği saklanması gereken kayıtlar, ilgili mevzuatta öngörülen süre boyunca saklanır ve ardından silinir.
 
 8. Haklarınız (KVKK m. 11)
-DentLink'e başvurarak:
+Dentigo'ya başvurarak:
 - kişisel verilerinizin işlenip işlenmediğini öğrenme,
 - işlenmişse buna ilişkin bilgi talep etme,
 - işlenme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme,

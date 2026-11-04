@@ -1,5 +1,5 @@
-import 'package:dentlink/features/search/screens/search_screen.dart';
-import 'package:dentlink/providers/search_provider.dart';
+import 'package:dentigo/features/search/screens/search_screen.dart';
+import 'package:dentigo/providers/search_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,7 +10,7 @@ void main() {
   testWidgets('post sayfasındaki etikete dokununca Keşfet o etiketle açılır', (
     tester,
   ) async {
-    await pumpDentLink(tester);
+    await pumpDentigo(tester);
     expect(find.text('#Kalsifiye_Kanal'), findsNothing);
 
     await tester.tap(find.text('Alt molar kanal tedavisi'));

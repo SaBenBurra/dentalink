@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dentlink/core/l10n/generated/app_localizations.dart'; // Kendi yolunuza göre düzeltin
+import 'package:dentigo/core/l10n/generated/app_localizations.dart'; // Kendi yolunuza göre düzeltin
 import '../../../data/models/enums.dart';
 
 extension PostTypeL10n on PostType {

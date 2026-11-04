@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
 
-  "appName": "DentLink",
+  "appName": "Dentigo",
   "scrollToTop": "Back to top",
   "appTagline": "Social Platform for Dentists",
   "loading": "Loading...",
@@ -300,7 +300,7 @@
   "completeProfile": "Complete My Profile",
   "continueAction": "Continue",
   "registerDoneTitle": "Registration Complete!",
-  "registerDoneMessage": "Welcome to DentLink. Your profile has been created.",
+  "registerDoneMessage": "Welcome to Dentigo. Your profile has been created.",
   "skip": "Skip",
   "stepOf": "Step {current} / {total}",
   "@stepOf": { "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } } },

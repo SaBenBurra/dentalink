@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dentlink/data/models/enums.dart';
+import 'package:dentigo/data/models/enums.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

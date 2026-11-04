@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
 
 class MessageBubble extends StatelessWidget {
   final String text;

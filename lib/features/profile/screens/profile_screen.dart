@@ -1,5 +1,5 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/shared/extensions/post_type_l10n.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/shared/extensions/post_type_l10n.dart';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -91,7 +91,7 @@ class ProfileScreen extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => DentLinkErrorWidget(
+      error: (error, stack) => DentigoErrorWidget(
         message: getErrorMessage(l10n, error),
         onRetry: () {
           if (isCurrentUser) {

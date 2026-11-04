@@ -1,4 +1,4 @@
-import 'package:dentlink/features/post/widgets/image_picker_grid.dart';
+import 'package:dentigo/features/post/widgets/image_picker_grid.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -1,4 +1,4 @@
-import 'package:dentlink/data/repositories/supabase_follow_repository.dart';
+import 'package:dentigo/data/repositories/supabase_follow_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 

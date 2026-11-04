@@ -1,4 +1,4 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -8,7 +8,7 @@ import '../models/login_step.dart';
 /// Login ekranı logo + dinamik başlık bileşeni.
 ///
 /// [currentStep] değerine göre farklı başlık metni gösterir:
-/// - emailOrPhone → "DentLink" + "E-posta veya telefon numaranızla giriş yapın"
+/// - emailOrPhone → "Dentigo" + "E-posta veya telefon numaranızla giriş yapın"
 /// - otp → "Doğrulama Kodu" + "{adres}e gönderilen kodu girin"
 class LoginLogoHeader extends StatelessWidget {
   const LoginLogoHeader({

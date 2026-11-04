@@ -40,13 +40,13 @@ class BlockedUsersScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settingsBlocked)),
       body: blocked.when(
-        loading: () => const DentLinkLoadingSpinner(),
-        error: (e, _) => DentLinkErrorWidget(
+        loading: () => const DentigoLoadingSpinner(),
+        error: (e, _) => DentigoErrorWidget(
           message: getErrorMessage(l10n, e),
           onRetry: () => ref.invalidate(blockedUsersProvider),
         ),
         data: (users) => users.isEmpty
-            ? DentLinkEmptyState(
+            ? DentigoEmptyState(
                 icon: Icons.block_outlined,
                 title: l10n.blockedEmpty,
               )

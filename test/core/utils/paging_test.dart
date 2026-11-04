@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:dentlink/core/utils/paging.dart';
-import 'package:dentlink/data/repositories/keyset.dart';
+import 'package:dentigo/core/utils/paging.dart';
+import 'package:dentigo/data/repositories/keyset.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';

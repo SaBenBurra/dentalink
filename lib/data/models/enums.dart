@@ -1,4 +1,4 @@
-/// DentLink — Tüm domain enum tanımları.
+/// Dentigo — Tüm domain enum tanımları.
 /// Faz 3'te Supabase'in PostgreSQL enum'larıyla eşleştirilir.
 library;
 

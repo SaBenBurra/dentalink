@@ -1,4 +1,4 @@
-import 'package:dentlink/core/constants/app_dimensions.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 

@@ -1,4 +1,4 @@
-# DentLink — Denetim Raporu (Audit)
+# Dentigo — Denetim Raporu (Audit)
 
 > **Tarih:** 2026-10-13 · **Commit:** `0bf5d3f` (phase 3.7)
 > **Kapsam:** Supabase migration'ları (001–011), tüm repository'ler, provider'lar, ekranlar, testler, Android/iOS yapılandırması.
@@ -161,7 +161,7 @@
 | REL-1 | 🟠 | `ios/Runner/Info.plist` | `NSCameraUsageDescription` ve `NSPhotoLibraryUsageDescription` yok, iOS'ta kamera/galeri açılınca **crash**. | İki anahtarı Türkçe açıklamayla ekle. | ✅ |
 | REL-2 | 🟠 | `android/app/build.gradle.kts:32` | Release build debug key ile imzalanıyor; Play Store reddeder. | `key.properties` (git dışı) + release signingConfig. *(Faz 5)* | ⬜ |
 | REL-3 | 🟡 | `pubspec.yaml`, `assets/fonts/*` | Font klasörleri boş, `fonts:` tanımı yok; uygulama sistem fontuna düşüyor. | Font dosyalarını ekle ve tanımla, ya da `google_fonts`. *(Faz 5)* | ⬜ |
-| REL-4 | 🟡 | `AndroidManifest.xml:5`, `Info.plist:10`, `build.gradle.kts:19` | Etiket "dentlink"/"Dentlink"; launcher ikonu Flutter varsayılanı; `applicationId` şablon. | İsim, ikon ve id kararı. *(Faz 5)* Kimlik `com.atlas.dentlink` (2026-10-29); ikon `assets/icon.svg`den (Android adaptive + iOS, 2026-11-01); isim ve splash açık. | 🔧 |
+| REL-4 | 🟡 | `AndroidManifest.xml:5`, `Info.plist:10`, `build.gradle.kts:19` | Etiket "dentlink"/"Dentlink"; launcher ikonu Flutter varsayılanı; `applicationId` şablon. | İsim, ikon ve id kararı. *(Faz 5)* Kimlik `com.atlas.dentlink` (2026-10-29); ikon `assets/icon.svg`den (Android adaptive + iOS, 2026-11-01); isim Dentigo (2026-11-04, kimlik değişmedi); splash açık. | 🔧 |
 | REL-5 | 🟡 | — | Crash raporlama yok (Sentry/Crashlytics). | *(Faz 5)* | ⬜ |
 | REL-6 | 🟡 | — | Push bildirim yok (FCM). | *(Faz 5)* 027–029, Edge Function `push`, `push_provider.dart`. Android'de cihazda doğrulandı (2026-10-29); iOS (APNs) ve bildirim tercihleri açık (`SUPABASE.md` §8). | 🔧 |
 | REL-7 | ⚪ | `pubspec.yaml` | `flutter_riverpod` 2.x ve `go_router` 14.x bir major sürüm geride. | Yayın sonrası, ayrı bir PR'da yükselt. | ⬜ |

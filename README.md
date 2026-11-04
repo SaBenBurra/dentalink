@@ -1,4 +1,4 @@
-# DentLink
+# Dentigo
 
 Diş hekimleri ve öğrenciler için mobil sosyal platform (Flutter + Supabase).
 

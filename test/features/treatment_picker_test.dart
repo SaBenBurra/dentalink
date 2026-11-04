@@ -1,8 +1,8 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/data/models/case_treatment.dart';
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/features/post/widgets/tag_input.dart';
-import 'package:dentlink/features/post/widgets/treatment_picker.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/data/models/case_treatment.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/features/post/widgets/tag_input.dart';
+import 'package:dentigo/features/post/widgets/treatment_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

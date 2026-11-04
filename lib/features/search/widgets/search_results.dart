@@ -1,5 +1,5 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/shared/utils/post_actions.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/shared/utils/post_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -15,8 +15,8 @@ import '../../../shared/widgets/user_tile.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/load_more_footer.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
-import 'package:dentlink/shared/widgets/post_card_factory.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
+import 'package:dentigo/shared/widgets/post_card_factory.dart';
 
 /// Keşfet gövdesi: popüler konular (arama yokken), (metin aranıyorsa) kişiler,
 /// popüler gönderiler.
@@ -146,7 +146,7 @@ class ExploreResults extends ConsumerWidget {
             data: (posts) => [
               if (posts.isEmpty)
                 SliverToBoxAdapter(
-                  child: DentLinkEmptyState(
+                  child: DentigoEmptyState(
                     icon: Icons.article_outlined,
                     title: l10n.searchNoResultsTitle,
                     subtitle: l10n.searchNoPosts,
@@ -186,13 +186,13 @@ class ExploreResults extends ConsumerWidget {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.all(AppDimensions.spacing32),
-                  child: DentLinkLoadingSpinner(),
+                  child: DentigoLoadingSpinner(),
                 ),
               ),
             ],
             error: (err, _) => [
               SliverToBoxAdapter(
-                child: DentLinkErrorWidget(
+                child: DentigoErrorWidget(
                   message: getErrorMessage(l10n, err),
                   onRetry: notifier.refresh,
                 ),

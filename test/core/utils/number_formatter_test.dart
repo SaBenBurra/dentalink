@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:dentlink/core/utils/number_formatter.dart';
+import 'package:dentigo/core/utils/number_formatter.dart';
 
 void main() {
   group('formatCount', () {

@@ -4,7 +4,7 @@ PRIVACY POLICY
 
 Last updated: [DD.MM.YYYY]
 
-This policy explains what information is collected when you use the DentLink mobile app (the "App"), how it is used and what your rights are. Legal details on personal data processing are in the KVKK Privacy Notice.
+This policy explains what information is collected when you use the Dentigo mobile app (the "App"), how it is used and what your rights are. Legal details on personal data processing are in the KVKK Privacy Notice.
 
 1. Information we collect
 - The email address or phone number you sign in with. It is never shown to other users.

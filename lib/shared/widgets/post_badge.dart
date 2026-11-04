@@ -1,6 +1,6 @@
-import 'package:dentlink/core/constants/app_colors.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
-import 'package:dentlink/shared/extensions/post_type_l10n.dart';
+import 'package:dentigo/core/constants/app_colors.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
+import 'package:dentigo/shared/extensions/post_type_l10n.dart';
 import 'package:flutter/material.dart';
 
 import '../../../data/models/enums.dart';

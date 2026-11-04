@@ -9,10 +9,10 @@ import '../../core/constants/app_dimensions.dart';
 /// Boyut ve çizgi kalınlığı isteğe bağlı olarak ayarlanabilir.
 ///
 /// ```dart
-/// DentLinkLoadingSpinner(size: 32, strokeWidth: 3)
+/// DentigoLoadingSpinner(size: 32, strokeWidth: 3)
 /// ```
-class DentLinkLoadingSpinner extends StatelessWidget {
-  const DentLinkLoadingSpinner({super.key, this.size, this.strokeWidth});
+class DentigoLoadingSpinner extends StatelessWidget {
+  const DentigoLoadingSpinner({super.key, this.size, this.strokeWidth});
 
   /// Gösterge çapı (piksel). Null ise Flutter varsayılanı kullanılır.
   final double? size;
@@ -45,11 +45,11 @@ class DentLinkLoadingSpinner extends StatelessWidget {
 /// ```dart
 /// ListView.builder(
 ///   itemCount: 3,
-///   itemBuilder: (_, __) => const DentLinkShimmerCard(),
+///   itemBuilder: (_, __) => const DentigoShimmerCard(),
 /// )
 /// ```
-class DentLinkShimmerCard extends StatelessWidget {
-  const DentLinkShimmerCard({super.key});
+class DentigoShimmerCard extends StatelessWidget {
+  const DentigoShimmerCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -176,19 +176,19 @@ class DentLinkShimmerCard extends StatelessWidget {
 /// Yarı saydam yükleme katmanı (overlay).
 ///
 /// Bir işlem sürerken alt içeriği devre dışı bırakır ve
-/// ortada bir [DentLinkLoadingSpinner] gösterir.
+/// ortada bir [DentigoLoadingSpinner] gösterir.
 ///
 /// [isLoading] `true` olduğunda overlay görünür hale gelir ve
 /// alt widget'a dokunma engellenir.
 ///
 /// ```dart
-/// DentLinkLoadingOverlay(
+/// DentigoLoadingOverlay(
 ///   isLoading: state.isSubmitting,
 ///   child: MyFormWidget(),
 /// )
 /// ```
-class DentLinkLoadingOverlay extends StatelessWidget {
-  const DentLinkLoadingOverlay({
+class DentigoLoadingOverlay extends StatelessWidget {
+  const DentigoLoadingOverlay({
     super.key,
     required this.isLoading,
     required this.child,
@@ -211,7 +211,7 @@ class DentLinkLoadingOverlay extends StatelessWidget {
               ignoring: false,
               child: Container(
                 color: Colors.black45,
-                child: const DentLinkLoadingSpinner(),
+                child: const DentigoLoadingSpinner(),
               ),
             ),
           ),

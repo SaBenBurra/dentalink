@@ -1,4 +1,4 @@
-import 'package:dentlink/shared/extensions/user_title_ui.dart';
+import 'package:dentigo/shared/extensions/user_title_ui.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_dimensions.dart';

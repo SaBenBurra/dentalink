@@ -1,4 +1,4 @@
-import 'package:dentlink/core/push/message_notifications.dart';
+import 'package:dentigo/core/push/message_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

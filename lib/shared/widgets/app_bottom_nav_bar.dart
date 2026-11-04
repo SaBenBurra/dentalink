@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
 
-/// DentLink ana floating bottom navigation bar.
+/// Dentigo ana floating bottom navigation bar.
 ///
 /// 5 sekme:
 ///   0 — Ana Sayfa (Feed)

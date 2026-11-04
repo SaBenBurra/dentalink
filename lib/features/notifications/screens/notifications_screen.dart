@@ -1,5 +1,5 @@
-import 'package:dentlink/data/models/notification_model.dart';
-import 'package:dentlink/features/notifications/widgets/notifications_app_bar.dart';
+import 'package:dentigo/data/models/notification_model.dart';
+import 'package:dentigo/features/notifications/widgets/notifications_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -71,7 +71,7 @@ class _NotificationListView extends ConsumerWidget {
       data: (notifications) {
         if (notifications.isEmpty) {
           return Center(
-            child: DentLinkEmptyState(
+            child: DentigoEmptyState(
               icon: Icons.notifications_off_outlined,
               title: localizations.notificationsTitle,
               subtitle: localizations.noNotifications,
@@ -106,7 +106,7 @@ class _NotificationListView extends ConsumerWidget {
       },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (err, stack) => Center(
-        child: DentLinkErrorWidget(
+        child: DentigoErrorWidget(
           message: localizations.notificationsLoadError,
           onRetry: () => ref.refresh(notificationsProvider),
         ),

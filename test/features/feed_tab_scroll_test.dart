@@ -1,9 +1,9 @@
-import 'package:dentlink/data/models/post_model.dart';
-import 'package:dentlink/shared/widgets/post_glass_container.dart';
-import 'package:dentlink/features/feed/screens/feed_screen.dart';
-import 'package:dentlink/features/feed/widgets/feed_filter_segments.dart';
-import 'package:dentlink/features/feed/widgets/feed_screen_app_bar.dart';
-import 'package:dentlink/features/shell/main_shell.dart';
+import 'package:dentigo/data/models/post_model.dart';
+import 'package:dentigo/shared/widgets/post_glass_container.dart';
+import 'package:dentigo/features/feed/screens/feed_screen.dart';
+import 'package:dentigo/features/feed/widgets/feed_filter_segments.dart';
+import 'package:dentigo/features/feed/widgets/feed_screen_app_bar.dart';
+import 'package:dentigo/features/shell/main_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -15,7 +15,7 @@ void main() {
   testWidgets('feed sekmeleri arasında geçişte kaydırma konumu korunur', (
     tester,
   ) async {
-    await pumpDentLink(tester, feed: _cases());
+    await pumpDentigo(tester, feed: _cases());
 
     Finder visible(String title) => find.text(title).hitTestable();
     // Ekrandaki dikey liste: görünen bir kartın en yakın Scrollable atası.
@@ -50,7 +50,7 @@ void main() {
   });
 
   testWidgets('logo yalnızca açık sekmeyi başa kaydırır', (tester) async {
-    await pumpDentLink(tester, feed: _cases());
+    await pumpDentigo(tester, feed: _cases());
     Finder visible(String title) => find.text(title).hitTestable();
     double offset() => tester
         .state<ScrollableState>(
@@ -86,7 +86,7 @@ void main() {
   testWidgets(
     'sekme kaydırması başlayınca gizli üst bar açılır, gösterge kaydırmayı izler; alt menü gizli kalır',
     (tester) async {
-      await pumpDentLink(tester, feed: _cases());
+      await pumpDentigo(tester, feed: _cases());
       final container = ProviderScope.containerOf(
         tester.element(find.byType(FeedScreen)),
       );

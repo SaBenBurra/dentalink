@@ -130,7 +130,7 @@ class TreatmentArchiveScreen extends ConsumerWidget {
               data: (posts) => [
                 if (posts.isEmpty)
                   SliverToBoxAdapter(
-                    child: DentLinkEmptyState(
+                    child: DentigoEmptyState(
                       icon: Icons.folder_open_outlined,
                       title: l10n.archiveEmpty,
                     ),
@@ -172,7 +172,7 @@ class TreatmentArchiveScreen extends ConsumerWidget {
               ],
               error: (err, _) => [
                 SliverToBoxAdapter(
-                  child: DentLinkErrorWidget(
+                  child: DentigoErrorWidget(
                     message: getErrorMessage(l10n, err),
                     onRetry: notifier.refresh,
                   ),

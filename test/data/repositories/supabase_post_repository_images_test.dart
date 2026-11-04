@@ -1,5 +1,5 @@
-import 'package:dentlink/data/models/post_model.dart';
-import 'package:dentlink/data/repositories/supabase_post_repository.dart';
+import 'package:dentigo/data/models/post_model.dart';
+import 'package:dentigo/data/repositories/supabase_post_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

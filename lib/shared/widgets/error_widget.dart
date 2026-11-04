@@ -8,16 +8,16 @@ import '../../core/l10n/generated/app_localizations.dart';
 /// kullanıcıya ikon, mesaj ve isteğe bağlı yeniden deneme butonu gösterir.
 ///
 /// Flutter'ın yerleşik [ErrorWidget] sınıfı ile isim çakışmasını önlemek
-/// için `DentLinkErrorWidget` olarak adlandırılmıştır.
+/// için `DentigoErrorWidget` olarak adlandırılmıştır.
 ///
 /// ```dart
-/// DentLinkErrorWidget(
+/// DentigoErrorWidget(
 ///   message: 'Gönderiler yüklenemedi.',
 ///   onRetry: () => ref.invalidate(feedProvider),
 /// )
 /// ```
-class DentLinkErrorWidget extends StatelessWidget {
-  const DentLinkErrorWidget({
+class DentigoErrorWidget extends StatelessWidget {
+  const DentigoErrorWidget({
     super.key,
     this.message,
     this.onRetry,

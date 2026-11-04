@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:dentlink/data/models/notification_model.dart';
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/data/models/user_model.dart';
+import 'package:dentigo/data/models/notification_model.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/data/models/user_model.dart';
 
 void main() {
   final testActor = UserModel(

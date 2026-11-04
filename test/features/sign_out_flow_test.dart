@@ -1,8 +1,8 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/core/router/app_router.dart';
-import 'package:dentlink/features/auth/screens/login_screen.dart';
-import 'package:dentlink/features/settings/widgets/sign_out_dialog.dart';
-import 'package:dentlink/main.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/router/app_router.dart';
+import 'package:dentigo/features/auth/screens/login_screen.dart';
+import 'package:dentigo/features/settings/widgets/sign_out_dialog.dart';
+import 'package:dentigo/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,7 +22,7 @@ class _SupabaseLikeAuth extends MockAuthForTest {
 
 void main() {
   testWidgets('ayarlardan çıkış login ekranına hatasız döner', (tester) async {
-    await pumpDentLink(tester, auth: _SupabaseLikeAuth());
+    await pumpDentigo(tester, auth: _SupabaseLikeAuth());
     ProviderScope.containerOf(
       tester.element(find.byType(MainApp)),
     ).read(routerProvider).push('/settings');

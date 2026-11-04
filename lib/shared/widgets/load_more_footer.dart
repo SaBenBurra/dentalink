@@ -75,7 +75,7 @@ class _LoadMoreFooterState extends State<LoadMoreFooter> {
               ],
             )
           : _loading || widget.auto
-          ? const DentLinkLoadingSpinner(size: 24, strokeWidth: 2)
+          ? const DentigoLoadingSpinner(size: 24, strokeWidth: 2)
           : Center(
               child: TextButton(onPressed: _start, child: Text(l10n.showMore)),
             ),

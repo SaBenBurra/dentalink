@@ -1,16 +1,16 @@
-import 'package:dentlink/core/constants/app_dimensions.dart';
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/features/feed/widgets/feed_skeleton.dart';
-import 'package:dentlink/providers/feed_provider.dart';
-import 'package:dentlink/shared/widgets/post_card_factory.dart';
-import 'package:dentlink/shared/widgets/empty_state.dart';
-import 'package:dentlink/shared/widgets/error_widget.dart';
-import 'package:dentlink/shared/widgets/load_more_footer.dart';
-import 'package:dentlink/shared/utils/error_messages.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/features/feed/widgets/feed_skeleton.dart';
+import 'package:dentigo/providers/feed_provider.dart';
+import 'package:dentigo/shared/widgets/post_card_factory.dart';
+import 'package:dentigo/shared/widgets/empty_state.dart';
+import 'package:dentigo/shared/widgets/error_widget.dart';
+import 'package:dentigo/shared/widgets/load_more_footer.dart';
+import 'package:dentigo/shared/utils/error_messages.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dentlink/shared/utils/post_actions.dart';
+import 'package:dentigo/shared/utils/post_actions.dart';
 
 class FeedList extends StatelessWidget {
   const FeedList({
@@ -54,7 +54,7 @@ class FeedList extends StatelessWidget {
               slivers: [
                 SliverFillRemaining(
                   child: Center(
-                    child: DentLinkEmptyState(
+                    child: DentigoEmptyState(
                       icon: Icons.dynamic_feed_outlined,
                       title: l10n.emptyFeed,
                       subtitle: filterType != null
@@ -109,7 +109,7 @@ class FeedList extends StatelessWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
             SliverFillRemaining(
-              child: DentLinkErrorWidget(
+              child: DentigoErrorWidget(
                 message: AppLocalizations.of(context)!.feedLoadError,
                 onRetry: () => ref.read(feedProvider.notifier).refresh(),
               ),

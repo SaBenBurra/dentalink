@@ -1,5 +1,5 @@
-import 'package:dentlink/features/feed/widgets/feed_list.dart';
-import 'package:dentlink/features/feed/widgets/feed_screen_app_bar.dart';
+import 'package:dentigo/features/feed/widgets/feed_list.dart';
+import 'package:dentigo/features/feed/widgets/feed_screen_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -128,7 +128,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
       (
         l10n.feedFilterJobs,
         Center(
-          child: DentLinkEmptyState(
+          child: DentigoEmptyState(
             icon: Icons.work_outline_rounded,
             title: l10n.feedJobsEmptyTitle,
             subtitle: l10n.feedJobsEmptySubtitle,

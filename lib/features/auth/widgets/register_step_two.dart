@@ -1,11 +1,11 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/core/constants/app_colors.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
-import 'package:dentlink/core/constants/app_text_styles.dart';
-import 'package:dentlink/shared/widgets/glass_field.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/constants/app_colors.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
+import 'package:dentigo/core/constants/app_text_styles.dart';
+import 'package:dentigo/shared/widgets/glass_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:dentlink/core/constants/profile_limits.dart';
+import 'package:dentigo/core/constants/profile_limits.dart';
 
 class RegisterStepTwo extends StatelessWidget {
   const RegisterStepTwo({

@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/chat_input.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
 import '../../../providers/message_provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../shared/widgets/load_more_footer.dart';
@@ -190,10 +190,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         children: [
           Expanded(
             child: chatState.when(
-              loading: () => const DentLinkLoadingSpinner(),
+              loading: () => const DentigoLoadingSpinner(),
               error: (err, st) {
                 debugPrint('ChatScreen: mesaj yükleme hatası: $err\n$st');
-                return DentLinkErrorWidget(
+                return DentigoErrorWidget(
                   message: l10n.chatLoadError,
                   onRetry: () =>
                       ref.invalidate(activeChatProvider(widget.userId)),
@@ -203,7 +203,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 final messages = state.messages;
 
                 if (messages.isEmpty) {
-                  return DentLinkEmptyState(
+                  return DentigoEmptyState(
                     icon: Icons.chat_bubble_outline_rounded,
                     iconSize: AppDimensions.spacing48,
                     title: userName,

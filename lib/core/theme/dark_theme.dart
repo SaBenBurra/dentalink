@@ -4,7 +4,7 @@ import '../constants/app_colors.dart';
 import '../constants/app_text_styles.dart';
 import '../constants/app_dimensions.dart';
 
-/// DentLink karanlık tema tanımı — Stitch "Clinical Glass" tasarımından.
+/// Dentigo karanlık tema tanımı — Stitch "Clinical Glass" tasarımından.
 ThemeData buildDarkTheme() {
   const colorScheme = ColorScheme(
     brightness: Brightness.dark,

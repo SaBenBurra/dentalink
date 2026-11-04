@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
-import 'package:dentlink/shared/utils/error_messages.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
+import 'package:dentigo/shared/utils/error_messages.dart';
 import 'form_section_label.dart';
 
 /// Kısa kenarı 320px altı ya da 1:4'ten dar görseller feed'de anlamsız görünür (4:5–1.91:1

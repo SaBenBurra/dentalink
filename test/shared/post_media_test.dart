@@ -1,5 +1,5 @@
-import 'package:dentlink/shared/widgets/fullscreen_image_viewer.dart';
-import 'package:dentlink/shared/widgets/post_media.dart';
+import 'package:dentigo/shared/widgets/fullscreen_image_viewer.dart';
+import 'package:dentigo/shared/widgets/post_media.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

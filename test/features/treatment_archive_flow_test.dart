@@ -1,7 +1,7 @@
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/features/search/screens/search_screen.dart';
-import 'package:dentlink/features/treatments/screens/treatment_archive_screen.dart';
-import 'package:dentlink/providers/search_provider.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/features/search/screens/search_screen.dart';
+import 'package:dentigo/features/treatments/screens/treatment_archive_screen.dart';
+import 'package:dentigo/providers/search_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -11,7 +11,7 @@ void main() {
   testWidgets(
     'ana sayfada tedavi yok; post sayfasındaki çip → arşiv → branş linki Keşfet\'i açar',
     (tester) async {
-      await pumpDentLink(tester);
+      await pumpDentigo(tester);
 
       // Tedavi etiketi serbest etiket satırında tekrar görünmez.
       expect(find.text('#kanal-tedavisi'), findsNothing);

@@ -4,7 +4,7 @@ import '../constants/app_colors.dart';
 import '../constants/app_text_styles.dart';
 import '../constants/app_dimensions.dart';
 
-/// DentLink aydınlık tema tanımı — Stitch "Clinical Glass" tasarımından.
+/// Dentigo aydınlık tema tanımı — Stitch "Clinical Glass" tasarımından.
 ThemeData buildLightTheme() {
   const colorScheme = ColorScheme(
     brightness: Brightness.light,

@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
-import 'package:dentlink/features/post/screens/post_screen.dart';
-import 'package:dentlink/features/post/widgets/comments/post_comments.dart';
-import 'package:dentlink/features/post/widgets/detail/detail_states.dart';
-import 'package:dentlink/data/providers/repository_providers.dart';
-import 'package:dentlink/providers/post_provider.dart';
+import 'package:dentigo/features/post/screens/post_screen.dart';
+import 'package:dentigo/features/post/widgets/comments/post_comments.dart';
+import 'package:dentigo/features/post/widgets/detail/detail_states.dart';
+import 'package:dentigo/data/providers/repository_providers.dart';
+import 'package:dentigo/providers/post_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -14,7 +14,7 @@ import '../../integration_test/fake_repositories.dart';
 
 void main() {
   Future<void> openPost(WidgetTester tester) async {
-    await pumpDentLink(tester);
+    await pumpDentigo(tester);
     GoRouter.of(
       tester.element(find.text(seedCase.title)),
     ).push('/post/${seedCase.id}');
@@ -43,7 +43,7 @@ void main() {
   testWidgets('feed kartına dokununca sayfa yükleniyor ekranı olmadan açılır', (
     tester,
   ) async {
-    await pumpDentLink(tester);
+    await pumpDentigo(tester);
     await tester.tap(find.text(seedCase.title));
     await tester.pump();
     await tester.pump(); // geçiş başladı
@@ -54,7 +54,7 @@ void main() {
   });
 
   testWidgets('feed yorum ikonu sayfayı açar, klavye açılmaz', (tester) async {
-    await pumpDentLink(tester);
+    await pumpDentigo(tester);
     await tester.tap(find.byIcon(CupertinoIcons.chat_bubble).first);
     await tester.pumpAndSettle();
     expect(find.byType(PostScreen), findsOneWidget);
@@ -91,7 +91,7 @@ void main() {
   });
 
   testWidgets('olmayan post: "mevcut değil" ve geri butonu', (tester) async {
-    await pumpDentLink(tester);
+    await pumpDentigo(tester);
     GoRouter.of(tester.element(find.text(seedCase.title))).push('/post/yok');
     await tester.pumpAndSettle();
     expect(find.text('Bu gönderi artık mevcut değil.'), findsOneWidget);
@@ -101,7 +101,7 @@ void main() {
   testWidgets('forum postu da aynı sayfada, yorumlar kartın altında', (
     tester,
   ) async {
-    await pumpDentLink(tester);
+    await pumpDentigo(tester);
     final anchor = tester.element(find.text(seedCase.title));
     final post = await ProviderScope.containerOf(anchor)
         .read(createPostRepositoryProvider)

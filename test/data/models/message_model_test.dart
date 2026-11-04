@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:dentlink/data/models/message_model.dart';
+import 'package:dentigo/data/models/message_model.dart';
 
 void main() {
   group('MessageModel -', () {

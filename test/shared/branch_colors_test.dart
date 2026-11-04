@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:dentlink/core/constants/app_colors.dart';
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/shared/extensions/dental_branch_ui.dart';
+import 'package:dentigo/core/constants/app_colors.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/shared/extensions/dental_branch_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

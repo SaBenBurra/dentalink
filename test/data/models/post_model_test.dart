@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:dentlink/data/models/case_treatment.dart';
-import 'package:dentlink/data/models/post_model.dart';
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/data/models/tag_model.dart';
-import 'package:dentlink/data/models/user_model.dart';
+import 'package:dentigo/data/models/case_treatment.dart';
+import 'package:dentigo/data/models/post_model.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/data/models/tag_model.dart';
+import 'package:dentigo/data/models/user_model.dart';
 
 void main() {
   final testAuthor = UserModel(

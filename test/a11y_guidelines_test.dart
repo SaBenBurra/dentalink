@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:go_router/go_router.dart';
-import 'package:dentlink/features/post/screens/post_screen.dart';
+import 'package:dentigo/features/post/screens/post_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../integration_test/app_flow.dart';
@@ -11,7 +11,7 @@ void main() {
     tester,
   ) async {
     final handle = tester.ensureSemantics();
-    await pumpDentLink(tester);
+    await pumpDentigo(tester);
     await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
     await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
     handle.dispose();
@@ -21,7 +21,7 @@ void main() {
     tester,
   ) async {
     final handle = tester.ensureSemantics();
-    await pumpDentLink(tester);
+    await pumpDentigo(tester);
     await tester.tap(find.byIcon(CupertinoIcons.chat_bubble).first);
     await tester.pumpAndSettle();
     await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
@@ -33,7 +33,7 @@ void main() {
     tester,
   ) async {
     final handle = tester.ensureSemantics();
-    await pumpDentLink(tester);
+    await pumpDentigo(tester);
     // Feed'den gidilmiyor (arama/profil/bildirim/deep link'ten açılır).
     GoRouter.of(
       tester.element(find.text(seedCase.title)),

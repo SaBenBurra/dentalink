@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dentlink/core/utils/image_compress.dart';
+import 'package:dentigo/core/utils/image_compress.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

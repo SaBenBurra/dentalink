@@ -1,5 +1,5 @@
-import 'package:dentlink/shared/extensions/user_title_ui.dart';
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/shared/extensions/user_title_ui.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

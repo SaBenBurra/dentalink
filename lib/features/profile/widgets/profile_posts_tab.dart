@@ -1,5 +1,5 @@
-import 'package:dentlink/shared/widgets/post_card_factory.dart';
-import 'package:dentlink/shared/utils/post_actions.dart';
+import 'package:dentigo/shared/widgets/post_card_factory.dart';
+import 'package:dentigo/shared/utils/post_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
@@ -11,7 +11,7 @@ import '../../../shared/utils/error_messages.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_widget.dart';
 import '../../../shared/widgets/load_more_footer.dart';
-import 'package:dentlink/core/constants/app_dimensions.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
 
 class ProfilePostsTab extends ConsumerWidget {
   final String userId;
@@ -58,7 +58,7 @@ class ProfilePostsTab extends ConsumerWidget {
         final hasMore = notifier.hasMore;
 
         if (posts.isEmpty && !hasMore) {
-          return DentLinkEmptyState(
+          return DentigoEmptyState(
             icon: Icons.article_outlined,
             title: AppLocalizations.of(context)!.profileNoPosts,
           );
@@ -102,7 +102,7 @@ class ProfilePostsTab extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stackTrace) => DentLinkErrorWidget(
+      error: (error, stackTrace) => DentigoErrorWidget(
         message: getErrorMessage(AppLocalizations.of(context)!, error),
         onRetry: () => ref.invalidate(userPostsProvider(userId)),
       ),

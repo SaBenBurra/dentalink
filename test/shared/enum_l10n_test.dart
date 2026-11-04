@@ -1,9 +1,9 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/shared/extensions/dental_branch_ui.dart';
-import 'package:dentlink/shared/extensions/notification_type_l10n.dart';
-import 'package:dentlink/shared/extensions/treatment_type_ui.dart';
-import 'package:dentlink/shared/extensions/user_title_ui.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/shared/extensions/dental_branch_ui.dart';
+import 'package:dentigo/shared/extensions/notification_type_l10n.dart';
+import 'package:dentigo/shared/extensions/treatment_type_ui.dart';
+import 'package:dentigo/shared/extensions/user_title_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

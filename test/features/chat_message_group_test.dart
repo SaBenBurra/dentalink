@@ -1,5 +1,5 @@
-import 'package:dentlink/data/models/message_model.dart';
-import 'package:dentlink/features/messaging/screens/chat_screen.dart';
+import 'package:dentigo/data/models/message_model.dart';
+import 'package:dentigo/features/messaging/screens/chat_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 MessageModel _msg(String sender, DateTime at) => MessageModel(

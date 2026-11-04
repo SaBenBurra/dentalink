@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:dentlink/data/models/enums.dart';
+import 'package:dentigo/data/models/enums.dart';
 
 void main() {
   group('UserTitle', () {

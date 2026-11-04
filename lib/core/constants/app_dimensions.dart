@@ -1,4 +1,4 @@
-/// DentLink boyut ve boşluk sabitleri.
+/// Dentigo boyut ve boşluk sabitleri.
 ///
 /// 4px grid sistemi kullanılır.
 /// Tüm spacing, radius ve boyut değerleri buradan alınır.

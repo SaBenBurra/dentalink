@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// Uygulamanın adı
   ///
   /// In tr, this message translates to:
-  /// **'DentLink'**
+  /// **'Dentigo'**
   String get appName;
 
   /// Feed logosunun ipucu: listeyi en üste kaydırır
@@ -1463,7 +1463,7 @@ abstract class AppLocalizations {
   /// No description provided for @registerDoneMessage.
   ///
   /// In tr, this message translates to:
-  /// **'DentLink dünyasına hoş geldiniz. Profiliniz oluşturuldu.'**
+  /// **'Dentigo dünyasına hoş geldiniz. Profiliniz oluşturuldu.'**
   String get registerDoneMessage;
 
   /// No description provided for @skip.

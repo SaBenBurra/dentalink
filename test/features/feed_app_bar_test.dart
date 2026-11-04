@@ -1,8 +1,8 @@
-import 'package:dentlink/core/l10n/generated/app_localizations.dart';
-import 'package:dentlink/features/feed/widgets/feed_filter_segments.dart';
-import 'package:dentlink/features/feed/widgets/feed_screen_app_bar.dart';
-import 'package:dentlink/providers/auth_provider.dart';
-import 'package:dentlink/providers/notification_provider.dart';
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/features/feed/widgets/feed_filter_segments.dart';
+import 'package:dentigo/features/feed/widgets/feed_screen_app_bar.dart';
+import 'package:dentigo/providers/auth_provider.dart';
+import 'package:dentigo/providers/notification_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

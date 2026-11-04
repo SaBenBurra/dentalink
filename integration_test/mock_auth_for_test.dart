@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/data/models/user_model.dart';
-import 'package:dentlink/data/repositories/auth_repository.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/data/models/user_model.dart';
+import 'package:dentigo/data/repositories/auth_repository.dart';
 
 class MockAuthForTest implements AuthRepository {
   UserModel? _currentUser;

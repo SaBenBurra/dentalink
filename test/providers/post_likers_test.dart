@@ -1,9 +1,9 @@
-import 'package:dentlink/core/utils/paging.dart';
-import 'package:dentlink/data/models/enums.dart';
-import 'package:dentlink/data/models/user_model.dart';
-import 'package:dentlink/data/providers/repository_providers.dart';
-import 'package:dentlink/data/repositories/post_repository.dart';
-import 'package:dentlink/providers/user_provider.dart';
+import 'package:dentigo/core/utils/paging.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/data/models/user_model.dart';
+import 'package:dentigo/data/providers/repository_providers.dart';
+import 'package:dentigo/data/repositories/post_repository.dart';
+import 'package:dentigo/providers/user_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 

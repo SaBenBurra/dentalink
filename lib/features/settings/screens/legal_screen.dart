@@ -42,9 +42,9 @@ class LegalScreen extends StatelessWidget {
         ),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return DentLinkErrorWidget(message: l10n.unknownError);
+            return DentigoErrorWidget(message: l10n.unknownError);
           }
-          if (!snapshot.hasData) return const DentLinkLoadingSpinner();
+          if (!snapshot.hasData) return const DentigoLoadingSpinner();
           return SingleChildScrollView(
             padding: const EdgeInsets.all(AppDimensions.spacing16),
             child: SafeArea(child: SelectableText(snapshot.data!)),

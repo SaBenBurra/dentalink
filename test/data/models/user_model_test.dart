@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:dentlink/data/models/user_model.dart';
-import 'package:dentlink/data/models/enums.dart';
+import 'package:dentigo/data/models/user_model.dart';
+import 'package:dentigo/data/models/enums.dart';
 
 void main() {
   group('UserModel', () {
@@ -307,7 +307,7 @@ void main() {
             'university': 'İstanbul Üniversitesi',
             'city': 'İstanbul',
             'experience_years': 12,
-            'workplace': 'DentLink Center',
+            'workplace': 'Dentigo Center',
             'followers_count': 500,
             'following_count': 250,
             'posts_count': 42,

@@ -4,7 +4,7 @@ KULLANIM KOŞULLARI
 
 Son güncelleme: [GG.AA.YYYY]
 
-Bu koşullar, [ŞİRKET UNVANI / AD SOYAD] ("DentLink") tarafından sunulan DentLink mobil uygulamasının ("Uygulama") kullanımını düzenler. Hesap oluşturarak bu koşulları kabul etmiş olursunuz.
+Bu koşullar, [ŞİRKET UNVANI / AD SOYAD] ("Dentigo") tarafından sunulan Dentigo mobil uygulamasının ("Uygulama") kullanımını düzenler. Hesap oluşturarak bu koşulları kabul etmiş olursunuz.
 
 1. Kimler kullanabilir
 Uygulama, diş hekimleri, uzman diş hekimleri ve diş hekimliği öğrencileri için mesleki bir paylaşım platformudur. 18 yaşından büyük olmanız ve profilinizde unvanınızı doğru belirtmeniz gerekir. Başkası adına veya sahte bilgiyle hesap açılamaz.
@@ -29,13 +29,13 @@ Paylaşımlar mesleki görüş alışverişi içindir ve bir hastaya yönelik te
 Kurallara aykırı içerik veya kullanıcıları ⋮ menüsünden raporlayabilirsiniz. Raporlar incelenir; aykırı içerik kaldırılır ve tekrar eden ihlallerde hesap kapatılabilir. İstemediğiniz kullanıcıları engelleyebilirsiniz; engellenen kişiyle birbirinizin içeriğini görmez ve mesajlaşamazsınız.
 
 5. İçeriğinizin hakları
-Paylaştığınız içeriğin hakları sizde kalır. İçeriğinizi Uygulama içinde diğer üyelere göstermemiz için DentLink'e münhasır olmayan, ücretsiz bir kullanım izni verirsiniz. Bu izin içeriği veya hesabınızı sildiğinizde sona erer.
+Paylaştığınız içeriğin hakları sizde kalır. İçeriğinizi Uygulama içinde diğer üyelere göstermemiz için Dentigo'ya münhasır olmayan, ücretsiz bir kullanım izni verirsiniz. Bu izin içeriği veya hesabınızı sildiğinizde sona erer.
 
 6. Hesabın sonlandırılması
-Hesabınızı istediğiniz zaman Ayarlar → Hesabı Sil ile kalıcı olarak silebilirsiniz. DentLink, bu koşulları ihlal eden hesapları askıya alabilir veya kapatabilir.
+Hesabınızı istediğiniz zaman Ayarlar → Hesabı Sil ile kalıcı olarak silebilirsiniz. Dentigo, bu koşulları ihlal eden hesapları askıya alabilir veya kapatabilir.
 
 7. Sorumluluğun sınırlandırılması
-Uygulama "olduğu gibi" sunulur. DentLink, kullanıcıların paylaştığı içeriğin doğruluğunu garanti etmez ve bu içeriğe dayanılarak verilen kararlardan sorumlu değildir. Hizmette kesinti veya veri kaybı olmaması için makul özeni gösteririz.
+Uygulama "olduğu gibi" sunulur. Dentigo, kullanıcıların paylaştığı içeriğin doğruluğunu garanti etmez ve bu içeriğe dayanılarak verilen kararlardan sorumlu değildir. Hizmette kesinti veya veri kaybı olmaması için makul özeni gösteririz.
 
 8. Değişiklikler
 Bu koşulları güncelleyebiliriz. Önemli değişiklikleri Uygulama içinde bildiririz; Uygulama'yı kullanmaya devam etmeniz güncel koşulları kabul ettiğiniz anlamına gelir.
