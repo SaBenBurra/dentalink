@@ -53,6 +53,18 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
     }
   }
 
+  /// Hesaba e-posta/telefon ekler ya da değiştirir: yeni adrese kod gönderir.
+  Future<void> requestContactChange(String emailOrPhone) =>
+      ref.read(authRepositoryProvider).requestContactChange(emailOrPhone);
+
+  /// Kodu doğrular. state AsyncLoading'e alınmaz: router ekranı yenilemesin.
+  Future<void> confirmContactChange(String emailOrPhone, String otpCode) async {
+    final user = await ref
+        .read(authRepositoryProvider)
+        .confirmContactChange(emailOrPhone, otpCode);
+    if (user != null) state = AsyncData(user);
+  }
+
   Future<void> completeRegistration({
     required String fullName,
     required UserTitle title,

@@ -31,7 +31,7 @@ Patient data: Case images and descriptions shared on the platform must not conta
 - Data made public by you (public profile and posts).
 
 5. Transfers
-Your data is transferred to our hosting and database provider (Supabase Inc.; servers in the European Union, Frankfurt). This transfer is made under KVKK Art. 9 on the basis of [STANDARD CONTRACT / EXPLICIT CONSENT — to be decided by counsel]. Your data may also be disclosed to authorised public bodies upon request and only to the extent required. Your data is never sold or rented to third parties for marketing.
+Your data is transferred to our hosting and database provider (Supabase Inc.; servers in the European Union, Frankfurt). This transfer is made under KVKK Art. 9 on the basis of [STANDARD CONTRACT / EXPLICIT CONSENT — to be decided by counsel]. To deliver verification codes, your email address or phone number is transferred on the same basis to Twilio Inc. (including SendGrid; USA) and Meta, the provider of WhatsApp. Your data may also be disclosed to authorised public bodies upon request and only to the extent required. Your data is never sold or rented to third parties for marketing.
 
 6. Collection method
 Your personal data is collected electronically through the information you enter in the app and automatically while you use it.

@@ -29,8 +29,10 @@ void main() {
     await tester.pumpAndSettle();
 
     final l10n = lookupAppLocalizations(const Locale('tr'));
-    await tester.ensureVisible(
+    await tester.scrollUntilVisible(
       find.widgetWithText(OutlinedButton, l10n.settingsLogout),
+      200,
+      scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(OutlinedButton, l10n.settingsLogout));

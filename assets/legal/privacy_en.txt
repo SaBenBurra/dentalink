@@ -7,7 +7,7 @@ Last updated: [DD.MM.YYYY]
 This policy explains what information is collected when you use the Dentigo mobile app (the "App"), how it is used and what your rights are. Legal details on personal data processing are in the KVKK Privacy Notice.
 
 1. Information we collect
-- The email address or phone number you sign in with. It is never shown to other users.
+- The email address or WhatsApp number you sign in with. It is never shown to other users.
 - Your profile: full name, title, university, city, clinic, years of experience, bio and profile photo. These are visible to other members.
 - Cases, questions, images, comments and likes you post. These are visible to signed-in members.
 - Your direct messages. Only you and the person you message can see them.
@@ -23,7 +23,7 @@ This policy explains what information is collected when you use the Dentigo mobi
 We do not use your information for advertising, and we do not sell or rent it.
 
 3. Sharing
-Your information is stored only with the infrastructure provider we use to run the service (Supabase; servers in the European Union) and may be shared with authorities when required by law.
+Your information is stored only with the infrastructure provider we use to run the service (Supabase; servers in the European Union) and may be shared with authorities when required by law. To deliver verification codes, your email address or phone number is shared with Twilio Inc. (including SendGrid) and Meta, the provider of WhatsApp.
 
 4. Patient privacy
 When posting a case, do not share the patient's face, name, ID or file number, or anything else that could identify them. Content that breaks this rule can be reported and will be removed.

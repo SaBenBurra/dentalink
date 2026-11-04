@@ -138,6 +138,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Future<void> _completeRegistration() async {
+    if (ref.read(registerControllerProvider).isCompleting) return;
     _setAuthRedirectHold(true);
     try {
       await ref
@@ -165,7 +166,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             begin: 0.8,
             end: 1.0,
           ).animate(CurvedAnimation(parent: anim1, curve: Curves.elasticOut));
-          return RegisterDialog(scale: scale);
+          return PopScope(canPop: false, child: RegisterDialog(scale: scale));
         },
       );
 
@@ -199,162 +200,170 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         ? AppColors.darkTextPrimary
         : AppColors.lightTextPrimary;
 
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      body: Stack(
-        children: [
-          if (!isDark)
-            Positioned.fill(
-              child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.bgGradientStart,
-                      AppColors.bgGradientEnd,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && !state.isCompleting) _prevStep();
+      },
+      child: Scaffold(
+        backgroundColor: backgroundColor,
+        body: Stack(
+          children: [
+            if (!isDark)
+              Positioned.fill(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.bgGradientStart,
+                        AppColors.bgGradientEnd,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                   ),
                 ),
               ),
+
+            const GlassBackgroundEffect(
+              left: -120,
+              top: -120,
+              width: 320,
+              height: 320,
+            ),
+            const GlassBackgroundEffect(
+              right: -120,
+              bottom: -120,
+              width: 380,
+              height: 380,
             ),
 
-          const GlassBackgroundEffect(
-            left: -120,
-            top: -120,
-            width: 320,
-            height: 320,
-          ),
-          const GlassBackgroundEffect(
-            right: -120,
-            bottom: -120,
-            width: 380,
-            height: 380,
-          ),
-
-          SafeArea(
-            child: Column(
-              children: [
-                RegisterHeader(
-                  currentStep: state.currentStep,
-                  totalSteps: _totalSteps,
-                  prevStep: _prevStep,
-                  nextStep: _nextStep,
-                ),
-
-                Expanded(
-                  child: PageView(
-                    controller: _pageController,
-                    physics: const NeverScrollableScrollPhysics(),
-                    onPageChanged: (int page) {
-                      ref
-                          .read(registerControllerProvider.notifier)
-                          .setStep(page);
-                    },
-                    children: [
-                      RegisterStepOne(
-                        nameController: _nameController,
-                        nameError: state.nameError,
-                        nameFocusNode: _nameFocusNode,
-                        selectedTitle: state.selectedTitle,
-                        onNameChanged: (val) {
-                          ref
-                              .read(registerControllerProvider.notifier)
-                              .clearNameError();
-                        },
-                        onTitleSelected: (title) {
-                          // Uyarı giderildi; floating SnackBar "Devam Et"i örtmesin.
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          ref
-                              .read(registerControllerProvider.notifier)
-                              .setTitle(title);
-                        },
-                        acceptedTerms: state.acceptedTerms,
-                        onAcceptedTermsChanged: (value) {
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          ref
-                              .read(registerControllerProvider.notifier)
-                              .setAcceptedTerms(value);
-                        },
-                      ),
-                      RegisterStepTwo(
-                        uniController: _uniController,
-                        uniFocusNode: _uniFocusNode,
-                        cityController: _cityController,
-                        cityFocusNode: _cityFocusNode,
-                        clinicController: _clinicController,
-                        clinicFocusNode: _clinicFocusNode,
-                        expController: _expController,
-                        expFocusNode: _expFocusNode,
-                      ),
-                      RegisterStepThree(
-                        selectedImageFile: state.selectedImageFile,
-                        bioController: _bioController,
-                        bioFocusNode: _bioFocusNode,
-                        onImageFilePicked: (File? file) {
-                          ref
-                              .read(registerControllerProvider.notifier)
-                              .setImageFile(file);
-                        },
-                      ),
-                    ],
+            SafeArea(
+              child: Column(
+                children: [
+                  RegisterHeader(
+                    currentStep: state.currentStep,
+                    totalSteps: _totalSteps,
+                    prevStep: _prevStep,
+                    nextStep: _nextStep,
                   ),
-                ),
 
-                RegisterBottomActions(
-                  currentStep: state.currentStep,
-                  totalSteps: _totalSteps,
-                  nextStep: _nextStep,
-                  prevStep: _prevStep,
-                ),
-              ],
-            ),
-          ),
-
-          if (state.isCompleting)
-            Positioned.fill(
-              child: Container(
-                color: Colors.black.withValues(alpha: 0.5),
-                child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDimensions.spacing32,
-                      vertical: AppDimensions.spacing24,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.black.withValues(alpha: 0.85)
-                          : Colors.white.withValues(alpha: 0.92),
-                      borderRadius: BorderRadius.circular(
-                        AppDimensions.radiusMedium,
-                      ),
-                      border: Border.all(
-                        color: isDark ? Colors.white12 : Colors.black12,
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                  Expanded(
+                    child: PageView(
+                      controller: _pageController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      onPageChanged: (int page) {
+                        ref
+                            .read(registerControllerProvider.notifier)
+                            .setStep(page);
+                      },
                       children: [
-                        CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Theme.of(context).colorScheme.primary,
-                          ),
+                        RegisterStepOne(
+                          nameController: _nameController,
+                          nameError: state.nameError,
+                          nameFocusNode: _nameFocusNode,
+                          selectedTitle: state.selectedTitle,
+                          onNameChanged: (val) {
+                            ref
+                                .read(registerControllerProvider.notifier)
+                                .clearNameError();
+                          },
+                          onTitleSelected: (title) {
+                            // Uyarı giderildi; floating SnackBar "Devam Et"i örtmesin.
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ref
+                                .read(registerControllerProvider.notifier)
+                                .setTitle(title);
+                          },
+                          acceptedTerms: state.acceptedTerms,
+                          onAcceptedTermsChanged: (value) {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ref
+                                .read(registerControllerProvider.notifier)
+                                .setAcceptedTerms(value);
+                          },
                         ),
-                        const SizedBox(height: AppDimensions.spacing16),
-                        Text(
-                          AppLocalizations.of(context)!.registerCreatingProfile,
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: textPrimaryColor,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        RegisterStepTwo(
+                          uniController: _uniController,
+                          uniFocusNode: _uniFocusNode,
+                          cityController: _cityController,
+                          cityFocusNode: _cityFocusNode,
+                          clinicController: _clinicController,
+                          clinicFocusNode: _clinicFocusNode,
+                          expController: _expController,
+                          expFocusNode: _expFocusNode,
+                        ),
+                        RegisterStepThree(
+                          selectedImageFile: state.selectedImageFile,
+                          bioController: _bioController,
+                          bioFocusNode: _bioFocusNode,
+                          onImageFilePicked: (File? file) {
+                            ref
+                                .read(registerControllerProvider.notifier)
+                                .setImageFile(file);
+                          },
                         ),
                       ],
                     ),
                   ),
-                ),
+
+                  RegisterBottomActions(
+                    currentStep: state.currentStep,
+                    totalSteps: _totalSteps,
+                    nextStep: _nextStep,
+                    prevStep: _prevStep,
+                  ),
+                ],
               ),
             ),
-        ],
+
+            if (state.isCompleting)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppDimensions.spacing32,
+                        vertical: AppDimensions.spacing24,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.black.withValues(alpha: 0.85)
+                            : Colors.white.withValues(alpha: 0.92),
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusMedium,
+                        ),
+                        border: Border.all(
+                          color: isDark ? Colors.white12 : Colors.black12,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(height: AppDimensions.spacing16),
+                          Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.registerCreatingProfile,
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: textPrimaryColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

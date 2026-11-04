@@ -7,7 +7,7 @@ Son güncelleme: [GG.AA.YYYY]
 Bu politika, Dentigo mobil uygulamasını ("Uygulama") kullanırken hangi bilgilerin toplandığını, nasıl kullanıldığını ve haklarınızı açıklar. Kişisel verilerin işlenmesine ilişkin yasal ayrıntılar KVKK Aydınlatma Metni'nde yer alır.
 
 1. Topladığımız bilgiler
-- Giriş için verdiğiniz e-posta adresi veya telefon numarası. Bu bilgiler diğer kullanıcılara gösterilmez.
+- Giriş için verdiğiniz e-posta adresi veya WhatsApp numarası. Bu bilgiler diğer kullanıcılara gösterilmez.
 - Profil bilgileriniz: ad soyad, unvan, üniversite, şehir, klinik, deneyim yılı, biyografi ve profil fotoğrafı. Bu bilgiler diğer üyelere görünür.
 - Paylaştığınız vakalar, sorular, görseller, yorumlar ve beğeniler. Bunlar Uygulama'ya giriş yapmış üyelere görünür.
 - Doğrudan mesajlarınız. Yalnızca siz ve mesajlaştığınız kişi görebilir.
@@ -23,7 +23,7 @@ Bu politika, Dentigo mobil uygulamasını ("Uygulama") kullanırken hangi bilgil
 Bilgilerinizi reklam amacıyla kullanmıyor, satmıyor veya kiralamıyoruz.
 
 3. Paylaşım
-Bilgileriniz yalnızca hizmeti sunmak için çalıştığımız altyapı sağlayıcısında (Supabase; sunucular Avrupa Birliği'nde) saklanır ve kanunen zorunlu hallerde yetkili makamlarla paylaşılabilir.
+Bilgileriniz yalnızca hizmeti sunmak için çalıştığımız altyapı sağlayıcısında (Supabase; sunucular Avrupa Birliği'nde) saklanır ve kanunen zorunlu hallerde yetkili makamlarla paylaşılabilir. Doğrulama kodları iletilmek üzere e-posta adresiniz veya telefon numaranız Twilio Inc. (SendGrid dahil) ve WhatsApp hizmet sağlayıcısı Meta ile paylaşılır.
 
 4. Hasta mahremiyeti
 Vaka paylaşırken hastanın yüzünü, adını, kimlik veya dosya numarasını ya da kimliğini ortaya çıkarabilecek başka bir bilgiyi paylaşmamanız gerekir. Bu kurala aykırı içerik raporlanabilir ve kaldırılır.

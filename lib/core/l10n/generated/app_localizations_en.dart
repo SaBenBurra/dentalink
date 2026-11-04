@@ -694,7 +694,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get otpInvalid => 'The code is wrong or has expired';
 
   @override
-  String get otpSendFailed => 'Could not send the code. Please try again.';
+  String get otpRateLimited =>
+      'Too many attempts. Please try again in a while.';
+
+  @override
+  String get validationContactInvalid =>
+      'Enter a valid email or WhatsApp number. Include the country code for numbers outside Turkey (+49…).';
 
   @override
   String get validationNameRequired => 'Full name is required';
@@ -706,14 +711,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registerCreatingProfile => 'Creating profile...';
 
   @override
-  String get loginInputHint => 'Email or phone number';
+  String get loginInputHint => 'Email or WhatsApp number';
 
   @override
-  String get loginHeaderSubtitle => 'Sign in with your email or phone number';
+  String get loginHeaderSubtitle =>
+      'Sign in or sign up with your email or WhatsApp number';
 
   @override
-  String otpSentTo(String destination) {
+  String otpSentToEmail(String destination) {
     return 'Enter the code sent to $destination';
+  }
+
+  @override
+  String otpSentToWhatsapp(String destination) {
+    return 'Enter the code sent on WhatsApp to $destination';
   }
 
   @override
@@ -1497,4 +1508,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get relatedCases => 'Similar cases';
+
+  @override
+  String get contactNotAdded => 'Not added';
+
+  @override
+  String get contactWhatsapp => 'WhatsApp Number';
+
+  @override
+  String get contactAddEmail => 'Add Email';
+
+  @override
+  String get contactChangeEmail => 'Change Email';
+
+  @override
+  String get contactAddPhone => 'Add WhatsApp Number';
+
+  @override
+  String get contactChangePhone => 'Change WhatsApp Number';
+
+  @override
+  String get contactEmailInfo =>
+      'You can also sign in with this email. It is not shown to other users.';
+
+  @override
+  String get contactPhoneInfo =>
+      'You can also sign in with this number; the code arrives on WhatsApp. It is not shown to other users.';
+
+  @override
+  String get contactSendCode => 'Send Code';
+
+  @override
+  String get contactVerify => 'Verify';
+
+  @override
+  String get contactSaved => 'Saved';
+
+  @override
+  String get contactSame => 'This is already on your account.';
+
+  @override
+  String get contactTaken => 'This is already registered to another account.';
+
+  @override
+  String get whatsappSendFailed =>
+      'Couldn\'t send the code on WhatsApp. Make sure this number is registered on WhatsApp.';
 }

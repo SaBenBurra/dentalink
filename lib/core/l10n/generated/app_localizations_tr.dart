@@ -693,7 +693,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get otpInvalid => 'Kod hatalı veya süresi dolmuş';
 
   @override
-  String get otpSendFailed => 'Kod gönderilemedi. Lütfen tekrar deneyin.';
+  String get otpRateLimited =>
+      'Çok fazla deneme yapıldı. Lütfen biraz sonra tekrar deneyin.';
+
+  @override
+  String get validationContactInvalid =>
+      'Geçerli bir e-posta veya WhatsApp numarası girin. Türkiye dışındaki numaralarda ülke kodunu yazın (+49…).';
 
   @override
   String get validationNameRequired => 'Ad Soyad alanı zorunludur';
@@ -705,15 +710,20 @@ class AppLocalizationsTr extends AppLocalizations {
   String get registerCreatingProfile => 'Profil oluşturuluyor...';
 
   @override
-  String get loginInputHint => 'E-posta veya telefon numarası';
+  String get loginInputHint => 'E-posta veya WhatsApp numarası';
 
   @override
   String get loginHeaderSubtitle =>
-      'E-posta veya telefon numaranızla giriş yapın';
+      'E-posta veya WhatsApp numaranızla giriş yapın ya da kaydolun';
 
   @override
-  String otpSentTo(String destination) {
+  String otpSentToEmail(String destination) {
     return '$destination adresine gönderilen kodu girin';
+  }
+
+  @override
+  String otpSentToWhatsapp(String destination) {
+    return '$destination numarasına WhatsApp\'tan gönderilen kodu girin';
   }
 
   @override
@@ -1479,4 +1489,49 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get relatedCases => 'Benzer vakalar';
+
+  @override
+  String get contactNotAdded => 'Eklenmedi';
+
+  @override
+  String get contactWhatsapp => 'WhatsApp Numarası';
+
+  @override
+  String get contactAddEmail => 'E-posta Ekle';
+
+  @override
+  String get contactChangeEmail => 'E-postayı Değiştir';
+
+  @override
+  String get contactAddPhone => 'WhatsApp Numarası Ekle';
+
+  @override
+  String get contactChangePhone => 'WhatsApp Numarasını Değiştir';
+
+  @override
+  String get contactEmailInfo =>
+      'Bu e-postayla da giriş yapabilirsiniz. Diğer kullanıcılara gösterilmez.';
+
+  @override
+  String get contactPhoneInfo =>
+      'Bu numarayla da giriş yapabilirsiniz, kod WhatsApp\'tan gelir. Diğer kullanıcılara gösterilmez.';
+
+  @override
+  String get contactSendCode => 'Kod Gönder';
+
+  @override
+  String get contactVerify => 'Doğrula';
+
+  @override
+  String get contactSaved => 'Kaydedildi';
+
+  @override
+  String get contactSame => 'Bu zaten hesabınızda kayıtlı.';
+
+  @override
+  String get contactTaken => 'Bu bilgi başka bir hesapta kayıtlı.';
+
+  @override
+  String get whatsappSendFailed =>
+      'WhatsApp\'a kod gönderilemedi. Numaranın WhatsApp\'ta kayıtlı olduğundan emin olun.';
 }

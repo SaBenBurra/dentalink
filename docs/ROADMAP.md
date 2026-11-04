@@ -183,6 +183,8 @@
 - [ ] iOS imzalama ve provisioning
 - [ ] Production Supabase projesi + `--dart-define-from-file` (dev/prod) — `SEC-15`
 - [ ] E-posta OTP şablonu ve SMTP; `site_url` — `AUTH-9`
+  - [ ] Canlıya uygula: `supabase/scripts/apply_auth_config.mjs` (`SUPABASE.md` §10): e-posta girişi, 6 haneli kod, kod içeren şablon
+  - [ ] Twilio WhatsApp göndericisi ve SendGrid SMTP bilgileri; `sms_test_otp` numaralarını temizle; cihazda uçtan uca test
 - [ ] Crash raporlama (Sentry veya Crashlytics) — `REL-5`
 - [ ] Push bildirim — `REL-6`
   - [x] Kod: migration 027 (`push_tokens`, `register/unregister_push_token`, pg_net trigger'ları), Edge Function `push` (FCM HTTP v1, geçersiz token temizliği), istemci `push_provider.dart` (izin, token kaydı, çıkışta silme, dokununca post/sohbet/profil). Bildirimler + DM. Firebase dosyaları yokken uygulama push'suz çalışır. Metin: başlık aktörün adı, gövde eylem + alıntı (post başlığı ya da yorumun başı, 029). Edge Function'ın okuduğu kolonlar `service_role`'e açıldı (028, 029). _(2026-10-29; rota testli, 027–029 canlıda)_
@@ -238,3 +240,7 @@
 | ~~Domain katmanı: tamamla mı, kaldır mı?~~ Kaldırıldı (2026-10-25) | Faz 3 ✅ |
 | Doğrulama belgesi türü (diploma / TDB oda kaydı) | Faz 4 |
 | İş ilanı ve pazar yeri: feed'de mi, ayrı sekmede mi? | Yayın sonrası |
+- [x] WhatsApp ve e-posta ile kayıt/giriş (uygulama tarafı): telefona kod WhatsApp kanalından gider (Twilio), numara yazımları tek E.164 biçimine iner (`contact_utils.dart`), WhatsApp'tan kopyalanan kod kutulara yapıştırılır. Ayarlar → Hesap'tan e-posta/WhatsApp numarası eklenir ya da değiştirilir (`/settings/contact/*`), kod yeni adrese gider. Yasal taslaklara Twilio ve Meta eklendi. Migration yok. Canlı ayarlar yukarıda bekliyor. _(2026-11-04)_
+- [x] Giriş akışı düzeltmeleri: açılışta oturum geri yüklenirken form yerine yükleniyor göstergesi; geçersiz girişte açıklama; adres sıklık sınırı (sunucunun bildirdiği süre) ile genel limit ayrıldı, genel limitte OTP adımı açılmaz; çok deneme "kod hatalı" görünmez; yeniden gönderimde WhatsApp hatası; doğrulama sürerken geri kapalı; kayıtta çift gönderim yok. _(2026-11-04)_
+- [x] Giriş akışı: Android geri tuşu OTP ve kayıtta önceki adıma döner; kayıt başlığındaki geri ve "Geç" çalışır; OTP tek gizli alana taşındı (boş kutuda silme, yapıştırma, kod önerisi). _(2026-11-04)_
+- [x] Migration 044: profilsiz auth kullanıcıları saat başı silinir (doğrulanmamış 1 saat, doğrulanmış 24 saat), yanlış yazılan numara gerçek sahibini kilitlemez. 043 ve 044 canlıda. _(2026-11-04)_

@@ -42,7 +42,7 @@ class RegisterHeader extends StatelessWidget {
                   color: textPrimaryColor,
                   size: 20,
                 ),
-                onPressed: () => prevStep,
+                onPressed: prevStep,
               ),
               Text(
                 AppLocalizations.of(context)!.registerButton,
@@ -54,7 +54,7 @@ class RegisterHeader extends StatelessWidget {
               Opacity(
                 opacity: currentStep > 0 ? 1.0 : 0.0,
                 child: TextButton(
-                  onPressed: currentStep > 0 ? () => nextStep : null,
+                  onPressed: currentStep > 0 ? nextStep : null,
                   child: Text(
                     AppLocalizations.of(context)!.skip,
                     style: TextStyle(

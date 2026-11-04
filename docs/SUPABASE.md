@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `043_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `044_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -517,3 +517,28 @@ Aynı kavramın farklı yazımları varsa önce `add_tag_alias` ile birleştir (
 1. Yeni migration: `select public.promote_other_treatment('<slug>', '<branch>');` (etiket tanımlı olur; bu tedaviyi farklı branşla girmiş vakaların branşı listedekine eşitlenir).
 2. İstemci: `TreatmentType` enum'una `('<slug>', '<etiket adı>', DentalBranch.x)` ve TR/EN ARB metni. `treatment_type_test` ikisinin aynılığını denetler.
 3. Migration'ı uygulama sürümüyle birlikte yayınla. Eski sürüm yeni türü kullanıcı tedavisi gibi (etiket adıyla) gösterir.
+
+---
+
+## 10. Giriş kanalları: WhatsApp ve e-posta (Twilio)
+
+Auth ayarları elle değil, `supabase/scripts/apply_auth_config.mjs` ile uygulanır. Sırlar `supabase/.env.local` içindedir (gitignored); boş bırakılan bölüm atlanır.
+
+```bash
+node --env-file=supabase/.env.local supabase/scripts/apply_auth_config.mjs
+```
+
+| Değişken | Değer |
+|---|---|
+| `SUPABASE_ACCESS_TOKEN` | Supabase erişim anahtarı (ortamda yoksa dosyaya ekle) |
+| `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` | Twilio konsolu |
+| `TWILIO_WHATSAPP_SENDER` | Onaylı WhatsApp göndericisi: `+90…` ya da Messaging Service SID (`MG…`) |
+| `TWILIO_CONTENT_SID` | Onaylı OTP şablonu (`HX…`); kod `{{1}}` değişkenine gelir |
+| `SENDGRID_API_KEY` | Yalnızca Mail Send izinli anahtar; SMTP kullanıcısı `apikey` |
+| `SMTP_SENDER` | Alan adı SendGrid'de doğrulanmış gönderici, ör. `noreply@alanadin.com` |
+
+- WhatsApp yalnızca Twilio ve Twilio Verify sağlayıcılarında var. SDK telefon değişiminde `channel` göndermez, `_WhatsAppPhoneAttributes` ekler; kaldırılırsa kod SMS'e düşer.
+- E-posta değişiminde çifte onay kapalıdır (`mailer_secure_email_change_enabled=false`): akış tek kod bekler. SMTP gelince eski adrese bildirim açılır.
+- `sms_test_otp` numaraları sabit kodla girer. Yayından önce temizle.
+- SMTP olmadan yerleşik gönderici saatte 2 e-posta atar.
+- Kod istemek doğrulanmasa da `auth.users` satırı açar ve Supabase'in mükerrer kontrolü onu da sayar. Profilsiz hesaplar saat başı silinir (044, pg_cron `cleanup-orphan-auth-users`): doğrulanmamış 1 saat, doğrulanmış 24 saat sonra.

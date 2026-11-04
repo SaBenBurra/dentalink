@@ -11,7 +11,7 @@ abstract class AuthRepository {
   /// Profil (public.users) mevcutsa UserModel döner, yoksa null.
   Future<UserModel?> getCurrentUser();
 
-  /// E-posta veya telefon numarasına OTP kodu gönderir.
+  /// E-postaya ya da telefonun WhatsApp'ına OTP kodu gönderir.
   /// [emailOrPhone] — geçerli bir e-posta veya telefon numarası.
   /// Cooldown aktifse [OtpCooldownException] fırlatır.
   Future<void> sendOtp(String emailOrPhone);
@@ -22,6 +22,14 @@ abstract class AuthRepository {
   /// Profili olan kullanıcı → UserModel döner.
   /// Yeni kullanıcı (profili yok) → null döner, kayıt ekranına yönlendirilir.
   Future<UserModel?> verifyOtp(String emailOrPhone, String otpCode);
+
+  /// Oturumdaki hesaba e-posta/telefon ekler ya da mevcut olanı değiştirir:
+  /// yeni adrese doğrulama kodu gönderir, değişiklik kod doğrulanınca geçerlidir.
+  /// Cooldown aktifse [OtpCooldownException] fırlatır.
+  Future<void> requestContactChange(String emailOrPhone);
+
+  /// [requestContactChange] ile gönderilen kodu doğrular, güncel profili döner.
+  Future<UserModel?> confirmContactChange(String emailOrPhone, String otpCode);
 
   /// Oturumu kapatır.
   Future<void> signOut();

@@ -6,8 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../data/providers/repository_providers.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
+import '../../../core/utils/contact_utils.dart';
 import '../../../providers/auth_provider.dart';
 import '../models/login_step.dart';
 import '../providers/login_controller.dart';
@@ -32,21 +35,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   static const _keyboardDismissDelay = Duration(milliseconds: 300);
 
-  static final _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-  static final _phoneRegex = RegExp(r'^\+?[0-9]{8,15}$');
-
   final _inputController = TextEditingController();
   final _inputFocusNode = FocusNode();
-  final List<TextEditingController> _otpControllers = List.generate(
-    _otpLength,
-    (_) => TextEditingController(),
-  );
-  final List<FocusNode> _otpFocusNodes = List.generate(
-    _otpLength,
-    (_) => FocusNode(),
-  );
+  final _otpController = TextEditingController();
+  final _otpFocusNode = FocusNode();
 
   bool _showContinueButton = false;
+  String _lastInput = '';
+  String? _inputError;
 
   late final AnimationController _shakeController;
   late final Animation<double> _shakeAnimation;
@@ -60,9 +56,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     super.initState();
     _inputFocusNode.addListener(_onFocusChanged);
     _inputController.addListener(_onInputChanged);
-    for (final node in _otpFocusNodes) {
-      node.addListener(_onFocusChanged);
-    }
+    _otpFocusNode.addListener(_onFocusChanged);
 
     _shakeController = AnimationController(
       duration: const Duration(milliseconds: 500),
@@ -90,13 +84,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     _inputFocusNode.removeListener(_onFocusChanged);
     _inputFocusNode.dispose();
     _shakeController.dispose();
-    for (final controller in _otpControllers) {
-      controller.dispose();
-    }
-    for (final node in _otpFocusNodes) {
-      node.removeListener(_onFocusChanged);
-      node.dispose();
-    }
+    _otpController.dispose();
+    _otpFocusNode.removeListener(_onFocusChanged);
+    _otpFocusNode.dispose();
     super.dispose();
   }
 
@@ -106,10 +96,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   void _onInputChanged() {
     final text = _inputController.text.trim();
-    final isValid = _emailRegex.hasMatch(text) || _phoneRegex.hasMatch(text);
-    if (_showContinueButton != isValid) {
-      setState(() => _showContinueButton = isValid);
-    }
+    if (text == _lastInput) return;
+    _lastInput = text;
+    ref.read(loginControllerProvider.notifier).clearError();
+    setState(() {
+      _inputError = null;
+      _showContinueButton = text.isNotEmpty;
+    });
   }
 
   void _setAuthRedirectHold(bool hold) {
@@ -129,6 +122,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final state = ref.read(loginControllerProvider);
     if (state.isLoading) return;
     final inputVal = _inputController.text.trim();
+    if (normalizeContact(inputVal) == null) {
+      setState(
+        () => _inputError = AppLocalizations.of(
+          context,
+        )!.validationContactInvalid,
+      );
+      return;
+    }
 
     // Klavye kapansın
     FocusScope.of(context).unfocus();
@@ -137,34 +138,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
     final newState = ref.read(loginControllerProvider);
     if (newState.step == LoginStep.otp) {
-      for (final controller in _otpControllers) {
-        controller.clear();
-      }
+      _otpController.clear();
       Future.delayed(_keyboardDismissDelay + _stepTransitionDuration, () {
         if (mounted &&
             ref.read(loginControllerProvider).step == LoginStep.otp) {
-          _otpFocusNodes[0].requestFocus();
+          _otpFocusNode.requestFocus();
         }
       });
     }
   }
 
-  void _onOtpChanged(String value, int index) {
-    if (value.isNotEmpty) {
-      ref.read(loginControllerProvider.notifier).clearError();
-      if (index < _otpLength - 1) {
-        _otpFocusNodes[index + 1].requestFocus();
-      } else {
-        _otpFocusNodes[index].unfocus();
-        _verifyOtp();
-      }
-    } else if (index > 0) {
-      _otpFocusNodes[index - 1].requestFocus();
+  void _onOtpChanged(String value) {
+    ref.read(loginControllerProvider.notifier).clearError();
+    if (value.length == _otpLength) {
+      _otpFocusNode.unfocus();
+      _verifyOtp();
     }
   }
 
   Future<void> _verifyOtp() async {
-    final otp = _otpControllers.map((c) => c.text).join();
+    final otp = _otpController.text;
     final state = ref.read(loginControllerProvider);
     if (otp.length < _otpLength || state.isLoading || state.isSuccess) return;
 
@@ -191,11 +184,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   void _onOtpScatterComplete() {
-    for (final controller in _otpControllers) {
-      controller.clear();
-    }
+    _otpController.clear();
     if (!mounted) return;
-    _otpFocusNodes[0].requestFocus();
+    _otpFocusNode.requestFocus();
   }
 
   Future<void> _handleResend() async {
@@ -239,41 +230,65 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       }
     });
 
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: backgroundColor,
-      body: Stack(
-        children: [
-          const RepaintBoundary(child: LoginBackground()),
-          SafeArea(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  keyboardDismissBehavior:
-                      ScrollViewKeyboardDismissBehavior.onDrag,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppDimensions.spacing24,
+    // Açık oturum geri yüklenirken giriş formu görünmesin. Kod doğrulanırken
+    // de oturum vardır; o durumda hold aktiftir ve form kalır.
+    final restoringSession =
+        ref.watch(authProvider).isLoading &&
+        !_holdsAuthRedirect &&
+        ref.read(authRepositoryProvider).hasSession;
+    if (restoringSession) {
+      return Scaffold(
+        backgroundColor: backgroundColor,
+        body: const Stack(
+          children: [
+            RepaintBoundary(child: LoginBackground()),
+            Center(child: CircularProgressIndicator()),
+          ],
+        ),
+      );
+    }
+
+    return PopScope(
+      canPop: state.step == LoginStep.emailOrPhone,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && !state.isLoading && !state.isSuccess) _goBack();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: backgroundColor,
+        body: Stack(
+          children: [
+            const RepaintBoundary(child: LoginBackground()),
+            SafeArea(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
                       ),
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(
-                            maxWidth: AppDimensions.maxContentWidth,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppDimensions.spacing24,
+                        ),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(
+                              maxWidth: AppDimensions.maxContentWidth,
+                            ),
+                            child: _buildContent(state),
                           ),
-                          child: _buildContent(state),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -340,7 +355,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         focusNode: _inputFocusNode,
         isLoading: state.isLoading,
         showContinueButton: _showContinueButton,
-        errorText: state.errorText,
+        errorText: _inputError ?? state.errorText,
         onContinue: _handleContinue,
         onSubmitted: (_) {
           if (_showContinueButton) _handleContinue();
@@ -349,8 +364,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     }
     return LoginOtpInput(
       key: const ValueKey('otp_step'),
-      otpControllers: _otpControllers,
-      otpFocusNodes: _otpFocusNodes,
+      otpLength: _otpLength,
+      otpController: _otpController,
+      otpFocusNode: _otpFocusNode,
       isLoading: state.isLoading,
       isSuccess: state.isSuccess,
       successMessage:

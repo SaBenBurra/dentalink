@@ -1,6 +1,7 @@
 import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:dentigo/data/models/user_model.dart';
 import 'package:dentigo/data/providers/repository_providers.dart';
+import 'package:dentigo/data/repositories/otp_cooldown_exception.dart';
 import 'package:dentigo/features/auth/providers/login_controller.dart';
 import 'package:dentigo/providers/locale_provider.dart';
 import 'package:flutter/material.dart' show Locale;
@@ -41,6 +42,50 @@ ProviderContainer _container(_ThrowingAuth auth) {
 }
 
 void main() {
+  test('çok deneme ve WhatsApp hatası kendi mesajıyla çıkar', () async {
+    final auth = _ThrowingAuth()
+      ..verifyError = const AuthApiException(
+        'slow down',
+        statusCode: '429',
+        code: 'over_request_rate_limit',
+      );
+    final c = _container(auth);
+    final ctrl = c.read(loginControllerProvider.notifier);
+
+    await ctrl.verifyOtp('a@b.co', '123456');
+    expect(
+      c.read(loginControllerProvider).errorText,
+      'Çok fazla deneme yapıldı. Lütfen biraz sonra tekrar deneyin.',
+    );
+
+    auth.sendError = const AuthApiException('fail', code: 'sms_send_failed');
+    await ctrl.sendOtp('5551234567');
+    expect(
+      c.read(loginControllerProvider).errorText,
+      startsWith("WhatsApp'a kod gönderilemedi"),
+    );
+  });
+
+  test('yeniden gönderim hatası WhatsApp mesajını gösterir', () async {
+    // Süresi bitmiş cooldown OTP adımını yeniden gönderime hazır açar.
+    final auth = _ThrowingAuth()
+      ..sendError = const OtpCooldownException(
+        remainingSeconds: 0,
+        sameDestination: true,
+      );
+    final c = _container(auth);
+    final ctrl = c.read(loginControllerProvider.notifier);
+
+    await ctrl.sendOtp('5551234567');
+    auth.sendError = const AuthApiException('fail', code: 'sms_send_failed');
+    await ctrl.resendOtp('5551234567');
+
+    expect(
+      c.read(loginControllerProvider).errorText,
+      startsWith("WhatsApp'a kod gönderilemedi"),
+    );
+  });
+
   test(
     'reddedilen kod "hatalı", ağ hatası bağlantı mesajı gösterir (AUTH-10)',
     () async {

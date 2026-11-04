@@ -12,6 +12,7 @@ import '../../integration_test/mock_auth_for_test.dart';
 /// Oturumu var ama profili yok: uygulama kayıt ekranında açılır.
 class _NewUserAuth extends MockAuthForTest {
   bool registered = false;
+  int registerCalls = 0;
 
   @override
   bool get hasSession => true;
@@ -32,6 +33,8 @@ class _NewUserAuth extends MockAuthForTest {
     int? experienceYears,
     File? avatarFile,
   }) async {
+    registerCalls++;
+    await Future<void>.delayed(const Duration(milliseconds: 50));
     registered = true;
     return (await super.getCurrentUser())!;
   }
@@ -42,7 +45,8 @@ void main() {
     'kayıt sonrası başarı diyaloğu görünür, sonra feed açılır; hazır avatar yok '
     '(BUG-21, AUTH-8)',
     (tester) async {
-      await pumpDentigo(tester, auth: _NewUserAuth());
+      final auth = _NewUserAuth();
+      await pumpDentigo(tester, auth: auth);
 
       await tester.enterText(find.byType(TextField).first, 'Ayşe Yılmaz');
       await tester.tap(find.text('Öğrenci'));
@@ -66,9 +70,12 @@ void main() {
 
       expect(find.text('veya bir avatar seçin'), findsNothing);
 
+      // Çift dokunma tek kayıt oluşturur.
+      await tester.tap(find.text('Profilimi Tamamla'));
       await tester.tap(find.text('Profilimi Tamamla'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
+      expect(auth.registerCalls, 1);
       expect(find.text('Kaydınız Tamamlandı!'), findsOneWidget);
 
       await tester.pump(const Duration(milliseconds: 1500));

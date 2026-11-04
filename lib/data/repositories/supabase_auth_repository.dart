@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/error/app_failures.dart';
+import '../../core/utils/contact_utils.dart';
 import '../../core/utils/supabase_error_mapper.dart';
 import '../models/enums.dart';
 import '../models/user_model.dart';
@@ -11,12 +12,12 @@ import 'otp_send_limiter.dart';
 /// Supabase Auth ile gerçek OTP kimlik doğrulama.
 ///
 /// Akış:
-///   1. sendOtp → Supabase signInWithOtp (SMS/E-posta)
+///   1. sendOtp → Supabase signInWithOtp (WhatsApp/E-posta)
 ///   2. verifyOtp → Supabase verifyOTP + public.users profil kontrolü
 ///   3. getCurrentUser → Session + public.users profil
 ///
 /// İstemci tarafı cooldown ([OtpSendLimiter]):
-///   - Aynı hedefe 60 sn içinde tekrar SMS atılmaz.
+///   - Aynı hedefe 60 sn içinde tekrar kod atılmaz.
 ///   - 60 sn içinde en fazla 2 farklı hedefe gönderim yapılabilir.
 class SupabaseAuthRepository implements AuthRepository {
   SupabaseAuthRepository({
@@ -32,72 +33,61 @@ class SupabaseAuthRepository implements AuthRepository {
   final SupabaseClient _client;
   final OtpSendLimiter _limiter;
 
-  // ── Telefon numarası normalleştirme ────────────────────────────────────
-  /// Türkiye telefon numarası formatı: +90XXXXXXXXXX
-  /// Kullanıcı "5551234567" girerse → "+905551234567" olur.
-  static final _phoneRegex = RegExp(r'^\+?[0-9]{8,15}$');
-  static final _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$');
-
-  bool _isPhone(String input) => _phoneRegex.hasMatch(input);
-  bool _isEmail(String input) => _emailRegex.hasMatch(input);
-
-  String _normalizePhone(String phone) {
-    phone = phone.replaceAll(RegExp(r'\s+'), '');
-    if (phone.startsWith('+')) return phone;
-    if (phone.startsWith('0')) phone = phone.substring(1);
-    return '+90$phone';
-  }
-
-  String _normalizeDestination(String input) {
-    final trimmed = input.trim();
-    if (_isEmail(trimmed)) return trimmed.toLowerCase();
-    if (_isPhone(trimmed)) return _normalizePhone(trimmed);
-    throw Exception('Geçersiz e-posta veya telefon numarası');
-  }
+  String _normalizeDestination(String input) =>
+      normalizeContact(input) ??
+      (throw const ValidationFailure('invalid email or phone'));
 
   // ── sendOtp ────────────────────────────────────────────────────────────
 
   @override
   Future<void> sendOtp(String emailOrPhone) async {
     final destination = _normalizeDestination(emailOrPhone);
+    await _limitedSend(destination, () async {
+      if (isEmailContact(destination)) {
+        await _client.auth.signInWithOtp(email: destination);
+      } else {
+        await _client.auth.signInWithOtp(
+          phone: destination,
+          channel: OtpChannel.whatsapp,
+        );
+      }
+    });
+  }
 
+  /// Gönderimi istemci cooldown'u ve sunucu rate-limit'iyle sarar.
+  Future<void> _limitedSend(
+    String destination,
+    Future<void> Function() send,
+  ) async {
     await _limiter.ensureLoaded();
     final blocked = _limiter.check(destination);
     if (blocked != null) throw blocked;
 
     try {
-      if (_isEmail(destination)) {
-        await _client.auth.signInWithOtp(email: destination);
-      } else {
-        await _client.auth.signInWithOtp(phone: destination);
-      }
+      await send();
     } on AuthException catch (e) {
-      // Sunucu tarafı rate-limit: istemci cooldown'u senkronize et.
-      // SMS gerçekten gönderilmediyse sameDestination yalnızca daha önce
-      // başarıyla gönderilmiş aynı hedef için true olmalı.
-      if (_isAuthRateLimit(e)) {
-        final sameDestination = _limiter.hasSentTo(destination);
-        if (sameDestination) {
-          await _limiter.touchRateLimit(destination);
-        }
-        throw OtpCooldownException(
-          remainingSeconds: _limiter.cooldown.inSeconds,
-          sameDestination: sameDestination,
-        );
+      // Adres sıklık sınırı: sunucu kalan süreyi yazar, kod yakın zamanda
+      // gitmiştir. Genel limitte süre yoktur, kod gitmemiştir; hata aynen çıkar.
+      final remaining = _frequencyLimitSeconds(e);
+      if (remaining == null) rethrow;
+      final sameDestination = _limiter.hasSentTo(destination);
+      if (sameDestination) {
+        await _limiter.touchRateLimit(destination);
       }
-      rethrow;
+      throw OtpCooldownException(
+        remainingSeconds: remaining,
+        sameDestination: sameDestination,
+      );
     }
 
     await _limiter.recordSuccess(destination);
   }
 
-  bool _isAuthRateLimit(AuthException e) {
-    const rateLimitCodes = {
-      'over_sms_send_rate_limit',
-      'over_email_send_rate_limit',
-      'over_request_rate_limit',
-    };
-    return rateLimitCodes.contains(e.code) || e.statusCode == '429';
+  static final _frequencyLimitRegex = RegExp(r'after (\d+) seconds?');
+
+  int? _frequencyLimitSeconds(AuthException e) {
+    final match = _frequencyLimitRegex.firstMatch(e.message);
+    return match == null ? null : int.parse(match[1]!);
   }
 
   // ── verifyOtp ──────────────────────────────────────────────────────────
@@ -108,7 +98,7 @@ class SupabaseAuthRepository implements AuthRepository {
 
     final AuthResponse response;
 
-    if (_isEmail(destination)) {
+    if (isEmailContact(destination)) {
       response = await _client.auth.verifyOTP(
         type: OtpType.email,
         token: otpCode,
@@ -127,6 +117,39 @@ class SupabaseAuthRepository implements AuthRepository {
     }
 
     // public.users tablosunda profil var mı kontrol et
+    return _fetchUserProfile(response.user!.id);
+  }
+
+  // ── E-posta/telefon ekleme ve değiştirme ───────────────────────────────
+
+  @override
+  Future<void> requestContactChange(String emailOrPhone) async {
+    final destination = _normalizeDestination(emailOrPhone);
+    await _limitedSend(destination, () async {
+      await _client.auth.updateUser(
+        isEmailContact(destination)
+            ? UserAttributes(email: destination)
+            : _WhatsAppPhoneAttributes(destination),
+      );
+    });
+  }
+
+  @override
+  Future<UserModel?> confirmContactChange(
+    String emailOrPhone,
+    String otpCode,
+  ) async {
+    final destination = _normalizeDestination(emailOrPhone);
+    final isEmail = isEmailContact(destination);
+    final response = await _client.auth.verifyOTP(
+      type: isEmail ? OtpType.emailChange : OtpType.phoneChange,
+      token: otpCode,
+      email: isEmail ? destination : null,
+      phone: isEmail ? null : destination,
+    );
+    if (response.user == null) {
+      throw Exception('Doğrulama başarısız');
+    }
     return _fetchUserProfile(response.user!.id);
   }
 
@@ -266,4 +289,16 @@ class SupabaseAuthRepository implements AuthRepository {
         );
     return _client.storage.from('avatars').getPublicUrl(fileName);
   }
+}
+
+/// gotrue `UserAttributes` kanal alanı taşımıyor; sunucu `PUT /user` için
+/// `channel` kabul ediyor. Verilmezse kod SMS ile gider.
+class _WhatsAppPhoneAttributes extends UserAttributes {
+  _WhatsAppPhoneAttributes(String phone) : super(phone: phone);
+
+  @override
+  Map<String, dynamic> toJson() => {
+    ...super.toJson(),
+    'channel': OtpChannel.whatsapp.name,
+  };
 }

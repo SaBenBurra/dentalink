@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show PlatformException;
 
 import 'package:supabase_flutter/supabase_flutter.dart'
-    show AuthRetryableFetchException, PostgrestException;
+    show AuthApiException, AuthRetryableFetchException, PostgrestException;
 
 import '../../core/error/app_failures.dart';
 import '../../core/l10n/generated/app_localizations.dart';
@@ -27,6 +27,16 @@ String getErrorMessage(AppLocalizations l10n, Object e) {
   if (e is SocketException || e is AuthRetryableFetchException) {
     return l10n.networkError;
   }
+  // sendOtp ve e-posta/telefon değişimi guardSupabase'den geçmez.
+  if (e is AuthApiException) {
+    switch (e.code) {
+      case 'email_exists' || 'phone_exists':
+        return l10n.contactTaken;
+      case 'sms_send_failed':
+        return l10n.whatsappSendFailed;
+    }
+    if (_isRateLimit(e)) return l10n.otpRateLimited;
+  }
   // image_picker izin reddi.
   if (e is PlatformException &&
       (e.code == 'camera_access_denied' || e.code == 'photo_access_denied')) {
@@ -37,6 +47,20 @@ String getErrorMessage(AppLocalizations l10n, Object e) {
   }
   return l10n.unknownError;
 }
+
+bool _isRateLimit(AuthApiException e) =>
+    e.statusCode == '429' ||
+    const {
+      'over_sms_send_rate_limit',
+      'over_email_send_rate_limit',
+      'over_request_rate_limit',
+    }.contains(e.code);
+
+/// Kod doğrulama hatası: yalnızca sunucunun reddettiği kod "hatalı" sayılır.
+String getOtpErrorMessage(AppLocalizations l10n, Object e) =>
+    e is AuthApiException && !_isRateLimit(e)
+    ? l10n.otpInvalid
+    : getErrorMessage(l10n, e);
 
 /// Kullanıcı aksiyonunu çalıştırır; hata olursa SnackBar ile gösterir.
 /// Messenger önceden alınır: öğe listeden düşüp unmount olsa da mesaj görünür.

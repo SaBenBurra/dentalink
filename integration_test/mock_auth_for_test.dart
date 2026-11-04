@@ -33,6 +33,17 @@ class MockAuthForTest implements AuthRepository {
   }
 
   @override
+  Future<void> requestContactChange(String emailOrPhone) async {}
+
+  @override
+  Future<UserModel?> confirmContactChange(
+    String emailOrPhone,
+    String otpCode,
+  ) async {
+    return _currentUser;
+  }
+
+  @override
   Future<void> signOut() async {
     _currentUser = null;
   }

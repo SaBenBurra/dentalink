@@ -65,7 +65,7 @@ lib/
 ## Ürün kapsamı
 
 ### Kullanıcılar
-- **Giriş:** e-posta veya telefon + 6 haneli OTP (şifresiz). İlk girişte 3 adımlı kayıt: (1) ad + unvan, (2) üniversite, şehir, klinik, deneyim, (3) avatar + biyografi.
+- **Giriş:** e-posta veya WhatsApp numarası + 6 haneli OTP (şifresiz, Twilio üzerinden; `docs/SUPABASE.md` §10). Giriş ve kayıt aynı ekrandır. E-posta ve numara Ayarlar → Hesap'tan eklenir ya da değiştirilir, kod yeni adrese gider; ikisi de aynı hesaba girer. İlk girişte 3 adımlı kayıt: (1) ad + unvan, (2) üniversite, şehir, klinik, deneyim, (3) avatar + biyografi.
 - **Unvanlar** (`UserTitle`): Öğrenci, Diş Hekimi, Endodontist, Ortodontist, Periodontolog, Protez Uzmanı, Pedodontist, Cerrah, Radyolog, Restoratif Uzmanı.
 - `is_verified` yalnızca admin onayıyla değişir (Faz 4: diploma doğrulama).
 
@@ -90,7 +90,7 @@ lib/
 ### Navigasyon
 Alt menü: **Ana Sayfa** `/feed` · **Keşfet** `/search` · **Oluştur (+)** (vaka/forum seçimi) · **Mesajlar** `/messages` · **Profil** `/profile`.
 
-Diğer rotalar: `/post/:id` (tek post kartı; bildirim ve deep link hedefi), `/post/:id/likes` (beğenenler), `/treatment/:slug` (tedavi arşivi), `/create-case`, `/create-question`, `/chat/:userId`, `/profile/:userId`, `/edit-profile`, `/network/:id`, `/notifications`, `/bookmarks`, `/settings`, `/settings/blocked`, `/legal/:doc`, `/login`, `/register`. Tam liste: `lib/core/router/app_router.dart`.
+Diğer rotalar: `/post/:id` (tek post kartı; bildirim ve deep link hedefi), `/post/:id/likes` (beğenenler), `/treatment/:slug` (tedavi arşivi), `/create-case`, `/create-question`, `/chat/:userId`, `/profile/:userId`, `/edit-profile`, `/network/:id`, `/notifications`, `/bookmarks`, `/settings`, `/settings/blocked`, `/settings/contact/email`, `/settings/contact/phone`, `/legal/:doc`, `/login`, `/register`. Tam liste: `lib/core/router/app_router.dart`.
 
 ---
 

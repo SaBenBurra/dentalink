@@ -15,8 +15,9 @@ import '../../../core/theme/glass_theme.dart';
 class LoginOtpInput extends StatefulWidget {
   const LoginOtpInput({
     super.key,
-    required this.otpControllers,
-    required this.otpFocusNodes,
+    required this.otpLength,
+    required this.otpController,
+    required this.otpFocusNode,
     required this.isLoading,
     required this.isSuccess,
     required this.successMessage,
@@ -29,14 +30,15 @@ class LoginOtpInput extends StatefulWidget {
     this.errorText,
   });
 
-  final List<TextEditingController> otpControllers;
-  final List<FocusNode> otpFocusNodes;
+  final int otpLength;
+  final TextEditingController otpController;
+  final FocusNode otpFocusNode;
   final bool isLoading;
   final bool isSuccess;
   final String successMessage;
   final bool canResend;
   final int resendCountdown;
-  final void Function(String value, int index) onOtpChanged;
+  final ValueChanged<String> onOtpChanged;
   final VoidCallback onResend;
   final VoidCallback onGoBack;
   final VoidCallback onScatterComplete;
@@ -78,10 +80,8 @@ class _LoginOtpInputState extends State<LoginOtpInput>
   @override
   void initState() {
     super.initState();
-    _displayDigits = widget.otpControllers.map((c) => c.text).toList();
-    for (final controller in widget.otpControllers) {
-      controller.addListener(_syncDigits);
-    }
+    _displayDigits = _digits();
+    widget.otpController.addListener(_syncDigits);
     _scatterController =
         AnimationController(
           vsync: this,
@@ -91,7 +91,7 @@ class _LoginOtpInputState extends State<LoginOtpInput>
             widget.onScatterComplete();
             setState(() {
               _scattering = false;
-              _displayDigits = List.filled(widget.otpControllers.length, '');
+              _displayDigits = List.filled(widget.otpLength, '');
             });
             _scatterController.reset();
           }
@@ -122,19 +122,35 @@ class _LoginOtpInputState extends State<LoginOtpInput>
 
   @override
   void dispose() {
-    for (final controller in widget.otpControllers) {
-      controller.removeListener(_syncDigits);
-    }
+    widget.otpController.removeListener(_syncDigits);
     _scatterController.dispose();
     _successController.dispose();
     super.dispose();
   }
 
+  List<String> _digits() {
+    final text = widget.otpController.text;
+    return List.generate(
+      widget.otpLength,
+      (i) => i < text.length ? text[i] : '',
+    );
+  }
+
   void _syncDigits() {
     if (_scattering || _succeeding || !mounted) return;
-    setState(() {
-      _displayDigits = widget.otpControllers.map((c) => c.text).toList();
-    });
+    setState(() => _displayDigits = _digits());
+  }
+
+  /// Fazla haneyi almaz; dolu alana yapıştırılan kodun son haneleri kalır.
+  TextEditingValue _limitOtp(TextEditingValue old, TextEditingValue next) {
+    final extra = next.text.length - widget.otpLength;
+    if (extra <= 0) return next;
+    if (next.text.length - old.text.length <= 1) return old;
+    final code = next.text.substring(extra);
+    return TextEditingValue(
+      text: code,
+      selection: TextSelection.collapsed(offset: code.length),
+    );
   }
 
   void _beginScatter() {
@@ -177,28 +193,62 @@ class _LoginOtpInputState extends State<LoginOtpInput>
             message: widget.successMessage,
           )
         else ...[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: List.generate(widget.otpControllers.length, (index) {
-              return _OtpDigitBox(
-                index: index,
-                digit: _displayDigits[index],
-                controller: widget.otpControllers[index],
-                focusNode: widget.otpFocusNodes[index],
-                hasError: widget.errorText != null,
-                isDark: isDark,
-                glassBgColor: glassBgColor,
-                glassBorderColor: glassBorderColor,
-                textPrimaryColor: textPrimaryColor,
-                scattering: _scattering,
-                scatterAnimation: _scatterController,
-                scatterOffset: _scatterOffsets[index % _scatterOffsets.length],
-                scatterRotation:
-                    _scatterRotations[index % _scatterRotations.length],
-                enabled: !_scattering && !widget.isLoading,
-                onChanged: (val) => widget.onOtpChanged(val, index),
-              );
-            }),
+          Stack(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(widget.otpLength, (index) {
+                  return _OtpDigitBox(
+                    index: index,
+                    digit: _displayDigits[index],
+                    focused:
+                        widget.otpFocusNode.hasFocus &&
+                        index ==
+                            math.min(
+                              widget.otpController.text.length,
+                              widget.otpLength - 1,
+                            ),
+                    hasError: widget.errorText != null,
+                    isDark: isDark,
+                    glassBgColor: glassBgColor,
+                    glassBorderColor: glassBorderColor,
+                    textPrimaryColor: textPrimaryColor,
+                    scattering: _scattering,
+                    scatterAnimation: _scatterController,
+                    scatterOffset:
+                        _scatterOffsets[index % _scatterOffsets.length],
+                    scatterRotation:
+                        _scatterRotations[index % _scatterRotations.length],
+                  );
+                }),
+              ),
+              // Tek gizli alan: silme, yapıştırma ve kod önerisi kutular yerine
+              // burada çalışır.
+              Positioned.fill(
+                child: Semantics(
+                  label: AppLocalizations.of(context)!.verificationCode,
+                  child: TextField(
+                    controller: widget.otpController,
+                    focusNode: widget.otpFocusNode,
+                    enabled: !_scattering && !widget.isLoading,
+                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.done,
+                    autofillHints: const [AutofillHints.oneTimeCode],
+                    showCursor: false,
+                    style: const TextStyle(color: Colors.transparent),
+                    // resizeToAvoidBottomInset kapalı; scroll ekran seviyesinde
+                    // yönetiliyor, küçük tampon yeterli.
+                    scrollPadding: const EdgeInsets.only(bottom: 24),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      TextInputFormatter.withFunction(_limitOtp),
+                    ],
+                    decoration: const InputDecoration.collapsed(hintText: ''),
+                    onChanged: widget.onOtpChanged,
+                  ),
+                ),
+              ),
+            ],
           ),
           AnimatedSize(
             duration: const Duration(milliseconds: 280),
@@ -283,7 +333,7 @@ class _LoginOtpInputState extends State<LoginOtpInput>
             ),
           const SizedBox(height: AppDimensions.spacing16),
           TextButton.icon(
-            onPressed: widget.onGoBack,
+            onPressed: widget.isLoading ? null : widget.onGoBack,
             icon: const Icon(Icons.arrow_back_rounded, size: 16),
             label: Text(AppLocalizations.of(context)!.changeEmailOrPhone),
             style: TextButton.styleFrom(
@@ -462,8 +512,7 @@ class _OtpDigitBox extends StatelessWidget {
   const _OtpDigitBox({
     required this.index,
     required this.digit,
-    required this.controller,
-    required this.focusNode,
+    required this.focused,
     required this.hasError,
     required this.isDark,
     required this.glassBgColor,
@@ -473,14 +522,11 @@ class _OtpDigitBox extends StatelessWidget {
     required this.scatterAnimation,
     required this.scatterOffset,
     required this.scatterRotation,
-    required this.enabled,
-    required this.onChanged,
   });
 
   final int index;
   final String digit;
-  final TextEditingController controller;
-  final FocusNode focusNode;
+  final bool focused;
   final bool hasError;
   final bool isDark;
   final Color glassBgColor;
@@ -490,12 +536,9 @@ class _OtpDigitBox extends StatelessWidget {
   final Animation<double> scatterAnimation;
   final Offset scatterOffset;
   final double scatterRotation;
-  final bool enabled;
-  final ValueChanged<String> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    final hasFocus = focusNode.hasFocus;
     final fromTop = index.isEven;
 
     final digitStyle = AppTextStyles.titleLarge.copyWith(
@@ -518,10 +561,10 @@ class _OtpDigitBox extends StatelessWidget {
           border: Border.all(
             color: hasError
                 ? AppColors.error.withValues(alpha: 0.85)
-                : hasFocus
+                : focused
                 ? Theme.of(context).colorScheme.primary
                 : glassBorderColor,
-            width: hasError || hasFocus ? 2.0 : 1.0,
+            width: hasError || focused ? 2.0 : 1.0,
           ),
         ),
         child: Stack(
@@ -588,39 +631,6 @@ class _OtpDigitBox extends StatelessWidget {
                         style: digitStyle,
                       ),
               ),
-            TextField(
-              controller: controller,
-              focusNode: focusNode,
-              enabled: enabled,
-              keyboardType: TextInputType.number,
-              textInputAction: index == 5
-                  ? TextInputAction.done
-                  : TextInputAction.next,
-              textAlign: TextAlign.center,
-              textAlignVertical: TextAlignVertical.center,
-              showCursor: true,
-              cursorColor: Theme.of(context).colorScheme.primary,
-              style: digitStyle.copyWith(color: Colors.transparent),
-              // resizeToAvoidBottomInset kapalı; scroll ekran seviyesinde
-              // yönetiliyor, küçük tampon yeterli.
-              scrollPadding: const EdgeInsets.only(bottom: 24),
-              maxLength: 1,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: const InputDecoration(
-                counterText: '',
-                filled: true,
-                fillColor: Colors.transparent,
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                disabledBorder: InputBorder.none,
-                errorBorder: InputBorder.none,
-                focusedErrorBorder: InputBorder.none,
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
-              ),
-              onChanged: onChanged,
-            ),
           ],
         ),
       ),

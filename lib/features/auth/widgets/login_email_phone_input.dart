@@ -5,7 +5,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/theme/glass_theme.dart';
 
-/// E-posta veya telefon numarası giriş alanı.
+/// E-posta veya WhatsApp numarası giriş alanı.
 ///
 /// Glassmorphism stilinde input field + animasyonlu devam butonu.
 /// Geçerli bir e-posta/telefon girildiğinde sağ tarafta ok butonu belirir.

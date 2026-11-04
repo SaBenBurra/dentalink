@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show AuthApiException;
 import '../../../data/repositories/otp_cooldown_exception.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/locale_provider.dart';
@@ -143,10 +142,7 @@ class LoginController extends AutoDisposeNotifier<LoginState> {
       if (_disposed) return false;
       state = state.copyWith(
         isLoading: false,
-        // Yalnızca sunucunun reddettiği kod "hatalı"; ağ ve profil hataları kendi mesajıyla.
-        errorText: () => e is AuthApiException
-            ? ref.read(l10nProvider).otpInvalid
-            : getErrorMessage(ref.read(l10nProvider), e),
+        errorText: () => getOtpErrorMessage(ref.read(l10nProvider), e),
         shouldShake: true,
       );
       // Reset shouldShake so it can shake again on next error
@@ -172,11 +168,11 @@ class LoginController extends AutoDisposeNotifier<LoginState> {
       if (_disposed) return;
       state = state.copyWith(isLoading: false);
       _startResendTimer(fromSeconds: e.remainingSeconds);
-    } catch (_) {
+    } catch (e) {
       if (_disposed) return;
       state = state.copyWith(
         isLoading: false,
-        errorText: () => ref.read(l10nProvider).otpSendFailed,
+        errorText: () => getErrorMessage(ref.read(l10nProvider), e),
       );
     }
   }

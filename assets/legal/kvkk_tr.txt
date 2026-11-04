@@ -31,7 +31,7 @@ Hasta verileri: Platformda paylaşılan vaka görsellerinin ve açıklamaların�
 - İlgili kişinin kendisi tarafından alenileştirilmiş olması (herkese açık profil ve paylaşımlar).
 
 5. Kişisel verilerin aktarılması
-Verileriniz, hizmetin altyapısını sağlayan barındırma ve veritabanı hizmet sağlayıcısına (Supabase Inc.; sunucular Avrupa Birliği'nde, Frankfurt) aktarılır. Bu aktarım KVKK m. 9 kapsamında [STANDART SÖZLEŞME / AÇIK RIZA — hukukçu belirleyecek] dayanağıyla yapılır. Verileriniz ayrıca kanunen yetkili kamu kurum ve kuruluşlarına, talep halinde ve yalnızca gerektiği ölçüde aktarılabilir. Verileriniz pazarlama amacıyla üçüncü kişilere satılmaz veya kiralanmaz.
+Verileriniz, hizmetin altyapısını sağlayan barındırma ve veritabanı hizmet sağlayıcısına (Supabase Inc.; sunucular Avrupa Birliği'nde, Frankfurt) aktarılır. Bu aktarım KVKK m. 9 kapsamında [STANDART SÖZLEŞME / AÇIK RIZA — hukukçu belirleyecek] dayanağıyla yapılır. Doğrulama kodlarının iletilmesi için e-posta adresiniz veya telefon numaranız, aynı dayanakla Twilio Inc. (SendGrid dahil; ABD) ve WhatsApp hizmet sağlayıcısı Meta'ya aktarılır. Verileriniz ayrıca kanunen yetkili kamu kurum ve kuruluşlarına, talep halinde ve yalnızca gerektiği ölçüde aktarılabilir. Verileriniz pazarlama amacıyla üçüncü kişilere satılmaz veya kiralanmaz.
 
 6. Toplama yöntemi
 Kişisel verileriniz, uygulamaya girdiğiniz bilgiler ve uygulamayı kullanımınız sırasında elektronik ortamda otomatik yollarla toplanır.

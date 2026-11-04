@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/constants/app_dimensions.dart';
+import '../../../core/utils/contact_utils.dart';
 import '../models/login_step.dart';
 
 /// Login ekranı logo + dinamik başlık bileşeni.
 ///
 /// [currentStep] değerine göre farklı başlık metni gösterir:
-/// - emailOrPhone → "Dentigo" + "E-posta veya telefon numaranızla giriş yapın"
+/// - emailOrPhone → "Dentigo" + giriş/kayıt alt başlığı
 /// - otp → "Doğrulama Kodu" + "{adres}e gönderilen kodu girin"
 class LoginLogoHeader extends StatelessWidget {
   const LoginLogoHeader({
@@ -24,6 +25,13 @@ class LoginLogoHeader extends StatelessWidget {
   /// Başlık geçiş süresi. Login ekranındaki form geçişiyle senkron kalması
   /// için tek merkezden verilir.
   final Duration transitionDuration;
+
+  String _otpSentText(AppLocalizations l10n) {
+    final contact = normalizeContact(inputText) ?? inputText;
+    return isEmailContact(contact)
+        ? l10n.otpSentToEmail(contact)
+        : l10n.otpSentToWhatsapp(contact);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +118,7 @@ class LoginLogoHeader extends StatelessWidget {
                       ),
                       const SizedBox(height: AppDimensions.spacing8),
                       Text(
-                        AppLocalizations.of(context)!.otpSentTo(inputText),
+                        _otpSentText(AppLocalizations.of(context)!),
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: textSecondaryColor,
                           fontWeight: FontWeight.w500,

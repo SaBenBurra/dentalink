@@ -6,6 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../providers/auth_provider.dart';
 import '../../../providers/locale_provider.dart';
 import '../../../providers/theme_provider.dart';
 import '../widgets/settings_section.dart';
@@ -314,6 +315,11 @@ class SettingsScreen extends ConsumerWidget {
     WidgetRef ref,
     bool isDark,
   ) {
+    final l10n = AppLocalizations.of(context)!;
+    final user = ref.watch(currentUserProvider);
+    final email = user?.email ?? '';
+    final phone = user?.phone ?? '';
+
     return SettingsSection(
       title: AppLocalizations.of(context)!.settingsAccount,
       icon: Icons.person_outline_rounded,
@@ -322,6 +328,18 @@ class SettingsScreen extends ConsumerWidget {
           icon: Icons.edit_outlined,
           title: AppLocalizations.of(context)!.editProfile,
           onTap: () => context.push('/edit-profile'),
+        ),
+        SettingsTile(
+          icon: Icons.alternate_email_rounded,
+          title: l10n.email,
+          subtitle: email.isEmpty ? l10n.contactNotAdded : email,
+          onTap: () => context.push('/settings/contact/email'),
+        ),
+        SettingsTile(
+          icon: Icons.phone_outlined,
+          title: l10n.contactWhatsapp,
+          subtitle: phone.isEmpty ? l10n.contactNotAdded : '+$phone',
+          onTap: () => context.push('/settings/contact/phone'),
         ),
         SettingsTile(
           icon: Icons.block_outlined,

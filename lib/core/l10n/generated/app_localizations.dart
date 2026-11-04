@@ -1370,11 +1370,17 @@ abstract class AppLocalizations {
   /// **'Kod hatalı veya süresi dolmuş'**
   String get otpInvalid;
 
-  /// No description provided for @otpSendFailed.
+  /// No description provided for @otpRateLimited.
   ///
   /// In tr, this message translates to:
-  /// **'Kod gönderilemedi. Lütfen tekrar deneyin.'**
-  String get otpSendFailed;
+  /// **'Çok fazla deneme yapıldı. Lütfen biraz sonra tekrar deneyin.'**
+  String get otpRateLimited;
+
+  /// No description provided for @validationContactInvalid.
+  ///
+  /// In tr, this message translates to:
+  /// **'Geçerli bir e-posta veya WhatsApp numarası girin. Türkiye dışındaki numaralarda ülke kodunu yazın (+49…).'**
+  String get validationContactInvalid;
 
   /// No description provided for @validationNameRequired.
   ///
@@ -1397,20 +1403,26 @@ abstract class AppLocalizations {
   /// No description provided for @loginInputHint.
   ///
   /// In tr, this message translates to:
-  /// **'E-posta veya telefon numarası'**
+  /// **'E-posta veya WhatsApp numarası'**
   String get loginInputHint;
 
   /// No description provided for @loginHeaderSubtitle.
   ///
   /// In tr, this message translates to:
-  /// **'E-posta veya telefon numaranızla giriş yapın'**
+  /// **'E-posta veya WhatsApp numaranızla giriş yapın ya da kaydolun'**
   String get loginHeaderSubtitle;
 
-  /// No description provided for @otpSentTo.
+  /// No description provided for @otpSentToEmail.
   ///
   /// In tr, this message translates to:
   /// **'{destination} adresine gönderilen kodu girin'**
-  String otpSentTo(String destination);
+  String otpSentToEmail(String destination);
+
+  /// No description provided for @otpSentToWhatsapp.
+  ///
+  /// In tr, this message translates to:
+  /// **'{destination} numarasına WhatsApp\'tan gönderilen kodu girin'**
+  String otpSentToWhatsapp(String destination);
 
   /// No description provided for @resendCode.
   ///
@@ -2749,6 +2761,90 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Benzer vakalar'**
   String get relatedCases;
+
+  /// No description provided for @contactNotAdded.
+  ///
+  /// In tr, this message translates to:
+  /// **'Eklenmedi'**
+  String get contactNotAdded;
+
+  /// No description provided for @contactWhatsapp.
+  ///
+  /// In tr, this message translates to:
+  /// **'WhatsApp Numarası'**
+  String get contactWhatsapp;
+
+  /// No description provided for @contactAddEmail.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-posta Ekle'**
+  String get contactAddEmail;
+
+  /// No description provided for @contactChangeEmail.
+  ///
+  /// In tr, this message translates to:
+  /// **'E-postayı Değiştir'**
+  String get contactChangeEmail;
+
+  /// No description provided for @contactAddPhone.
+  ///
+  /// In tr, this message translates to:
+  /// **'WhatsApp Numarası Ekle'**
+  String get contactAddPhone;
+
+  /// No description provided for @contactChangePhone.
+  ///
+  /// In tr, this message translates to:
+  /// **'WhatsApp Numarasını Değiştir'**
+  String get contactChangePhone;
+
+  /// No description provided for @contactEmailInfo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu e-postayla da giriş yapabilirsiniz. Diğer kullanıcılara gösterilmez.'**
+  String get contactEmailInfo;
+
+  /// No description provided for @contactPhoneInfo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu numarayla da giriş yapabilirsiniz, kod WhatsApp\'tan gelir. Diğer kullanıcılara gösterilmez.'**
+  String get contactPhoneInfo;
+
+  /// No description provided for @contactSendCode.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kod Gönder'**
+  String get contactSendCode;
+
+  /// No description provided for @contactVerify.
+  ///
+  /// In tr, this message translates to:
+  /// **'Doğrula'**
+  String get contactVerify;
+
+  /// No description provided for @contactSaved.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kaydedildi'**
+  String get contactSaved;
+
+  /// No description provided for @contactSame.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu zaten hesabınızda kayıtlı.'**
+  String get contactSame;
+
+  /// No description provided for @contactTaken.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu bilgi başka bir hesapta kayıtlı.'**
+  String get contactTaken;
+
+  /// No description provided for @whatsappSendFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'WhatsApp\'a kod gönderilemedi. Numaranın WhatsApp\'ta kayıtlı olduğundan emin olun.'**
+  String get whatsappSendFailed;
 }
 
 class _AppLocalizationsDelegate

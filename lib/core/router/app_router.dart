@@ -24,6 +24,7 @@ import '../../features/messaging/screens/chat_screen.dart';
 import '../../features/notifications/screens/notifications_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
 import '../../features/settings/screens/blocked_users_screen.dart';
+import '../../features/settings/screens/change_contact_screen.dart';
 import '../../features/settings/screens/legal_screen.dart';
 import '../../features/bookmarks/screens/bookmarks_screen.dart';
 import 'package:dentigo/core/constants/app_dimensions.dart';
@@ -225,6 +226,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/settings/blocked',
         builder: (context, state) => const BlockedUsersScreen(),
+      ),
+      GoRoute(
+        path: '/settings/contact/email',
+        builder: (context, state) => const ChangeContactScreen(isEmail: true),
+      ),
+      GoRoute(
+        path: '/settings/contact/phone',
+        builder: (context, state) => const ChangeContactScreen(isEmail: false),
       ),
       GoRoute(
         path: '/legal/:doc',
