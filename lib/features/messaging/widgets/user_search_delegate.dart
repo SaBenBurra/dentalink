@@ -12,6 +12,7 @@ class UserSearchDelegate extends SearchDelegate<UserModel?> {
   UserSearchDelegate(this.ref);
 
   Future<List<UserModel>>? _future;
+  Future<List<UserModel>>? _suggestions;
   String _lastQuery = '';
 
   @override
@@ -47,10 +48,78 @@ class UserSearchDelegate extends SearchDelegate<UserModel?> {
 
   Widget _buildSearchResults(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    if (query.trim().length < 2) {
+    final trimmed = query.trim();
+    if (trimmed.length == 1) {
       return Center(child: Text(l10n.searchMinChars));
     }
 
+    return StatefulBuilder(
+      builder: (context, setState) => FutureBuilder<List<UserModel>>(
+        future: trimmed.isEmpty
+            ? _suggestions ??= ref
+                  .read(userRepositoryProvider)
+                  .getSuggestedUsers()
+            : _searchFuture(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            final msg = getErrorMessage(l10n, snapshot.error!);
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(msg),
+                  TextButton(
+                    onPressed: () => setState(() {
+                      _lastQuery = '';
+                      _suggestions = null;
+                    }),
+                    child: Text(l10n.retry),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          final users = snapshot.data ?? [];
+
+          if (users.isEmpty) {
+            return Center(
+              child: Text(
+                trimmed.isEmpty ? l10n.searchMinChars : l10n.userNotFound,
+              ),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              final user = users[index];
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundImage:
+                      user.avatarUrl != null && user.avatarUrl!.isNotEmpty
+                      ? NetworkImage(user.avatarUrl!)
+                      : null,
+                  child: (user.avatarUrl == null || user.avatarUrl!.isEmpty)
+                      ? const Icon(Icons.person)
+                      : null,
+                ),
+                title: Text(user.fullName),
+                onTap: () {
+                  close(context, user);
+                },
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Future<List<UserModel>> _searchFuture() {
     if (query != _lastQuery) {
       final q = _lastQuery = query;
       // Debounce: superseded futures skip the request; FutureBuilder ignores their result.
@@ -59,61 +128,6 @@ class UserSearchDelegate extends SearchDelegate<UserModel?> {
         return ref.read(userRepositoryProvider).searchUsers(q);
       });
     }
-
-    return FutureBuilder<List<UserModel>>(
-      future: _future,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          final msg = getErrorMessage(l10n, snapshot.error!);
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(msg),
-                TextButton(
-                  onPressed: () {
-                    _lastQuery = ''; // force retry
-                    query = query; // trigger rebuild
-                  },
-                  child: Text(l10n.retry),
-                ),
-              ],
-            ),
-          );
-        }
-
-        final users = snapshot.data ?? [];
-
-        if (users.isEmpty) {
-          return Center(child: Text(l10n.userNotFound));
-        }
-
-        return ListView.builder(
-          itemCount: users.length,
-          itemBuilder: (context, index) {
-            final user = users[index];
-            return ListTile(
-              leading: CircleAvatar(
-                backgroundImage:
-                    user.avatarUrl != null && user.avatarUrl!.isNotEmpty
-                    ? NetworkImage(user.avatarUrl!)
-                    : null,
-                child: (user.avatarUrl == null || user.avatarUrl!.isEmpty)
-                    ? const Icon(Icons.person)
-                    : null,
-              ),
-              title: Text(user.fullName),
-              subtitle: Text('@${user.username}'),
-              onTap: () {
-                close(context, user);
-              },
-            );
-          },
-        );
-      },
-    );
+    return _future!;
   }
 }

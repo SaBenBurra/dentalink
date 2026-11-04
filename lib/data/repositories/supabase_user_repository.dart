@@ -29,15 +29,26 @@ class SupabaseUserRepository implements UserRepository {
     if (q.isEmpty) return [];
 
     // Önek + aksan duyarsız; kendini ve engellenenleri dışlar (038).
-    final ids =
-        (await client.rpc('search_user_ids', params: {'p_query': q}) as List)
-            .cast<String>();
-    if (ids.isEmpty) return <UserModel>[];
+    return _usersInOrder(
+      (await client.rpc('search_user_ids', params: {'p_query': q}) as List)
+          .cast<String>(),
+    );
+  });
+
+  @override
+  Future<List<UserModel>> getSuggestedUsers() => guardSupabase(() async {
+    return _usersInOrder(
+      (await client.rpc('suggested_user_ids') as List).cast<String>(),
+    );
+  });
+
+  /// RPC sırası korunur.
+  Future<List<UserModel>> _usersInOrder(List<String> ids) async {
+    if (ids.isEmpty) return [];
     final rows = await client.from('users').select().inFilter('id', ids);
-    // RPC sırası (alaka) korunur.
     final byId = {for (final r in rows) r['id'] as String: r};
     return [for (final id in ids) ?byId[id]].map(UserModel.fromJson).toList();
-  });
+  }
 
   @override
   Future<List<BadgeModel>> getUserBadges(String userId) =>

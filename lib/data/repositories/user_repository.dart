@@ -18,6 +18,9 @@ abstract class UserRepository {
   /// Sonuç bulunamazsa boş liste döner, exception fırlatmaz.
   Future<List<UserModel>> searchUsers(String query);
 
+  /// Yeni mesajda önerilen kişiler, öncelik sırasıyla (041).
+  Future<List<UserModel>> getSuggestedUsers();
+
   /// Kullanıcının kazandığı rozetleri getirir.
   Future<List<BadgeModel>> getUserBadges(String userId);
 

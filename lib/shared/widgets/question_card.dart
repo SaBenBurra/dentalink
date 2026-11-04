@@ -6,7 +6,6 @@ import 'package:dentlink/shared/widgets/post_badge.dart';
 import 'package:dentlink/shared/widgets/post_body.dart';
 import 'package:dentlink/shared/widgets/post_glass_container.dart';
 import 'package:dentlink/shared/widgets/post_header.dart';
-import 'package:dentlink/shared/widgets/post_tags.dart';
 import 'package:dentlink/shared/utils/post_actions.dart';
 import 'package:dentlink/shared/utils/moderation_actions.dart';
 import 'package:flutter/material.dart';
@@ -76,9 +75,9 @@ class QuestionCard extends ConsumerWidget {
           PostBody(
             title: post.title,
             content: post.content,
+            tags: post.tags,
             expanded: expanded,
           ),
-          PostTags(tags: post.tags),
 
           // <-- 3. Ayırıcı çizgi (Soru postlarında görsel eki olmadığından daima gösterilir)
           Padding(
@@ -97,6 +96,7 @@ class QuestionCard extends ConsumerWidget {
               vertical: AppDimensions.spacing8,
             ),
             child: PostActionBar.fromPost(
+              compact: true,
               post: post,
               onLikeToggle: onLikeToggle,
               onBookmarkToggle: onBookmarkToggle,

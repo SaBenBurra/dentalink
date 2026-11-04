@@ -7,10 +7,16 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../integration_test/app_flow.dart';
 
 void main() {
-  testWidgets('karttaki etikete dokununca Keşfet o etiketle açılır', (
+  testWidgets('post sayfasındaki etikete dokununca Keşfet o etiketle açılır', (
     tester,
   ) async {
     await pumpDentLink(tester);
+    expect(find.text('#Kalsifiye_Kanal'), findsNothing);
+
+    await tester.tap(find.text('Alt molar kanal tedavisi'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('#Kalsifiye_Kanal'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('#Kalsifiye_Kanal'));
     await tester.pumpAndSettle();
 

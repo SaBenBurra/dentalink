@@ -273,6 +273,9 @@ class _FakeUserRepository implements UserRepository {
   Future<List<UserModel>> searchUsers(String query) async => [otherUser];
 
   @override
+  Future<List<UserModel>> getSuggestedUsers() async => [otherUser];
+
+  @override
   Future<List<BadgeModel>> getUserBadges(String userId) async => [];
 
   @override

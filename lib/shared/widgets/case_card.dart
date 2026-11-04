@@ -6,7 +6,6 @@ import 'package:dentlink/shared/widgets/post_badge.dart';
 import 'package:dentlink/shared/widgets/post_body.dart';
 import 'package:dentlink/shared/widgets/post_glass_container.dart';
 import 'package:dentlink/shared/widgets/post_header.dart';
-import 'package:dentlink/shared/widgets/post_tags.dart';
 import 'package:dentlink/shared/widgets/case_treatments.dart';
 import 'package:dentlink/shared/widgets/post_media.dart';
 import 'package:dentlink/shared/utils/post_actions.dart';
@@ -26,6 +25,7 @@ class CaseCard extends ConsumerWidget {
     this.onCommentTap,
     this.onTap,
     this.expanded = false,
+    this.showTreatments = true,
   });
 
   final CasePostModel post;
@@ -36,6 +36,9 @@ class CaseCard extends ConsumerWidget {
 
   /// Post sayfasında metnin tamamı gösterilir.
   final bool expanded;
+
+  /// Ana sayfa kartlarında tedavi satırı gösterilmez.
+  final bool showTreatments;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -76,17 +79,16 @@ class CaseCard extends ConsumerWidget {
           ),
 
           // Listede tedaviler başlığın üstünde: vakanın "rafı".
-          if (!expanded)
+          if (!expanded && showTreatments)
             CaseTreatmentsRow(treatments: post.treatments, onMore: onTap),
 
           // <-- 2. İçerik (uzunsa "Devamını oku")
           PostBody(
             title: post.title,
             content: post.content,
+            tags: post.freeTags,
             expanded: expanded,
           ),
-          if (expanded) CaseTreatmentsSection(treatments: post.treatments),
-          PostTags(tags: post.freeTags),
 
           // <-- 3. Görsel (yoksa ayırıcı çizgi)
           if (post.imageUrls.isNotEmpty)
@@ -112,12 +114,16 @@ class CaseCard extends ConsumerWidget {
               vertical: AppDimensions.spacing8,
             ),
             child: PostActionBar.fromPost(
+              compact: true,
               post: post,
               onLikeToggle: onLikeToggle,
               onBookmarkToggle: onBookmarkToggle,
               onCommentTap: onCommentTap,
             ),
           ),
+
+          // <-- 5. Post sayfasında tedaviler: görselin altında, yorumların üstünde
+          if (expanded) CaseTreatmentsSection(treatments: post.treatments),
         ],
       ),
     );

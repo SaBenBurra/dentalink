@@ -9,12 +9,18 @@ import '../../integration_test/app_flow.dart';
 
 void main() {
   testWidgets(
-    'kartta tedavi çipi (etiket değil) → arşiv → branş linki Keşfet\'i açar',
+    'ana sayfada tedavi yok; post sayfasındaki çip → arşiv → branş linki Keşfet\'i açar',
     (tester) async {
       await pumpDentLink(tester);
 
       // Tedavi etiketi serbest etiket satırında tekrar görünmez.
       expect(find.text('#kanal-tedavisi'), findsNothing);
+      expect(find.text('Kanal tedavisi'), findsNothing);
+
+      await tester.tap(find.text('Alt molar kanal tedavisi'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Kanal tedavisi').first);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Kanal tedavisi').first);
       await tester.pumpAndSettle();
 

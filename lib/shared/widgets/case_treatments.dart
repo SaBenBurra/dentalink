@@ -179,7 +179,12 @@ class CaseTreatmentsSection extends StatelessWidget {
       (byBranch[t.branch] ??= []).add(t);
     }
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing16),
+      padding: const EdgeInsets.fromLTRB(
+        AppDimensions.spacing16,
+        0,
+        AppDimensions.spacing16,
+        AppDimensions.spacing8,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
