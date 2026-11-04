@@ -28,6 +28,23 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
     super.dispose();
   }
 
+  Future<void> _startNewMessage() async {
+    final selectedUser = await showSearch(
+      context: context,
+      delegate: UserSearchDelegate(ref),
+    );
+    if (selectedUser != null && mounted) {
+      context.pushNamed(
+        'chat',
+        pathParameters: {'userId': selectedUser.id},
+        queryParameters: {
+          'name': selectedUser.fullName,
+          'avatar': selectedUser.avatarUrl ?? '',
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -37,27 +54,17 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.messagesTitle, style: textTheme.titleLarge),
+        centerTitle: false,
+        title: Text(
+          l10n.messagesTitle,
+          style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+        ),
         actions: [
           IconButton(
-            tooltip: AppLocalizations.of(context)!.newMessage,
-            icon: const Icon(Icons.add),
-            onPressed: () async {
-              final selectedUser = await showSearch(
-                context: context,
-                delegate: UserSearchDelegate(ref),
-              );
-              if (selectedUser != null && context.mounted) {
-                context.pushNamed(
-                  'chat',
-                  pathParameters: {'userId': selectedUser.id},
-                  queryParameters: {
-                    'name': selectedUser.fullName,
-                    'avatar': selectedUser.avatarUrl ?? '',
-                  },
-                );
-              }
-            },
+            tooltip: l10n.newMessage,
+            color: Theme.of(context).colorScheme.primary,
+            icon: const Icon(Icons.edit_square),
+            onPressed: _startNewMessage,
           ),
         ],
       ),
@@ -81,6 +88,8 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
                   return DentigoEmptyState(
                     icon: Icons.chat_bubble_outline_rounded,
                     title: l10n.noMessages,
+                    actionLabel: l10n.newMessage,
+                    onAction: _startNewMessage,
                   );
                 }
 
@@ -95,15 +104,16 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
                 }).toList();
 
                 if (filteredConversations.isEmpty) {
-                  return Center(child: Text(l10n.noResults));
+                  return DentigoEmptyState(
+                    icon: Icons.search_off_rounded,
+                    title: l10n.noResults,
+                  );
                 }
 
                 return RefreshIndicator(
                   onRefresh: () => ref.refresh(conversationsProvider.future),
-                  child: ListView.separated(
+                  child: ListView.builder(
                     itemCount: filteredConversations.length,
-                    separatorBuilder: (context, index) =>
-                        const Divider(height: 1),
                     itemBuilder: (context, index) {
                       final conversation = filteredConversations[index];
 

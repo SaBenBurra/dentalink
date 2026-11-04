@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dentigo/core/constants/app_dimensions.dart';
+import '../../../shared/widgets/user_avatar.dart';
 
 class ConversationTile extends StatelessWidget {
   final String name;
@@ -30,20 +31,12 @@ class ConversationTile extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: AppDimensions.spacing16,
-          vertical: AppDimensions.spacing12,
+          vertical: AppDimensions.spacing10,
         ),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 24,
-              backgroundImage: avatarUrl.isNotEmpty
-                  ? NetworkImage(avatarUrl)
-                  : null,
-              child: avatarUrl.isEmpty
-                  ? const Icon(Icons.person, size: 24)
-                  : null,
-            ),
-            const SizedBox(width: AppDimensions.spacing16),
+            UserAvatar(name: name, imageUrl: avatarUrl, size: AvatarSize.large),
+            const SizedBox(width: AppDimensions.spacing12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,9 +93,9 @@ class ConversationTile extends StatelessWidget {
                         const SizedBox(width: AppDimensions.spacing8),
                         // No vertical padding: badge stays within the text line so unread rows aren't taller.
                         Container(
-                          constraints: const BoxConstraints(minWidth: 16),
+                          constraints: const BoxConstraints(minWidth: 18),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: AppDimensions.spacing4,
+                            horizontal: AppDimensions.spacing6,
                           ),
                           decoration: ShapeDecoration(
                             color: colorScheme.primary,

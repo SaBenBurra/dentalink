@@ -11,7 +11,6 @@ import '../../../providers/auth_provider.dart';
 import '../../../shared/widgets/load_more_footer.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/error_widget.dart';
-import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/extensions/user_title_ui.dart';
 import '../../../data/models/conversation_model.dart';
 import '../../../data/models/message_model.dart';
@@ -129,11 +128,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     });
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         titleSpacing: 0,
         scrolledUnderElevation: 0,
-        shape: Border(bottom: BorderSide(color: colorScheme.outlineVariant)),
+        shape: Border(
+          bottom: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+          ),
+        ),
         title: InkWell(
           onTap: () => context.push('/profile/${widget.userId}'),
           borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
@@ -203,11 +205,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 final messages = state.messages;
 
                 if (messages.isEmpty) {
-                  return DentigoEmptyState(
-                    icon: Icons.chat_bubble_outline_rounded,
-                    iconSize: AppDimensions.spacing48,
-                    title: userName,
-                    subtitle: l10n.chatEmpty,
+                  return _ChatIntro(
+                    name: userName,
+                    avatarUrl: avatarUrl,
+                    title: peer?.title.displayName(context),
                   );
                 }
 
@@ -252,6 +253,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       time: _timeFormatter.format(message.createdAt),
                       isFirstInGroup: !isSameMessageGroup(prev, message),
                       isLastInGroup: !isSameMessageGroup(message, next),
+                      avatar: UserAvatar(
+                        name: userName,
+                        imageUrl: avatarUrl,
+                        size: AvatarSize.small,
+                      ),
                     );
                     if (!startsDay) {
                       return KeyedSubtree(
@@ -326,6 +332,60 @@ String chatDayLabel(DateTime day, DateTime now, AppLocalizations l10n) {
   return format.format(date);
 }
 
+/// Henüz mesaj yokken sohbetin kiminle olduğunu gösterir.
+class _ChatIntro extends StatelessWidget {
+  const _ChatIntro({required this.name, required this.avatarUrl, this.title});
+
+  final String name;
+  final String avatarUrl;
+  final String? title;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return Center(
+      // Klavye açılınca alan daralır; taşmasın diye kaydırılabilir.
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppDimensions.spacing32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            UserAvatar(
+              name: name,
+              imageUrl: avatarUrl,
+              size: AvatarSize.xLarge,
+            ),
+            const SizedBox(height: AppDimensions.spacing16),
+            Text(
+              name,
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            if (title != null)
+              Text(
+                title!,
+                style: textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+            const SizedBox(height: AppDimensions.spacing12),
+            Text(
+              AppLocalizations.of(context)!.chatEmpty,
+              style: textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _DaySeparator extends StatelessWidget {
   const _DaySeparator({required this.label});
 
@@ -337,14 +397,26 @@ class _DaySeparator extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(
         top: AppDimensions.spacing24,
-        bottom: AppDimensions.spacing8,
+        bottom: AppDimensions.spacing4,
       ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: colorScheme.onSurfaceVariant,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.4,
+      child: DecoratedBox(
+        decoration: ShapeDecoration(
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
+          shape: const StadiumBorder(),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.spacing12,
+            vertical: AppDimensions.spacing4,
+          ),
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.4,
+            ),
+          ),
         ),
       ),
     );

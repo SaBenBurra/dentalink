@@ -7,9 +7,13 @@ class MessageBubble extends StatelessWidget {
   final String time;
 
   /// Aynı göndericinin ardışık mesajları gruplanır: grubun ilki üstte boşluk
-  /// alır, yalnızca sonuncusu "kuyruklu" köşe gösterir.
+  /// alır, saat yalnızca sonuncuda görünür, gönderici tarafındaki köşeler
+  /// birbirine bağlanır.
   final bool isFirstInGroup;
   final bool isLastInGroup;
+
+  /// Karşı tarafın avatarı; grubun son balonunun yanında gösterilir.
+  final Widget? avatar;
 
   const MessageBubble({
     super.key,
@@ -18,6 +22,7 @@ class MessageBubble extends StatelessWidget {
     required this.time,
     this.isFirstInGroup = true,
     this.isLastInGroup = true,
+    this.avatar,
   });
 
   @override
@@ -26,48 +31,37 @@ class MessageBubble extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     const radius = Radius.circular(AppDimensions.radiusXLarge);
     const tail = Radius.circular(AppDimensions.radiusSmall);
+    final senderTop = isFirstInGroup ? radius : tail;
 
-    // Align: üst ebeveyn (ör. gün ayırıcılı Column) ortalasa bile balon kendi tarafında kalır.
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: EdgeInsets.only(
-          left: isMe ? AppDimensions.spacing56 : AppDimensions.spacing16,
-          right: isMe ? AppDimensions.spacing16 : AppDimensions.spacing56,
-          top: isFirstInGroup ? AppDimensions.spacing8 : AppDimensions.spacing2,
+    final bubble = Container(
+      constraints: const BoxConstraints(
+        maxWidth: AppDimensions.maxContentWidth,
+      ),
+      decoration: BoxDecoration(
+        color: isMe ? colorScheme.primary : colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.only(
+          topLeft: isMe ? radius : senderTop,
+          topRight: isMe ? senderTop : radius,
+          bottomLeft: isMe ? radius : tail,
+          bottomRight: isMe ? tail : radius,
         ),
-        constraints: const BoxConstraints(
-          maxWidth: AppDimensions.maxContentWidth,
-        ),
-        decoration: BoxDecoration(
-          color: isMe
-              ? colorScheme.primary
-              : colorScheme.surfaceContainerHighest,
-          border: isMe ? null : Border.all(color: colorScheme.outlineVariant),
-          borderRadius: BorderRadius.only(
-            topLeft: radius,
-            topRight: radius,
-            bottomLeft: isMe || !isLastInGroup ? radius : tail,
-            bottomRight: !isMe || !isLastInGroup ? radius : tail,
-          ),
-        ),
-        padding: const EdgeInsets.fromLTRB(
-          AppDimensions.spacing12,
-          AppDimensions.spacing8,
-          AppDimensions.spacing12,
-          AppDimensions.spacing6,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              text,
-              style: textTheme.bodyMedium?.copyWith(
-                color: isMe ? colorScheme.onPrimary : colorScheme.onSurface,
-                height: 1.35,
-              ),
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.spacing16,
+        vertical: AppDimensions.spacing10,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            text,
+            style: textTheme.bodyMedium?.copyWith(
+              color: isMe ? colorScheme.onPrimary : colorScheme.onSurface,
+              height: 1.35,
             ),
+          ),
+          if (isLastInGroup) ...[
             const SizedBox(height: AppDimensions.spacing2),
             Text(
               time,
@@ -78,7 +72,31 @@ class MessageBubble extends StatelessWidget {
               ),
             ),
           ],
-        ),
+        ],
+      ),
+    );
+
+    return Padding(
+      padding: EdgeInsets.only(
+        left: isMe ? AppDimensions.spacing56 : AppDimensions.spacing12,
+        right: isMe ? AppDimensions.spacing12 : AppDimensions.spacing56,
+        top: isFirstInGroup ? AppDimensions.spacing12 : AppDimensions.spacing2,
+      ),
+      child: Row(
+        mainAxisAlignment: isMe
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (!isMe) ...[
+            SizedBox.square(
+              dimension: AppDimensions.avatarSmall,
+              child: isLastInGroup ? avatar : null,
+            ),
+            const SizedBox(width: AppDimensions.spacing8),
+          ],
+          Flexible(child: bubble),
+        ],
       ),
     );
   }
