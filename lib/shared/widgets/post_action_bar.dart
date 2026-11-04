@@ -73,7 +73,7 @@ class PostActionBar extends StatelessWidget {
   /// Beğeni durumu değiştirildiğinde çağrılır.
   final VoidCallback? onLikeToggle;
 
-  /// Beğeni sayısına dokunulduğunda çağrılır (beğenenler listesi).
+  /// Beğeniye basılı tutulduğunda çağrılır (beğenenler listesi).
   final VoidCallback? onLikesTap;
 
   /// Kaydetme durumu değiştirildiğinde çağrılır.
@@ -104,11 +104,10 @@ class PostActionBar extends StatelessWidget {
             isLiked: isLiked,
             likeCount: likeCount,
             onToggle: onLikeToggle,
-            onCountTap: onLikesTap,
+            onLongPress: onLikesTap,
             size: iconSize,
           ),
-          // Sayacın 48dp'lik dokunma alanı boşluğun yerini tutar.
-          if (onLikesTap == null) SizedBox(width: gap),
+          SizedBox(width: gap),
           StatCount(
             icon: CupertinoIcons.chat_bubble,
             count: commentCount,

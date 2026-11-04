@@ -26,7 +26,7 @@ class LikeButton extends StatelessWidget {
     required this.isLiked,
     required this.likeCount,
     this.onToggle,
-    this.onCountTap,
+    this.onLongPress,
     this.size = AppDimensions.iconDefault,
     this.showCount = true,
   });
@@ -40,8 +40,8 @@ class LikeButton extends StatelessWidget {
   /// Beğeni durumu değiştirildiğinde çağrılır.
   final VoidCallback? onToggle;
 
-  /// Sayaca dokunulduğunda çağrılır (beğenenler listesi).
-  final VoidCallback? onCountTap;
+  /// Basılı tutulduğunda çağrılır (beğenenler listesi).
+  final VoidCallback? onLongPress;
 
   /// İkon boyutu (varsayılan: 24).
   final double size;
@@ -61,8 +61,7 @@ class LikeButton extends StatelessWidget {
       size: size,
       showCount: showCount,
       count: likeCount,
-      onCountTap: onCountTap,
-      countTooltip: AppLocalizations.of(context)!.likersTitle,
+      onLongPress: onLongPress,
     );
   }
 }

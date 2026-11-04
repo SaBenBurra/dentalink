@@ -68,21 +68,15 @@ void main() {
       return (toggles, opens);
     }
 
-    testWidgets('sayı beğenenleri açar, kalp beğenir; alan 48dp', (
+    testWidgets('dokunmak beğenir; sayaç ikonun dokunma alanında', (
       tester,
     ) async {
       final (toggles, opens) = await pump(tester, 7);
 
-      await tester.tap(find.text('7'));
-      expect((toggles.length, opens.length), (0, 1));
-
       await tester.tap(find.byIcon(Icons.favorite_border_rounded));
-      expect((toggles.length, opens.length), (1, 1));
+      await tester.tap(find.text('7'));
 
-      expect(
-        tester.getSize(find.byTooltip('Beğenenler')).width,
-        greaterThanOrEqualTo(48),
-      );
+      expect((toggles.length, opens.length), (2, 0));
     });
 
     testWidgets('kalbe basılı tutmak beğenmeden beğenenleri açar', (
@@ -97,17 +91,13 @@ void main() {
       expect(find.text('Beğen'), findsNothing); // ipucu açılmaz
     });
 
-    testWidgets('beğeni yokken sayı beğenir, basılı tutmak liste açmaz', (
-      tester,
-    ) async {
+    testWidgets('beğeni yokken basılı tutmak liste açmaz', (tester) async {
       final (toggles, opens) = await pump(tester, 0);
-
-      await tester.tap(find.text('0'));
-      expect((toggles.length, opens.length), (1, 0));
 
       await tester.longPress(find.byIcon(Icons.favorite_border_rounded));
       await tester.pump();
-      expect((toggles.length, opens.length), (1, 0));
+
+      expect((toggles.length, opens.length), (0, 0));
     });
   });
 }
