@@ -93,6 +93,18 @@ void main() {
     expect(auth.code, '124567');
   });
 
+  testWidgets('gizli alan temadan çerçeve almaz', (tester) async {
+    await _pumpOtpStep(tester, _Auth());
+
+    await tester.tap(_otpField);
+    await tester.pump();
+
+    expect(
+      find.descendant(of: _otpField, matching: find.byType(InputDecorator)),
+      findsNothing,
+    );
+  });
+
   testWidgets('Android geri tuşu kod ekranından girişe döner', (tester) async {
     await _pumpOtpStep(tester, _Auth());
 

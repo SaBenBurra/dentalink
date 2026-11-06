@@ -243,7 +243,7 @@ class _LoginOtpInputState extends State<LoginOtpInput>
                       FilteringTextInputFormatter.digitsOnly,
                       TextInputFormatter.withFunction(_limitOtp),
                     ],
-                    decoration: const InputDecoration.collapsed(hintText: ''),
+                    decoration: null,
                     onChanged: widget.onOtpChanged,
                   ),
                 ),
