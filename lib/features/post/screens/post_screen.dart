@@ -5,7 +5,6 @@ import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:dentigo/data/models/post_model.dart';
 import 'package:dentigo/features/post/widgets/comments/post_comments.dart';
 import 'package:dentigo/features/post/widgets/detail/detail_states.dart';
-import 'package:dentigo/features/post/widgets/related_cases.dart';
 import 'package:dentigo/providers/comment_provider.dart';
 import 'package:dentigo/providers/post_provider.dart';
 import 'package:dentigo/shared/extensions/post_type_l10n.dart';
@@ -104,22 +103,15 @@ class _PostScreenState extends ConsumerState<PostScreen> {
                   highlightCommentId: widget.highlightCommentId,
                   header: Padding(
                     padding: const EdgeInsets.only(top: AppDimensions.spacing8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        PostCardFactory.build(
-                          post,
-                          expanded: true,
-                          onLikeToggle: () =>
-                              runOrShowError(context, notifier.toggleLike),
-                          onBookmarkToggle: () =>
-                              runOrShowError(context, notifier.toggleBookmark),
-                          onCommentTap: () =>
-                              _commentsKey.currentState?.focusInput(),
-                        ),
-                        if (post is CasePostModel)
-                          RelatedCases(postId: post.id),
-                      ],
+                    child: PostCardFactory.build(
+                      post,
+                      expanded: true,
+                      onLikeToggle: () =>
+                          runOrShowError(context, notifier.toggleLike),
+                      onBookmarkToggle: () =>
+                          runOrShowError(context, notifier.toggleBookmark),
+                      onCommentTap: () =>
+                          _commentsKey.currentState?.focusInput(),
                     ),
                   ),
                 ),

@@ -290,16 +290,6 @@ class SupabasePostRepository implements PostRepository {
   });
 
   @override
-  Future<List<PostModel>> relatedCases(String postId) => guardSupabase(
-    () async {
-      final ids =
-          (await _client.rpc('related_case_ids', params: {'p_post_id': postId})
-                  as List)
-              .cast<String>();
-      return _postsInOrder(ids);
-    },
-  );
-
   @override
   Future<List<TagModel>> popularTags({int limit = 5}) =>
       guardSupabase(() async {

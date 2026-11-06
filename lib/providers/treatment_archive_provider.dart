@@ -187,8 +187,3 @@ final treatmentSearchProvider = FutureProvider.autoDispose
       ].take(3).toList();
     });
 
-/// Post sayfasındaki "Benzer vakalar".
-final relatedCasesProvider = FutureProvider.autoDispose
-    .family<List<PostModel>, String>(
-      (ref, postId) => ref.watch(searchRepositoryProvider).relatedCases(postId),
-    );

@@ -172,8 +172,6 @@ class _FakePostRepository implements PostRepository {
   ];
 
   @override
-  Future<List<PostModel>> relatedCases(String postId) async => const [];
-
   @override
   Future<void> incrementViewCount(String postId) async {}
 

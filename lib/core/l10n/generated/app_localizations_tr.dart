@@ -1488,9 +1488,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get archiveEmpty => 'Bu tedaviyle paylaşılmış vaka yok.';
 
   @override
-  String get relatedCases => 'Benzer vakalar';
-
-  @override
   String get contactNotAdded => 'Eklenmedi';
 
   @override

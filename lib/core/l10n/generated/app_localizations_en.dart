@@ -1507,9 +1507,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get archiveEmpty => 'No cases with this treatment yet.';
 
   @override
-  String get relatedCases => 'Similar cases';
-
-  @override
   String get contactNotAdded => 'Not added';
 
   @override

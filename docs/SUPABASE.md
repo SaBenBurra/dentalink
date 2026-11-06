@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `044_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `045_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -363,8 +363,8 @@ select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', 
 select public.create_post('case', 'Vaka', 'içerik', null, '[]', '[{"name":"lazer","slug":"lazer"}]');
 rollback;
 
--- 25) Arşiv sorguları (040) → BEKLENEN: counted, in_archive, in_second_branch, related = true
---     (vaka ikinci tedavisinin branşında da görünür; aynı tedaviyi paylaşan vaka benzer)
+-- 25) Arşiv sorguları (040) → BEKLENEN: counted, in_archive, in_second_branch = true
+--     (vaka ikinci tedavisinin branşında da görünür)
 begin;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
@@ -377,9 +377,7 @@ select
   current_setting('t.a')::uuid in
     (select public.popular_post_ids(p_treatment => 'kron', p_recent => true)) in_archive,
   current_setting('t.b')::uuid in
-    (select public.popular_post_ids(p_branch => 'agiz_dis_cene_cerrahi', p_recent => true)) in_second_branch,
-  current_setting('t.a')::uuid in
-    (select public.related_case_ids(current_setting('t.b')::uuid)) related;
+    (select public.popular_post_ids(p_branch => 'agiz_dis_cene_cerrahi', p_recent => true)) in_second_branch;
 rollback;
 ```
 

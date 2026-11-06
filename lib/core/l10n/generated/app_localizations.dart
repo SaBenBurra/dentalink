@@ -2756,12 +2756,6 @@ abstract class AppLocalizations {
   /// **'Bu tedaviyle paylaşılmış vaka yok.'**
   String get archiveEmpty;
 
-  /// No description provided for @relatedCases.
-  ///
-  /// In tr, this message translates to:
-  /// **'Benzer vakalar'**
-  String get relatedCases;
-
   /// No description provided for @contactNotAdded.
   ///
   /// In tr, this message translates to:

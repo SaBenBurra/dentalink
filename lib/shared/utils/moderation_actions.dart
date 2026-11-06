@@ -82,7 +82,6 @@ Future<bool> confirmAndBlockUser(
   // Açık yanıt listeleri tek tek bilinmiyor; RLS engelliyi gizleyerek yeniden çeker.
   ref.invalidate(repliesProvider);
   ref.invalidate(treatmentArchiveProvider);
-  ref.invalidate(relatedCasesProvider);
   ref.invalidate(authProvider); // takip sayıları DB'de düştü
   messenger.showSnackBar(SnackBar(content: Text(l10n.userBlocked)));
   return true;

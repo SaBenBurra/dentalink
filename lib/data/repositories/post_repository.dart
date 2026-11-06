@@ -45,9 +45,6 @@ abstract class ISearchRepository {
     int limit = 50,
   });
 
-  /// Ortak tedavisi en çok olan vakalar (bu post hariç).
-  Future<List<PostModel>> relatedCases(String postId);
-
   /// En çok postta geçen [limit] etiket (`usageCount` = post sayısı).
   Future<List<TagModel>> popularTags({int limit = 5});
 }
