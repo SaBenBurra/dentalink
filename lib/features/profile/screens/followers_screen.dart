@@ -152,7 +152,12 @@ class _UserListViewState extends ConsumerState<UserListView> {
         return RefreshIndicator(
           onRefresh: () => ref.refresh(widget.provider.future),
           child: ListView.separated(
-            padding: const EdgeInsets.all(AppDimensions.spacing16),
+            padding: const EdgeInsets.all(AppDimensions.spacing16).copyWith(
+              // Sekmede yüzen barın altında kalmasın.
+              bottom:
+                  AppDimensions.spacing16 +
+                  MediaQuery.paddingOf(context).bottom,
+            ),
             itemCount: users.length + (hasMore ? 1 : 0),
             separatorBuilder: (context, index) =>
                 const SizedBox(height: AppDimensions.spacing8),

@@ -82,8 +82,11 @@ class _NotificationListView extends ConsumerWidget {
         return RefreshIndicator(
           onRefresh: () => ref.refresh(notificationsProvider.future),
           child: ListView.separated(
-            padding: const EdgeInsets.symmetric(
-              vertical: AppDimensions.spacing8,
+            padding: EdgeInsets.only(
+              top: AppDimensions.spacing8,
+              // Sekmede yüzen barın altında kalmasın.
+              bottom:
+                  AppDimensions.spacing8 + MediaQuery.paddingOf(context).bottom,
             ),
             itemCount: notifications.length,
             separatorBuilder: (context, index) => Divider(

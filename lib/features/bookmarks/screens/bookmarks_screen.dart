@@ -53,8 +53,12 @@ class BookmarksScreen extends ConsumerWidget {
             onRefresh: () => ref.read(bookmarkProvider.notifier).refresh(),
             color: Theme.of(context).colorScheme.primary,
             child: ListView.separated(
-              padding: const EdgeInsets.symmetric(
-                vertical: AppDimensions.spacing8,
+              padding: EdgeInsets.only(
+                top: AppDimensions.spacing8,
+                // Sekmede yüzen barın altında kalmasın.
+                bottom:
+                    AppDimensions.spacing8 +
+                    MediaQuery.paddingOf(context).bottom,
               ),
               itemCount: posts.length + (hasMore ? 1 : 0),
               separatorBuilder: (_, _) =>
