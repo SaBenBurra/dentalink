@@ -207,7 +207,8 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
       );
       if (picked == null) return;
       length = await videoDuration(picked.path);
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('video seçilemedi: $e\n$st');
       messenger.showSnackBar(SnackBar(content: Text(getErrorMessage(l10n, e))));
       return;
     }

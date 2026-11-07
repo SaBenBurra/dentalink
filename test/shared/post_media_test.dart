@@ -1,9 +1,13 @@
 import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/shared/widgets/gallery_video.dart';
 import 'package:dentigo/shared/widgets/fullscreen_image_viewer.dart';
 import 'package:dentigo/shared/widgets/post_media.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'fake_video_platform.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 void main() {
   const urls = ['https://x/1.jpg', 'https://x/2.jpg', 'https://x/3.jpg'];
@@ -121,8 +125,10 @@ void main() {
   });
 
   testWidgets(
-    'video kendi sırasında oynat simgesiyle; galeride de kapak ve simgeyle durur',
+    'videoya dokununca galeri o sayfada açılır ve video hemen başlar; kaydırınca diğer medya',
     (tester) async {
+      final video = FakeVideoPlatform();
+      VideoPlayerPlatform.instance = video;
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -150,31 +156,48 @@ void main() {
       await tester.fling(slider, const Offset(-300, 0), 1000);
       await settle(tester);
       expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget);
-      await tester.fling(slider, const Offset(-300, 0), 1000);
-      await settle(tester);
-      expect(find.byIcon(Icons.play_arrow_rounded), findsNothing);
 
+      // Videoya dokun: galeri video sayfasında açılır, video kendiliğinden başlar.
       await tester.tap(slider);
       await tester.pump(kDoubleTapTimeout);
       await settle(tester);
       expect(find.byType(FullscreenImageViewer), findsOneWidget);
-      expect(find.text('3 / 3'), findsOneWidget);
+      expect(find.text('2 / 3'), findsOneWidget);
+      final inGallery = find.descendant(
+        of: find.byType(FullscreenImageViewer),
+        matching: find.byIcon(Icons.play_arrow_rounded),
+      );
+      expect(
+        tester.widget<GalleryVideo>(find.byType(GalleryVideo)).autoplay,
+        isTrue,
+      );
+      expect(video.plays, 1, reason: 'video kendiliğinden başladı');
+      expect(inGallery, findsNothing, reason: 'oynarken simge yok');
 
-      // Galeride geri kaydırınca video sayfası: kapak + oynat simgesi.
+      // Kaydırınca postun diğer medyası.
       final gallery = find.descendant(
         of: find.byType(FullscreenImageViewer),
         matching: find.byType(PageView),
       );
+      await tester.fling(gallery, const Offset(-400, 0), 1000);
+      await settle(tester);
+      expect(find.text('3 / 3'), findsOneWidget);
       await tester.fling(gallery, const Offset(400, 0), 1000);
+      await settle(tester);
+      await tester.fling(gallery, const Offset(400, 0), 1000);
+      await settle(tester);
+      expect(find.text('1 / 3'), findsOneWidget);
+
+      // Kaydırarak geri gelinen video kendiliğinden başlamaz: kapak + oynat simgesi.
+      await tester.fling(gallery, const Offset(-400, 0), 1000);
       await settle(tester);
       expect(find.text('2 / 3'), findsOneWidget);
       expect(
-        find.descendant(
-          of: find.byType(FullscreenImageViewer),
-          matching: find.byIcon(Icons.play_arrow_rounded),
-        ),
-        findsOneWidget,
+        tester.widget<GalleryVideo>(find.byType(GalleryVideo)).autoplay,
+        isFalse,
       );
+      expect(inGallery, findsOneWidget);
+      expect(video.plays, 1, reason: 'yeniden başlamadı');
     },
   );
 }

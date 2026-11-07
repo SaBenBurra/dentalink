@@ -5,7 +5,6 @@ import '../../../core/constants/app_dimensions.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../data/models/post_model.dart';
 import 'fullscreen_image_viewer.dart';
-import 'fullscreen_video_player.dart';
 
 /// Instagram gibi: çerçeve oranı ilk görselden, 4:5 (dikey) ile 1.91:1 (yatay) arasında.
 double postMediaAspectRatio(int width, int height) =>
@@ -168,14 +167,12 @@ class _PostMediaState extends State<PostMedia> with TickerProviderStateMixin {
                 itemCount: pages.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
-                    onTap: () => switch (media[index].videoUrl) {
-                      final url? => openFullscreenVideo(context, url),
-                      null => openFullscreenImages(
-                        context,
-                        media,
-                        initialIndex: index,
-                      ),
-                    },
+                    // Video da galeride açılır ve orada hemen oynar.
+                    onTap: () => openFullscreenImages(
+                      context,
+                      media,
+                      initialIndex: index,
+                    ),
                     onDoubleTap: _handleDoubleTap,
                     child: CachedNetworkImage(
                       imageUrl: pages[index],
