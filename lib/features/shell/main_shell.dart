@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui' show lerpDouble;
 
 import 'package:flutter/material.dart';
@@ -22,6 +23,16 @@ double bottomInsetFollowingBar(MediaQueryData mq, double barVisibility) =>
       mq.padding.bottom,
       barVisibility.clamp(0.0, 1.0),
     )!;
+
+/// Barın ekran kenarlarından payı.
+const barOffset = 12.0;
+
+/// İçeriğin barın altında kalmaması için ayrılacak alt boşluk. Paketin
+/// bildirdiği yükseklik ([footprint]) barı her kenardan SafeArea ve [barOffset]
+/// ile sarılmış ölçer; alttaki bar için üstteki durum çubuğu ([topPadding]) ve
+/// üst pay da eklenir, içerik barın ~40 dp üstünde kalırdı. Onlar çıkarılır.
+double barReservedHeight(double footprint, double topPadding) =>
+    math.max(0, footprint - topPadding - barOffset);
 
 /// Barların açılıp kapanma yayı; feed üst barı da sekme kaydırırken aynısını
 /// kullanır.
@@ -65,7 +76,7 @@ class MainShell extends ConsumerWidget {
         layout: BottomBarLayout(
           width: MediaQuery.of(context).size.width - 32,
           borderRadius: BorderRadius.circular(28),
-          offset: 12,
+          offset: barOffset,
           clip: Clip.none,
         ),
         motion: const BottomBarMotion.cupertino(
@@ -116,7 +127,12 @@ class MainShell extends ConsumerWidget {
               data: MediaQuery.of(context).copyWith(
                 padding: keyboardOpen
                     ? MediaQuery.paddingOf(context)
-                    : MediaQuery.paddingOf(context).copyWith(bottom: barHeight),
+                    : MediaQuery.paddingOf(context).copyWith(
+                        bottom: barReservedHeight(
+                          barHeight,
+                          MediaQuery.paddingOf(context).top,
+                        ),
+                      ),
               ),
               child: child!,
             ),

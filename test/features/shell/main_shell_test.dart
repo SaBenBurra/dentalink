@@ -58,6 +58,7 @@ Future<ProviderContainer> _pumpShell(
 
 void main() {
   bottomInsetTests();
+  barReservedHeightTests();
 
   testWidgets(
     'gizli alt menü, içerik kaydırılamayacak kadar kısalınca geri gelir',
@@ -161,5 +162,13 @@ void bottomInsetTests() {
     );
     expect(bottomInsetFollowingBar(outside, 1), 24);
     expect(bottomInsetFollowingBar(const MediaQueryData(), 1), 0);
+  });
+}
+
+void barReservedHeightTests() {
+  test('ayrılan boşluk durum çubuğunu ve üst payı içermez', () {
+    // Ölçülen kutu: durum çubuğu 32 + pay 12 + bar 64 + pay 12 + sistem 24.
+    expect(barReservedHeight(144, 32), 64 + barOffset + 24);
+    expect(barReservedHeight(0, 32), 0); // bar henüz ölçülmedi
   });
 }
