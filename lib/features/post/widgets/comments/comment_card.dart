@@ -36,7 +36,7 @@ class CommentLikeButton extends StatelessWidget {
         comment.isLiked
             ? Icons.favorite_rounded
             : Icons.favorite_border_rounded,
-        size: comment.parentId == null ? 16 : 14,
+        size: comment.parentId == null ? 18 : 16,
         color: comment.isLiked ? AppColors.like : cs.outline,
       ),
       constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
@@ -67,7 +67,7 @@ class _CommentTextAction extends StatelessWidget {
       style: TextButton.styleFrom(
         foregroundColor:
             color ?? Theme.of(context).colorScheme.onSurfaceVariant,
-        textStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+        textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
         padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing6),
         minimumSize: const Size(32, 32),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap, // satır şişmesin
@@ -100,7 +100,7 @@ class _RepliesToggle extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: cs.onSurfaceVariant,
               ),
@@ -134,7 +134,7 @@ class _AuthorBadge extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
-          fontSize: 9,
+          fontSize: 10,
           fontWeight: FontWeight.bold,
           color: cs.primary,
         ),
@@ -173,7 +173,7 @@ class _BestAnswerBadge extends StatelessWidget {
             style: textTheme.labelSmall?.copyWith(
               color: AppColors.success,
               fontWeight: FontWeight.bold,
-              fontSize: 10,
+              fontSize: 11,
             ),
           ),
         ],
@@ -288,7 +288,7 @@ class CommentCard extends ConsumerWidget {
         postAuthorId != null &&
         comment.userId == postAuthorId;
     final metaStyle = TextStyle(
-      fontSize: isReply ? 10 : 11,
+      fontSize: isReply ? 11 : 12,
       color: colorScheme.onSurfaceVariant,
     );
     void openProfile() => context.push('/profile/${author!.id}');
@@ -310,7 +310,7 @@ class CommentCard extends ConsumerWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: isReply ? 11 : 12,
+              fontSize: isReply ? 13 : 14,
               fontWeight: FontWeight.bold,
               color: colorScheme.onSurface,
             ),
@@ -408,8 +408,8 @@ class CommentCard extends ConsumerWidget {
                 Text(
                   comment.content,
                   style: TextStyle(
-                    fontSize: isReply ? 11 : 12,
-                    height: 1.6,
+                    fontSize: isReply ? 13 : 14,
+                    height: 1.45,
                     color: colorScheme.onSurface,
                   ),
                 ),

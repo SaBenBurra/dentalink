@@ -56,7 +56,7 @@ class MessageBubble extends StatelessWidget {
         children: [
           Text(
             text,
-            style: textTheme.bodyMedium?.copyWith(
+            style: textTheme.bodyLarge?.copyWith(
               color: isMe ? colorScheme.onPrimary : colorScheme.onSurface,
               height: 1.35,
             ),
@@ -65,7 +65,7 @@ class MessageBubble extends StatelessWidget {
             const SizedBox(height: AppDimensions.spacing2),
             Text(
               time,
-              style: textTheme.labelSmall?.copyWith(
+              style: textTheme.labelMedium?.copyWith(
                 color: isMe
                     ? colorScheme.onPrimary.withValues(alpha: 0.75)
                     : colorScheme.onSurfaceVariant,
