@@ -94,6 +94,8 @@ class CaseCard extends ConsumerWidget {
           if (post.media.isNotEmpty)
             PostMedia(
               media: post.media,
+              // Post sayfasında 4:5, listelerde kare.
+              minAspectRatio: expanded ? 0.8 : 1,
             )
           else
             Padding(

@@ -57,10 +57,11 @@ void main() {
     expect(page(tester, find.byKey(const Key('tabs'))), 0);
   });
 
-  test('çerçeve oranı 4:5 ile 1.91:1 arasında sınırlanır', () {
+  test('listede çerçeve en fazla kare, post sayfasında 4:5', () {
     expect(postMediaAspectRatio(1080, 1080), 1.0);
-    expect(postMediaAspectRatio(1080, 1350), 0.8);
-    expect(postMediaAspectRatio(1080, 1920), 0.8); // 9:16 → 4:5'e kırpılır
+    expect(postMediaAspectRatio(1080, 1350), 1.0); // dikey → kareye kırpılır
+    expect(postMediaAspectRatio(1080, 1350, minRatio: 0.8), 0.8);
+    expect(postMediaAspectRatio(1080, 1920, minRatio: 0.8), 0.8); // 9:16 → 4:5
     expect(postMediaAspectRatio(1920, 1080), closeTo(1.78, 0.01));
     expect(postMediaAspectRatio(3000, 1000), 1.91);
     expect(postMediaAspectRatio(100, 0), 1.0);

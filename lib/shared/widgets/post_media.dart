@@ -6,19 +6,25 @@ import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../data/models/post_model.dart';
 import 'fullscreen_image_viewer.dart';
 
-/// Instagram gibi: çerçeve oranı ilk görselden, 4:5 (dikey) ile 1.91:1 (yatay) arasında.
-double postMediaAspectRatio(int width, int height) =>
-    height == 0 ? 1.0 : (width / height).clamp(0.8, 1.91);
+/// Çerçeve oranı ilk görselden, [minRatio] (dikey sınır) ile 1.91:1 (yatay) arasında.
+/// Listelerde kare (1), post sayfasında Instagram gibi 4:5 (0.8).
+double postMediaAspectRatio(int width, int height, {double minRatio = 1}) =>
+    height == 0 ? 1.0 : (width / height).clamp(minRatio, 1.91);
 
 class PostMedia extends StatefulWidget {
   const PostMedia({
     super.key,
     required this.media,
+    this.minAspectRatio = 1,
   });
 
   /// Sıralı görsel ve video; video kapak resmiyle görünür, dokununca tam ekran
   /// oynatılır (046).
   final List<PostMediaItem> media;
+
+  /// Dikey görselin çerçevesi en fazla bu kadar uzar: listede kare (1), post
+  /// sayfasında 4:5 (0.8). Fazlası ortadan kırpılır, galeride tamamı görünür.
+  final double minAspectRatio;
 
   @override
   State<PostMedia> createState() => _PostMediaState();
@@ -47,7 +53,12 @@ class _PostMediaState extends State<PostMedia> {
   ImageStream? _ratioStream;
   late final _ratioListener = ImageStreamListener(
     (info, _) {
-      final ratio = postMediaAspectRatio(info.image.width, info.image.height);
+      // Ham oran saklanır; liste ve post sayfası aynı görseli farklı sınırla gösterir.
+      final ratio = postMediaAspectRatio(
+        info.image.width,
+        info.image.height,
+        minRatio: 0,
+      );
       info.dispose();
       _ratioCache[_firstPath] = ratio;
       if (mounted) setState(() {});
@@ -61,7 +72,8 @@ class _PostMediaState extends State<PostMedia> {
 
   String get _firstPath => Uri.parse(_pages.first).path;
 
-  double get _aspectRatio => _ratioCache[_firstPath] ?? 1.0;
+  double get _aspectRatio =>
+      _ratioCache[_firstPath]?.clamp(widget.minAspectRatio, 1.91) ?? 1.0;
 
   void _resolveRatio() {
     _ratioStream?.removeListener(_ratioListener);
