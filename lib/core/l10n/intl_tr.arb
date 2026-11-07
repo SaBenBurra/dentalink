@@ -850,6 +850,8 @@
   "videoTooLarge": "Video sıkıştırıldıktan sonra bile 50 MB'tan büyük. Daha kısa bir video deneyin.",
   "playVideo": "Videoyu oynat",
   "pauseVideo": "Videoyu duraklat",
+  "unmuteVideo": "Sesi aç",
+  "muteVideo": "Sesi kapat",
   "videoLoadFailed": "Video açılamadı.",
   "mediaReorderHint": "Sırayı değiştirmek için basılı tutup sürükleyin.",
   "mediaOrder": "Medya sırası"

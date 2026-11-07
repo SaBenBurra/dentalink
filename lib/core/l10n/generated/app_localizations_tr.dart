@@ -1538,6 +1538,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get pauseVideo => 'Videoyu duraklat';
 
   @override
+  String get unmuteVideo => 'Sesi aç';
+
+  @override
+  String get muteVideo => 'Sesi kapat';
+
+  @override
   String get videoLoadFailed => 'Video açılamadı.';
 
   @override

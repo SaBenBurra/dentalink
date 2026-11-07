@@ -547,6 +547,8 @@
   "videoTooLarge": "The video is still larger than 50 MB after compression. Try a shorter one.",
   "playVideo": "Play video",
   "pauseVideo": "Pause video",
+  "unmuteVideo": "Unmute",
+  "muteVideo": "Mute",
   "videoLoadFailed": "Couldn't load the video.",
   "mediaReorderHint": "Press and hold, then drag to reorder.",
   "mediaOrder": "Media order"

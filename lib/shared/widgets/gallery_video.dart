@@ -5,9 +5,51 @@ import 'package:video_player/video_player.dart';
 import '../../core/constants/app_dimensions.dart';
 import '../../core/l10n/generated/app_localizations.dart';
 
+/// Tüm videoların ortak ses ayarı (Instagram gibi sessiz başlar); bir videonun
+/// ses ikonu hepsini değiştirir.
+// shortcut: uygulama kapanınca sessize döner; kalıcı olsun istenirse SharedPreferences'a yaz.
+final videoMuted = ValueNotifier<bool>(true);
+
+/// [videoMuted]'u değiştiren ses ikonu. [compact]: listedeki videonun sağ alt
+/// köşesindeki küçük yuvarlak; değilse galerideki düz ikon. Dokunma alanı 48dp.
+class VideoSoundButton extends StatelessWidget {
+  const VideoSoundButton({super.key, this.compact = false});
+
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return ValueListenableBuilder<bool>(
+      valueListenable: videoMuted,
+      builder: (context, muted, _) {
+        final icon = Icon(
+          muted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+          color: Colors.white,
+          size: compact ? AppDimensions.iconSmall : null,
+        );
+        return IconButton(
+          tooltip: muted ? l10n.unmuteVideo : l10n.muteVideo,
+          onPressed: () => videoMuted.value = !muted,
+          icon: compact
+              ? Container(
+                  padding: const EdgeInsets.all(AppDimensions.spacing4),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.55),
+                    shape: BoxShape.circle,
+                  ),
+                  child: icon,
+                )
+              : icon,
+        );
+      },
+    );
+  }
+}
+
 /// Tam ekran galerideki video sayfası. Başlamadan önce kapak resmi ve oynat
-/// simgesi; [autoplay] ise hemen oynar. Dokununca durur/devam eder, altta
-/// sarılabilir ilerleme çubuğu. Sayfadan çıkınca (PageView sayfayı atar) durur.
+/// simgesi; [autoplay] ise hemen oynar. Dokununca durur/devam eder, altta oynat/duraklat,
+/// sarılabilir ilerleme çubuğu ve ses ikonu. Sayfadan çıkınca (PageView sayfayı atar) durur.
 class GalleryVideo extends StatefulWidget {
   const GalleryVideo({
     super.key,
@@ -31,8 +73,11 @@ class _GalleryVideoState extends State<GalleryVideo> {
   @override
   void initState() {
     super.initState();
+    videoMuted.addListener(_applyVolume);
     if (widget.autoplay) _start();
   }
+
+  void _applyVolume() => _controller?.setVolume(videoMuted.value ? 0 : 1);
 
   void _start() {
     final c = _controller = VideoPlayerController.networkUrl(
@@ -40,7 +85,9 @@ class _GalleryVideoState extends State<GalleryVideo> {
     )..addListener(_onChanged);
     c.initialize().then(
       (_) {
-        if (mounted) c.play();
+        if (!mounted) return;
+        _applyVolume();
+        c.play();
       },
       onError: (_) {
         if (mounted) setState(() => _failed = true);
@@ -54,6 +101,7 @@ class _GalleryVideoState extends State<GalleryVideo> {
 
   @override
   void dispose() {
+    videoMuted.removeListener(_applyVolume);
     _controller?.removeListener(_onChanged);
     _controller?.dispose();
     super.dispose();
@@ -154,14 +202,29 @@ class _GalleryVideoState extends State<GalleryVideo> {
               ),
             ),
           ),
-          // Çubuğun yeri baştan ayrılır: oynatma başlayınca görüntü kaymaz.
+          // Oynat/duraklat, çubuk ve ses; satırın yeri baştan ayrılır: oynatma başlayınca görüntü kaymaz.
           Padding(
-            padding: const EdgeInsets.all(AppDimensions.spacing16),
-            child: SizedBox(
-              height: AppDimensions.spacing12,
-              child: c != null && v!.isInitialized
-                  ? _SmoothProgress(controller: c)
-                  : null,
+            padding: const EdgeInsets.all(AppDimensions.spacing4),
+            child: Row(
+              children: [
+                IconButton(
+                  tooltip: playing ? l10n.pauseVideo : l10n.playVideo,
+                  onPressed: _toggle,
+                  color: Colors.white,
+                  icon: Icon(
+                    playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    height: AppDimensions.spacing12,
+                    child: c != null && v!.isInitialized
+                        ? _SmoothProgress(controller: c)
+                        : null,
+                  ),
+                ),
+                const VideoSoundButton(),
+              ],
             ),
           ),
         ],

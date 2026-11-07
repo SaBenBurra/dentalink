@@ -1,4 +1,5 @@
 import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/shared/widgets/feed_video.dart';
 import 'package:dentigo/shared/widgets/gallery_video.dart';
 import 'package:dentigo/shared/widgets/fullscreen_image_viewer.dart';
 import 'package:dentigo/shared/widgets/post_media.dart';
@@ -119,7 +120,7 @@ void main() {
   });
 
   testWidgets(
-    'videoya dokununca galeri o sayfada açılır ve video hemen başlar; kaydırınca diğer medya',
+    'video kendiliğinden oynar; dokununca galeride büyür ve baştan başlar; kaydırınca diğer medya',
     (tester) async {
       final video = FakeVideoPlatform();
       VideoPlayerPlatform.instance = video;
@@ -147,11 +148,14 @@ void main() {
       );
       await tester.fling(slider, const Offset(-300, 0), 1000);
       await settle(tester);
-      expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget);
+      expect(find.byType(FeedVideo), findsOneWidget);
+      expect(video.plays, 1, reason: 'listede kendiliğinden oynar');
+      expect(find.byIcon(Icons.volume_off_rounded), findsOneWidget);
 
-      // Videoya dokun: galeri video sayfasında açılır, video kendiliğinden başlar.
+      // Videoya dokun: listedeki durur, galeri video sayfasında açılır ve baştan başlar.
       await tester.tap(slider);
       await settle(tester);
+      expect(video.pauses, greaterThan(0), reason: 'listedeki video durdu');
       expect(find.byType(FullscreenImageViewer), findsOneWidget);
       expect(find.text('2 / 3'), findsOneWidget);
       final inGallery = find.descendant(
@@ -162,7 +166,7 @@ void main() {
         tester.widget<GalleryVideo>(find.byType(GalleryVideo)).autoplay,
         isTrue,
       );
-      expect(video.plays, 1, reason: 'video kendiliğinden başladı');
+      expect(video.plays, 2, reason: 'galerideki video kendiliğinden başladı');
       expect(inGallery, findsNothing, reason: 'oynarken simge yok');
 
       // Kaydırınca postun diğer medyası.
@@ -187,8 +191,69 @@ void main() {
         tester.widget<GalleryVideo>(find.byType(GalleryVideo)).autoplay,
         isFalse,
       );
-      expect(inGallery, findsOneWidget);
-      expect(video.plays, 1, reason: 'yeniden başlamadı');
+      expect(
+        inGallery,
+        findsNWidgets(2),
+        reason: 'ortada ve kontrol satırında',
+      );
+      expect(video.plays, 2, reason: 'yeniden başlamadı');
+    },
+  );
+
+  testWidgets(
+    'listede yalnızca ekrandaki video oynar; ses ikonu tüm videolar için geçerli',
+    (tester) async {
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      addTearDown(() => videoMuted.value = true);
+      final video = FakeVideoPlatform();
+      VideoPlayerPlatform.instance = video;
+      final scroll = ScrollController();
+      addTearDown(scroll.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: ListView(
+              controller: scroll,
+              children: [
+                const PostMedia(
+                  media: [
+                    (
+                      id: 'v',
+                      url: 'https://x/t.jpg',
+                      videoUrl: 'https://x/v.mp4',
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2000),
+              ],
+            ),
+          ),
+        ),
+      );
+      await settle(tester);
+      expect(video.plays, 1, reason: 'ekranda: oynar');
+      expect(video.volume, 0, reason: 'sessiz başlar');
+
+      // Ses ikonu galeriyi açmaz, sesi açar.
+      await tester.tap(find.byType(VideoSoundButton));
+      await settle(tester);
+      expect(find.byType(FullscreenImageViewer), findsNothing);
+      expect(videoMuted.value, isFalse);
+      expect(video.volume, 1);
+      expect(find.byIcon(Icons.volume_up_rounded), findsOneWidget);
+
+      // Ekrandan çıkınca durur, geri gelince devam eder.
+      final pauses = video.pauses;
+      scroll.jumpTo(600);
+      await settle(tester);
+      expect(video.pauses, pauses + 1);
+      scroll.jumpTo(0);
+      await settle(tester);
+      expect(video.plays, 2);
     },
   );
 

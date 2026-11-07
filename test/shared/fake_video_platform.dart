@@ -1,9 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
-/// Testte gerçek oynatıcı yok: hemen hazır olan, play çağrılarını sayan platform.
+/// Testte gerçek oynatıcı yok: hemen hazır olan, play/pause çağrılarını sayan, sesi tutan platform.
 class FakeVideoPlatform extends VideoPlayerPlatform {
   int plays = 0;
+  int pauses = 0;
+  double volume = 1;
 
   @override
   Future<void> init() async {}
@@ -20,11 +22,12 @@ class FakeVideoPlatform extends VideoPlayerPlatform {
   @override
   Future<void> play(int playerId) async => plays++;
   @override
-  Future<void> pause(int playerId) async {}
+  Future<void> pause(int playerId) async => pauses++;
   @override
   Future<void> setLooping(int playerId, bool looping) async {}
   @override
-  Future<void> setVolume(int playerId, double volume) async {}
+  Future<void> setVolume(int playerId, double volume) async =>
+      this.volume = volume;
   @override
   Future<void> setPlaybackSpeed(int playerId, double speed) async {}
   @override

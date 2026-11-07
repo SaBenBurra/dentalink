@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
-import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../data/models/post_model.dart';
+import 'feed_video.dart';
 import 'fullscreen_image_viewer.dart';
 
 /// Çerçeve oranı ilk görselden, [minRatio] (dikey sınır) ile 1.91:1 (yatay) arasında.
@@ -14,8 +14,8 @@ double postMediaAspectRatio(int width, int height, {double minRatio = 1}) =>
 class PostMedia extends StatefulWidget {
   const PostMedia({super.key, required this.media, this.minAspectRatio = 1});
 
-  /// Sıralı görsel ve video; video kapak resmiyle görünür, dokununca tam ekran
-  /// oynatılır (046).
+  /// Sıralı görsel ve video; video ekrandayken kendiliğinden oynar ([FeedVideo]),
+  /// dokununca tam ekran galeride büyür (046).
   final List<PostMediaItem> media;
 
   /// Dikey görselin çerçevesi en fazla bu kadar uzar: listede kare (1), post
@@ -102,6 +102,15 @@ class _PostMediaState extends State<PostMedia> {
     super.dispose();
   }
 
+  /// Galeri açıkken listedeki video durur: galeri kendi oynatıcısıyla oynar.
+  bool _galleryOpen = false;
+
+  Future<void> _openGallery(int index) async {
+    setState(() => _galleryOpen = true);
+    await openFullscreenImages(context, widget.media, initialIndex: index);
+    if (mounted) setState(() => _galleryOpen = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     final pages = _pages;
@@ -126,66 +135,53 @@ class _PostMediaState extends State<PostMedia> {
                 onPageChanged: (idx) => setState(() => _currentPage = idx),
                 itemCount: pages.length,
                 itemBuilder: (context, index) {
+                  final image = CachedNetworkImage(
+                    imageUrl: pages[index],
+                    // İmzalı URL her çekişte değişir; önbellek dosya yoluna bağlı (SEC-9).
+                    cacheKey: Uri.parse(pages[index]).path,
+                    // Çerçeve ilk görselin oranında; diğerleri ve sınır dışı oranlar ortadan kırpılır.
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      color: isDark ? Colors.black26 : Colors.white24,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      color: isDark ? Colors.black26 : Colors.white24,
+                      child: const Center(
+                        child: Icon(
+                          Icons.broken_image_outlined,
+                          size: 48,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  );
+                  final video = media[index].videoUrl;
                   return GestureDetector(
-                    // Video da galeride açılır ve orada hemen oynar. Çift dokunma yok: tek dokunuşu 300 ms geciktirirdi.
-                    onTap: () => openFullscreenImages(
-                      context,
-                      media,
-                      initialIndex: index,
-                    ),
-                    child: CachedNetworkImage(
-                      imageUrl: pages[index],
-                      // İmzalı URL her çekişte değişir; önbellek dosya yoluna bağlı (SEC-9).
-                      cacheKey: Uri.parse(pages[index]).path,
-                      // Çerçeve ilk görselin oranında; diğerleri ve sınır dışı oranlar ortadan kırpılır.
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: isDark ? Colors.black26 : Colors.white24,
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.primary,
-                            ),
+                    // opaque: video kutusunun tamamı dokunulabilir. Video galeride büyür, orada baştan oynar.
+                    // Çift dokunma yok: tek dokunuşu 300 ms geciktirirdi.
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => _openGallery(index),
+                    child: video == null
+                        ? image
+                        : FeedVideo(
+                            url: video,
+                            cover: image,
+                            active: !_galleryOpen,
                           ),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        color: isDark ? Colors.black26 : Colors.white24,
-                        child: const Center(
-                          child: Icon(
-                            Icons.broken_image_outlined,
-                            size: 48,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ),
                   );
                 },
               ),
             ),
           ),
         ),
-        if (_currentPage < media.length && media[_currentPage].videoUrl != null)
-          // Dokunma kapağın GestureDetector'ına geçer.
-          IgnorePointer(
-            child: Semantics(
-              label: AppLocalizations.of(context)!.playVideo,
-              child: Container(
-                padding: const EdgeInsets.all(AppDimensions.spacing12),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.55),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.play_arrow_rounded,
-                  color: Colors.white,
-                  size: AppDimensions.iconXLarge,
-                ),
-              ),
-            ),
-          ),
         if (pages.length > 1) ...[
           // Kaydırılabilir olduğu belli olsun: köşede sayaç, aktif nokta uzar.
           // Dokunmayı yutmazlar: yoksa dokunuş karta düşüp post sayfasını açardı.

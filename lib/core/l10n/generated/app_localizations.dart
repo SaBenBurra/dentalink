@@ -2864,6 +2864,18 @@ abstract class AppLocalizations {
   /// **'Videoyu duraklat'**
   String get pauseVideo;
 
+  /// No description provided for @unmuteVideo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sesi aç'**
+  String get unmuteVideo;
+
+  /// No description provided for @muteVideo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sesi kapat'**
+  String get muteVideo;
+
   /// No description provided for @videoLoadFailed.
   ///
   /// In tr, this message translates to:

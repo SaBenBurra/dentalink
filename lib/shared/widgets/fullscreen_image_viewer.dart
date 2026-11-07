@@ -6,14 +6,14 @@ import 'gallery_video.dart';
 
 /// Post medyasını tam ekranda, kaydırılabilir açar. Görseller yakınlaştırılır;
 /// video galerinin içinde oynar ([GalleryVideo]); [initialIndex] video ise hemen başlar.
-/// Yukarı ya da aşağı sürükleyince kapanır (WhatsApp gibi).
-void openFullscreenImages(
+/// Yukarı ya da aşağı sürükleyince kapanır (WhatsApp gibi). Galeri kapanınca tamamlanır.
+Future<void> openFullscreenImages(
   BuildContext context,
   List<PostMediaItem> media, {
   int initialIndex = 0,
 }) {
   // Kök navigator: alt menünün de üstünü kaplar. Saydam: sürüklerken arkadaki sayfa görünür.
-  Navigator.of(context, rootNavigator: true).push(
+  return Navigator.of(context, rootNavigator: true).push(
     PageRouteBuilder<void>(
       opaque: false,
       transitionDuration: const Duration(milliseconds: 200),

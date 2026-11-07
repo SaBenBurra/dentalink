@@ -1556,6 +1556,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pauseVideo => 'Pause video';
 
   @override
+  String get unmuteVideo => 'Unmute';
+
+  @override
+  String get muteVideo => 'Mute';
+
+  @override
   String get videoLoadFailed => 'Couldn\'t load the video.';
 
   @override
