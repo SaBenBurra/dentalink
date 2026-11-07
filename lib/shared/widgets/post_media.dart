@@ -130,54 +130,57 @@ class _PostMediaState extends State<PostMedia> {
             duration: const Duration(milliseconds: 150),
             child: AspectRatio(
               aspectRatio: _aspectRatio,
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: (idx) => setState(() => _currentPage = idx),
-                itemCount: pages.length,
-                itemBuilder: (context, index) {
-                  final image = CachedNetworkImage(
-                    imageUrl: pages[index],
-                    // İmzalı URL her çekişte değişir; önbellek dosya yoluna bağlı (SEC-9).
-                    cacheKey: Uri.parse(pages[index]).path,
-                    // Çerçeve ilk görselin oranında; diğerleri ve sınır dışı oranlar ortadan kırpılır.
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
-                      color: isDark ? Colors.black26 : Colors.white24,
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColors.primary,
+              // Dokunuş PageView'ın dışında: kayma animasyonu bitmeden sayfalar dokunuşu
+              // yok sayar (Scrollable IgnorePointer), dokunuş karta düşüp post sayfasını açardı.
+              // Video galeride büyür, orada baştan oynar. Çift dokunma yok: tek dokunuşu
+              // 300 ms geciktirirdi.
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () =>
+                    _openGallery(_pageController.page?.round() ?? _currentPage),
+                child: PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: (idx) => setState(() => _currentPage = idx),
+                  itemCount: pages.length,
+                  itemBuilder: (context, index) {
+                    final image = CachedNetworkImage(
+                      imageUrl: pages[index],
+                      // İmzalı URL her çekişte değişir; önbellek dosya yoluna bağlı (SEC-9).
+                      cacheKey: Uri.parse(pages[index]).path,
+                      // Çerçeve ilk görselin oranında; diğerleri ve sınır dışı oranlar ortadan kırpılır.
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: isDark ? Colors.black26 : Colors.white24,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColors.primary,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      color: isDark ? Colors.black26 : Colors.white24,
-                      child: const Center(
-                        child: Icon(
-                          Icons.broken_image_outlined,
-                          size: 48,
-                          color: Colors.grey,
+                      errorWidget: (context, url, error) => Container(
+                        color: isDark ? Colors.black26 : Colors.white24,
+                        child: const Center(
+                          child: Icon(
+                            Icons.broken_image_outlined,
+                            size: 48,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                  final video = media[index].videoUrl;
-                  return GestureDetector(
-                    // opaque: video kutusunun tamamı dokunulabilir. Video galeride büyür, orada baştan oynar.
-                    // Çift dokunma yok: tek dokunuşu 300 ms geciktirirdi.
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => _openGallery(index),
-                    child: video == null
+                    );
+                    final video = media[index].videoUrl;
+                    return video == null
                         ? image
                         : FeedVideo(
                             url: video,
                             cover: image,
                             active: !_galleryOpen,
-                          ),
-                  );
-                },
+                          );
+                  },
+                ),
               ),
             ),
           ),

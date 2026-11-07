@@ -257,6 +257,52 @@ void main() {
     },
   );
 
+  testWidgets(
+    'kayma bitmeden dokunuş galeriyi yeni medyada açar, kartı değil',
+    (tester) async {
+      var cardTaps = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: 400,
+                child: InkWell(
+                  onTap: () => cardTaps++,
+                  child: PostMedia(
+                    media: [
+                      for (final u in urls) (id: u, url: u, videoUrl: null),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      final slider = find.descendant(
+        of: find.byType(PostMedia),
+        matching: find.byType(PageView),
+      );
+      // Yeni görsel büyük ölçüde ekranda, animasyon sürüyor.
+      await tester.drag(slider, const Offset(-250, 0));
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(
+        tester.widget<PageView>(slider).controller!.page,
+        isNot(closeTo(1, 0.001)),
+        reason: 'kayma henüz bitmedi',
+      );
+
+      await tester.tap(slider);
+      await settle(tester);
+
+      expect(cardTaps, 0);
+      expect(find.byType(FullscreenImageViewer), findsOneWidget);
+      expect(find.text('2 / 3'), findsOneWidget);
+    },
+  );
+
   // Sayaç ve noktalar görselin üstünde; dokunuş karta düşmemeli.
   final overlays = <String, Finder Function()>{
     'sayaç': () => find.text('1/3'),
