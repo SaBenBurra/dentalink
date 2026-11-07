@@ -1460,21 +1460,6 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String treatmentMore(int count) {
-    return '+$count';
-  }
-
-  @override
-  String treatmentMoreLabel(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count tedavi daha',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String branchTreatments(String branch) {
     return '$branch tedavileri';
   }

@@ -119,49 +119,6 @@ class _TreatmentChipState extends State<TreatmentChip> {
   }
 }
 
-/// Karttaki tedavi satırı: ilk iki tedavi, sığmayanlar "+N" (dokununca post
-/// sayfası açılır, orada hepsi görünür). Tek satır; kart yüksekliği değişmez.
-class CaseTreatmentsRow extends StatelessWidget {
-  const CaseTreatmentsRow({super.key, required this.treatments, this.onMore});
-
-  final List<CaseTreatment> treatments;
-  final VoidCallback? onMore;
-
-  static const shown = 2;
-
-  @override
-  Widget build(BuildContext context) {
-    if (treatments.isEmpty) return const SizedBox.shrink();
-    final hidden = treatments.length - shown;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing16),
-      child: Row(
-        spacing: AppDimensions.spacing6,
-        children: [
-          for (final t in treatments.take(shown))
-            Flexible(child: TreatmentChip(treatment: t)),
-          if (hidden > 0)
-            Semantics(
-              label: AppLocalizations.of(context)!.treatmentMoreLabel(hidden),
-              excludeSemantics: true,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  minimumSize: const Size(0, 32),
-                  tapTargetSize: MaterialTapTargetSize.padded,
-                  shape: const StadiumBorder(),
-                ),
-                onPressed: onMore,
-                child: Text(
-                  AppLocalizations.of(context)!.treatmentMore(hidden),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
 /// Post sayfasında bütün tedaviler, branşa göre gruplu. Branş adı Keşfet'i o
 /// branşla açar; çipler arşive gider.
 class CaseTreatmentsSection extends StatelessWidget {

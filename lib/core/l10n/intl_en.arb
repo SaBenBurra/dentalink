@@ -523,8 +523,6 @@
   "treatmentNotListed": "Not listed? Add it",
   "treatmentWhichBranch": "Which specialty is \"{name}\"?",
   "treatmentCaseCount": "{count, plural, =1{1 case} other{{count} cases}}",
-  "treatmentMore": "+{count}",
-  "treatmentMoreLabel": "{count, plural, =1{1 more treatment} other{{count} more treatments}}",
   "branchTreatments": "{branch} treatments",
   "archiveSortRecent": "Newest",
   "archiveSortPopular": "Most popular",

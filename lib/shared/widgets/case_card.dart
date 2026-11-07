@@ -25,7 +25,6 @@ class CaseCard extends ConsumerWidget {
     this.onCommentTap,
     this.onTap,
     this.expanded = false,
-    this.showTreatments = true,
   });
 
   final CasePostModel post;
@@ -36,9 +35,6 @@ class CaseCard extends ConsumerWidget {
 
   /// Post sayfasında metnin tamamı gösterilir.
   final bool expanded;
-
-  /// Ana sayfa kartlarında tedavi satırı gösterilmez.
-  final bool showTreatments;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -54,7 +50,7 @@ class CaseCard extends ConsumerWidget {
           // <-- 1. Header
           PostHeader(
             post: post,
-            // Branş kartta yazılmaz; tedavi çiplerinin renginde görünür.
+            // Branş ve tedaviler listede yazılmaz; yalnızca post sayfasında.
             subtitle: post.author.title.displayName(context),
             isOwner: isOwner,
             badge: PostBadge(postType: PostType.casePost),
@@ -77,10 +73,6 @@ class CaseCard extends ConsumerWidget {
               ),
             },
           ),
-
-          // Listede tedaviler başlığın üstünde: vakanın "rafı".
-          if (!expanded && showTreatments)
-            CaseTreatmentsRow(treatments: post.treatments, onMore: onTap),
 
           // <-- 2. İçerik (uzunsa "Devamını oku")
           PostBody(

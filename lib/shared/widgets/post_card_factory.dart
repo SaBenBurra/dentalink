@@ -15,7 +15,6 @@ class PostCardFactory {
     VoidCallback? onCommentTap,
     VoidCallback? onTap,
     bool expanded = false,
-    bool showTreatments = true,
   }) {
     return switch (post.type) {
       PostType.casePost => CaseCard(
@@ -25,7 +24,6 @@ class PostCardFactory {
         onCommentTap: onCommentTap, // <-- Parametreden gelen değer
         onTap: onTap, // <-- Parametreden gelen değer
         expanded: expanded,
-        showTreatments: showTreatments,
       ),
       PostType.question => QuestionCard(
         post: post as QuestionPostModel,

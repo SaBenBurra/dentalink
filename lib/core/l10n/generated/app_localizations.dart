@@ -2720,18 +2720,6 @@ abstract class AppLocalizations {
   /// **'{count, plural, other{{count} vaka}}'**
   String treatmentCaseCount(int count);
 
-  /// Kartta sığmayan tedavi sayısı
-  ///
-  /// In tr, this message translates to:
-  /// **'+{count}'**
-  String treatmentMore(int count);
-
-  /// No description provided for @treatmentMoreLabel.
-  ///
-  /// In tr, this message translates to:
-  /// **'{count, plural, other{{count} tedavi daha}}'**
-  String treatmentMoreLabel(int count);
-
   /// No description provided for @branchTreatments.
   ///
   /// In tr, this message translates to:

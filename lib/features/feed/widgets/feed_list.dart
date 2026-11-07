@@ -86,7 +86,6 @@ class FeedList extends StatelessWidget {
               final post = filteredPosts[index];
               return PostCardFactory.build(
                 post,
-                showTreatments: false,
                 onLikeToggle: () => runOrShowError(
                   context,
                   () => ref.read(feedProvider.notifier).toggleLike(post.id),
