@@ -14,61 +14,24 @@ class PostMedia extends StatefulWidget {
   const PostMedia({
     super.key,
     required this.media,
-    required this.isLiked,
-    required this.onLikeToggle,
   });
 
   /// Sıralı görsel ve video; video kapak resmiyle görünür, dokununca tam ekran
   /// oynatılır (046).
   final List<PostMediaItem> media;
-  final bool isLiked;
-  final VoidCallback onLikeToggle;
 
   @override
   State<PostMedia> createState() => _PostMediaState();
 }
 
-class _PostMediaState extends State<PostMedia> with TickerProviderStateMixin {
+class _PostMediaState extends State<PostMedia> {
   late final PageController _pageController;
   int _currentPage = 0;
-  bool _showHeartPop = false;
-
-  late AnimationController _heartAnimController;
-  late Animation<double> _heartScaleAnimation;
-  late Animation<double> _heartOpacityAnimation;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
-    _heartAnimController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-
-    _heartScaleAnimation =
-        TweenSequence<double>([
-          TweenSequenceItem(tween: Tween(begin: 0.2, end: 1.3), weight: 40),
-          TweenSequenceItem(tween: Tween(begin: 1.3, end: 1.0), weight: 30),
-          TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.0), weight: 30),
-        ]).animate(
-          CurvedAnimation(
-            parent: _heartAnimController,
-            curve: Curves.easeInOut,
-          ),
-        );
-
-    _heartOpacityAnimation =
-        TweenSequence<double>([
-          TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0), weight: 30),
-          TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.0), weight: 40),
-          TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0), weight: 30),
-        ]).animate(
-          CurvedAnimation(
-            parent: _heartAnimController,
-            curve: Curves.easeInOut,
-          ),
-        );
   }
 
   // Sayaç ve noktaların zemini: açık görselde koyu dolgu, koyu görselde ince açık kenar seçilir.
@@ -128,18 +91,7 @@ class _PostMediaState extends State<PostMedia> with TickerProviderStateMixin {
   void dispose() {
     _ratioStream?.removeListener(_ratioListener);
     _pageController.dispose();
-    _heartAnimController.dispose();
     super.dispose();
-  }
-
-  void _handleDoubleTap() {
-    if (!widget.isLiked) {
-      widget.onLikeToggle();
-    }
-    setState(() => _showHeartPop = true);
-    _heartAnimController.forward(from: 0).then((_) {
-      if (mounted) setState(() => _showHeartPop = false);
-    });
   }
 
   @override
@@ -167,13 +119,12 @@ class _PostMediaState extends State<PostMedia> with TickerProviderStateMixin {
                 itemCount: pages.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
-                    // Video da galeride açılır ve orada hemen oynar.
+                    // Video da galeride açılır ve orada hemen oynar. Çift dokunma yok: tek dokunuşu 300 ms geciktirirdi.
                     onTap: () => openFullscreenImages(
                       context,
                       media,
                       initialIndex: index,
                     ),
-                    onDoubleTap: _handleDoubleTap,
                     child: CachedNetworkImage(
                       imageUrl: pages[index],
                       // İmzalı URL her çekişte değişir; önbellek dosya yoluna bağlı (SEC-9).
@@ -279,31 +230,6 @@ class _PostMediaState extends State<PostMedia> with TickerProviderStateMixin {
             ),
           ),
         ],
-        if (_showHeartPop)
-          AnimatedBuilder(
-            animation: _heartAnimController,
-            builder: (context, child) {
-              return Transform.scale(
-                scale: _heartScaleAnimation.value,
-                child: Opacity(
-                  opacity: _heartOpacityAnimation.value,
-                  child: child,
-                ),
-              );
-            },
-            child: const Icon(
-              Icons.favorite_rounded,
-              color: Colors.white,
-              size: 100,
-              shadows: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 16,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-          ),
       ],
     );
   }

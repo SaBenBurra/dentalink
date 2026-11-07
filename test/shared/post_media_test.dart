@@ -2,7 +2,6 @@ import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:dentigo/shared/widgets/gallery_video.dart';
 import 'package:dentigo/shared/widgets/fullscreen_image_viewer.dart';
 import 'package:dentigo/shared/widgets/post_media.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -23,8 +22,6 @@ void main() {
             children: [
               PostMedia(
                 media: [for (final u in urls) (id: u, url: u, videoUrl: null)],
-                isLiked: false,
-                onLikeToggle: () {},
               ),
             ],
           ),
@@ -91,8 +88,6 @@ void main() {
         home: Scaffold(
           body: PostMedia(
             media: const [(id: '1', url: 'https://x/1.jpg', videoUrl: null)],
-            isLiked: false,
-            onLikeToggle: () {},
           ),
         ),
       ),
@@ -112,8 +107,6 @@ void main() {
     await settle(tester);
 
     await tester.tap(slider);
-    // onDoubleTap olduğundan tek dokunuş çift dokunma süresi kadar bekler.
-    await tester.pump(kDoubleTapTimeout);
     await settle(tester);
 
     expect(find.byType(FullscreenImageViewer), findsOneWidget);
@@ -140,8 +133,6 @@ void main() {
                 (id: 'v', url: 'https://x/t.jpg', videoUrl: 'https://x/v.mp4'),
                 (id: '2', url: 'https://x/2.jpg', videoUrl: null),
               ],
-              isLiked: false,
-              onLikeToggle: () {},
             ),
           ),
         ),
@@ -159,7 +150,6 @@ void main() {
 
       // Videoya dokun: galeri video sayfasında açılır, video kendiliğinden başlar.
       await tester.tap(slider);
-      await tester.pump(kDoubleTapTimeout);
       await settle(tester);
       expect(find.byType(FullscreenImageViewer), findsOneWidget);
       expect(find.text('2 / 3'), findsOneWidget);

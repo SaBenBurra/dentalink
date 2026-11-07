@@ -84,8 +84,6 @@ class QuestionCard extends ConsumerWidget {
           if (post.media.isNotEmpty)
             PostMedia(
               media: post.media,
-              isLiked: post.isLiked,
-              onLikeToggle: onLikeToggle,
             )
           else
             Padding(
