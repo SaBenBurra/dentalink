@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:video_player/video_player.dart';
 import '../../core/constants/app_dimensions.dart';
 import '../../core/l10n/generated/app_localizations.dart';
@@ -159,11 +160,122 @@ class _GalleryVideoState extends State<GalleryVideo> {
             child: SizedBox(
               height: AppDimensions.spacing12,
               child: c != null && v!.isInitialized
-                  ? VideoProgressIndicator(c, allowScrubbing: true)
+                  ? _SmoothProgress(controller: c)
                   : null,
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Oynarken çubuğun oranı: oynatıcı konumu yaklaşık 500 ms'de bir bildirir,
+/// aradaki süre geçen zamanla doldurulur ki çubuk adım adım değil akarak dolsun.
+double videoProgress({
+  required Duration reported,
+  required Duration sinceReport,
+  required Duration duration,
+  required bool playing,
+  double speed = 1,
+}) {
+  if (duration <= Duration.zero) return 0;
+  final pos = playing ? reported + sinceReport * speed : reported;
+  return (pos.inMicroseconds / duration.inMicroseconds).clamp(0.0, 1.0);
+}
+
+/// Paletteki renklerle, sarılabilir ve akıcı ilerleme çubuğu.
+class _SmoothProgress extends StatefulWidget {
+  const _SmoothProgress({required this.controller});
+
+  final VideoPlayerController controller;
+
+  @override
+  State<_SmoothProgress> createState() => _SmoothProgressState();
+}
+
+class _SmoothProgressState extends State<_SmoothProgress>
+    with SingleTickerProviderStateMixin {
+  late final Ticker _ticker = createTicker((_) => setState(() {}));
+  final _sinceReport = Stopwatch();
+  Duration _reported = Duration.zero;
+
+  VideoPlayerController get _c => widget.controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _c.addListener(_onChanged);
+    _onChanged();
+  }
+
+  void _onChanged() {
+    final v = _c.value;
+    if (v.position != _reported) {
+      _reported = v.position;
+      _sinceReport
+        ..reset()
+        ..start();
+    }
+    if (v.isPlaying && !_ticker.isActive) {
+      _ticker.start();
+    } else if (!v.isPlaying && _ticker.isActive) {
+      _ticker.stop();
+    }
+  }
+
+  @override
+  void dispose() {
+    _c.removeListener(_onChanged);
+    _ticker.dispose();
+    super.dispose();
+  }
+
+  void _seek(Offset local) {
+    final box = context.findRenderObject()! as RenderBox;
+    final f = (local.dx / box.size.width).clamp(0.0, 1.0);
+    _c.seekTo(_c.value.duration * f);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final v = _c.value;
+    final buffered = v.buffered.isEmpty || v.duration <= Duration.zero
+        ? 0.0
+        : (v.buffered.last.end.inMicroseconds / v.duration.inMicroseconds)
+              .clamp(0.0, 1.0);
+    final played = videoProgress(
+      reported: _reported,
+      sinceReport: _sinceReport.elapsed,
+      duration: v.duration,
+      playing: v.isPlaying,
+      speed: v.playbackSpeed,
+    );
+    Widget fill(double f, Color color) => FractionallySizedBox(
+      alignment: Alignment.centerLeft,
+      widthFactor: f,
+      child: ColoredBox(color: color),
+    );
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: (d) => _seek(d.localPosition),
+      onHorizontalDragUpdate: (d) => _seek(d.localPosition),
+      child: Center(
+        child: SizedBox(
+          height: AppDimensions.spacing4,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(AppDimensions.radiusRound),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                const ColoredBox(color: Colors.white24),
+                fill(buffered, scheme.primary.withValues(alpha: 0.35)),
+                fill(played, scheme.primary),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

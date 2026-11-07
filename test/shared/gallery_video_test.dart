@@ -53,4 +53,46 @@ void main() {
     // 16:9 video alanın genişliğini doldurur, kapak da aynı genişlikteydi.
     expect(tester.getSize(find.byType(VideoPlayer)).width, before.width);
   });
+
+  test('çubuk bildirimler arasında geçen zamanla akar, süreyi aşmaz', () {
+    const d = Duration(seconds: 10);
+    const r = Duration(seconds: 2);
+    expect(
+      videoProgress(
+        reported: r,
+        sinceReport: const Duration(milliseconds: 250),
+        duration: d,
+        playing: true,
+      ),
+      closeTo(0.225, 1e-9),
+    );
+    expect(
+      videoProgress(
+        reported: r,
+        sinceReport: const Duration(seconds: 1),
+        duration: d,
+        playing: false,
+      ),
+      0.2,
+      reason: 'duraklatınca bildirilen konumda kalır',
+    );
+    expect(
+      videoProgress(
+        reported: d,
+        sinceReport: const Duration(seconds: 1),
+        duration: d,
+        playing: true,
+      ),
+      1.0,
+    );
+    expect(
+      videoProgress(
+        reported: r,
+        sinceReport: r,
+        duration: Duration.zero,
+        playing: true,
+      ),
+      0.0,
+    );
+  });
 }
