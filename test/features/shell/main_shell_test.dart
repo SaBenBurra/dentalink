@@ -59,6 +59,7 @@ Future<ProviderContainer> _pumpShell(
 void main() {
   bottomInsetTests();
   barReservedHeightTests();
+  textFieldTests();
 
   testWidgets(
     'gizli alt menü, içerik kaydırılamayacak kadar kısalınca geri gelir',
@@ -170,5 +171,28 @@ void barReservedHeightTests() {
     // Ölçülen kutu: durum çubuğu 32 + pay 12 + bar 64 + pay 12 + sistem 24.
     expect(barReservedHeight(144, 32), 64 + barOffset + 24);
     expect(barReservedHeight(0, 32), 0); // bar henüz ölçülmedi
+  });
+}
+
+void textFieldTests() {
+  testWidgets('çok satırlı yazı alanı gizli barı geri getirmez', (
+    tester,
+  ) async {
+    final container = await _pumpShell(
+      tester,
+      initialLocation: '/search',
+      feed: (_) => const SizedBox(),
+      // Post sayfası gibi: uzun liste ve altta sabit çok satırlı giriş alanı.
+      search: (_) => Column(
+        children: [
+          Expanded(child: _list(100)),
+          const TextField(minLines: 1, maxLines: 4),
+        ],
+      ),
+    );
+    final bar = container.read(bottomBarControllerProvider);
+    await tester.drag(find.byType(ListView), const Offset(0, -600));
+    await tester.pumpAndSettle();
+    expect(bar.isVisible, isFalse);
   });
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
+import 'package:dentigo/core/router/app_router.dart';
 import 'package:dentigo/features/post/screens/post_screen.dart';
 import 'package:dentigo/features/post/widgets/comments/post_comments.dart';
 import 'package:dentigo/features/post/widgets/detail/detail_states.dart';
+import 'package:dentigo/features/shell/main_shell.dart';
 import 'package:dentigo/data/providers/repository_providers.dart';
 import 'package:dentigo/providers/post_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -143,5 +145,47 @@ void main() {
     final rect = tester.getRect(sent);
     expect(rect.top, greaterThan(0));
     expect(rect.bottom, lessThanOrEqualTo(tester.getRect(input).top));
+  });
+
+  testWidgets('post sayfasında kaydırınca bar gizlenmez, yorum satırı sabit', (
+    tester,
+  ) async {
+    await pumpDentigo(tester);
+    final anchor = tester.element(find.text(seedCase.title));
+    final container = ProviderScope.containerOf(anchor);
+    final repo = container.read(commentRepositoryProvider);
+    for (var i = 0; i < 15; i++) {
+      await repo.addComment(seedCase.id, 'eski yorum $i');
+    }
+    pushDetailOn(GoRouter.of(anchor), '/post/${seedCase.id}');
+    await tester.pumpAndSettle();
+    final bar = container.read(bottomBarControllerProvider);
+
+    final input = inPage(find.byType(TextField)).last;
+    final inputTop = tester.getRect(input).top;
+    // Parmak hareketinin her karesinde: bar gizlenmeye başlamaz, satır kaymaz.
+    final gesture = await tester.startGesture(
+      tester.getCenter(inPage(find.byType(CustomScrollView))),
+    );
+    for (var i = 0; i < 40; i++) {
+      await gesture.moveBy(const Offset(0, -40));
+      await tester.pump(const Duration(milliseconds: 16));
+      expect(bar.isVisible, isTrue);
+      expect(tester.getRect(input).top, inputTop);
+    }
+    await gesture.up();
+    await tester.pumpAndSettle();
+    for (var i = 0; i < 10; i++) {
+      await tester.drag(
+        inPage(find.byType(CustomScrollView)),
+        const Offset(0, -400),
+      );
+      await tester.pumpAndSettle();
+    }
+    expect(tester.getRect(input).top, inputTop);
+    expect(
+      tester.getRect(inPage(find.text('eski yorum 14'))).bottom,
+      lessThan(inputTop),
+    );
   });
 }

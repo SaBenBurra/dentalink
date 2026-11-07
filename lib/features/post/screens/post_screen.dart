@@ -5,6 +5,7 @@ import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:dentigo/data/models/post_model.dart';
 import 'package:dentigo/features/post/widgets/comments/post_comments.dart';
 import 'package:dentigo/features/post/widgets/detail/detail_states.dart';
+import 'package:dentigo/features/shell/main_shell.dart';
 import 'package:dentigo/providers/comment_provider.dart';
 import 'package:dentigo/providers/post_provider.dart';
 import 'package:dentigo/shared/extensions/post_type_l10n.dart';
@@ -50,6 +51,10 @@ class _PostScreenState extends ConsumerState<PostScreen> {
     if (seed != null && !ref.exists(postDetailProvider(widget.postId))) {
       ref.read(postSeedsProvider)[widget.postId] = seed;
     }
+    // Bar bu sayfada hep görünür (bkz. build'deki NotificationListener).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ref.read(bottomBarControllerProvider).show();
+    });
   }
 
   @override
@@ -91,27 +96,35 @@ class _PostScreenState extends ConsumerState<PostScreen> {
                 titleSpacing: 0,
                 title: Text(post.type.getBadgeLabel(context)),
               ),
-              body: RefreshIndicator(
-                onRefresh: () {
-                  ref.invalidate(commentsProvider(post.id));
-                  return ref.refresh(provider.future);
-                },
-                child: PostComments(
-                  key: _commentsKey,
-                  post: post,
-                  scrollToComments: widget.scrollToComments,
-                  highlightCommentId: widget.highlightCommentId,
-                  header: Padding(
-                    padding: const EdgeInsets.only(top: AppDimensions.spacing8),
-                    child: PostCardFactory.build(
-                      post,
-                      expanded: true,
-                      onLikeToggle: () =>
-                          runOrShowError(context, notifier.toggleLike),
-                      onBookmarkToggle: () =>
-                          runOrShowError(context, notifier.toggleBookmark),
-                      onCommentTap: () =>
-                          _commentsKey.currentState?.focusInput(),
+              // Kaydırma alt menüye ulaşmaz, bar gizlenmez: gizlenip açıldıkça
+              // altta sabit yorum satırı da kayıp listenin sonunu örtüyordu.
+              // RefreshIndicator daha içte olduğu için yenileme çalışır.
+              body: NotificationListener<ScrollNotification>(
+                onNotification: (_) => true,
+                child: RefreshIndicator(
+                  onRefresh: () {
+                    ref.invalidate(commentsProvider(post.id));
+                    return ref.refresh(provider.future);
+                  },
+                  child: PostComments(
+                    key: _commentsKey,
+                    post: post,
+                    scrollToComments: widget.scrollToComments,
+                    highlightCommentId: widget.highlightCommentId,
+                    header: Padding(
+                      padding: const EdgeInsets.only(
+                        top: AppDimensions.spacing8,
+                      ),
+                      child: PostCardFactory.build(
+                        post,
+                        expanded: true,
+                        onLikeToggle: () =>
+                            runOrShowError(context, notifier.toggleLike),
+                        onBookmarkToggle: () =>
+                            runOrShowError(context, notifier.toggleBookmark),
+                        onCommentTap: () =>
+                            _commentsKey.currentState?.focusInput(),
+                      ),
                     ),
                   ),
                 ),
