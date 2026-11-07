@@ -1,3 +1,4 @@
+import 'package:dentigo/core/router/app_router.dart';
 import 'package:dentigo/shared/extensions/user_title_ui.dart';
 import 'package:dentigo/data/models/enums.dart';
 import 'package:dentigo/providers/auth_provider.dart';
@@ -107,7 +108,7 @@ class QuestionCard extends ConsumerWidget {
               compact: true,
               post: post,
               onLikeToggle: onLikeToggle,
-              onLikesTap: () => context.push('/post/${post.id}/likes'),
+              onLikesTap: () => context.pushDetail('/post/${post.id}/likes'),
               onBookmarkToggle: onBookmarkToggle,
               onCommentTap: onCommentTap,
             ),

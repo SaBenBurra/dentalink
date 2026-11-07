@@ -110,14 +110,14 @@ class PushController {
       '/auth-error',
     }.contains(_router.routerDelegate.currentConfiguration.uri.path);
     if (ready()) {
-      _router.push(route);
+      pushDetailOn(_router, route);
       return;
     }
     late final VoidCallback listener;
     listener = () {
       if (!ready()) return;
       _router.routerDelegate.removeListener(listener);
-      _router.push(route);
+      pushDetailOn(_router, route);
     };
     _router.routerDelegate.addListener(listener);
   }

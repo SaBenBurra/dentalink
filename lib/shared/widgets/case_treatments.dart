@@ -1,3 +1,4 @@
+import 'package:dentigo/core/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,7 +14,7 @@ void openTreatment(
   BuildContext context,
   CaseTreatment treatment, {
   Object? heroTag,
-}) => context.push(
+}) => context.pushDetail(
   '/treatment/${treatment.slug}',
   extra: (treatment: treatment, heroTag: heroTag),
 );

@@ -1,7 +1,7 @@
+import 'package:dentigo/core/router/app_router.dart';
 import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/following_provider.dart';
@@ -164,7 +164,7 @@ class _UserListViewState extends ConsumerState<UserListView> {
               final isMe = user.id == ref.watch(currentUserProvider)?.id;
               return UserTile(
                 user: user,
-                onTap: () => context.push('/profile/${user.id}'),
+                onTap: () => context.pushDetail('/profile/${user.id}'),
                 trailing: isMe
                     ? null
                     : _FollowButton(key: ValueKey(user.id), userId: user.id),

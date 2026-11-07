@@ -1,3 +1,4 @@
+import 'package:dentigo/core/router/app_router.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -137,7 +138,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
         ),
         title: InkWell(
-          onTap: () => context.push('/profile/${widget.userId}'),
+          onTap: () => context.pushDetail('/profile/${widget.userId}'),
           borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
           child: Padding(
             padding: const EdgeInsets.symmetric(

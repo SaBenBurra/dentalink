@@ -1,8 +1,8 @@
+import 'package:dentigo/core/router/app_router.dart';
 import 'package:dentigo/data/models/notification_model.dart';
 import 'package:dentigo/features/notifications/widgets/notifications_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/router/notification_route.dart';
@@ -58,7 +58,7 @@ class _NotificationListView extends ConsumerWidget {
       postId: notification.postId,
       commentId: notification.commentId,
     );
-    if (route != null) context.push(route);
+    if (route != null) context.pushDetail(route);
   }
 
   @override

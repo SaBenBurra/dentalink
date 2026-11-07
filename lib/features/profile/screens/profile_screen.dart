@@ -1,3 +1,4 @@
+import 'package:dentigo/core/router/app_router.dart';
 import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:dentigo/shared/extensions/post_type_l10n.dart';
 import 'package:flutter/foundation.dart' show listEquals;
@@ -114,7 +115,7 @@ class ProfileScreen extends ConsumerWidget {
                     HeaderIconButton(
                       icon: Icons.bookmark_border_rounded,
                       tooltip: l10n.bookmarksTitle,
-                      onTap: () => context.push('/bookmarks'),
+                      onTap: () => context.pushDetail('/bookmarks'),
                     ),
                     HeaderIconButton(
                       icon: Icons.settings_outlined,

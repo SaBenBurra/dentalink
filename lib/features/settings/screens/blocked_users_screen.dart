@@ -1,6 +1,6 @@
+import 'package:dentigo/core/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../providers/feed_provider.dart';
@@ -56,7 +56,7 @@ class BlockedUsersScreen extends ConsumerWidget {
                   final user = users[i];
                   return UserTile(
                     user: user,
-                    onTap: () => context.push('/profile/${user.id}'),
+                    onTap: () => context.pushDetail('/profile/${user.id}'),
                     trailing: OutlinedButton(
                       onPressed: () => _unblock(context, ref, user.id),
                       child: Text(l10n.unblock),

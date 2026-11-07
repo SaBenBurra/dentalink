@@ -92,6 +92,8 @@ Alt menü: **Ana Sayfa** `/feed` · **Keşfet** `/search` · **Oluştur (+)** (v
 
 Diğer rotalar: `/post/:id` (tek post kartı; bildirim ve deep link hedefi), `/post/:id/likes` (beğenenler), `/treatment/:slug` (tedavi arşivi), `/create-case`, `/create-question`, `/chat/:userId`, `/profile/:userId`, `/edit-profile`, `/network/:id`, `/notifications`, `/bookmarks`, `/settings`, `/settings/blocked`, `/settings/contact/email`, `/settings/contact/phone`, `/legal/:doc`, `/login`, `/register`. Tam liste: `lib/core/router/app_router.dart`.
 
+**Detay sayfaları sekmenin içinde açılır:** post, beğenenler, tedavi arşivi, kullanıcı profili, ağ, kaydedilenler ve bildirimler hangi sekmeden açıldıysa onun altında açılır (`/feed/post/:id`, `/search/treatment/:slug`…). Alt menü görünür kalır, aktif sekmeye dokununca sekmenin köküne tek dokunuşla dönülür. Bunları `context.push` ile değil `context.pushDetail` ile aç (`lib/core/router/app_router.dart`). Sekme dışı bir sayfadan (sohbet, ayarlar) açılınca kökteki aynı rota kullanılır, alt menü gizli olur. Paylaşımdan sonra post `/feed/post/:id` olarak açılır. Klavye açıkken alt menü klavyenin arkasında kalır.
+
 ---
 
 ## Tasarım sistemi

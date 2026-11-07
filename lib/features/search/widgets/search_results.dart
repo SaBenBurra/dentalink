@@ -1,8 +1,8 @@
+import 'package:dentigo/core/router/app_router.dart';
 import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:dentigo/shared/utils/post_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../providers/search_provider.dart';
 import '../../../providers/treatment_archive_provider.dart';
 import '../../../data/models/case_treatment.dart';
@@ -136,7 +136,7 @@ class ExploreResults extends ConsumerWidget {
                 for (final user in users.take(maxPeople))
                   UserTile(
                     user: user,
-                    onTap: () => context.push('/profile/${user.id}'),
+                    onTap: () => context.pushDetail('/profile/${user.id}'),
                   ),
               ],
             ),

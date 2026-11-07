@@ -1,3 +1,4 @@
+import 'package:dentigo/core/router/app_router.dart';
 import 'package:dentigo/shared/extensions/user_title_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -106,13 +107,13 @@ class ProfileHeader extends StatelessWidget {
               _Stat(
                 count: user.followersCount,
                 label: l10n.followers,
-                onTap: () => context.push('/network/${user.id}?tab=0'),
+                onTap: () => context.pushDetail('/network/${user.id}?tab=0'),
               ),
               const _StatDot(),
               _Stat(
                 count: user.followingCount,
                 label: l10n.statFollowing,
-                onTap: () => context.push('/network/${user.id}?tab=1'),
+                onTap: () => context.pushDetail('/network/${user.id}?tab=1'),
               ),
             ],
           ),

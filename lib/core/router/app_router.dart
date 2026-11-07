@@ -78,15 +78,17 @@ String? resolveAuthRedirect({
 /// Navigasyon yapısı:
 ///   /login            → LoginScreen
 ///   /register         → RegisterScreen
-///   /post/:id         → PostScreen (post + yorumlar; `?comments=1`, `?comment=<id>`)
-///   /post/:id/likes   → PostLikersScreen
-///   /                 → redirect → /login
+///   /                 → redirect → /feed
 ///   StatefulShellRoute → MainShell (bottom nav, sekmeler canlı kalır)
 ///     /feed           → FeedScreen
 ///     /search         → SearchScreen
-///     /treatment/:slug → TreatmentArchiveScreen (alt menü gizli)
 ///     /messages       → ConversationsScreen
 ///     /profile        → ProfileScreen
+///     `<tab>`/…         → detay sayfaları ([_detailRoutes], alt menü görünür)
+///   /post/:id, /treatment/:slug… → aynı detaylar kökte (sekme dışından ve
+///                       deep link; alt menü gizli)
+///
+/// Detay açmak için `context.push` yerine `context.pushDetail` kullanılır.
 ///
 /// Oturum var ama `public.users` profili yoksa kullanıcı kayıt
 /// ekranında tutulur (OTP sonrası yarım kalan kayıt).
@@ -128,41 +130,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const AuthErrorScreen(),
       ),
 
-      // ── Tek post (Root level - Bottom Nav gizlenir); bildirim ve deep link hedefi ─
-      GoRoute(
-        path: '/post/:id',
-        name: 'post',
-        builder: (context, state) => PostScreen(
-          postId: state.pathParameters['id']!,
-          initialPost: state.extra is PostModel
-              ? state.extra as PostModel
-              : null,
-          scrollToComments: state.uri.queryParameters['comments'] == '1',
-          highlightCommentId: state.uri.queryParameters['comment'],
-        ),
-      ),
-      GoRoute(
-        path: '/post/:id/likes',
-        name: 'postLikers',
-        builder: (context, state) =>
-            PostLikersScreen(postId: state.pathParameters['id']!),
-      ),
-      // Tedavi arşivi; karttan gelince tedavi ve Hero etiketi extra ile taşınır.
-      GoRoute(
-        path: '/treatment/:slug',
-        name: 'treatment',
-        builder: (context, state) {
-          final extra =
-              state.extra is ({CaseTreatment treatment, Object? heroTag})
-              ? state.extra as ({CaseTreatment treatment, Object? heroTag})
-              : null;
-          return TreatmentArchiveScreen(
-            slug: state.pathParameters['slug']!,
-            initial: extra?.treatment,
-            heroTag: extra?.heroTag,
-          );
-        },
-      ),
       GoRoute(
         path: '/create-case',
         name: 'createCase',
@@ -185,24 +152,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const EditProfileScreen(),
       ),
       GoRoute(
-        path: '/profile/:id',
-        name: 'userProfile',
-        builder: (context, state) {
-          final id = state.pathParameters['id']!;
-          return ProfileScreen(userId: id);
-        },
-      ),
-      GoRoute(
-        path: '/network/:id',
-        name: 'network',
-        builder: (context, state) {
-          final id = state.pathParameters['id']!;
-          final initialIndex =
-              int.tryParse(state.uri.queryParameters['tab'] ?? '0') ?? 0;
-          return FollowersScreen(userId: id, initialIndex: initialIndex);
-        },
-      ),
-      GoRoute(
         path: '/chat/:userId',
         name: 'chat',
         builder: (context, state) {
@@ -213,11 +162,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
 
-      GoRoute(
-        path: '/notifications',
-        name: 'notifications',
-        builder: (context, state) => const NotificationsScreen(),
-      ),
       GoRoute(
         path: '/settings',
         name: 'settings',
@@ -244,15 +188,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) =>
             LegalScreen(doc: LegalDoc.tryParse(state.pathParameters['doc'])!),
       ),
-      GoRoute(
-        path: '/bookmarks',
-        name: 'bookmarks',
-        builder: (context, state) => const BookmarksScreen(),
-      ),
-
       // ── Ana Kabuk (Bottom Nav Shell) ───────────────────────
       // Her sekme kendi navigator'ında canlı kalır: sekme değişince veri ve
-      // kaydırma konumu korunur.
+      // kaydırma konumu korunur. Detay sayfaları açıldıkları sekmenin içinde
+      // açılır (`pushDetail`). Kabuk, kök seviyedeki `/profile/:id`'den önce
+      // gelir: yoksa `/profile/bookmarks` kullanıcı profili sanılırdı.
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
             MainShell(navigationShell: navigationShell),
@@ -263,6 +203,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: '/feed',
                 name: 'feed',
                 builder: (context, state) => const FeedScreen(),
+                routes: _detailRoutes(),
               ),
             ],
           ),
@@ -276,6 +217,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                   tag: state.uri.queryParameters['tag'],
                   branch: state.uri.queryParameters['branch'],
                 ),
+                routes: _detailRoutes(),
               ),
             ],
           ),
@@ -285,6 +227,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: '/messages',
                 name: 'messages',
                 builder: (context, state) => const ConversationsScreen(),
+                routes: _detailRoutes(),
               ),
             ],
           ),
@@ -294,11 +237,15 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: '/profile',
                 name: 'profile',
                 builder: (context, state) => const ProfileScreen(),
+                routes: _detailRoutes(),
               ),
             ],
           ),
         ],
       ),
+      // Sekme dışı (sohbet, ayarlar, oluşturma) ve uygulama açılışındaki
+      // deep link hedefi; alt menü gizli.
+      ..._detailRoutes(root: true),
     ],
 
     // Bilinmeyen route'a düşülürse login'e dön
@@ -323,3 +270,96 @@ final routerProvider = Provider<GoRouter>((ref) {
     ),
   );
 });
+
+/// Detay sayfaları: her sekmenin altında (`/feed/post/:id`, `/search/post/:id`…)
+/// ve sekme dışı için kökte (`/post/:id`). Sekme içindekilerde alt menü görünür
+/// kalır; aktif sekmeye dokunmak köke döner.
+List<RouteBase> _detailRoutes({bool root = false}) {
+  final p = root ? '/' : '';
+  return [
+    GoRoute(
+      path: '${p}post/:id',
+      builder: (context, state) => PostScreen(
+        postId: state.pathParameters['id']!,
+        initialPost: state.extra is PostModel ? state.extra as PostModel : null,
+        scrollToComments: state.uri.queryParameters['comments'] == '1',
+        highlightCommentId: state.uri.queryParameters['comment'],
+      ),
+      routes: [
+        GoRoute(
+          path: 'likes',
+          builder: (context, state) =>
+              PostLikersScreen(postId: state.pathParameters['id']!),
+        ),
+      ],
+    ),
+    // Tedavi arşivi; karttan gelince tedavi ve Hero etiketi extra ile taşınır.
+    GoRoute(
+      path: '${p}treatment/:slug',
+      builder: (context, state) {
+        final extra =
+            state.extra is ({CaseTreatment treatment, Object? heroTag})
+            ? state.extra as ({CaseTreatment treatment, Object? heroTag})
+            : null;
+        return TreatmentArchiveScreen(
+          slug: state.pathParameters['slug']!,
+          initial: extra?.treatment,
+          heroTag: extra?.heroTag,
+        );
+      },
+    ),
+    GoRoute(
+      path: '${p}profile/:id',
+      builder: (context, state) =>
+          ProfileScreen(userId: state.pathParameters['id']!),
+    ),
+    GoRoute(
+      path: '${p}network/:id',
+      builder: (context, state) => FollowersScreen(
+        userId: state.pathParameters['id']!,
+        initialIndex:
+            int.tryParse(state.uri.queryParameters['tab'] ?? '0') ?? 0,
+      ),
+    ),
+    GoRoute(
+      path: '${p}bookmarks',
+      builder: (context, state) => const BookmarksScreen(),
+    ),
+    GoRoute(
+      path: '${p}notifications',
+      builder: (context, state) => const NotificationsScreen(),
+    ),
+  ];
+}
+
+final _detailPath = RegExp(
+  r'^/(post|treatment|profile|network|bookmarks|notifications)/?',
+);
+
+/// [location] bir detay sayfasıysa ve [tabRoot] (`/feed` gibi) verildiyse onu
+/// sekmenin altına taşır; diğer rotalar (sohbet, ayarlar…) olduğu gibi kalır.
+String detailLocationIn(String? tabRoot, String location) =>
+    tabRoot != null && _detailPath.hasMatch(location)
+    ? '$tabRoot$location'
+    : location;
+
+/// Detay sayfasını açık sekmenin içinde açar (alt menü görünür kalır). En üstte
+/// sekme dışı bir sayfa (sohbet, ayarlar) varsa kökte açar: kabuk ikinci kez
+/// kurulamaz.
+Future<T?> pushDetailOn<T extends Object?>(
+  GoRouter router,
+  String location, {
+  Object? extra,
+}) {
+  final top = router.routerDelegate.currentConfiguration.matches.lastOrNull;
+  final tabRoot = top is ShellRouteMatch
+      ? top.matches.first.matchedLocation
+      : null;
+  return router.push<T>(detailLocationIn(tabRoot, location), extra: extra);
+}
+
+extension DetailNavigation on BuildContext {
+  /// Bkz. [pushDetailOn].
+  Future<T?> pushDetail<T extends Object?>(String location, {Object? extra}) =>
+      pushDetailOn<T>(GoRouter.of(this), location, extra: extra);
+}

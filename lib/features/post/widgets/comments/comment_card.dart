@@ -1,8 +1,8 @@
+import 'package:dentigo/core/router/app_router.dart';
 import 'package:dentigo/shared/extensions/user_title_ui.dart';
 import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_dimensions.dart';
 import '../../../../../data/models/comment_model.dart';
@@ -291,7 +291,7 @@ class CommentCard extends ConsumerWidget {
       fontSize: isReply ? 11 : 12,
       color: colorScheme.onSurfaceVariant,
     );
-    void openProfile() => context.push('/profile/${author!.id}');
+    void openProfile() => context.pushDetail('/profile/${author!.id}');
 
     final avatar = UserAvatar(
       name: authorName,

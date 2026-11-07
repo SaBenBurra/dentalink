@@ -1,6 +1,6 @@
+import 'package:dentigo/core/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/l10n/generated/app_localizations.dart';
 import '../../data/models/post_model.dart';
@@ -80,7 +80,7 @@ Future<bool> confirmAndDeletePost(
 /// dokununca post sayfası, yorum ikonunda yorumlara kaydırılmış post sayfası.
 /// Eldeki post sayfaya taşınır; sayfa yükleniyor ekranı olmadan açılır.
 void openPost(BuildContext context, PostModel post, {bool comments = false}) =>
-    context.push(
+    context.pushDetail(
       comments ? '/post/${post.id}?comments=1' : '/post/${post.id}',
       extra: post,
     );

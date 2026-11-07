@@ -1,3 +1,4 @@
+import 'package:dentigo/core/router/app_router.dart';
 import 'package:dentigo/core/constants/app_dimensions.dart';
 import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:dentigo/features/feed/widgets/feed_filter_segments.dart';
@@ -106,9 +107,10 @@ class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
                     icon: Icons.search_rounded,
                     tooltip: l10n.searchHint,
                     onTap: () {
-                      ProviderScope.containerOf(context, listen: false)
-                          .read(searchFocusRequestProvider.notifier)
-                          .state++;
+                      ProviderScope.containerOf(
+                        context,
+                        listen: false,
+                      ).read(searchFocusRequestProvider.notifier).state++;
                       context.go('/search?focus=1');
                     },
                   ),
@@ -202,7 +204,7 @@ class _NotificationBell extends ConsumerWidget {
       icon: Icons.notifications_none_rounded,
       tooltip: AppLocalizations.of(context)!.notificationsTitle,
       showDot: unread > 0,
-      onTap: () => context.push('/notifications'),
+      onTap: () => context.pushDetail('/notifications'),
     );
   }
 }

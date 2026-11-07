@@ -42,7 +42,12 @@ class MainShell extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    // Klavye açıkken bar klavyenin arkasında kalır; sekme içindeki sayfalar
+    // (ör. post sayfasındaki yorum alanı) klavyeye göre kendileri yerleşir.
+    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: BottomBar(
         controller: ref.watch(bottomBarControllerProvider),
         layout: BottomBarLayout(
@@ -97,9 +102,9 @@ class MainShell extends ConsumerWidget {
             valueListenable: BottomBarScope.of(context).barHeight,
             builder: (context, barHeight, child) => MediaQuery(
               data: MediaQuery.of(context).copyWith(
-                padding: MediaQuery.paddingOf(
-                  context,
-                ).copyWith(bottom: barHeight),
+                padding: keyboardOpen
+                    ? MediaQuery.paddingOf(context)
+                    : MediaQuery.paddingOf(context).copyWith(bottom: barHeight),
               ),
               child: child!,
             ),
