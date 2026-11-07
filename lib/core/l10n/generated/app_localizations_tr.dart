@@ -287,7 +287,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String maxImagesReached(int count) {
-    return 'En fazla $count görsel ekleyebilirsiniz.';
+    return 'En fazla $count görsel veya video ekleyebilirsiniz.';
   }
 
   @override
@@ -852,7 +852,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get joinDiscussionHint => 'Mesleki tartışmaya katılın...';
 
   @override
-  String get caseImageRequired => 'Vaka için en az bir görsel eklemelisiniz.';
+  String get caseImageRequired =>
+      'Vaka için en az bir görsel veya video eklemelisiniz.';
 
   @override
   String get caseShared => 'Vaka başarıyla paylaşıldı!';
@@ -934,10 +935,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get commentsTitle => 'Yorumlar';
 
   @override
-  String get images => 'Görseller';
+  String get images => 'Görsel ve Video';
 
   @override
-  String get addPhoto => 'Fotoğraf Ekle';
+  String get addPhoto => 'Medya Ekle';
 
   @override
   String get addTagHint => 'Etiket ekle (Enter\'a bas)';
@@ -1151,7 +1152,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get casePrivacyConfirm =>
-      'Görseller ve açıklama hastanın yüzünü, adını veya kimliğini ortaya çıkaracak bilgi içermiyor.';
+      'Görseller, video ve açıklama hastanın yüzünü, adını veya kimliğini ortaya çıkaracak bilgi içermiyor.';
 
   @override
   String get casePrivacyRequired =>
@@ -1531,4 +1532,33 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get whatsappSendFailed =>
       'WhatsApp\'a kod gönderilemedi. Numaranın WhatsApp\'ta kayıtlı olduğundan emin olun.';
+
+  @override
+  String get pickVideoFromGallery => 'Galeriden Video Seç';
+
+  @override
+  String get recordVideo => 'Video Çek';
+
+  @override
+  String get videoTooLong => 'Video en fazla 60 saniye olabilir.';
+
+  @override
+  String get videoTooLarge =>
+      'Video sıkıştırıldıktan sonra bile 50 MB\'tan büyük. Daha kısa bir video deneyin.';
+
+  @override
+  String get playVideo => 'Videoyu oynat';
+
+  @override
+  String get pauseVideo => 'Videoyu duraklat';
+
+  @override
+  String get videoLoadFailed => 'Video açılamadı.';
+
+  @override
+  String get mediaReorderHint =>
+      'Sırayı değiştirmek için basılı tutup sürükleyin.';
+
+  @override
+  String get mediaOrder => 'Medya sırası';
 }

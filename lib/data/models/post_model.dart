@@ -3,6 +3,10 @@ import 'enums.dart';
 import 'tag_model.dart';
 import 'user_model.dart';
 
+/// Gönderi medyası (post_images satırı, 046): görsel ya da video. [url] görselin
+/// ya da videonun kapak resminin, [videoUrl] videonun imzalı URL'si.
+typedef PostMediaItem = ({String id, String url, String? videoUrl});
+
 /// Gönderi modeli (Base)
 sealed class PostModel {
   final String id;
@@ -12,6 +16,9 @@ sealed class PostModel {
   final String content;
 
   final List<TagModel> tags;
+
+  /// Sıralı medya; en fazla 1 video.
+  final List<PostMediaItem> media;
 
   // Denormalize sayaçlar
   final int likeCount;
@@ -34,6 +41,7 @@ sealed class PostModel {
     required this.title,
     required this.content,
     this.tags = const [],
+    this.media = const [],
     this.likeCount = 0,
     this.commentCount = 0,
     this.bookmarkCount = 0,
@@ -82,8 +90,6 @@ class CasePostModel extends PostModel {
       if (!treatments.any((c) => c.slug == t.slug)) t,
   ];
 
-  final List<String> imageUrls;
-
   const CasePostModel({
     required super.id,
     required super.userId,
@@ -91,7 +97,7 @@ class CasePostModel extends PostModel {
     required super.title,
     required super.content,
     this.treatments = const [],
-    this.imageUrls = const [],
+    super.media,
     super.tags,
     super.likeCount,
     super.commentCount,
@@ -112,7 +118,7 @@ class CasePostModel extends PostModel {
     String? title,
     String? content,
     List<CaseTreatment>? treatments,
-    List<String>? imageUrls,
+    List<PostMediaItem>? media,
     List<TagModel>? tags,
     int? likeCount,
     int? commentCount,
@@ -131,7 +137,7 @@ class CasePostModel extends PostModel {
       title: title ?? this.title,
       content: content ?? this.content,
       treatments: treatments ?? this.treatments,
-      imageUrls: imageUrls ?? this.imageUrls,
+      media: media ?? this.media,
       tags: tags ?? this.tags,
       likeCount: likeCount ?? this.likeCount,
       commentCount: commentCount ?? this.commentCount,
@@ -157,6 +163,7 @@ class QuestionPostModel extends PostModel {
     required super.title,
     required super.content,
     this.isSolved = false,
+    super.media,
     super.tags,
     super.likeCount,
     super.commentCount,
@@ -195,6 +202,7 @@ class QuestionPostModel extends PostModel {
       title: title ?? this.title,
       content: content ?? this.content,
       isSolved: isSolved ?? this.isSolved,
+      media: media,
       tags: tags ?? this.tags,
       likeCount: likeCount ?? this.likeCount,
       commentCount: commentCount ?? this.commentCount,

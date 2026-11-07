@@ -287,7 +287,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String maxImagesReached(int count) {
-    return 'You can add up to $count images.';
+    return 'You can add up to $count images or videos.';
   }
 
   @override
@@ -853,7 +853,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get joinDiscussionHint => 'Join the professional discussion...';
 
   @override
-  String get caseImageRequired => 'Add at least one image for the case.';
+  String get caseImageRequired =>
+      'Add at least one image or video for the case.';
 
   @override
   String get caseShared => 'Case shared successfully!';
@@ -936,10 +937,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commentsTitle => 'Comments';
 
   @override
-  String get images => 'Images';
+  String get images => 'Images & Video';
 
   @override
-  String get addPhoto => 'Add Photo';
+  String get addPhoto => 'Add Media';
 
   @override
   String get addTagHint => 'Add tag (press Enter)';
@@ -1153,7 +1154,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get casePrivacyConfirm =>
-      'The images and description do not show the patient\'s face, name or anything that identifies them.';
+      'The images, video and description do not show the patient\'s face, name or anything that identifies them.';
 
   @override
   String get casePrivacyRequired => 'Confirm patient privacy before posting';
@@ -1550,4 +1551,32 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get whatsappSendFailed =>
       'Couldn\'t send the code on WhatsApp. Make sure this number is registered on WhatsApp.';
+
+  @override
+  String get pickVideoFromGallery => 'Choose Video';
+
+  @override
+  String get recordVideo => 'Record Video';
+
+  @override
+  String get videoTooLong => 'Videos can be at most 60 seconds long.';
+
+  @override
+  String get videoTooLarge =>
+      'The video is still larger than 50 MB after compression. Try a shorter one.';
+
+  @override
+  String get playVideo => 'Play video';
+
+  @override
+  String get pauseVideo => 'Pause video';
+
+  @override
+  String get videoLoadFailed => 'Couldn\'t load the video.';
+
+  @override
+  String get mediaReorderHint => 'Press and hold, then drag to reorder.';
+
+  @override
+  String get mediaOrder => 'Media order';
 }

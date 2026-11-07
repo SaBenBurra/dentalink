@@ -11,6 +11,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../mocks/generate_mocks.mocks.dart';
 
 void main() {
+  group('video', videoTests);
+
   late MockSupabaseClient client;
   late MockStorageFileApi bucket;
   late SupabasePostRepository repository;
@@ -34,7 +36,10 @@ void main() {
     title: 't',
     content: 'c',
     treatments: [CaseTreatment.listed(TreatmentType.kanalTedavisi)],
-    imageFiles: [File('a.JPG'), File('b.png')],
+    media: [
+      (image: File('a.JPG'), video: null),
+      (image: File('b.png'), video: null),
+    ],
     tags: const [],
   );
 
@@ -96,6 +101,7 @@ void main() {
             ),
           ],
           tags: const ['İmplant', 'implant'],
+          mediaOrder: const ['m2', 'm1'],
         ),
         throwsA(isA<NotFoundFailure>()),
       );
@@ -118,6 +124,102 @@ void main() {
       expect(params['p_tags'], [
         {'name': 'İmplant', 'slug': 'implant'},
       ]);
+      expect(params['p_media_order'], ['m2', 'm1']);
     },
   );
+}
+
+void videoTests() {
+  late MockSupabaseClient client;
+  late MockStorageFileApi images;
+  late MockStorageFileApi videos;
+  late SupabasePostRepository repository;
+
+  setUp(() {
+    client = MockSupabaseClient();
+    final auth = MockGoTrueClient();
+    final user = MockUser();
+    final storage = MockSupabaseStorageClient();
+    images = MockStorageFileApi();
+    videos = MockStorageFileApi();
+    when(client.auth).thenReturn(auth);
+    when(auth.currentUser).thenReturn(user);
+    when(user.id).thenReturn('u1');
+    when(client.storage).thenReturn(storage);
+    when(storage.from('post-images')).thenReturn(images);
+    when(storage.from('post-videos')).thenReturn(videos);
+    for (final b in [images, videos]) {
+      when(b.remove(any)).thenAnswer((_) async => []);
+      when(
+        b.upload(any, any, fileOptions: anyNamed('fileOptions')),
+      ).thenAnswer((_) async => 'ok');
+    }
+    repository = SupabasePostRepository(client);
+  });
+
+  test('forum: medya sırası korunur, video kapağı sırasında; '
+      'hata olursa yüklenenler silinir', () async {
+    when(client.rpc('create_post', params: anyNamed('params'))).thenThrow(
+      const PostgrestException(message: 'invalid video path', code: '22023'),
+    );
+
+    await expectLater(
+      repository.createQuestion(
+        title: 't',
+        content: 'c',
+        media: [
+          (image: File('a.webp'), video: null),
+          (image: File('v.jpg'), video: File('v.mp4')),
+          (image: File('b.webp'), video: null),
+        ],
+        tags: const [],
+      ),
+      throwsA(anything),
+    );
+
+    final videoPaths = verify(
+      videos.upload(captureAny, any, fileOptions: anyNamed('fileOptions')),
+    ).captured.cast<String>();
+    final imagePaths = verify(
+      images.upload(captureAny, any, fileOptions: anyNamed('fileOptions')),
+    ).captured.cast<String>();
+    expect(videoPaths.single, allOf(startsWith('u1/'), endsWith('.mp4')));
+    expect(imagePaths.map((p) => p.split('.').last), ['webp', 'jpg', 'webp']);
+
+    final params =
+        verify(
+              client.rpc('create_post', params: captureAnyNamed('params')),
+            ).captured.single
+            as Map<String, dynamic>;
+    expect(params['p_type'], 'question');
+    expect(params['p_image_paths'], imagePaths);
+    expect(params['p_video_path'], videoPaths.single);
+    expect(params['p_video_index'], 1);
+
+    expect(verify(images.remove(captureAny)).captured.single, imagePaths);
+    expect(verify(videos.remove(captureAny)).captured.single, videoPaths);
+  });
+
+  test('video yüklenemezse görsel yüklenmez, post oluşturulmaz', () async {
+    when(
+      videos.upload(any, any, fileOptions: anyNamed('fileOptions')),
+    ).thenThrow(const StorageException('network'));
+
+    await expectLater(
+      repository.createCase(
+        title: 't',
+        content: 'c',
+        treatments: [CaseTreatment.listed(TreatmentType.kanalTedavisi)],
+        media: [
+          (image: File('a.webp'), video: null),
+          (image: File('v.jpg'), video: File('v.mp4')),
+        ],
+        tags: const [],
+      ),
+      throwsA(anything),
+    );
+
+    verifyNever(images.upload(any, any, fileOptions: anyNamed('fileOptions')));
+    verifyNever(client.rpc(any, params: anyNamed('params')));
+  });
 }

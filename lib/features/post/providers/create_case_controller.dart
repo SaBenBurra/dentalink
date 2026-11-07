@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/models/case_treatment.dart';
-import '../../../core/utils/image_compress.dart';
+import '../../../core/utils/media_prepare.dart';
 import '../../../data/models/post_model.dart';
 import '../../../data/providers/repository_providers.dart';
 
@@ -22,14 +21,14 @@ class CreateCaseController extends AutoDisposeAsyncNotifier<void> {
 
   /// Yeni vaka formunu gönderir.
   ///
-  /// [imageFiles] kullanıcının cihazından seçtiği ham görsel dosyaları.
-  /// Görseller Supabase Storage'a (`post-images` bucket'ı) yüklenir,
+  /// [media] kullanıcının seçip sıraladığı görseller ve video. Görseller
+  /// `post-images`'a, video 720p'ye sıkıştırılıp `post-videos`'a yüklenir,
   /// ardından post ve ilişkili kayıtlar veritabanına yazılır.
   Future<PostModel?> submit({
     required String title,
     required String content,
     required List<CaseTreatment> treatments,
-    required List<File> imageFiles,
+    required List<PickedMedia> media,
     required List<String> tags,
   }) async {
     state = const AsyncLoading();
@@ -40,7 +39,7 @@ class CreateCaseController extends AutoDisposeAsyncNotifier<void> {
         title: title,
         content: content,
         treatments: treatments,
-        imageFiles: await compressToWebp(imageFiles),
+        media: await prepareMedia(media),
         tags: tags,
       );
 

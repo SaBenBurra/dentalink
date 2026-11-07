@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart'
 
 import '../../core/error/app_failures.dart';
 import '../../core/l10n/generated/app_localizations.dart';
+import '../../core/utils/video_prepare.dart';
 
 /// Hatayı kullanıcıya gösterilecek metne çevirir. Ham `Exception: ...` metni
 /// asla UI'a çıkmaz.
@@ -39,6 +40,7 @@ String getErrorMessage(AppLocalizations l10n, Object e) {
     if (e.message == 'sms_send_failed') return l10n.whatsappSendFailed;
     if (_isRateLimit(e)) return l10n.otpRateLimited;
   }
+  if (e is VideoTooLargeException) return l10n.videoTooLarge;
   // image_picker izin reddi.
   if (e is PlatformException &&
       (e.code == 'camera_access_denied' || e.code == 'photo_access_denied')) {

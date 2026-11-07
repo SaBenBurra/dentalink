@@ -69,11 +69,15 @@ abstract class IPostActionRepository {
   Future<void> incrementViewCount(String postId);
 }
 
+/// Yüklemeye hazır medya öğesi: görsel ya da videonun kapağı [image],
+/// videoysa sıkıştırılmış mp4 [video]. Liste sırası gönderideki sıradır.
+typedef MediaUpload = ({File image, File? video});
+
 /// Gönderi oluşturma ve silme işlemleri
 abstract class ICreatePostRepository {
   /// Yeni bir vaka gönderisi oluşturur.
   ///
-  /// [imageFiles] Supabase Storage'a yüklenecek ham dosyalar.
+  /// [media] Supabase Storage'a yüklenecek dosyalar, gösterim sırasıyla.
   /// Etiketler (`tags`) varsa `tags` tablosuna upsert yapılır,
   /// ardından `post_tags` junction tablosuna bağlanır. [treatments] 1–5 tedavi
   /// (040); etiketleri sunucuda posta eklenir, 5 etiket sınırına sayılmaz.
@@ -81,25 +85,28 @@ abstract class ICreatePostRepository {
     required String title,
     required String content,
     required List<CaseTreatment> treatments,
-    required List<File> imageFiles,
+    required List<MediaUpload> media,
     required List<String> tags,
   });
 
-  /// Yeni bir soru gönderisi oluşturur.
+  /// Yeni bir forum gönderisi oluşturur; görsel ve video isteğe bağlı (en fazla 4 medya).
   Future<PostModel> createQuestion({
     required String title,
     required String content,
+    List<MediaUpload> media = const [],
     required List<String> tags,
   });
 
   /// Başlık, içerik, tedaviler (yalnızca vaka, 1–5) ve etiketleri günceller.
-  /// Görseller düzenlenmez. Post yoksa ya da başkasınınsa [NotFoundFailure].
+  /// Medya eklenmez/silinmez; [mediaOrder] verilirse (post_images id'leri) yeniden
+  /// sıralanır. Post yoksa ya da başkasınınsa [NotFoundFailure].
   Future<PostModel> updatePost({
     required String postId,
     required String title,
     required String content,
     List<CaseTreatment> treatments = const [],
     required List<String> tags,
+    List<String>? mediaOrder,
   });
 
   /// Gönderiyi siler (cascade: images, tags, likes, bookmarks, comments).

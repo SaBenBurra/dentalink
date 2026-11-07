@@ -277,7 +277,7 @@
   "addImages": "Görsel Ekle",
   "@addImages": { "description": "Görsel ekleme butonu" },
 
-  "maxImagesReached": "En fazla {count} görsel ekleyebilirsiniz.",
+  "maxImagesReached": "En fazla {count} görsel veya video ekleyebilirsiniz.",
   "@maxImagesReached": { "description": "Maksimum görsel uyarısı", "placeholders": { "count": { "type": "int" } } },
 
   "publish": "Yayınla",
@@ -626,7 +626,7 @@
   "conversationsLoadError": "Konuşmalar yüklenemedi",
   "markAllRead": "Tümünü Okundu İşaretle",
   "joinDiscussionHint": "Mesleki tartışmaya katılın...",
-  "caseImageRequired": "Vaka için en az bir görsel eklemelisiniz.",
+  "caseImageRequired": "Vaka için en az bir görsel veya video eklemelisiniz.",
   "caseShared": "Vaka başarıyla paylaşıldı!",
   "share": "Paylaş",
   "caseTitleLabel": "Vaka Başlığı",
@@ -654,8 +654,8 @@
   "answersWithCount": "Cevaplar ({count})",
   "@answersWithCount": { "placeholders": { "count": { "type": "int" } } },
   "commentsTitle": "Yorumlar",
-  "images": "Görseller",
-  "addPhoto": "Fotoğraf Ekle",
+  "images": "Görsel ve Video",
+  "addPhoto": "Medya Ekle",
   "addTagHint": "Etiket ekle (Enter'a bas)",
   "profileUpdated": "Profil güncellendi",
   "userInfoNotFound": "Kullanıcı bilgisi bulunamadı",
@@ -724,7 +724,7 @@
   "legalKvkk": "KVKK Aydınlatma Metni",
   "registerAcceptTerms": "Kullanım Koşulları'nı okudum ve kabul ediyorum. KVKK Aydınlatma Metni'ni ve Gizlilik Politikası'nı okudum.",
   "validationTermsRequired": "Devam etmek için kullanım koşullarını kabul etmelisin",
-  "casePrivacyConfirm": "Görseller ve açıklama hastanın yüzünü, adını veya kimliğini ortaya çıkaracak bilgi içermiyor.",
+  "casePrivacyConfirm": "Görseller, video ve açıklama hastanın yüzünü, adını veya kimliğini ortaya çıkaracak bilgi içermiyor.",
   "casePrivacyRequired": "Paylaşmadan önce hasta mahremiyeti onayını işaretlemelisin",
   "logoutConfirmTitle": "Çıkış yapılsın mı?",
   "chatToday": "Bugün",
@@ -847,5 +847,14 @@
   "contactSaved": "Kaydedildi",
   "contactSame": "Bu zaten hesabınızda kayıtlı.",
   "contactTaken": "Bu bilgi başka bir hesapta kayıtlı.",
-  "whatsappSendFailed": "WhatsApp'a kod gönderilemedi. Numaranın WhatsApp'ta kayıtlı olduğundan emin olun."
+  "whatsappSendFailed": "WhatsApp'a kod gönderilemedi. Numaranın WhatsApp'ta kayıtlı olduğundan emin olun.",
+  "pickVideoFromGallery": "Galeriden Video Seç",
+  "recordVideo": "Video Çek",
+  "videoTooLong": "Video en fazla 60 saniye olabilir.",
+  "videoTooLarge": "Video sıkıştırıldıktan sonra bile 50 MB'tan büyük. Daha kısa bir video deneyin.",
+  "playVideo": "Videoyu oynat",
+  "pauseVideo": "Videoyu duraklat",
+  "videoLoadFailed": "Video açılamadı.",
+  "mediaReorderHint": "Sırayı değiştirmek için basılı tutup sürükleyin.",
+  "mediaOrder": "Medya sırası"
 }

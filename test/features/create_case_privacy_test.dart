@@ -36,7 +36,7 @@ class _PostRepo implements ICreatePostRepository {
     required String title,
     required String content,
     required List<CaseTreatment> treatments,
-    required List<File> imageFiles,
+    required List<MediaUpload> media,
     required List<String> tags,
   }) async {
     calls++;

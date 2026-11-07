@@ -9,7 +9,7 @@ import '../../mocks/generate_mocks.mocks.dart';
 /// SEC-9: post-images private; görseller tek istekte imzalanır.
 void main() {
   test(
-    'getPostById görselleri sırayla imzalar, imzalanamayanı atlar',
+    'getPostById görselleri sırayla imzalar, imzalanamayanı atlar; video ayrı bucket\'ta',
     () async {
       final client = MockSupabaseClient();
       final auth = MockGoTrueClient();
@@ -48,9 +48,16 @@ void main() {
               'updated_at': now,
             },
             'post_images': [
-              {'image_url': 'a1/2.webp', 'sort_order': 1},
-              {'image_url': 'a1/gone.webp', 'sort_order': 2},
-              {'image_url': 'a1/1.webp', 'sort_order': 0},
+              {'id': 'i2', 'image_url': 'a1/2.webp', 'sort_order': 2},
+              {'id': 'ig', 'image_url': 'a1/gone.webp', 'sort_order': 3},
+              {'id': 'i1', 'image_url': 'a1/1.webp', 'sort_order': 0},
+              // Video ortada: kapak post-images'ta, video post-videos'ta.
+              {
+                'id': 'iv',
+                'image_url': 'a1/v.jpg',
+                'sort_order': 1,
+                'video_path': 'a1/v.mp4',
+              },
             ],
             'post_tags': [],
             'likes': [],
@@ -63,11 +70,19 @@ void main() {
       final bucket = MockStorageFileApi();
       when(client.storage).thenReturn(storage);
       when(storage.from('post-images')).thenReturn(bucket);
+      final videos = MockStorageFileApi();
+      when(storage.from('post-videos')).thenReturn(videos);
+      when(videos.createSignedUrlsResult(['a1/v.mp4'], any)).thenAnswer(
+        (_) async => const [
+          SignedUrlSuccess(path: 'a1/v.mp4', signedUrl: 'https://s/v?token=x'),
+        ],
+      );
       when(bucket.createSignedUrlsResult(any, any)).thenAnswer(
         (_) async => const [
           SignedUrlSuccess(path: 'a1/2.webp', signedUrl: 'https://s/2?token=x'),
           SignedUrlSuccess(path: 'a1/1.webp', signedUrl: 'https://s/1?token=x'),
           SignedUrlFailure(path: 'a1/gone.webp', error: 'not found'),
+          SignedUrlSuccess(path: 'a1/v.jpg', signedUrl: 'https://s/t?token=x'),
         ],
       );
 
@@ -75,11 +90,15 @@ void main() {
           await SupabasePostRepository(client).getPostById('p1')
               as CasePostModel;
 
-      expect(post.imageUrls, ['https://s/1?token=x', 'https://s/2?token=x']);
+      expect(post.media, [
+        (id: 'i1', url: 'https://s/1?token=x', videoUrl: null),
+        (id: 'iv', url: 'https://s/t?token=x', videoUrl: 'https://s/v?token=x'),
+        (id: 'i2', url: 'https://s/2?token=x', videoUrl: null),
+      ]);
       final call = verify(
         bucket.createSignedUrlsResult(captureAny, captureAny),
       ).captured;
-      expect(call[0], hasLength(3));
+      expect(call[0], hasLength(4)); // 3 görsel + kapak
       expect(call[1], SupabasePostRepository.signedUrlTtl.inSeconds);
     },
   );

@@ -6,6 +6,7 @@ import 'package:dentigo/shared/widgets/post_badge.dart';
 import 'package:dentigo/shared/widgets/post_body.dart';
 import 'package:dentigo/shared/widgets/post_glass_container.dart';
 import 'package:dentigo/shared/widgets/post_header.dart';
+import 'package:dentigo/shared/widgets/post_media.dart';
 import 'package:dentigo/shared/utils/post_actions.dart';
 import 'package:dentigo/shared/utils/moderation_actions.dart';
 import 'package:flutter/material.dart';
@@ -79,15 +80,22 @@ class QuestionCard extends ConsumerWidget {
             expanded: expanded,
           ),
 
-          // <-- 3. Ayırıcı çizgi (Soru postlarında görsel eki olmadığından daima gösterilir)
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.spacing16,
+          // <-- 3. Görsel/video (yoksa ayırıcı çizgi)
+          if (post.media.isNotEmpty)
+            PostMedia(
+              media: post.media,
+              isLiked: post.isLiked,
+              onLikeToggle: onLikeToggle,
+            )
+          else
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppDimensions.spacing16,
+              ),
+              child: Divider(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+              ),
             ),
-            child: Divider(
-              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-            ),
-          ),
 
           // <-- 4. Aksiyon Butonları
           Padding(

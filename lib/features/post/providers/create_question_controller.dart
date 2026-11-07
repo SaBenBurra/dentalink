@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/utils/media_prepare.dart';
 import '../../../data/models/post_model.dart';
 import '../../../data/providers/repository_providers.dart';
 
@@ -17,13 +18,12 @@ class CreateQuestionController extends AutoDisposeAsyncNotifier<void> {
     // Başlangıç durumu boş
   }
 
-  /// Yeni soru formunu gönderir.
-  ///
-  /// Soru gönderilerinde görsel opsiyoneldir ve şu anki implementasyonda
-  /// desteklenmez (ileride eklenebilir). Etiketler veritabanına upsert edilir.
+  /// Yeni forum gönderisini gönderir. Görsel ve video isteğe bağlıdır
+  /// (vaka ile aynı sıkıştırma). Etiketler veritabanına upsert edilir.
   Future<PostModel?> submit({
     required String title,
     required String content,
+    List<PickedMedia> media = const [],
     required List<String> tags,
   }) async {
     state = const AsyncLoading();
@@ -33,6 +33,7 @@ class CreateQuestionController extends AutoDisposeAsyncNotifier<void> {
       final post = await repo.createQuestion(
         title: title,
         content: content,
+        media: await prepareMedia(media),
         tags: tags,
       );
 

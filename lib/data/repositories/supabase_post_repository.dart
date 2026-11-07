@@ -34,7 +34,7 @@ class SupabasePostRepository implements PostRepository {
   static const _fullPostSelect = '''
     *,
     users!posts_user_id_fkey(*),
-    post_images(id, image_url, sort_order),
+    post_images(id, image_url, sort_order, video_path),
     post_tags(tags(id, name, slug, usage_count)),
     post_treatments(branch, position, tags(name, slug)),
     likes(id, user_id),
@@ -61,16 +61,14 @@ class SupabasePostRepository implements PostRepository {
     // --- Yazar ---
     final author = UserModel.fromJson(row['users'] as Map<String, dynamic>);
 
-    // --- Görseller ---
-    final rawImages = row['post_images'] as List<dynamic>? ?? [];
-    // sort_order'a göre sırala
-    rawImages.sort(
-      (a, b) => (a['sort_order'] as int? ?? 0).compareTo(
-        b['sort_order'] as int? ?? 0,
-      ),
-    );
-    // image_url bucket içi yol tutar (migration 015); imzalanamayan (silinmiş) dosya atlanır.
-    final imageUrls = [for (final e in rawImages) ?signedUrls[e['image_url']]];
+    // --- Medya (görsel ve video, 046) ---
+    final rawMedia = [...row['post_images'] as List<dynamic>? ?? []]
+      ..sort(
+        (a, b) => (a['sort_order'] as int? ?? 0).compareTo(
+          b['sort_order'] as int? ?? 0,
+        ),
+      );
+    final media = [for (final e in rawMedia) ?_mediaItem(e, signedUrls)];
 
     // --- Etiketler ---
     final rawTags = row['post_tags'] as List<dynamic>? ?? [];
@@ -104,7 +102,7 @@ class SupabasePostRepository implements PostRepository {
           title: row['title'] as String,
           content: row['content'] as String,
           treatments: _treatments(row),
-          imageUrls: imageUrls,
+          media: media,
           tags: tags,
           likeCount: row['like_count'] as int? ?? 0,
           commentCount: row['comment_count'] as int? ?? 0,
@@ -123,6 +121,7 @@ class SupabasePostRepository implements PostRepository {
           title: row['title'] as String,
           content: row['content'] as String,
           isSolved: row['is_solved'] as bool? ?? false,
+          media: media,
           tags: tags,
           likeCount: row['like_count'] as int? ?? 0,
           commentCount: row['comment_count'] as int? ?? 0,
@@ -135,6 +134,19 @@ class SupabasePostRepository implements PostRepository {
           author: author,
         );
     }
+  }
+
+  /// image_url bucket içi yol tutar (migration 015, videoda kapak resmi);
+  /// imzalanamayan (silinmiş) görsel ya da video atlanır.
+  static PostMediaItem? _mediaItem(
+    Map<String, dynamic> e,
+    Map<String, String> signed,
+  ) {
+    final url = signed[e['image_url']];
+    final videoPath = e['video_path'] as String?;
+    final videoUrl = videoPath == null ? null : signed[videoPath];
+    if (url == null || (videoPath != null && videoUrl == null)) return null;
+    return (id: e['id'] as String, url: url, videoUrl: videoUrl);
   }
 
   /// `post_treatments` satırları seçim sırasıyla; bilinmeyen branş atlanır.
@@ -152,24 +164,36 @@ class SupabasePostRepository implements PostRepository {
     ];
   }
 
-  /// Satırları post'a çevirir. `post-images` private (migration 020, SEC-9):
-  /// sayfadaki tüm görseller tek istekle imzalanır.
+  /// Satırları post'a çevirir. `post-images` ve `post-videos` private
+  /// (migration 020, 046, SEC-9): sayfadaki dosyalar bucket başına tek istekle imzalanır.
   Future<List<PostModel>> _mapRows(List<Map<String, dynamic>> rows) async {
-    final paths = [
-      for (final row in rows)
-        for (final e in row['post_images'] as List<dynamic>? ?? [])
-          e['image_url'] as String,
+    final media = [
+      for (final row in rows) ...row['post_images'] as List<dynamic>? ?? [],
     ];
-    final signed = <String, String>{};
-    if (paths.isNotEmpty) {
-      final results = await _client.storage
-          .from('post-images')
-          .createSignedUrlsResult(paths, signedUrlTtl.inSeconds);
-      for (final r in results) {
-        if (r is SignedUrlSuccess) signed[r.path] = r.signedUrl;
-      }
-    }
+    final images = [for (final e in media) e['image_url'] as String];
+    final videos = [
+      for (final e in media)
+        if (e['video_path'] case final String p) p,
+    ];
+    final signed = {
+      ...await _sign(_imageBucket, images),
+      ...await _sign(_videoBucket, videos),
+    };
     return [for (final row in rows) _mapRowToPost(row, signed)];
+  }
+
+  static const _imageBucket = 'post-images';
+  static const _videoBucket = 'post-videos';
+
+  Future<Map<String, String>> _sign(String bucket, List<String> paths) async {
+    if (paths.isEmpty) return const {};
+    final results = await _client.storage
+        .from(bucket)
+        .createSignedUrlsResult(paths, signedUrlTtl.inSeconds);
+    return {
+      for (final r in results)
+        if (r is SignedUrlSuccess) r.path: r.signedUrl,
+    };
   }
 
   /// Uzun süre açık kalan ekranda görseller düşmesin diye 1 gün; sızan link en geç o zaman ölür.
@@ -441,26 +465,61 @@ class SupabasePostRepository implements PostRepository {
     required String title,
     required String content,
     required List<CaseTreatment> treatments,
-    required List<File> imageFiles,
+    required List<MediaUpload> media,
     required List<String> tags,
-  }) => guardSupabase(() async {
+  }) => guardSupabase(
+    () => _createWithMedia(
+      type: PostType.casePost,
+      title: title,
+      content: content,
+      treatments: treatments,
+      media: media,
+      tags: tags,
+    ),
+  );
+
+  /// Dosyalar önce; post, medya kayıtları ve etiketler tek RPC'de (migration 015, 046).
+  /// Herhangi bir adım başarısız olursa yüklenen dosyalar silinir.
+  Future<PostModel> _createWithMedia({
+    required PostType type,
+    required String title,
+    required String content,
+    List<CaseTreatment> treatments = const [],
+    required List<MediaUpload> media,
+    required List<String> tags,
+  }) async {
     final uid = _currentUserId;
-    // Görseller önce; post, görsel kayıtları ve etiketler tek RPC'de (migration 015).
-    final paths = await _uploadImages(uid, imageFiles);
+    final videos = await _upload(_videoBucket, uid, [
+      for (final m in media) ?m.video,
+    ]);
+    final List<String> images;
+    try {
+      // Videonun kapağı da görsellerle aynı sırada yüklenir.
+      images = await _upload(_imageBucket, uid, [
+        for (final m in media) m.image,
+      ]);
+    } catch (_) {
+      await _remove(_videoBucket, videos);
+      rethrow;
+    }
+    final videoIndex = media.indexWhere((m) => m.video != null);
     try {
       return await _createPost(
-        type: PostType.casePost,
+        type: type,
         title: title,
         content: content,
         treatments: treatments,
-        imagePaths: paths,
+        imagePaths: images,
+        videoPath: videos.firstOrNull,
+        videoIndex: videoIndex < 0 ? null : videoIndex,
         tags: tags,
       );
     } catch (_) {
-      await _removeImages(paths);
+      await _remove(_imageBucket, images);
+      await _remove(_videoBucket, videos);
       rethrow;
     }
-  });
+  }
 
   @override
   Future<List<String>> suggestTags(String query) => guardSupabase(() async {
@@ -472,12 +531,14 @@ class SupabasePostRepository implements PostRepository {
   Future<PostModel> createQuestion({
     required String title,
     required String content,
+    List<MediaUpload> media = const [],
     required List<String> tags,
   }) => guardSupabase(
-    () => _createPost(
+    () => _createWithMedia(
       type: PostType.question,
       title: title,
       content: content,
+      media: media,
       tags: tags,
     ),
   );
@@ -488,6 +549,8 @@ class SupabasePostRepository implements PostRepository {
     required String content,
     List<CaseTreatment> treatments = const [],
     List<String> imagePaths = const [],
+    String? videoPath,
+    int? videoIndex,
     required List<String> tags,
   }) async {
     final postId =
@@ -500,6 +563,8 @@ class SupabasePostRepository implements PostRepository {
                 'p_image_paths': imagePaths,
                 'p_tags': _tagsPayload(tags),
                 'p_treatments': [for (final t in treatments) t.toPayload()],
+                'p_video_path': videoPath,
+                'p_video_index': videoIndex,
               },
             )
             as String;
@@ -513,6 +578,7 @@ class SupabasePostRepository implements PostRepository {
     required String content,
     List<CaseTreatment> treatments = const [],
     required List<String> tags,
+    List<String>? mediaOrder,
   }) => guardSupabase(() async {
     await _client.rpc(
       'update_post',
@@ -522,6 +588,7 @@ class SupabasePostRepository implements PostRepository {
         'p_content': content,
         'p_tags': _tagsPayload(tags),
         'p_treatments': [for (final t in treatments) t.toPayload()],
+        'p_media_order': mediaOrder,
       },
     );
     return getPostById(postId);
@@ -529,10 +596,10 @@ class SupabasePostRepository implements PostRepository {
 
   @override
   Future<void> deletePost(String postId) => guardSupabase(() async {
-    // 1) Görsel yollarını, satır CASCADE ile silinmeden önce al.
-    final images = await _client
+    // 1) Dosya yollarını, satır CASCADE ile silinmeden önce al.
+    final media = await _client
         .from('post_images')
-        .select('image_url')
+        .select('image_url, video_path')
         .eq('post_id', postId);
 
     // 2) Önce satırı sil. RLS sahibi olmayanın silmesini hata vermeden 0 satıra
@@ -546,30 +613,38 @@ class SupabasePostRepository implements PostRepository {
 
     // 3) En son dosyalar: burada hata olsa bile post zaten silinmiştir,
     // en kötü ihtimalle yetim dosya kalır (veri kaybı değil).
-    await _removeImages([for (final e in images) e['image_url'] as String]);
+    await _remove(_imageBucket, [
+      for (final e in media) e['image_url'] as String,
+    ]);
+    await _remove(_videoBucket, [
+      for (final e in media)
+        if (e['video_path'] case final String p) p,
+    ]);
   });
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  PRİVATE YARDIMCILAR
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /// Görselleri `post-images` bucket'ına kullanıcının klasörüne yükler,
+  /// Dosyaları [bucket] içinde kullanıcının klasörüne yükler,
   /// bucket içi yolları döndürür. Biri bile başarısız olursa yüklenenler
   /// silinir ve hata fırlatılır.
-  Future<List<String>> _uploadImages(
+  Future<List<String>> _upload(
+    String bucket,
     String userId,
-    List<File> imageFiles,
+    List<File> files,
   ) async {
+    if (files.isEmpty) return const [];
     final stamp = DateTime.now().millisecondsSinceEpoch;
     final paths = [
-      for (final (i, f) in imageFiles.indexed)
+      for (final (i, f) in files.indexed)
         '$userId/${stamp}_$i.${f.path.split('.').last.toLowerCase()}',
     ];
     try {
       await Future.wait([
-        for (final (i, f) in imageFiles.indexed)
+        for (final (i, f) in files.indexed)
           _client.storage
-              .from('post-images')
+              .from(bucket)
               .upload(
                 paths[i],
                 f,
@@ -581,19 +656,19 @@ class SupabasePostRepository implements PostRepository {
       ]);
     } catch (_) {
       // remove(), olmayan yolları sessizce atlar.
-      await _removeImages(paths);
+      await _remove(bucket, paths);
       rethrow;
     }
     return paths;
   }
 
   /// En iyi çaba: hata olursa en kötü ihtimalle yetim dosya kalır.
-  Future<void> _removeImages(List<String> paths) async {
+  Future<void> _remove(String bucket, List<String> paths) async {
     if (paths.isEmpty) return;
     try {
-      await _client.storage.from('post-images').remove(paths);
+      await _client.storage.from(bucket).remove(paths);
     } catch (e) {
-      debugPrint('post-images silinemedi: $e');
+      debugPrint('$bucket silinemedi: $e');
     }
   }
 

@@ -12,6 +12,7 @@ void main() {
   late MockSupabaseClient client;
   late MockStorageFileApi avatars;
   late MockStorageFileApi postImages;
+  late MockStorageFileApi postVideos;
   late SupabaseUserRepository repo;
 
   setUp(() {
@@ -21,18 +22,20 @@ void main() {
     final storage = MockSupabaseStorageClient();
     avatars = MockStorageFileApi();
     postImages = MockStorageFileApi();
+    postVideos = MockStorageFileApi();
     when(user.id).thenReturn('me');
     when(auth.currentUser).thenReturn(user);
     when(client.auth).thenReturn(auth);
     when(client.storage).thenReturn(storage);
     when(storage.from('avatars')).thenReturn(avatars);
     when(storage.from('post-images')).thenReturn(postImages);
+    when(storage.from('post-videos')).thenReturn(postVideos);
     // RPC'ye ulaşıldığını bu hatayla anlarız (builder mock'u gerekmez).
     when(client.rpc('delete_account')).thenThrow(StateError('rpc reached'));
     repo = SupabaseUserRepository(client: client);
   });
 
-  test('önce iki klasör sayfa sayfa boşaltılır, sonra RPC çağrılır', () async {
+  test('önce üç klasör sayfa sayfa boşaltılır, sonra RPC çağrılır', () async {
     final avatarPages = [
       [_file('a.webp')],
       <FileObject>[],
@@ -48,6 +51,18 @@ void main() {
     when(
       postImages.list(path: 'me', searchOptions: anyNamed('searchOptions')),
     ).thenAnswer((_) async => postPages.removeAt(0));
+    final videoPages = [
+      [_file('v.mp4')],
+      <FileObject>[],
+    ];
+    when(
+      postVideos.list(path: 'me', searchOptions: anyNamed('searchOptions')),
+    ).thenAnswer((_) async => videoPages.removeAt(0));
+    when(postVideos.remove(any)).thenAnswer(
+      (inv) async => [
+        for (final p in inv.positionalArguments[0] as List<String>) _file(p),
+      ],
+    );
     when(avatars.remove(any)).thenAnswer(
       (inv) async => [
         for (final p in inv.positionalArguments[0] as List<String>) _file(p),
@@ -64,6 +79,7 @@ void main() {
     verify(avatars.remove(['me/a.webp'])).called(1);
     verify(postImages.remove(['me/1.webp', 'me/2.webp'])).called(1);
     verify(postImages.remove(['me/3.webp'])).called(1);
+    verify(postVideos.remove(['me/v.mp4'])).called(1);
   });
 
   test('dosyalar silinemezse hesaba dokunulmaz', () async {

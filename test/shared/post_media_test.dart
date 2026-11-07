@@ -1,3 +1,4 @@
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:dentigo/shared/widgets/fullscreen_image_viewer.dart';
 import 'package:dentigo/shared/widgets/post_media.dart';
 import 'package:flutter/gestures.dart';
@@ -16,7 +17,11 @@ void main() {
         children: [
           ListView(
             children: [
-              PostMedia(imageUrls: urls, isLiked: false, onLikeToggle: () {}),
+              PostMedia(
+                media: [for (final u in urls) (id: u, url: u, videoUrl: null)],
+                isLiked: false,
+                onLikeToggle: () {},
+              ),
             ],
           ),
           const Text('ikinci sekme'),
@@ -81,7 +86,7 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: PostMedia(
-            imageUrls: const ['https://x/1.jpg'],
+            media: const [(id: '1', url: 'https://x/1.jpg', videoUrl: null)],
             isLiked: false,
             onLikeToggle: () {},
           ),
@@ -114,4 +119,62 @@ void main() {
     await settle(tester);
     expect(find.byType(FullscreenImageViewer), findsNothing);
   });
+
+  testWidgets(
+    'video kendi sırasında oynat simgesiyle; galeride de kapak ve simgeyle durur',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: PostMedia(
+              media: const [
+                (id: '1', url: 'https://x/1.jpg', videoUrl: null),
+                (id: 'v', url: 'https://x/t.jpg', videoUrl: 'https://x/v.mp4'),
+                (id: '2', url: 'https://x/2.jpg', videoUrl: null),
+              ],
+              isLiked: false,
+              onLikeToggle: () {},
+            ),
+          ),
+        ),
+      );
+      expect(find.text('1/3'), findsOneWidget);
+      expect(find.byIcon(Icons.play_arrow_rounded), findsNothing);
+
+      final slider = find.descendant(
+        of: find.byType(PostMedia),
+        matching: find.byType(PageView),
+      );
+      await tester.fling(slider, const Offset(-300, 0), 1000);
+      await settle(tester);
+      expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget);
+      await tester.fling(slider, const Offset(-300, 0), 1000);
+      await settle(tester);
+      expect(find.byIcon(Icons.play_arrow_rounded), findsNothing);
+
+      await tester.tap(slider);
+      await tester.pump(kDoubleTapTimeout);
+      await settle(tester);
+      expect(find.byType(FullscreenImageViewer), findsOneWidget);
+      expect(find.text('3 / 3'), findsOneWidget);
+
+      // Galeride geri kaydırınca video sayfası: kapak + oynat simgesi.
+      final gallery = find.descendant(
+        of: find.byType(FullscreenImageViewer),
+        matching: find.byType(PageView),
+      );
+      await tester.fling(gallery, const Offset(400, 0), 1000);
+      await settle(tester);
+      expect(find.text('2 / 3'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(FullscreenImageViewer),
+          matching: find.byIcon(Icons.play_arrow_rounded),
+        ),
+        findsOneWidget,
+      );
+    },
+  );
 }

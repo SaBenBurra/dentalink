@@ -67,8 +67,10 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>Profil fotoğrafı ve vaka görselleri çekmek için kameraya erişim gerekir.</string>
+	<string>Profil fotoğrafı, gönderi görselleri ve videoları çekmek için kameraya erişim gerekir.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Gönderi videosu çekerken sesi kaydetmek için mikrofona erişim gerekir.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Profil fotoğrafı ve vaka görselleri seçmek için fotoğraf arşivine erişim gerekir.</string>
+	<string>Profil fotoğrafı, gönderi görselleri ve videoları seçmek için fotoğraf arşivine erişim gerekir.</string>
 </dict>
 </plist>

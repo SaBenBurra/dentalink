@@ -653,7 +653,7 @@ abstract class AppLocalizations {
   /// Maksimum görsel uyarısı
   ///
   /// In tr, this message translates to:
-  /// **'En fazla {count} görsel ekleyebilirsiniz.'**
+  /// **'En fazla {count} görsel veya video ekleyebilirsiniz.'**
   String maxImagesReached(int count);
 
   /// Yayınla butonu
@@ -1655,7 +1655,7 @@ abstract class AppLocalizations {
   /// No description provided for @caseImageRequired.
   ///
   /// In tr, this message translates to:
-  /// **'Vaka için en az bir görsel eklemelisiniz.'**
+  /// **'Vaka için en az bir görsel veya video eklemelisiniz.'**
   String get caseImageRequired;
 
   /// No description provided for @caseShared.
@@ -1811,13 +1811,13 @@ abstract class AppLocalizations {
   /// No description provided for @images.
   ///
   /// In tr, this message translates to:
-  /// **'Görseller'**
+  /// **'Görsel ve Video'**
   String get images;
 
   /// No description provided for @addPhoto.
   ///
   /// In tr, this message translates to:
-  /// **'Fotoğraf Ekle'**
+  /// **'Medya Ekle'**
   String get addPhoto;
 
   /// No description provided for @addTagHint.
@@ -2189,7 +2189,7 @@ abstract class AppLocalizations {
   /// No description provided for @casePrivacyConfirm.
   ///
   /// In tr, this message translates to:
-  /// **'Görseller ve açıklama hastanın yüzünü, adını veya kimliğini ortaya çıkaracak bilgi içermiyor.'**
+  /// **'Görseller, video ve açıklama hastanın yüzünü, adını veya kimliğini ortaya çıkaracak bilgi içermiyor.'**
   String get casePrivacyConfirm;
 
   /// No description provided for @casePrivacyRequired.
@@ -2839,6 +2839,60 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'WhatsApp\'a kod gönderilemedi. Numaranın WhatsApp\'ta kayıtlı olduğundan emin olun.'**
   String get whatsappSendFailed;
+
+  /// No description provided for @pickVideoFromGallery.
+  ///
+  /// In tr, this message translates to:
+  /// **'Galeriden Video Seç'**
+  String get pickVideoFromGallery;
+
+  /// No description provided for @recordVideo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Video Çek'**
+  String get recordVideo;
+
+  /// No description provided for @videoTooLong.
+  ///
+  /// In tr, this message translates to:
+  /// **'Video en fazla 60 saniye olabilir.'**
+  String get videoTooLong;
+
+  /// No description provided for @videoTooLarge.
+  ///
+  /// In tr, this message translates to:
+  /// **'Video sıkıştırıldıktan sonra bile 50 MB\'tan büyük. Daha kısa bir video deneyin.'**
+  String get videoTooLarge;
+
+  /// No description provided for @playVideo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Videoyu oynat'**
+  String get playVideo;
+
+  /// No description provided for @pauseVideo.
+  ///
+  /// In tr, this message translates to:
+  /// **'Videoyu duraklat'**
+  String get pauseVideo;
+
+  /// No description provided for @videoLoadFailed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Video açılamadı.'**
+  String get videoLoadFailed;
+
+  /// No description provided for @mediaReorderHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sırayı değiştirmek için basılı tutup sürükleyin.'**
+  String get mediaReorderHint;
+
+  /// No description provided for @mediaOrder.
+  ///
+  /// In tr, this message translates to:
+  /// **'Medya sırası'**
+  String get mediaOrder;
 }
 
 class _AppLocalizationsDelegate

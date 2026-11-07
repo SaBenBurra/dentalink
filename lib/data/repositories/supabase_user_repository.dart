@@ -156,7 +156,7 @@ class SupabaseUserRepository implements UserRepository {
     final uid = client.auth.currentUser?.id;
     if (uid == null) throw const AuthRequiredFailure();
 
-    for (final bucket in const ['avatars', 'post-images']) {
+    for (final bucket in const ['avatars', 'post-images', 'post-videos']) {
       await _emptyFolder(bucket, uid);
     }
     await client.rpc('delete_account');

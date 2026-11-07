@@ -105,6 +105,7 @@ class _FakePostRepository implements PostRepository {
   Future<PostModel> createQuestion({
     required String title,
     required String content,
+    List<MediaUpload> media = const [],
     required List<String> tags,
   }) async {
     final post = QuestionPostModel(

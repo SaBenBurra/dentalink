@@ -1,5 +1,5 @@
 import 'package:dentigo/core/l10n/generated/app_localizations.dart';
-import 'dart:io';
+import '../../../core/utils/media_prepare.dart';
 import 'package:flutter/material.dart';
 import '../../../data/providers/repository_providers.dart';
 import '../../../shared/utils/error_messages.dart';
@@ -10,6 +10,7 @@ import '../widgets/form_section_label.dart';
 import '../widgets/share_submit.dart';
 import '../widgets/treatments_field.dart';
 import '../widgets/image_picker_grid.dart';
+import '../widgets/privacy_confirm_tile.dart';
 import '../widgets/tag_input.dart';
 import 'package:dentigo/core/constants/app_dimensions.dart';
 import '../../../shared/widgets/unsaved_changes_scope.dart';
@@ -28,7 +29,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   List<CaseTreatment> _treatments = const [];
-  List<File> _images = [];
+  List<PickedMedia> _media = [];
   List<String> _tags = [];
   bool _dirty = false; // UX-2
   String? _sharedPostId;
@@ -54,7 +55,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
         return;
       }
 
-      if (_images.isEmpty) {
+      if (_media.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.caseImageRequired),
@@ -78,7 +79,7 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
             title: _titleController.text,
             content: _contentController.text,
             treatments: _treatments,
-            imageFiles: _images,
+            media: _media,
             tags: _tags,
           );
 
@@ -111,8 +112,6 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return UnsavedChangesScope(
       dirty: _dirty,
       busy: ref.watch(createCaseProvider).isLoading || _sharedPostId != null,
@@ -191,42 +190,18 @@ class _CreateCaseScreenState extends ConsumerState<CreateCaseScreen> {
               // Görseller
               ImagePickerGrid(
                 maxImages: 10,
-                onImagesChanged: (images) {
-                  setState(() {
-                    _dirty = true;
-                    _images = List.of(images);
-                  });
-                },
+                onChanged: (media) => setState(() {
+                  _dirty = true;
+                  _media = media;
+                }),
               ),
               const SizedBox(height: AppDimensions.spacing16),
-              // Hasta mahremiyeti (Faz 4): yüz ve kimlik bilgisi paylaşılmaz.
-              CheckboxListTile(
-                tileColor:
-                    (_privacyConfirmed
-                            ? colorScheme.primary
-                            : colorScheme.tertiary)
-                        .withValues(alpha: 0.08),
+              PrivacyConfirmTile(
                 value: _privacyConfirmed,
                 onChanged: (v) => setState(() {
                   _dirty = true;
-                  _privacyConfirmed = v ?? false;
+                  _privacyConfirmed = v;
                 }),
-                controlAffinity: ListTileControlAffinity.leading,
-                secondary: Icon(
-                  Icons.shield_outlined,
-                  color: _privacyConfirmed
-                      ? colorScheme.primary
-                      : colorScheme.tertiary,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    AppDimensions.radiusMedium,
-                  ),
-                ),
-                title: Text(
-                  AppLocalizations.of(context)!.casePrivacyConfirm,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
               ),
               const FormSectionDivider(),
 

@@ -91,9 +91,9 @@ class CaseCard extends ConsumerWidget {
           ),
 
           // <-- 3. Görsel (yoksa ayırıcı çizgi)
-          if (post.imageUrls.isNotEmpty)
+          if (post.media.isNotEmpty)
             PostMedia(
-              imageUrls: post.imageUrls,
+              media: post.media,
               isLiked: post.isLiked,
               onLikeToggle: onLikeToggle,
             )

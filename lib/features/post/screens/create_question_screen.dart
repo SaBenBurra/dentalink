@@ -1,4 +1,5 @@
 import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import '../../../core/utils/media_prepare.dart';
 import 'package:flutter/material.dart';
 import '../../../data/providers/repository_providers.dart';
 import '../../../shared/utils/error_messages.dart';
@@ -6,6 +7,8 @@ import '../../../shared/utils/post_actions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/form_section_label.dart';
+import '../widgets/image_picker_grid.dart';
+import '../widgets/privacy_confirm_tile.dart';
 import '../widgets/share_submit.dart';
 import '../widgets/tag_input.dart';
 import 'package:dentigo/core/constants/app_dimensions.dart';
@@ -24,9 +27,13 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
+  List<PickedMedia> _media = [];
   List<String> _tags = [];
   bool _dirty = false; // UX-2
   String? _sharedPostId;
+  bool _privacyConfirmed = false;
+
+  bool get _hasMedia => _media.isNotEmpty;
 
   @override
   void dispose() {
@@ -37,11 +44,22 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
 
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
+      // Görsel hasta fotoğrafı olabilir: vakadaki onay burada da şart.
+      if (_hasMedia && !_privacyConfirmed) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.casePrivacyRequired),
+          ),
+        );
+        return;
+      }
+
       final post = await ref
           .read(createQuestionProvider.notifier)
           .submit(
             title: _titleController.text,
             content: _contentController.text,
+            media: _media,
             tags: _tags,
           );
 
@@ -135,6 +153,26 @@ class _CreateQuestionScreenState extends ConsumerState<CreateQuestionScreen> {
                   return null;
                 },
               ),
+              const FormSectionDivider(),
+
+              // Görsel ve video (isteğe bağlı, en fazla 4; 046)
+              ImagePickerGrid(
+                maxImages: 4,
+                onChanged: (media) => setState(() {
+                  _dirty = true;
+                  _media = media;
+                }),
+              ),
+              if (_hasMedia) ...[
+                const SizedBox(height: AppDimensions.spacing16),
+                PrivacyConfirmTile(
+                  value: _privacyConfirmed,
+                  onChanged: (v) => setState(() {
+                    _dirty = true;
+                    _privacyConfirmed = v;
+                  }),
+                ),
+              ],
               const FormSectionDivider(),
 
               // Etiketler

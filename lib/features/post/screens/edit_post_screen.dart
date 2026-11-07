@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,11 +15,13 @@ import '../../../providers/post_provider.dart';
 import '../../../shared/utils/error_messages.dart';
 import '../widgets/form_section_label.dart';
 import '../widgets/treatments_field.dart';
+import '../widgets/media_reorder_strip.dart';
 import '../widgets/detail/detail_states.dart';
 import '../widgets/tag_input.dart';
 import '../../../shared/widgets/unsaved_changes_scope.dart';
 
-/// Başlık, içerik, branş (vaka) ve etiket düzenleme. Görseller düzenlenmez.
+/// Başlık, içerik, tedaviler (vaka), etiket ve medya sırası düzenleme.
+/// Medya eklenmez/silinmez, yalnızca sıralanır (046).
 class EditPostScreen extends ConsumerWidget {
   final String postId;
 
@@ -70,6 +73,8 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
     CasePostModel(:final treatments) => treatments,
     _ => const [],
   };
+  late final List<PostMediaItem> _media = [...widget.post.media];
+  bool _mediaReordered = false;
   bool _saving = false;
   bool _dirty = false; // UX-2
 
@@ -94,6 +99,7 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
             content: _contentController.text,
             treatments: _treatments,
             tags: _tags,
+            mediaOrder: _mediaReordered ? [for (final m in _media) m.id] : null,
           );
       ref.read(feedProvider.notifier).replacePost(updated);
       if (ref.exists(userPostsProvider(updated.userId))) {
@@ -188,6 +194,44 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
                     _treatments = t;
                     _dirty = true;
                   }),
+                ),
+              ],
+              if (_media.length > 1) ...[
+                const FormSectionDivider(),
+                FormSectionLabel(
+                  icon: Icons.photo_library_outlined,
+                  label: l10n.mediaOrder,
+                ),
+                const SizedBox(height: AppDimensions.spacing12),
+                MediaReorderStrip(
+                  onReorder: (oldIndex, newIndex) => setState(() {
+                    _media.insert(newIndex, _media.removeAt(oldIndex));
+                    _mediaReordered = true;
+                    _dirty = true;
+                  }),
+                  children: [
+                    for (final m in _media)
+                      MediaTile(
+                        key: ValueKey(m.id),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl: m.url,
+                              // İmzalı URL her çekişte değişir; önbellek dosya yoluna bağlı (SEC-9).
+                              cacheKey: Uri.parse(m.url).path,
+                              fit: BoxFit.cover,
+                            ),
+                            if (m.videoUrl != null)
+                              const Icon(
+                                Icons.play_circle_outline,
+                                color: Colors.white,
+                                size: 32,
+                              ),
+                          ],
+                        ),
+                      ),
+                  ],
                 ),
               ],
               const FormSectionDivider(),

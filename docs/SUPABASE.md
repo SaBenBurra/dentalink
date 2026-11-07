@@ -54,6 +54,7 @@ RLS **hangi satırlara** dokunulabileceğini belirler; GRANT **hangi kolonlara**
 |---|---|---|---|
 | `avatars` | public read | `{auth.uid()}/…` | 012'de tanımlandı; 2MB limit (019) |
 | `post-images` | **private**, okuma yalnızca `authenticated` (020) | `{auth.uid()}/…` | 2MB limit (019), istemci WebP yükler; görseller 1 günlük signed URL ile gösterilir (SEC-9) |
+| `post-videos` | **private**, okuma yalnızca `authenticated` (046) | `{auth.uid()}/…` | 50MB, yalnızca `video/mp4`; istemci 720p'ye sıkıştırır. Video bir `post_images` satırıdır: kapak `image_url`'de (`post-images`), video `video_path`'te. Signed URL 1 gün |
 
 - Yazma ve silme policy'si: `(storage.foldername(name))[1] = auth.uid()::text`.
 - **Sıra:** önce yeni dosyayı yükle, DB'yi güncelle, **en son** eski dosyayı sil. Tersi veri kaybına yol açar (AUDIT `DATA-7`, `DATA-8`).
@@ -378,6 +379,32 @@ select
     (select public.popular_post_ids(p_treatment => 'kron', p_recent => true)) in_archive,
   current_setting('t.b')::uuid in
     (select public.popular_post_ids(p_branch => 'agiz_dis_cene_cerrahi', p_recent => true)) in_second_branch;
+rollback;
+
+-- 26) Video ve medya sırası (046) → BEKLENEN: dört select de 22023 hatası verir
+--     (sırası verilmemiş video, yüklenmemiş dosya, forumda 4'ten fazla medya,
+--     postun medyasıyla eşleşmeyen sıra)
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select public.create_post('question', 'F', 'içerik', p_video_path => '<A>/yok.mp4');
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select public.create_post('question', 'F', 'içerik', ARRAY['<A>/yok.jpg'],
+  p_video_path => '<A>/yok.mp4', p_video_index => 0);
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select public.create_post('question', 'F', 'içerik', ARRAY['a','b','c','d','e']);
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select public.update_post(public.create_post('question', 'F', 'içerik'), 'F', 'içerik',
+  p_media_order => ARRAY[gen_random_uuid()]);
 rollback;
 ```
 

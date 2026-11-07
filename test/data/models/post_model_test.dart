@@ -43,7 +43,7 @@ void main() {
       expect(post.isBookmarked, isFalse);
       expect(post.tags, isEmpty);
       expect(post.treatments, isEmpty);
-      expect(post.imageUrls, isEmpty);
+      expect(post.media, isEmpty);
     });
 
     test('constructor with all fields sets values correctly', () {
@@ -53,7 +53,11 @@ void main() {
         title: 'Full Case',
         content: 'Full content',
         treatments: [CaseTreatment.listed(TreatmentType.kanalTedavisi)],
-        imageUrls: ['url1.jpg', 'url2.jpg'],
+        media: [
+          (id: 'm1', url: 'url1.jpg', videoUrl: null),
+          (id: 'm2', url: 'thumb.jpg', videoUrl: 'v.mp4'),
+          (id: 'm3', url: 'url2.jpg', videoUrl: null),
+        ],
         tags: [testTag],
         likeCount: 10,
         commentCount: 5,
@@ -67,7 +71,8 @@ void main() {
       );
 
       expect(post.treatments.single.branch, DentalBranch.endodonti);
-      expect(post.imageUrls, hasLength(2));
+      expect(post.media, hasLength(3));
+      expect(post.media[1].videoUrl, 'v.mp4');
       expect(post.tags, hasLength(1));
       expect(post.likeCount, 10);
       expect(post.isLiked, isTrue);

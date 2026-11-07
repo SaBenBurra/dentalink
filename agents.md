@@ -72,8 +72,8 @@ lib/
 ### İçerik
 | Tür | Alanlar | Not |
 |---|---|---|
-| **Vaka** | başlık, açıklama, **tedaviler** (1–5, seçim sırasıyla; listedeki `TreatmentType` ya da kullanıcının eklediği ad + branş; ayrı branş alanı yok, branşlar tedavilerden çıkar), etiketler (5, tedaviler sayılmaz), en fazla 10 görsel | Hasta mahremiyeti: yüz ve kimlik bilgisi içermemeli (paylaşırken onay kutusu zorunlu) |
-| **Forum** | başlık, içerik, etiketler (görsel yükleme henüz yok) | Soru şartı yok, serbest paylaşım alanı. Kodda ve DB'de adı hâlâ `question`. "En İyi Cevap" (`mark_best_answer` RPC) forumda kapalı: `PostType.allowsBestAnswer`. |
+| **Vaka** | başlık, açıklama, **tedaviler** (1–5, seçim sırasıyla; listedeki `TreatmentType` ya da kullanıcının eklediği ad + branş; ayrı branş alanı yok, branşlar tedavilerden çıkar), etiketler (5, tedaviler sayılmaz), en fazla 10 medya (görsel + en fazla 1 video, ≤60 sn; paylaşırken ve düzenlerken sürükleyerek sıralanır) | Hasta mahremiyeti: yüz ve kimlik bilgisi içermemeli (paylaşırken onay kutusu zorunlu) |
+| **Forum** | başlık, içerik, etiketler, isteğe bağlı en fazla 4 medya (görsel + en fazla 1 video) | Soru şartı yok, serbest paylaşım alanı. Medya eklenirse mahremiyet onayı zorunlu. Kodda ve DB'de adı hâlâ `question`. "En İyi Cevap" (`mark_best_answer` RPC) forumda kapalı: `PostType.allowsBestAnswer`. |
 | İş ilanı, pazar yeri | — | Yayın sonrası |
 
 **Branşlar** (`DentalBranch`): Pedodonti, Endodonti, Ortodonti, Periodontoloji, Protetik, Çene Cerrahisi, Çene Radyolojisi, Restoratif.
