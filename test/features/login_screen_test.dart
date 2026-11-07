@@ -63,11 +63,11 @@ void main() {
     await tester.tap(find.byIcon(Icons.arrow_forward_rounded));
     await tester.pump();
 
-    expect(find.textContaining('ülke kodunu yazın'), findsOneWidget);
+    expect(find.textContaining('Türkiye WhatsApp numarası'), findsOneWidget);
     expect(auth.sent, 0);
 
     await tester.enterText(find.byType(TextField), '5551234567');
     await tester.pump();
-    expect(find.textContaining('ülke kodunu yazın'), findsNothing);
+    expect(find.textContaining('Türkiye WhatsApp numarası'), findsNothing);
   });
 }

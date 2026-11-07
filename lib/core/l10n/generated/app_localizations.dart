@@ -1379,7 +1379,7 @@ abstract class AppLocalizations {
   /// No description provided for @validationContactInvalid.
   ///
   /// In tr, this message translates to:
-  /// **'Geçerli bir e-posta veya WhatsApp numarası girin. Türkiye dışındaki numaralarda ülke kodunu yazın (+49…).'**
+  /// **'Geçerli bir e-posta veya Türkiye WhatsApp numarası (+90 5xx…) girin.'**
   String get validationContactInvalid;
 
   /// No description provided for @validationNameRequired.
@@ -2801,7 +2801,7 @@ abstract class AppLocalizations {
   /// No description provided for @contactPhoneInfo.
   ///
   /// In tr, this message translates to:
-  /// **'Bu numarayla da giriş yapabilirsiniz, kod WhatsApp\'tan gelir. Diğer kullanıcılara gösterilmez.'**
+  /// **'Bu numarayla da giriş yapabilirsiniz, kod WhatsApp\'tan gelir. Yalnızca Türkiye numaraları (+90) kabul edilir. Diğer kullanıcılara gösterilmez.'**
   String get contactPhoneInfo;
 
   /// No description provided for @contactSendCode.

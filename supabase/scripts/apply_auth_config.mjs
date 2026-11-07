@@ -46,6 +46,17 @@ if (env.TWILIO_ACCOUNT_SID) {
   });
 }
 
+// Twilio'ya artık send-sms gider. Önce fonksiyonu deploy et (SUPABASE.md §10).
+// sms_autoconfirm açıkken kod gönderilmez, hook da çalışmaz.
+if (env.SEND_SMS_HOOK_SECRET) {
+  Object.assign(config, {
+    sms_autoconfirm: false,
+    hook_send_sms_enabled: true,
+    hook_send_sms_uri: `https://${ref}.supabase.co/functions/v1/send-sms`,
+    hook_send_sms_secrets: env.SEND_SMS_HOOK_SECRET,
+  });
+}
+
 if (env.SENDGRID_API_KEY) {
   Object.assign(config, {
     smtp_host: 'smtp.sendgrid.net',
@@ -65,6 +76,6 @@ if (!response.ok) {
   process.exit(1);
 }
 const saved = await response.json();
-for (const key of ['external_email_enabled', 'mailer_otp_length', 'sms_otp_exp', 'sms_provider', 'smtp_host']) {
+for (const key of ['external_email_enabled', 'mailer_otp_length', 'sms_otp_exp', 'sms_provider', 'hook_send_sms_enabled', 'smtp_host']) {
   console.log(key, '=', saved[key]);
 }

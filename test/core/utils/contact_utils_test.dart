@@ -15,8 +15,11 @@ void main() {
     }
   });
 
-  test('ülke kodlu yabancı numara kalır, belirsiz numara reddedilir', () {
-    expect(normalizePhone('+49 151 23456789'), '+4915123456789');
+  test('yabancı ve belirsiz numara reddedilir', () {
+    expect(normalizePhone('+49 151 23456789'), isNull);
+    expect(normalizePhone('0049 151 23456789'), isNull);
+    expect(normalizePhone('+15551234567'), isNull);
+    expect(normalizePhone('+5551234567'), isNull);
     expect(normalizePhone('12345678'), isNull);
     expect(normalizePhone('02121234567'), isNull);
     expect(normalizePhone('+0555123456'), isNull);

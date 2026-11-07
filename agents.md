@@ -65,7 +65,7 @@ lib/
 ## Ürün kapsamı
 
 ### Kullanıcılar
-- **Giriş:** e-posta veya WhatsApp numarası + 6 haneli OTP (şifresiz, Twilio üzerinden; `docs/SUPABASE.md` §10). Giriş ve kayıt aynı ekrandır. E-posta ve numara Ayarlar → Hesap'tan eklenir ya da değiştirilir, kod yeni adrese gider; ikisi de aynı hesaba girer. İlk girişte 3 adımlı kayıt: (1) ad + unvan, (2) üniversite, şehir, klinik, deneyim, (3) avatar + biyografi.
+- **Giriş:** e-posta veya WhatsApp numarası (yalnızca Türkiye, +90 5xx) + 6 haneli OTP (şifresiz, Twilio üzerinden; `docs/SUPABASE.md` §10). Giriş ve kayıt aynı ekrandır. E-posta ve numara Ayarlar → Hesap'tan eklenir ya da değiştirilir, kod yeni adrese gider; ikisi de aynı hesaba girer. İlk girişte 3 adımlı kayıt: (1) ad + unvan, (2) üniversite, şehir, klinik, deneyim, (3) avatar + biyografi.
 - **Unvanlar** (`UserTitle`): Öğrenci, Diş Hekimi, Endodontist, Ortodontist, Periodontolog, Protez Uzmanı, Pedodontist, Cerrah, Radyolog, Restoratif Uzmanı.
 - `is_verified` yalnızca admin onayıyla değişir (Faz 4: diploma doğrulama).
 

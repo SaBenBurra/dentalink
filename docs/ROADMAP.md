@@ -184,6 +184,7 @@
 - [ ] Production Supabase projesi + `--dart-define-from-file` (dev/prod) — `SEC-15`
 - [ ] E-posta OTP şablonu ve SMTP; `site_url` — `AUTH-9`
   - [ ] Canlıya uygula: `supabase/scripts/apply_auth_config.mjs` (`SUPABASE.md` §10): e-posta girişi, 6 haneli kod, kod içeren şablon
+  - [ ] `send-sms` hook'unu canlıya al (`SUPABASE.md` §10): sırlar, deploy, `SEND_SMS_HOOK_SECRET` ile config
   - [ ] Twilio WhatsApp göndericisi ve SendGrid SMTP bilgileri; `sms_test_otp` numaralarını temizle; cihazda uçtan uca test
 - [ ] Crash raporlama (Sentry veya Crashlytics) — `REL-5`
 - [ ] Push bildirim — `REL-6`
@@ -245,3 +246,4 @@
 - [x] Giriş akışı: Android geri tuşu OTP ve kayıtta önceki adıma döner; kayıt başlığındaki geri ve "Geç" çalışır; OTP tek gizli alana taşındı (boş kutuda silme, yapıştırma, kod önerisi). _(2026-11-04)_
 - [x] Migration 044: profilsiz auth kullanıcıları saat başı silinir (doğrulanmamış 1 saat, doğrulanmış 24 saat), yanlış yazılan numara gerçek sahibini kilitlemez. 043 ve 044 canlıda. _(2026-11-04)_
 - [x] "Benzer vakalar" post sayfasından kaldırıldı: bölüm, provider, repository metodu ve metinler silindi; migration 045 `related_case_ids` fonksiyonunu kaldırır.
+- [x] WhatsApp girişi yalnızca Türkiye cep numaralarını kabul eder (`normalizePhone`, giriş ve Ayarlar → Hesap). Sunucu kısıtı: Send SMS hook'u `send-sms` giriş, kayıt ve numara değişiminde yabancı numarayı reddeder, WhatsApp'ı kendisi gönderir (`SUPABASE.md` §10). _(2026-11-06)_

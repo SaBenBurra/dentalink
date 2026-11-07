@@ -698,7 +698,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get validationContactInvalid =>
-      'Geçerli bir e-posta veya WhatsApp numarası girin. Türkiye dışındaki numaralarda ülke kodunu yazın (+49…).';
+      'Geçerli bir e-posta veya Türkiye WhatsApp numarası (+90 5xx…) girin.';
 
   @override
   String get validationNameRequired => 'Ad Soyad alanı zorunludur';
@@ -1511,7 +1511,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get contactPhoneInfo =>
-      'Bu numarayla da giriş yapabilirsiniz, kod WhatsApp\'tan gelir. Diğer kullanıcılara gösterilmez.';
+      'Bu numarayla da giriş yapabilirsiniz, kod WhatsApp\'tan gelir. Yalnızca Türkiye numaraları (+90) kabul edilir. Diğer kullanıcılara gösterilmez.';
 
   @override
   String get contactSendCode => 'Kod Gönder';

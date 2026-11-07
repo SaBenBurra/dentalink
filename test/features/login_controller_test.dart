@@ -66,6 +66,22 @@ void main() {
     );
   });
 
+  test('send-sms hook hatası da WhatsApp mesajını gösterir', () async {
+    final auth = _ThrowingAuth()
+      ..sendError = const AuthApiException(
+        'sms_send_failed',
+        statusCode: '400',
+        code: 'unknown',
+      );
+    final c = _container(auth);
+
+    await c.read(loginControllerProvider.notifier).sendOtp('5551234567');
+    expect(
+      c.read(loginControllerProvider).errorText,
+      startsWith("WhatsApp'a kod gönderilemedi"),
+    );
+  });
+
   test('yeniden gönderim hatası WhatsApp mesajını gösterir', () async {
     // Süresi bitmiş cooldown OTP adımını yeniden gönderime hazır açar.
     final auth = _ThrowingAuth()

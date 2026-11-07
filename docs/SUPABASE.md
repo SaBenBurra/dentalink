@@ -532,11 +532,25 @@ node --env-file=supabase/.env.local supabase/scripts/apply_auth_config.mjs
 | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` | Twilio konsolu |
 | `TWILIO_WHATSAPP_SENDER` | Onaylı WhatsApp göndericisi: `+90…` ya da Messaging Service SID (`MG…`) |
 | `TWILIO_CONTENT_SID` | Onaylı OTP şablonu (`HX…`); kod `{{1}}` değişkenine gelir |
+| `SEND_SMS_HOOK_SECRET` | `send-sms` hook sırrı: `v1,whsec_` + `openssl rand -base64 32` |
 | `SENDGRID_API_KEY` | Yalnızca Mail Send izinli anahtar; SMTP kullanıcısı `apikey` |
 | `SMTP_SENDER` | Alan adı SendGrid'de doğrulanmış gönderici, ör. `noreply@alanadin.com` |
 
+**Numara kısıtı:** telefona giden her kod (giriş, kayıt, numara değiştirme) Send SMS hook'undan, yani `supabase/functions/send-sms` üzerinden geçer. Fonksiyon yalnızca `+905…` numaralara WhatsApp'tan kod yollar, gerisini `phone_not_allowed` ile reddeder; Twilio'yu Auth değil bu fonksiyon çağırır. Sırayla uygula, ters sırada kodlar gitmez:
+
+```bash
+set -a; source supabase/.env.local; set +a
+supabase secrets set SEND_SMS_HOOK_SECRET="$SEND_SMS_HOOK_SECRET" TWILIO_ACCOUNT_SID="$TWILIO_ACCOUNT_SID" \
+  TWILIO_AUTH_TOKEN="$TWILIO_AUTH_TOKEN" TWILIO_WHATSAPP_SENDER="$TWILIO_WHATSAPP_SENDER" TWILIO_CONTENT_SID="$TWILIO_CONTENT_SID"
+supabase functions deploy send-sms --no-verify-jwt --use-api   # Docker gerekmez
+node --env-file=supabase/.env.local supabase/scripts/apply_auth_config.mjs   # hook'u açar
+```
+
+Doğrula: `+49…` numarayla `POST /auth/v1/otp` ve oturumlu `PUT /auth/v1/user` 400 `phone_not_allowed` döner, Twilio loglarında mesaj görünmez. Test: `node --test supabase/functions/send-sms/phone.test.ts`.
+
+- Hook'un hata gövdesi yalnızca HTTP 200'de okunur ve hata kodu taşıyamaz (istemciye `unknown` gider), bu yüzden istemci `sms_send_failed` mesajına bakar. `sms.phone` Auth v2.180+ ister; numara değişiminde `user.phone` eski numaradır, kullanma.
 - WhatsApp yalnızca Twilio ve Twilio Verify sağlayıcılarında var. SDK telefon değişiminde `channel` göndermez, `_WhatsAppPhoneAttributes` ekler; kaldırılırsa kod SMS'e düşer.
 - E-posta değişiminde çifte onay kapalıdır (`mailer_secure_email_change_enabled=false`): akış tek kod bekler. SMTP gelince eski adrese bildirim açılır.
-- `sms_test_otp` numaraları sabit kodla girer. Yayından önce temizle.
+- `sms_test_otp` numaraları sabit kodla girer, hook'a uğramaz. Yayından önce temizle.
 - SMTP olmadan yerleşik gönderici saatte 2 e-posta atar.
 - Kod istemek doğrulanmasa da `auth.users` satırı açar ve Supabase'in mükerrer kontrolü onu da sayar. Profilsiz hesaplar saat başı silinir (044, pg_cron `cleanup-orphan-auth-users`): doğrulanmamış 1 saat, doğrulanmış 24 saat sonra.

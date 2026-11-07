@@ -153,7 +153,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phone => 'Phone Number';
 
   @override
-  String get phoneHint => '+1 xxx xxx xxxx';
+  String get phoneHint => '+90 5xx xxx xx xx';
 
   @override
   String get verificationCode => 'Verification Code';
@@ -699,7 +699,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get validationContactInvalid =>
-      'Enter a valid email or WhatsApp number. Include the country code for numbers outside Turkey (+49…).';
+      'Enter a valid email or Turkish WhatsApp number (+90 5xx…).';
 
   @override
   String get validationNameRequired => 'Full name is required';
@@ -1530,7 +1530,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contactPhoneInfo =>
-      'You can also sign in with this number; the code arrives on WhatsApp. It is not shown to other users.';
+      'You can also sign in with this number; the code arrives on WhatsApp. Only Turkish numbers (+90) are accepted. It is not shown to other users.';
 
   @override
   String get contactSendCode => 'Send Code';

@@ -35,6 +35,8 @@ String getErrorMessage(AppLocalizations l10n, Object e) {
       case 'sms_send_failed':
         return l10n.whatsappSendFailed;
     }
+    // send-sms hook'u hata kodu taşıyamaz, sebep mesajdadır.
+    if (e.message == 'sms_send_failed') return l10n.whatsappSendFailed;
     if (_isRateLimit(e)) return l10n.otpRateLimited;
   }
   // image_picker izin reddi.
