@@ -280,3 +280,7 @@ final searchProvider =
 final popularTagsProvider = FutureProvider.autoDispose<List<TagModel>>(
   (ref) => ref.watch(searchRepositoryProvider).popularTags(),
 );
+
+/// Feed üst barındaki arama ikonu her dokunuşta artırır; Keşfet sekmesi canlı
+/// kaldığı için `autofocus` yalnızca ilk açılışta çalışır, sonrası bunu dinler.
+final searchFocusRequestProvider = StateProvider<int>((ref) => 0);

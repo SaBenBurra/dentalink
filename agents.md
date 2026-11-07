@@ -19,7 +19,7 @@
 | Platform | Flutter 3.47 (Dart SDK ^3.12), Android + iOS |
 | Backend | Supabase: Auth (e-posta/SMS OTP), Postgres + RLS, Storage, Realtime |
 | State | `flutter_riverpod` 2.x (elle yazılmış provider'lar, codegen yok) |
-| Navigasyon | `go_router` (auth guard redirect + `ShellRoute` alt menü) |
+| Navigasyon | `go_router` (auth guard redirect + `StatefulShellRoute.indexedStack` alt menü: sekmeler canlı kalır, veri ve kaydırma korunur) |
 | Dil | TR (şablon) + EN, ARB → `lib/core/l10n/generated` |
 | Tasarım | Material 3 + glassmorphism (`GlassThemeExtension`), Teal/Mint paleti, Plus Jakarta Sans |
 

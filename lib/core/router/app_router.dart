@@ -81,7 +81,7 @@ String? resolveAuthRedirect({
 ///   /post/:id         → PostScreen (post + yorumlar; `?comments=1`, `?comment=<id>`)
 ///   /post/:id/likes   → PostLikersScreen
 ///   /                 → redirect → /login
-///   ShellRoute        → MainShell (bottom nav)
+///   StatefulShellRoute → MainShell (bottom nav, sekmeler canlı kalır)
 ///     /feed           → FeedScreen
 ///     /search         → SearchScreen
 ///     /treatment/:slug → TreatmentArchiveScreen (alt menü gizli)
@@ -251,37 +251,51 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
 
       // ── Ana Kabuk (Bottom Nav Shell) ───────────────────────
-      ShellRoute(
-        builder: (context, state, child) => MainShell(child: child),
-        routes: [
-          GoRoute(
-            path: '/feed',
-            name: 'feed',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: FeedScreen()),
-          ),
-          GoRoute(
-            path: '/search',
-            name: 'search',
-            pageBuilder: (context, state) => NoTransitionPage(
-              child: SearchScreen(
-                autofocus: state.uri.queryParameters['focus'] == '1',
-                tag: state.uri.queryParameters['tag'],
-                branch: state.uri.queryParameters['branch'],
+      // Her sekme kendi navigator'ında canlı kalır: sekme değişince veri ve
+      // kaydırma konumu korunur.
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            MainShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/feed',
+                name: 'feed',
+                builder: (context, state) => const FeedScreen(),
               ),
-            ),
+            ],
           ),
-          GoRoute(
-            path: '/messages',
-            name: 'messages',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: ConversationsScreen()),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/search',
+                name: 'search',
+                builder: (context, state) => SearchScreen(
+                  autofocus: state.uri.queryParameters['focus'] == '1',
+                  tag: state.uri.queryParameters['tag'],
+                  branch: state.uri.queryParameters['branch'],
+                ),
+              ),
+            ],
           ),
-          GoRoute(
-            path: '/profile',
-            name: 'profile',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: ProfileScreen()),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/messages',
+                name: 'messages',
+                builder: (context, state) => const ConversationsScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                name: 'profile',
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
           ),
         ],
       ),

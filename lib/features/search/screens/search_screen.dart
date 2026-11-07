@@ -163,6 +163,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(searchFocusRequestProvider, (_, _) => _focusNode.requestFocus());
     // Arama satırı odaktayken keşfet içeriği kaybolur; gövde yalnızca
     // arama sonuçları için (sorgu doluyken) görünür.
     final hideExplore =

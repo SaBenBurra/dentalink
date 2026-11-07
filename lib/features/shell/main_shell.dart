@@ -23,8 +23,8 @@ final bottomBarControllerProvider = Provider<BottomBarController>((ref) {
 const barMotionPreset = BottomBarCupertinoMotion.snappy;
 const barMotionDuration = Duration(milliseconds: 400);
 
-/// Ana shell — go_router ShellRoute tarafından sarılır.
-/// [child] parametresi aktif sekme ekranıdır.
+/// Ana shell — go_router StatefulShellRoute tarafından sarılır.
+/// [navigationShell] sekmeleri canlı tutan IndexedStack'tir.
 ///
 /// Tab → Route eşlemesi:
 ///   0 → /feed
@@ -33,9 +33,9 @@ const barMotionDuration = Duration(milliseconds: 400);
 ///   3 → /messages
 ///   4 → /profile
 class MainShell extends ConsumerWidget {
-  const MainShell({super.key, required this.child});
+  const MainShell({super.key, required this.navigationShell});
 
-  final Widget child;
+  final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -114,15 +114,15 @@ class MainShell extends ConsumerWidget {
                 }
                 return false;
               },
-              child: SizedBox.expand(child: child),
+              child: SizedBox.expand(child: navigationShell),
             ),
           ),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
           child: AppBottomNavBar(
-            currentIndex: _currentIndex(context),
-            onTap: (index) => _onNavTap(context, index),
+            currentIndex: _currentIndex,
+            onTap: _onNavTap,
             onCreateTap: () => showCreatePostSheet(context),
             unreadMessages: ref.watch(totalUnreadMessagesProvider),
           ),
@@ -152,26 +152,20 @@ class MainShell extends ConsumerWidget {
     );
   }
 
-  /// Aktif route'a göre seçili sekme indeksini döndürür.
-  int _currentIndex(BuildContext context) {
-    final location = GoRouterState.of(context).uri.path;
-    if (location.startsWith('/search')) return 1;
-    if (location.startsWith('/messages')) return 3;
-    if (location.startsWith('/profile')) return 4;
-    // /feed ya da root → 0
-    return 0;
-  }
+  /// Alt menü indeksi (2 = oluştur, route yok) ↔ shell branch indeksi.
+  static const _branchOfTab = {0: 0, 1: 1, 3: 2, 4: 3};
 
-  void _onNavTap(BuildContext context, int index) {
-    switch (index) {
-      case 0:
-        context.go('/feed');
-      case 1:
-        context.go('/search');
-      case 3:
-        context.go('/messages');
-      case 4:
-        context.go('/profile');
-    }
+  int get _currentIndex => _branchOfTab.entries
+      .firstWhere((e) => e.value == navigationShell.currentIndex)
+      .key;
+
+  void _onNavTap(int index) {
+    final branch = _branchOfTab[index];
+    if (branch == null) return;
+    // Aktif sekmeye tekrar dokunmak o sekmenin köküne döner.
+    navigationShell.goBranch(
+      branch,
+      initialLocation: branch == navigationShell.currentIndex,
+    );
   }
 }

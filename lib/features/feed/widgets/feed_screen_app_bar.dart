@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../providers/notification_provider.dart';
+import '../../../providers/search_provider.dart';
 
 /// Feed üst barı: logo, tür segmentleri, arama ve bildirim.
 class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -104,7 +105,12 @@ class FeedScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
                     alignment: Alignment.centerRight,
                     icon: Icons.search_rounded,
                     tooltip: l10n.searchHint,
-                    onTap: () => context.go('/search?focus=1'),
+                    onTap: () {
+                      ProviderScope.containerOf(context, listen: false)
+                          .read(searchFocusRequestProvider.notifier)
+                          .state++;
+                      context.go('/search?focus=1');
+                    },
                   ),
                   const _NotificationBell(),
                 ],
