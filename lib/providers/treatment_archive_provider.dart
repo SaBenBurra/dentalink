@@ -186,4 +186,3 @@ final treatmentSearchProvider = FutureProvider.autoDispose
           if (t.caseCount > 0 && seen.add(t.slug)) t,
       ].take(3).toList();
     });
-

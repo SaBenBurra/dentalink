@@ -12,11 +12,7 @@ double postMediaAspectRatio(int width, int height, {double minRatio = 1}) =>
     height == 0 ? 1.0 : (width / height).clamp(minRatio, 1.91);
 
 class PostMedia extends StatefulWidget {
-  const PostMedia({
-    super.key,
-    required this.media,
-    this.minAspectRatio = 1,
-  });
+  const PostMedia({super.key, required this.media, this.minAspectRatio = 1});
 
   /// Sıralı görsel ve video; video kapak resmiyle görünür, dokununca tam ekran
   /// oynatılır (046).
