@@ -76,8 +76,8 @@ abstract class CommentThreadNotifier<A>
   }
 
   /// Bu listedeki [parent]'a yanıt yazar: ebeveynin sayacı +1, yanıt listesi
-  /// açıksa sonuna eklenir (kapalıysa açılınca sunucudan gelir).
-  Future<void> addReply(CommentModel parent, String content) =>
+  /// açıksa sonuna eklenir (kapalıysa açılınca sunucudan gelir). Yanıtı döndürür.
+  Future<CommentModel> addReply(CommentModel parent, String content) =>
       _keepingAlive(() async {
         final reply = await _repo.addComment(
           postId,
@@ -89,6 +89,7 @@ abstract class CommentThreadNotifier<A>
         if (cur != null) _replace(cur.copyWith(replyCount: cur.replyCount + 1));
         final replies = repliesProvider((postId: postId, parentId: parent.id));
         if (ref.exists(replies)) ref.read(replies.notifier)._append(reply);
+        return reply;
       });
 
   /// Sayaç DB trigger'ıyla artar (yanıtlar dahil); ekrandaki kopyalar yeniden
@@ -178,10 +179,12 @@ class CommentsNotifier extends CommentThreadNotifier<String> {
     PageCursor? after,
   ) => repo.getComments(arg, after: after);
 
-  Future<void> addComment(String content) => _keepingAlive(() async {
+  /// Gönderilen yorumu döndürür (sayfa ona kaydırır).
+  Future<CommentModel> addComment(String content) => _keepingAlive(() async {
     final newComment = await _repo.addComment(arg, _validated(content));
     _bumpCommentCount();
     _append(newComment);
+    return newComment;
   });
 
   Future<void> markBestAnswer(String commentId) =>

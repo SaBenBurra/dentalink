@@ -117,4 +117,31 @@ void main() {
     );
     expect(find.byType(BottomSheet), findsNothing);
   });
+
+  testWidgets('gönderilen yorum giriş alanının üstüne kaydırılır', (
+    tester,
+  ) async {
+    await pumpDentigo(tester);
+    final anchor = tester.element(find.text(seedCase.title));
+    // Liste ekrandan uzun olsun: yeni yorum açılışta görünmez.
+    final repo = ProviderScope.containerOf(
+      anchor,
+    ).read(commentRepositoryProvider);
+    for (var i = 0; i < 15; i++) {
+      await repo.addComment(seedCase.id, 'eski yorum $i');
+    }
+    GoRouter.of(anchor).push('/post/${seedCase.id}');
+    await tester.pumpAndSettle();
+
+    final input = inPage(find.byType(TextField)).last;
+    await tester.enterText(input, 'yeni yorum');
+    await tester.testTextInput.receiveAction(TextInputAction.send);
+    await tester.pumpAndSettle();
+
+    final sent = inPage(find.text('yeni yorum'));
+    expect(sent, findsOneWidget);
+    final rect = tester.getRect(sent);
+    expect(rect.top, greaterThan(0));
+    expect(rect.bottom, lessThanOrEqualTo(tester.getRect(input).top));
+  });
 }

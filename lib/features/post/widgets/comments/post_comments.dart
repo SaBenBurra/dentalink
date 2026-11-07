@@ -43,9 +43,11 @@ class PostComments extends ConsumerStatefulWidget {
 class PostCommentsState extends ConsumerState<PostComments> {
   static const _commentMax = 2000;
   static const _highlightDuration = Duration(seconds: 2);
+  static const _revealDuration = Duration(milliseconds: 350);
   late final _drafts = ref.read(commentDraftsProvider);
   late final _controller = TextEditingController(text: _drafts[widget.post.id]);
   final _focusNode = FocusNode();
+  final _scroll = ScrollController();
   final _titleKey = GlobalKey();
   final _highlightKey = GlobalKey();
   bool _isSubmitting = false;
@@ -70,6 +72,7 @@ class PostCommentsState extends ConsumerState<PostComments> {
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
+    _scroll.dispose();
     super.dispose();
   }
 
@@ -118,6 +121,60 @@ class PostCommentsState extends ConsumerState<PostComments> {
     });
   }
 
+  /// Gönderilen yorumu yumuşakça görünür alana getirir (giriş alanının hemen
+  /// üstüne). Yorumlar `ValueKey(id)` taşır.
+  Future<void> _revealSent(CommentModel sent) async {
+    final parentId = sent.parentId;
+    await WidgetsBinding.instance.endOfFrame;
+    if (parentId != null) {
+      // Thread kapalıydı ve şimdi açıldıysa yanıtlar sunucudan gelir.
+      try {
+        await ref.read(
+          repliesProvider((postId: sent.postId, parentId: parentId)).future,
+        );
+      } catch (_) {
+        return; // yükleme hatasını thread kendisi gösterir
+      }
+      await WidgetsBinding.instance.endOfFrame;
+    }
+    if (!mounted) return;
+    var target = _findComment(sent.id);
+    if (target == null && parentId == null && _scroll.hasClients) {
+      // Tembel liste: yeni yorum sonda ve henüz kurulmadı; sona kayınca kurulur.
+      await _scroll.animateTo(
+        _scroll.position.maxScrollExtent,
+        duration: _revealDuration,
+        curve: Curves.easeOut,
+      );
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
+      target = _findComment(sent.id);
+    }
+    if (target == null || !target.mounted) return;
+    await Scrollable.ensureVisible(
+      target,
+      duration: _revealDuration,
+      curve: Curves.easeOut,
+      alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+    );
+  }
+
+  BuildContext? _findComment(String id) {
+    final key = ValueKey(id);
+    Element? found;
+    void visit(Element e) {
+      if (found != null) return;
+      if (e.widget.key == key) {
+        found = e;
+      } else {
+        e.visitChildren(visit);
+      }
+    }
+
+    (context as Element).visitChildren(visit);
+    return found;
+  }
+
   void _startReply(CommentModel parent, VoidCallback onSent) {
     setState(() => _replyTo = (parent: parent, onSent: onSent));
     _focusNode.requestFocus();
@@ -130,12 +187,13 @@ class PostCommentsState extends ConsumerState<PostComments> {
     setState(() => _isSubmitting = true);
     try {
       final replyTo = _replyTo;
+      final CommentModel sent;
       if (replyTo == null) {
-        await ref
+        sent = await ref
             .read(commentsProvider(widget.post.id).notifier)
             .addComment(text);
       } else {
-        await commentThreadOf(
+        sent = await commentThreadOf(
           ref,
           replyTo.parent,
         ).addReply(replyTo.parent, text);
@@ -144,6 +202,7 @@ class PostCommentsState extends ConsumerState<PostComments> {
       if (!mounted) return;
       _controller.clear();
       setState(() => _replyTo = null);
+      _revealSent(sent);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -271,6 +330,7 @@ class PostCommentsState extends ConsumerState<PostComments> {
       children: [
         Expanded(
           child: CustomScrollView(
+            controller: _scroll,
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
               leading,

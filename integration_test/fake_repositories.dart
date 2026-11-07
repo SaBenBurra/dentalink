@@ -181,25 +181,36 @@ class _FakePostRepository implements PostRepository {
 }
 
 class _FakeCommentRepository implements CommentRepository {
+  /// Eklenen üst yorumlar; sayfa yeniden açılınca geri gelir.
+  final _comments = <String, List<CommentModel>>{};
+  var _nextId = 1;
+
   @override
   Future<PageResult<CommentModel>> getComments(
     String postId, {
     PageCursor? after,
-  }) async => (items: <CommentModel>[], next: null);
+  }) async => (items: [...?_comments[postId]], next: null);
 
   @override
   Future<CommentModel> addComment(
     String postId,
     String content, {
     String? parentId,
-  }) async => CommentModel(
-    id: 'c1',
-    postId: postId,
-    userId: 'me',
-    content: content,
-    createdAt: DateTime.now(),
-    updatedAt: DateTime.now(),
-  );
+  }) async {
+    final comment = CommentModel(
+      id: 'c${_nextId++}',
+      postId: postId,
+      parentId: parentId,
+      userId: 'me',
+      content: content,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+    if (parentId == null) {
+      (_comments[postId] ??= []).add(comment);
+    }
+    return comment;
+  }
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
