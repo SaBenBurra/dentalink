@@ -136,6 +136,10 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer>
             offset: Offset(0, _dy),
             child: PageView.builder(
               controller: _controller,
+              // İki parmak ya da yakınken sayfa kaymaz: hareket pinch/pan'a kalır.
+              physics: _zoomed || _pointers > 1
+                  ? const NeverScrollableScrollPhysics()
+                  : null,
               itemCount: count,
               onPageChanged: (i) => setState(() {
                 _zooms[_index]?.value = Matrix4.identity();
@@ -162,17 +166,26 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer>
                   ),
                 );
                 return switch (m.videoUrl) {
-                  null => InteractiveViewer(
-                    maxScale: 4,
-                    transformationController: _zooms.putIfAbsent(
-                      i,
-                      TransformationController.new,
+                  // Yakınken çift dokunuş görseli eski boyutuna döndürür.
+                  null => GestureDetector(
+                    onDoubleTap: _zoomed
+                        ? () => setState(() {
+                            _zooms[i]!.value = Matrix4.identity();
+                            _zoomed = false;
+                          })
+                        : null,
+                    child: InteractiveViewer(
+                      maxScale: 4,
+                      transformationController: _zooms.putIfAbsent(
+                        i,
+                        TransformationController.new,
+                      ),
+                      onInteractionEnd: (_) => setState(
+                        () => _zoomed =
+                            _zooms[i]!.value.getMaxScaleOnAxis() > 1.01,
+                      ),
+                      child: image,
                     ),
-                    onInteractionEnd: (_) => setState(
-                      () =>
-                          _zoomed = _zooms[i]!.value.getMaxScaleOnAxis() > 1.01,
-                    ),
-                    child: image,
                   ),
                   // Dokunularak açılan video hemen oynar; kaydırarak gelinende oynat simgesi.
                   final url => GalleryVideo(

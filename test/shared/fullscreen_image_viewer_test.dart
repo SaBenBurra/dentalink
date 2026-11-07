@@ -52,6 +52,41 @@ void main() {
     await settle(tester);
     expect(find.text('2 / 2'), findsOneWidget);
   });
+
+  testWidgets(
+    'iki parmakla yana kayan pinch sayfa değiştirmez, yakınlaştırır',
+    (tester) async {
+      await open(tester);
+      final c = tester.getCenter(find.byType(PageView));
+      final a = await tester.startGesture(c - const Offset(40, 0));
+      final b = await tester.startGesture(c + const Offset(40, 0), pointer: 2);
+      await tester.pump();
+      // Parmaklar açılırken ikisi de sola kayar: eskiden sayfa kayıyordu.
+      for (var i = 0; i < 10; i++) {
+        await a.moveBy(const Offset(-20, 0));
+        await b.moveBy(const Offset(-5, 0));
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      await a.up();
+      await b.up();
+      await settle(tester);
+      expect(find.text('1 / 2'), findsOneWidget);
+      final zoom = tester
+          .widget<InteractiveViewer>(find.byType(InteractiveViewer).first)
+          .transformationController!;
+      expect(zoom.value.getMaxScaleOnAxis(), greaterThan(1));
+
+      // Çift dokunuş küçültür, ardından yatay kaydırma yine sayfa değiştirir.
+      await tester.tapAt(c);
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.tapAt(c);
+      await settle(tester);
+      expect(zoom.value.getMaxScaleOnAxis(), 1);
+      await tester.fling(find.byType(PageView), const Offset(-300, 0), 1000);
+      await settle(tester);
+      expect(find.text('2 / 2'), findsOneWidget);
+    },
+  );
 }
 
 // pumpAndSettle kullanılamaz: görsel testte yüklenmez, yükleme göstergesi hiç durmaz.
