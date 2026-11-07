@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:video_compress/video_compress.dart';
 
+import 'mp4_metadata.dart';
+
 /// Gönderi videosu en fazla 60 sn (046).
 const maxVideoDuration = Duration(seconds: 60);
 
@@ -32,6 +34,8 @@ Future<({File image, File? video})> prepareVideo(File video) async {
   );
   final file = info?.file;
   if (file == null) throw StateError('video compression failed');
+  // Sıkıştırma kaynak videonun konumunu kopyalar (Transcoder setLocation, iOS export).
+  await stripMp4Metadata(file);
   if (await file.length() > maxVideoBytes) throw const VideoTooLargeException();
   final thumbnail = await VideoCompress.getFileThumbnail(
     file.path,
