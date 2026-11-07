@@ -1,3 +1,5 @@
+import 'dart:ui' show lerpDouble;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
@@ -10,6 +12,16 @@ import '../../shared/widgets/app_bottom_nav_bar.dart';
 final bottomBarAnimationProvider = Provider<ProxyAnimation>(
   (ref) => ProxyAnimation(kAlwaysCompleteAnimation),
 );
+
+/// Alta sabitlenmiş öğenin (ör. yorum alanı) alt boşluğu. Kabuk `padding`'e bar
+/// gizliyken de bar yüksekliğini koyar; bu değer barla birlikte gerçek sistem
+/// boşluğuna (`viewPadding`) iner, öğe havada kalmaz. Kabuk dışında ikisi eşittir.
+double bottomInsetFollowingBar(MediaQueryData mq, double barVisibility) =>
+    lerpDouble(
+      mq.viewPadding.bottom,
+      mq.padding.bottom,
+      barVisibility.clamp(0.0, 1.0),
+    )!;
 
 /// Barların açılıp kapanma yayı; feed üst barı da sekme kaydırırken aynısını
 /// kullanır.

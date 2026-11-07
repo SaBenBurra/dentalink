@@ -10,6 +10,7 @@ import '../../../../providers/comment_provider.dart';
 import '../../../../shared/utils/error_messages.dart';
 import '../../../../shared/widgets/load_more_footer.dart';
 import '../../../../shared/widgets/user_avatar.dart';
+import '../../../shell/main_shell.dart';
 import 'comment_card.dart';
 import 'comment_thread.dart';
 
@@ -314,8 +315,18 @@ class PostCommentsState extends ConsumerState<PostComments> {
               ],
             ),
           ),
-        SafeArea(
-          top: false,
+        // Bar gizlenince giriş alanı da onunla aşağı iner.
+        AnimatedBuilder(
+          animation: ref.watch(bottomBarAnimationProvider),
+          builder: (context, child) => Padding(
+            padding: EdgeInsets.only(
+              bottom: bottomInsetFollowingBar(
+                MediaQuery.of(context),
+                ref.read(bottomBarAnimationProvider).value,
+              ),
+            ),
+            child: child,
+          ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(
               AppDimensions.spacing16,

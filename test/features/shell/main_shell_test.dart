@@ -57,6 +57,8 @@ Future<ProviderContainer> _pumpShell(
 }
 
 void main() {
+  bottomInsetTests();
+
   testWidgets(
     'gizli alt menü, içerik kaydırılamayacak kadar kısalınca geri gelir',
     (tester) async {
@@ -136,5 +138,28 @@ void main() {
           .pixels,
       offset,
     );
+  });
+}
+
+void bottomInsetTests() {
+  // Kabuğun içi: padding bar yüksekliği (96), viewPadding sistem boşluğu (24).
+  const inShell = MediaQueryData(
+    padding: EdgeInsets.only(bottom: 96),
+    viewPadding: EdgeInsets.only(bottom: 24),
+  );
+  test('alttaki öğe barla birlikte iner, yay taşmasında sınırda kalır', () {
+    expect(bottomInsetFollowingBar(inShell, 1), 96);
+    expect(bottomInsetFollowingBar(inShell, 0), 24);
+    expect(bottomInsetFollowingBar(inShell, 0.5), 60);
+    expect(bottomInsetFollowingBar(inShell, 1.2), 96);
+    expect(bottomInsetFollowingBar(inShell, -0.2), 24);
+  });
+  test('kabuk dışında ve klavye açıkken bar payı eklenmez', () {
+    const outside = MediaQueryData(
+      padding: EdgeInsets.only(bottom: 24),
+      viewPadding: EdgeInsets.only(bottom: 24),
+    );
+    expect(bottomInsetFollowingBar(outside, 1), 24);
+    expect(bottomInsetFollowingBar(const MediaQueryData(), 1), 0);
   });
 }
