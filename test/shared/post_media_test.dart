@@ -191,4 +191,49 @@ void main() {
       expect(video.plays, 1, reason: 'yeniden başlamadı');
     },
   );
+
+  // Sayaç ve noktalar görselin üstünde; dokunuş karta düşmemeli.
+  final overlays = <String, Finder Function()>{
+    'sayaç': () => find.text('1/3'),
+    'noktalar': () => find
+        .descendant(
+          of: find.byType(PostMedia),
+          matching: find.byType(AnimatedContainer),
+        )
+        .first,
+  };
+  for (final MapEntry(key: name, value: target) in overlays.entries) {
+    testWidgets('$name dokunuşu galeriyi açar, kartı değil', (tester) async {
+      var cardTaps = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            // Kare çerçeve ekrana sığsın (test ekranı 800x600): noktalar altta.
+            body: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: 400,
+                // Feed kartı gibi: kartın tamamı post sayfasını açar.
+                child: InkWell(
+                  onTap: () => cardTaps++,
+                  child: PostMedia(
+                    media: [
+                      for (final u in urls) (id: u, url: u, videoUrl: null),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Hedef dokunmayı geçirir; dokunuş alttaki görsele iner.
+      await tester.tap(target(), warnIfMissed: false);
+      await settle(tester);
+
+      expect(find.byType(FullscreenImageViewer), findsOneWidget);
+      expect(cardTaps, 0);
+    });
+  }
 }

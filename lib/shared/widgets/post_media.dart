@@ -188,52 +188,57 @@ class _PostMediaState extends State<PostMedia> {
           ),
         if (pages.length > 1) ...[
           // Kaydırılabilir olduğu belli olsun: köşede sayaç, aktif nokta uzar.
+          // Dokunmayı yutmazlar: yoksa dokunuş karta düşüp post sayfasını açardı.
           Positioned(
             top: AppDimensions.spacing12,
             right: AppDimensions.spacing12,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.spacing8,
-                vertical: 3,
-              ),
-              decoration: _scrim,
-              child: Text(
-                '${_currentPage + 1}/${pages.length}',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
+            child: IgnorePointer(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.spacing8,
+                  vertical: 3,
+                ),
+                decoration: _scrim,
+                child: Text(
+                  '${_currentPage + 1}/${pages.length}',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
           ),
           Positioned(
             bottom: AppDimensions.spacing12,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.spacing4,
-                vertical: AppDimensions.spacing4,
-              ),
-              decoration: _scrim,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(pages.length, (idx) {
-                  final isActive = _currentPage == idx;
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeOut,
-                    margin: const EdgeInsets.symmetric(horizontal: 3.0),
-                    width: isActive ? 18 : 7,
-                    height: 7,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(
-                        AppDimensions.radiusRound,
+            child: IgnorePointer(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.spacing4,
+                  vertical: AppDimensions.spacing4,
+                ),
+                decoration: _scrim,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(pages.length, (idx) {
+                    final isActive = _currentPage == idx;
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOut,
+                      margin: const EdgeInsets.symmetric(horizontal: 3.0),
+                      width: isActive ? 18 : 7,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(
+                          AppDimensions.radiusRound,
+                        ),
+                        color: isActive
+                            ? Colors.white
+                            : Colors.white.withValues(alpha: 0.5),
                       ),
-                      color: isActive
-                          ? Colors.white
-                          : Colors.white.withValues(alpha: 0.5),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+                ),
               ),
             ),
           ),
