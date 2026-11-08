@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../data/providers/repository_providers.dart';
 import '../../features/auth/screens/auth_error_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
+import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/feed/screens/feed_screen.dart';
 import '../../features/messaging/screens/conversations_screen.dart';
@@ -49,7 +50,9 @@ String? resolveAuthRedirect({
   final isLogin = location == '/login';
   final isRegister = location == '/register';
   final isAuthError = location == '/auth-error';
-  final isAuthRoute = isLogin || isRegister || isAuthError;
+  // Açılış: profil yüklenene kadar boş ekran, giriş ekranı görünüp kaybolmasın.
+  final isSplash = location == '/splash';
+  final isAuthRoute = isLogin || isRegister || isAuthError || isSplash;
 
   // Hukuk metinleri her durumda okunabilir (kayıtta onay kutusundan açılır).
   if (location.startsWith('/legal/')) return null;
@@ -76,6 +79,7 @@ String? resolveAuthRedirect({
 /// Dentigo uygulama router'ı.
 ///
 /// Navigasyon yapısı:
+///   /splash           → SplashScreen (profil yüklenirken)
 ///   /login            → LoginScreen
 ///   /register         → RegisterScreen
 ///   /                 → redirect → /feed
@@ -99,7 +103,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.listen(authRedirectHoldProvider, (prev, next) => refresh.ping());
 
   return GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/splash',
     debugLogDiagnostics: false,
     refreshListenable: refresh,
 
@@ -114,6 +118,10 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       // ── Auth ──────────────────────────────────────────────
       GoRoute(path: '/', redirect: (context, state) => '/feed'),
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
       GoRoute(
         path: '/login',
         name: 'login',

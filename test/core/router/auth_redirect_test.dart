@@ -38,6 +38,16 @@ void main() {
       expect(go('/login', session: false, auth: const AsyncData(null)), isNull);
     });
 
+    test('açılış ekranı profil yüklenince doğru sayfaya gider', () {
+      expect(go('/splash', auth: const AsyncLoading()), isNull);
+      expect(
+        go('/splash', session: false, auth: const AsyncData(null)),
+        '/login',
+      );
+      expect(go('/splash', auth: AsyncData(user)), '/feed');
+      expect(go('/splash', auth: const AsyncData(null)), '/register');
+    });
+
     test('profil yüklenirken veya hold aktifken karar verilmez', () {
       expect(go('/login', auth: const AsyncLoading()), isNull);
       expect(go('/login', hold: true, auth: const AsyncData(null)), isNull);
