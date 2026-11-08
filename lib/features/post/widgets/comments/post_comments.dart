@@ -64,7 +64,10 @@ class PostCommentsState extends ConsumerState<PostComments> {
     super.initState();
     _controller.addListener(_saveDraft);
     if (widget.scrollToComments && !_highlightPending) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _revealComments());
+      // Yükleme alanı ekran boyu olduğu için yorumları beklemeden, animasyonsuz.
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _revealComments(duration: Duration.zero),
+      );
     }
   }
 
@@ -85,12 +88,14 @@ class PostCommentsState extends ConsumerState<PostComments> {
     }
   }
 
-  Future<void> _revealComments() async {
+  Future<void> _revealComments({
+    Duration duration = const Duration(milliseconds: 250),
+  }) async {
     final title = _titleKey.currentContext;
     if (title == null || !mounted) return;
     await Scrollable.ensureVisible(
       title,
-      duration: const Duration(milliseconds: 250),
+      duration: duration,
       curve: Curves.easeOut,
     );
   }
@@ -304,10 +309,19 @@ class PostCommentsState extends ConsumerState<PostComments> {
           },
         );
       },
-      loading: () => const SliverToBoxAdapter(
-        child: Padding(
-          padding: EdgeInsets.all(AppDimensions.spacing24),
-          child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      // Ekran boyu: yorumlar gelmeden de başlık ekranın tepesine kaydırılabilir.
+      loading: () => SliverLayoutBuilder(
+        builder: (context, constraints) => SliverToBoxAdapter(
+          child: SizedBox(
+            height: constraints.viewportMainAxisExtent,
+            child: const Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: EdgeInsets.all(AppDimensions.spacing24),
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          ),
         ),
       ),
       error: (err, stack) => SliverToBoxAdapter(

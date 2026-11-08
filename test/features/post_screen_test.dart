@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
+import 'package:dentigo/core/constants/app_dimensions.dart';
 import 'package:dentigo/core/router/app_router.dart';
 import 'package:dentigo/features/post/screens/post_screen.dart';
 import 'package:dentigo/features/post/widgets/comments/post_comments.dart';
@@ -118,6 +119,33 @@ void main() {
       findsOneWidget,
     );
     expect(find.byType(BottomSheet), findsNothing);
+  });
+
+  testWidgets('yorum ikonuyla açılınca yorum başlığı ekranın tepesine gelir', (
+    tester,
+  ) async {
+    await pumpDentigo(tester);
+    final anchor = tester.element(find.text(seedCase.title));
+    final repo = ProviderScope.containerOf(
+      anchor,
+    ).read(commentRepositoryProvider);
+    for (var i = 0; i < 15; i++) {
+      await repo.addComment(seedCase.id, 'eski yorum $i');
+    }
+    GoRouter.of(anchor).push('/post/${seedCase.id}?comments=1');
+    await tester.pumpAndSettle();
+
+    final appBar = find.descendant(
+      of: find.byType(PostScreen),
+      matching: find.byType(AppBar),
+    );
+    expect(
+      tester.getRect(inPage(find.text('Tartışma'))).top,
+      moreOrLessEquals(
+        tester.getRect(appBar).bottom + AppDimensions.spacing16,
+        epsilon: 1,
+      ),
+    );
   });
 
   testWidgets('gönderilen yorum giriş alanının üstüne kaydırılır', (
