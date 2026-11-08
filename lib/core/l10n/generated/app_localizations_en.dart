@@ -976,13 +976,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get usersLoadError => 'Could not load users.';
 
   @override
-  String mutualFollowedBy(String name, int others) {
+  String mutualFollowedBy(int count, String first, String second, int others) {
     String _temp0 = intl.Intl.pluralLogic(
-      others,
+      count,
       locale: localeName,
-      other: 'Followed by $name and $others others',
-      one: 'Followed by $name and 1 other',
-      zero: 'Followed by $name',
+      other: 'Followed by $first, $second and $others more',
+      two: 'Followed by $first and $second',
+      one: 'Followed by $first',
     );
     return '$_temp0';
   }

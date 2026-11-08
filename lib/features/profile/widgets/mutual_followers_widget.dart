@@ -1,75 +1,82 @@
 import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/user_provider.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import 'package:dentigo/core/constants/app_dimensions.dart';
 
+/// Instagram tarzı tek satır: üst üste küçük avatarlar + "A, B ve N kişi
+/// takip ediyor". Ortak takipçi yoksa (ya da kendi profilinde) hiç yer kaplamaz.
 class MutualFollowersWidget extends ConsumerWidget {
   final String userId;
 
   const MutualFollowersWidget({super.key, required this.userId});
 
+  static const _avatar = 24.0;
+  static const _overlap = 16.0;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final followersAsync = ref.watch(mutualFollowersProvider(userId));
+    final mutual = ref.watch(mutualFollowersProvider(userId)).valueOrNull;
+    if (mutual == null || mutual.users.isEmpty) return const SizedBox.shrink();
+
     final theme = Theme.of(context);
+    final users = mutual.users.take(3).toList();
+    final text = AppLocalizations.of(context)!.mutualFollowedBy(
+      mutual.total,
+      users.first.fullName,
+      users.length > 1 ? users[1].fullName : '',
+      mutual.total - 2,
+    );
 
-    return followersAsync.when(
-      data: (mutual) {
-        if (mutual.users.isEmpty) return const SizedBox.shrink();
-
-        final displayUsers = mutual.users.take(3).toList();
-
-        return Padding(
-          padding: const EdgeInsets.only(top: AppDimensions.spacing12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 36.0 + (displayUsers.length - 1) * 20.0,
-                height: 36.0,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: List.generate(displayUsers.length, (index) {
-                    return Positioned(
-                      left: index * 20.0,
-                      child: Container(
+    return InkWell(
+      onTap: () => context.pushDetail('/network/$userId?tab=0'),
+      borderRadius: BorderRadius.circular(AppDimensions.spacing8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacing8),
+        child: Row(
+          children: [
+            SizedBox(
+              width: _avatar + (users.length - 1) * _overlap,
+              height: _avatar,
+              child: Stack(
+                children: [
+                  for (final (i, u) in users.indexed.toList().reversed)
+                    Positioned(
+                      left: i * _overlap,
+                      child: DecoratedBox(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: theme.scaffoldBackgroundColor,
-                            width: 2,
+                            width: 1.5,
                           ),
                         ),
                         child: UserAvatar(
-                          name: displayUsers[index].fullName,
-                          imageUrl: displayUsers[index].avatarUrl,
-                          size: AvatarSize.small,
+                          name: u.fullName,
+                          imageUrl: u.avatarUrl,
+                          size: AvatarSize.xSmall,
                         ),
                       ),
-                    );
-                  }).reversed.toList(),
-                ),
+                    ),
+                ],
               ),
-              const SizedBox(width: AppDimensions.spacing12),
-              Expanded(
-                child: Text(
-                  AppLocalizations.of(context)!.mutualFollowedBy(
-                    displayUsers.first.fullName,
-                    mutual.total - 1,
-                  ),
-                  style: theme.textTheme.bodySmall,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(width: AppDimensions.spacing8),
+            Expanded(
+              child: Text(
+                text,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-            ],
-          ),
-        );
-      },
-      loading: () => const SizedBox.shrink(),
-      error: (_, _) => const SizedBox.shrink(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

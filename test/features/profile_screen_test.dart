@@ -2,6 +2,7 @@ import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:dentigo/data/models/enums.dart';
 import 'package:dentigo/data/models/user_model.dart';
 import 'package:dentigo/features/profile/widgets/profile_header.dart';
+import 'package:dentigo/providers/user_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dentigo/features/profile/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -92,5 +93,34 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.textContaining('123.5K', findRichText: true), findsOneWidget);
+  });
+
+  testWidgets('ortak takipçiler: ilk iki ad ve kalan sayı', (tester) async {
+    UserModel u(String name) => UserModel(
+      id: name,
+      fullName: name,
+      username: name,
+      title: UserTitle.disHekimi,
+      createdAt: DateTime(2024),
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          ...fakeRepositoryOverrides(),
+          mutualFollowersProvider(otherUser.id).overrideWith(
+            (ref) async => (users: [u('Ali'), u('Veli'), u('Can')], total: 7),
+          ),
+        ],
+        child: MaterialApp(
+          locale: const Locale('tr'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(body: ProfileHeader(user: otherUser)),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ali, Veli ve 5 kişi daha takip ediyor'), findsOneWidget);
   });
 }

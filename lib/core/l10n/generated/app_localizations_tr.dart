@@ -974,12 +974,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get usersLoadError => 'Kullanıcılar yüklenirken bir hata oluştu.';
 
   @override
-  String mutualFollowedBy(String name, int others) {
+  String mutualFollowedBy(int count, String first, String second, int others) {
     String _temp0 = intl.Intl.pluralLogic(
-      others,
+      count,
       locale: localeName,
-      other: '$name ve $others diğer kişi takip ediyor',
-      zero: '$name takip ediyor',
+      other: '$first, $second ve $others kişi daha takip ediyor',
+      two: '$first ve $second takip ediyor',
+      one: '$first takip ediyor',
     );
     return '$_temp0';
   }

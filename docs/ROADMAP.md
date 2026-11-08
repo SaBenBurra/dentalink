@@ -101,7 +101,7 @@
 - [x] `mark_best_answer`: tip kontrolü, `unmark_best_answer` RPC + kartta "Seçimi Kaldır", en iyi cevap silinince `is_solved = false` (migration 017). _(2026-10-25; canlıda, smoke 12–13 geçti, cihazda doğrulandı 2026-10-25)_ — `DATA-16`
 - [x] Uzunluk CHECK'leri (migration 017): post başlığı 150, içerik 5000, yorum ve mesaj 2000, etiket 30 karakter, post başına 5 etiket (trigger); oluşturma ekranlarına `maxLength`; RPC `22023` → `ValidationFailure`. Profil alanları UX-8'de. _(2026-10-25; canlıda, smoke 13 geçti)_ — `DATA-17`
 - [x] Paylaş butonu kaldırıldı — `BUG-11`
-- [x] Ortak takipçiler: profili takip edenlerden benim takip ettiklerim (`mutualFollowersProvider`); kendi profilinde gizli. _(2026-10-25; testli, cihazda doğrulandı)_ — `BUG-19`
+- [x] Ortak takipçiler: profili takip edenlerden benim takip ettiklerim (`mutualFollowersProvider`); kendi profilinde gizli. _(2026-10-25; testli, cihazda doğrulandı)_ — `BUG-19` Başlık yenilenirken (d8fb60d) düşmüştü; 2026-11-08 Instagram tarzı tek satırla (24px üst üste avatarlar, "A, B ve N kişi daha takip ediyor", dokununca takipçiler) sayaçlarla butonlar arasına geri eklendi.
 - [x] Bildirim ayarları toggle'ları kaldırıldı (DB tercihi ve push yok); tercihler Faz 5'te push ile gelir — `UX-4`
 - [x] Integration test fake repository'lerle (`integration_test/fake_repositories.dart`); koşullu assertion yok; aynı akış headless `test/app_flow_test.dart` ile `flutter test`'te ve GitHub Actions CI'da (`.github/workflows/ci.yml`: analyze + test) koşar. _(2026-10-25; yerelde, Android emülatörde ve CI'da yeşil)_ — `TEST-2`
 

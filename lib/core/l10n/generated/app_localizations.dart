@@ -1889,8 +1889,8 @@ abstract class AppLocalizations {
   /// No description provided for @mutualFollowedBy.
   ///
   /// In tr, this message translates to:
-  /// **'{others, plural, =0{{name} takip ediyor} other{{name} ve {others} diğer kişi takip ediyor}}'**
-  String mutualFollowedBy(String name, int others);
+  /// **'{count, plural, =1{{first} takip ediyor} =2{{first} ve {second} takip ediyor} other{{first}, {second} ve {others} kişi daha takip ediyor}}'**
+  String mutualFollowedBy(int count, String first, String second, int others);
 
   /// No description provided for @badgesTitle.
   ///

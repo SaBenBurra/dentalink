@@ -8,6 +8,7 @@ import '../../../core/utils/number_formatter.dart';
 import '../../../data/models/user_model.dart';
 import '../../../shared/widgets/follow_button.dart';
 import '../../../shared/widgets/user_avatar.dart';
+import 'mutual_followers_widget.dart';
 
 /// Instagram düzeni: solda avatar, yanında ad / unvan / üniversite / şehir;
 /// altında biyografi, sayaç satırı ve aksiyonlar.
@@ -117,6 +118,7 @@ class ProfileHeader extends StatelessWidget {
               ),
             ],
           ),
+          if (!isCurrentUser) MutualFollowersWidget(userId: user.id),
           const SizedBox(height: AppDimensions.spacing4),
           if (isCurrentUser)
             OutlinedButton.icon(
