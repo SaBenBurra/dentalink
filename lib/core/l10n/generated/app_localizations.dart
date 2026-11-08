@@ -2228,11 +2228,11 @@ abstract class AppLocalizations {
   /// **'Yanıtla'**
   String get reply;
 
-  /// No description provided for @explorePopularTags.
+  /// No description provided for @explorePopularPeople.
   ///
   /// In tr, this message translates to:
-  /// **'Popüler konular'**
-  String get explorePopularTags;
+  /// **'Popüler kişiler'**
+  String get explorePopularPeople;
 
   /// No description provided for @explorePopularPosts.
   ///
@@ -2245,12 +2245,6 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Kişiler'**
   String get explorePeople;
-
-  /// No description provided for @exploreTagPostCount.
-  ///
-  /// In tr, this message translates to:
-  /// **'{count, plural, other{{count} paylaşım}}'**
-  String exploreTagPostCount(int count);
 
   /// No description provided for @showReplies.
   ///

@@ -159,7 +159,7 @@ void main() {
       },
     );
 
-    test('popüler etiket: sorgu yalnızca etiket olur, branş Tümü', () async {
+    test('etiket linki: sorgu yalnızca etiket olur, branş Tümü', () async {
       notifier().setBranch(DentalBranch.ortodonti);
       notifier().search('braket');
       await pumpEventQueue();
@@ -171,10 +171,6 @@ void main() {
       expect((last.query, last.branch, last.offset), ('', null, 0));
       expect(last.tags, ['şeffaf_plak']);
       expect(state().users.value, isEmpty);
-      expect(state().isOnlyTag('şeffaf plak'), isTrue);
-      expect(state().isOnlyTag('braket'), isFalse);
-      notifier().search('#şeffaf_plak kalın');
-      expect(state().isOnlyTag('şeffaf plak'), isFalse);
     });
 
     test(

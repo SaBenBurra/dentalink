@@ -4,7 +4,6 @@ import '../../core/utils/paging.dart';
 import '../models/case_treatment.dart';
 import '../models/enums.dart';
 import '../models/post_model.dart';
-import '../models/tag_model.dart';
 import '../models/user_model.dart';
 
 /// Feed odaklı işlemler (Listeleme)
@@ -18,7 +17,7 @@ abstract class IFeedRepository {
   });
 }
 
-/// Keşfet: popülerlik sırası ve popüler etiketler
+/// Keşfet: popülerlik sırası ve popüler kişiler
 abstract class ISearchRepository {
   /// Popülerlik sırasıyla (035, `post_hot_score`) en fazla [pageSize] post.
   /// [query] metni, [tags] (hepsi bulunmalı), [branch] (vakanın herhangi bir
@@ -45,8 +44,9 @@ abstract class ISearchRepository {
     int limit = 50,
   });
 
-  /// En çok postta geçen [limit] etiket (`usageCount` = post sayısı).
-  Future<List<TagModel>> popularTags({int limit = 5});
+  /// Son 30 gündeki post ve yorum (düşük ağırlıkla) skorlarının toplamına göre
+  /// (047, 048) en fazla [limit] kişi; [now] skorun hesaplandığı an.
+  Future<List<UserModel>> popularUsers({required DateTime now, int limit = 5});
 }
 
 /// Kaydedilenler işlemleri

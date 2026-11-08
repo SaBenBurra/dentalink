@@ -1,5 +1,6 @@
 import 'package:dentigo/core/l10n/generated/app_localizations.dart';
-import 'package:dentigo/data/models/tag_model.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/data/models/user_model.dart';
 import 'package:dentigo/features/search/screens/search_screen.dart';
 import 'package:dentigo/features/search/widgets/filter_chips.dart';
 import 'package:dentigo/providers/search_provider.dart';
@@ -21,8 +22,16 @@ Future<void> _pump(WidgetTester tester, String query) async {
       key: ValueKey(query),
       overrides: [
         searchProvider.overrideWith(() => _FixedSearch(query)),
-        popularTagsProvider.overrideWith(
-          (ref) => const [TagModel(id: '1', name: 'implant', slug: 'implant')],
+        popularUsersProvider.overrideWith(
+          (ref) => [
+            UserModel(
+              id: 'u1',
+              fullName: 'Ayşe Hekim',
+              username: 'ayse',
+              title: UserTitle.disHekimi,
+              createdAt: DateTime(2024),
+            ),
+          ],
         ),
       ],
       child: MaterialApp(
@@ -40,12 +49,12 @@ void main() {
   testWidgets('odakta sorgu boşken yalnızca branşlar kalır', (tester) async {
     await _pump(tester, '');
     expect(find.byType(BranchFilterChips), findsOneWidget);
-    expect(find.text('#implant').hitTestable(), findsNothing);
+    expect(find.text('Ayşe Hekim').hitTestable(), findsNothing);
 
     // Boş alana dokunmak odağı bırakır, keşfet içeriği geri gelir.
     await tester.tapAt(tester.getCenter(find.byKey(const ValueKey('empty'))));
     await tester.pumpAndSettle();
-    expect(find.text('#implant').hitTestable(), findsOneWidget);
+    expect(find.text('Ayşe Hekim').hitTestable(), findsOneWidget);
   });
 
   testWidgets('odakta sorgu varken sonuçlar görünür', (tester) async {
@@ -62,7 +71,7 @@ void main() {
     await _pump(tester, '');
     await tester.tap(find.byIcon(Icons.clear_rounded));
     await tester.pumpAndSettle();
-    expect(find.text('#implant').hitTestable(), findsOneWidget);
+    expect(find.text('Ayşe Hekim').hitTestable(), findsOneWidget);
     expect(find.byIcon(Icons.clear_rounded), findsNothing);
   });
 
@@ -70,10 +79,10 @@ void main() {
     await _pump(tester, '');
     tester.view.viewInsets = const FakeViewPadding(bottom: 300);
     await tester.pump();
-    expect(find.text('#implant').hitTestable(), findsNothing);
+    expect(find.text('Ayşe Hekim').hitTestable(), findsNothing);
 
     tester.view.resetViewInsets();
     await tester.pumpAndSettle();
-    expect(find.text('#implant').hitTestable(), findsOneWidget);
+    expect(find.text('Ayşe Hekim').hitTestable(), findsOneWidget);
   });
 }

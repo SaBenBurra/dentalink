@@ -314,26 +314,26 @@ class SupabasePostRepository implements PostRepository {
   });
 
   @override
-  @override
-  Future<List<TagModel>> popularTags({int limit = 5}) =>
-      guardSupabase(() async {
-        final rows = await _client
-            .from('tags')
-            .select('id, name, slug, usage_count')
-            .gt('usage_count', 0)
-            .order('usage_count', ascending: false)
-            .order('name', ascending: true)
-            .limit(limit);
-        return [
-          for (final t in rows)
-            TagModel(
-              id: t['id'] as String,
-              name: t['name'] as String,
-              slug: t['slug'] as String,
-              usageCount: t['usage_count'] as int,
-            ),
-        ];
-      });
+  Future<List<UserModel>> popularUsers({
+    required DateTime now,
+    int limit = 5,
+  }) => guardSupabase(() async {
+    final ids =
+        (await _client.rpc(
+                  'popular_user_ids',
+                  params: {
+                    'p_now': now.toUtc().toIso8601String(),
+                    'p_limit': limit,
+                  },
+                )
+                as List)
+            .cast<String>();
+    if (ids.isEmpty) return <UserModel>[];
+    // RPC sırası korunur.
+    final rows = await _client.from('users').select().inFilter('id', ids);
+    final byId = {for (final r in rows) r['id'] as String: r};
+    return [for (final id in ids) ?byId[id]].map(UserModel.fromJson).toList();
+  });
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  IBookmarkRepository

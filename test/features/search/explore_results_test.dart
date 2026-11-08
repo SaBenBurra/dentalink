@@ -1,28 +1,42 @@
 import 'package:dentigo/core/l10n/generated/app_localizations.dart';
-import 'package:dentigo/data/models/tag_model.dart';
+import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/data/models/user_model.dart';
 import 'package:dentigo/features/search/widgets/search_results.dart';
 import 'package:dentigo/providers/search_provider.dart';
+import 'package:dentigo/shared/widgets/user_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _FixedSearch extends SearchNotifier {
-  _FixedSearch(this.query);
+  _FixedSearch(this.query, this.branch);
   final String query;
+  final DentalBranch? branch;
 
   @override
-  SearchState build() => SearchState(query: query, posts: const AsyncData([]));
+  SearchState build() =>
+      SearchState(query: query, branch: branch, posts: const AsyncData([]));
 }
 
-Future<void> _pump(WidgetTester tester, String query) async {
+Future<void> _pump(
+  WidgetTester tester,
+  String query, {
+  DentalBranch? branch,
+}) async {
   await tester.pumpWidget(
     ProviderScope(
-      key: ValueKey(query), // her sorgu taze provider durumu
+      key: ValueKey((query, branch)), // her durum taze provider
       overrides: [
-        searchProvider.overrideWith(() => _FixedSearch(query)),
-        popularTagsProvider.overrideWith(
-          (ref) => const [
-            TagModel(id: '1', name: 'implant', slug: 'implant', usageCount: 12),
+        searchProvider.overrideWith(() => _FixedSearch(query, branch)),
+        popularUsersProvider.overrideWith(
+          (ref) => [
+            UserModel(
+              id: 'u1',
+              fullName: 'Ayşe Hekim',
+              username: 'ayse',
+              title: UserTitle.disHekimi,
+              createdAt: DateTime(2024),
+            ),
           ],
         ),
       ],
@@ -30,7 +44,7 @@ Future<void> _pump(WidgetTester tester, String query) async {
         locale: const Locale('tr'),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: Scaffold(body: ExploreResults(onTagTap: (_) {})),
+        home: const Scaffold(body: ExploreResults()),
       ),
     ),
   );
@@ -38,14 +52,23 @@ Future<void> _pump(WidgetTester tester, String query) async {
 }
 
 void main() {
-  testWidgets('popüler etiketler yalnızca arama yokken görünür', (
+  testWidgets('popüler kişiler yalnızca Tümü\'de ve arama yokken görünür', (
     tester,
   ) async {
     await _pump(tester, '');
-    expect(find.text('#implant'), findsOneWidget);
-    expect(find.text('12 paylaşım'), findsOneWidget);
+    expect(find.text('Popüler kişiler'), findsOneWidget);
+    expect(find.text('Ayşe Hekim'), findsOneWidget);
+    // Başlıkla aynı kenar boşluğu, ekranın kenarına yapışmaz.
+    expect(
+      tester.getTopLeft(find.byType(UserTile)).dx,
+      tester.getTopLeft(find.text('Popüler kişiler')).dx,
+    );
+    expect(tester.getTopLeft(find.byType(UserTile)).dx, greaterThan(0));
 
     await _pump(tester, 'kanal');
-    expect(find.text('#implant'), findsNothing);
+    expect(find.text('Popüler kişiler'), findsNothing);
+
+    await _pump(tester, '', branch: DentalBranch.endodonti);
+    expect(find.text('Popüler kişiler'), findsNothing);
   });
 }

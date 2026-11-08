@@ -3,7 +3,7 @@ import '../data/models/enums.dart';
 import '../core/error/app_failures.dart';
 import '../core/utils/paging.dart';
 import '../data/models/post_model.dart';
-import '../data/models/tag_model.dart';
+import 'auth_provider.dart';
 import '../data/models/user_model.dart';
 import '../data/providers/repository_providers.dart';
 import 'post_toggle.dart';
@@ -52,9 +52,6 @@ class SearchState {
   /// Yalnızca sorguda metin varken dolar.
   final AsyncValue<List<UserModel>> users;
   final bool hasMore;
-
-  /// Sorgu yalnızca bu etiketse (popüler etiket seçili görünür).
-  bool isOnlyTag(String name) => query.trim() == hashtag(name);
 
   const SearchState({
     this.query = '',
@@ -121,7 +118,7 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
     _reload();
   }
 
-  /// Popüler etikete dokunuş: sorgu yalnızca etiket olur, branş Tümü'ye döner.
+  /// Etiket linki (post sayfası): sorgu yalnızca etiket olur, branş Tümü'ye döner.
   void selectTag(String name) {
     state = state.copyWith(query: hashtag(name), branch: () => null);
     _reload();
@@ -276,10 +273,12 @@ final searchProvider =
       () => SearchNotifier(),
     );
 
-/// Keşfet'teki "Popüler konular"; yenilemede invalidate edilir.
-final popularTagsProvider = FutureProvider.autoDispose<List<TagModel>>(
-  (ref) => ref.watch(searchRepositoryProvider).popularTags(),
-);
+/// Keşfet "Tümü"deki "Popüler kişiler"; yenilemede ve engellemede invalidate
+/// edilir. Kişi kendini görmez, bu yüzden hesap değişince yeniden çekilir.
+final popularUsersProvider = FutureProvider.autoDispose<List<UserModel>>((ref) {
+  ref.watch(authProvider.select((a) => a.valueOrNull?.id));
+  return ref.watch(searchRepositoryProvider).popularUsers(now: DateTime.now());
+});
 
 /// Feed üst barındaki arama ikonu her dokunuşta artırır; Keşfet sekmesi canlı
 /// kaldığı için `autofocus` yalnızca ilk açılışta çalışır, sonrası bunu dinler.

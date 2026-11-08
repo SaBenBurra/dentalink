@@ -1176,24 +1176,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reply => 'Reply';
 
   @override
-  String get explorePopularTags => 'Trending topics';
+  String get explorePopularPeople => 'Popular people';
 
   @override
   String get explorePopularPosts => 'Popular posts';
 
   @override
   String get explorePeople => 'People';
-
-  @override
-  String exploreTagPostCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count posts',
-      one: '1 post',
-    );
-    return '$_temp0';
-  }
 
   @override
   String showReplies(int count) {

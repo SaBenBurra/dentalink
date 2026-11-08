@@ -406,6 +406,16 @@ select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', 
 select public.update_post(public.create_post('question', 'F', 'içerik'), 'F', 'içerik',
   p_media_order => ARRAY[gen_random_uuid()]);
 rollback;
+
+-- 27) Popüler kişiler (047, 048) → BEKLENEN: me_listed = false, b_listed = true
+--     (<B>'nin son 30 günde postu ya da beğeni/yanıt almış yorumu olmalı)
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select
+  '<A>'::uuid in (select public.popular_user_ids(p_limit => 20)) me_listed,
+  '<B>'::uuid in (select public.popular_user_ids(p_limit => 20)) b_listed;
+rollback;
 ```
 
 ---

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/search_provider.dart';
 import '../../../providers/treatment_archive_provider.dart';
 import '../../../data/models/case_treatment.dart';
+import '../../../data/models/user_model.dart';
 import '../../../shared/extensions/dental_branch_ui.dart';
 import '../../../shared/extensions/treatment_type_ui.dart';
 import '../../../shared/widgets/case_treatments.dart';
@@ -18,13 +19,10 @@ import '../../../shared/widgets/load_more_footer.dart';
 import 'package:dentigo/core/constants/app_dimensions.dart';
 import 'package:dentigo/shared/widgets/post_card_factory.dart';
 
-/// Keşfet gövdesi: popüler konular (arama yokken), (metin aranıyorsa) kişiler,
+/// Keşfet gövdesi: popüler kişiler (Tümü, arama yokken), (metin aranıyorsa) kişiler,
 /// popüler gönderiler.
 class ExploreResults extends ConsumerWidget {
-  const ExploreResults({super.key, required this.onTagTap});
-
-  /// Popüler etikete dokunuş (seçiliyse kaldırır); ekran arama satırını da günceller.
-  final ValueChanged<String> onTagTap;
+  const ExploreResults({super.key});
 
   /// Metin aramasında gösterilen en fazla kişi.
   static const maxPeople = 3;
@@ -34,7 +32,7 @@ class ExploreResults extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(searchProvider);
     final notifier = ref.read(searchProvider.notifier);
-    final tags = ref.watch(popularTagsProvider);
+    final popularUsers = ref.watch(popularUsersProvider);
     final users = state.users.valueOrNull ?? const [];
     final branch = state.branch;
     final text = parseExploreQuery(state.query).text;
@@ -48,7 +46,7 @@ class ExploreResults extends ConsumerWidget {
 
     return RefreshIndicator(
       onRefresh: () {
-        ref.invalidate(popularTagsProvider);
+        ref.invalidate(popularUsersProvider);
         ref.invalidate(branchTreatmentsProvider);
         ref.invalidate(treatmentSearchProvider);
         return notifier.refresh();
@@ -96,50 +94,22 @@ class ExploreResults extends ConsumerWidget {
                   ),
               ],
             ),
-          // Arama varken etiketler sonuçları aşağı itmesin.
-          if (state.query.trim().isEmpty)
-            ...tags.when(
+          // Yalnızca Tümü'de ve arama yokken; sonuçları aşağı itmesin.
+          if (branch == null && state.query.trim().isEmpty)
+            ...popularUsers.when(
               data: (list) => [
-                if (list.isNotEmpty) _SectionHeader(l10n.explorePopularTags),
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(
-                    AppDimensions.spacing16,
-                    AppDimensions.spacing8,
-                    AppDimensions.spacing16,
-                    0,
-                  ),
-                  sliver: SliverToBoxAdapter(
-                    child: Wrap(
-                      spacing: AppDimensions.spacing8,
-                      runSpacing: AppDimensions.spacing8,
-                      children: [
-                        for (final tag in list)
-                          _PopularTagCard(
-                            name: tag.name,
-                            count: tag.usageCount,
-                            selected: state.isOnlyTag(tag.name),
-                            onTap: () => onTagTap(tag.name),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
+                if (list.isNotEmpty) ...[
+                  _SectionHeader(l10n.explorePopularPeople),
+                  _PeopleList(list),
+                ],
               ],
               loading: () => [const _SectionHeader(null)],
-              // Etiketler yardımcı bölüm; hata postları engellemesin, yenilemede tekrar denenir.
+              // Yardımcı bölüm; hata postları engellemesin, yenilemede tekrar denenir.
               error: (_, _) => const [],
             ),
           if (users.isNotEmpty) ...[
             _SectionHeader(l10n.explorePeople),
-            SliverList.list(
-              children: [
-                for (final user in users.take(maxPeople))
-                  UserTile(
-                    user: user,
-                    onTap: () => context.pushDetail('/profile/${user.id}'),
-                  ),
-              ],
-            ),
+            _PeopleList(users.take(maxPeople)),
           ],
           _SectionHeader(l10n.explorePopularPosts),
           ...state.posts.when(
@@ -242,74 +212,24 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-/// Popüler etiket: kalın `#ad` ve altında paylaşım sayısı. Seçiliyken dolu
-/// renkte ve çarpılı; tekrar dokunmak seçimi kaldırır.
-class _PopularTagCard extends StatelessWidget {
-  const _PopularTagCard({
-    required this.name,
-    required this.count,
-    required this.selected,
-    required this.onTap,
-  });
+/// Kişi satırları; [UserTile] yan boşluk vermez, bölüm başlığıyla hizalanır.
+class _PeopleList extends StatelessWidget {
+  const _PeopleList(this.users);
 
-  final String name;
-  final int count;
-  final bool selected;
-  final VoidCallback onTap;
+  final Iterable<UserModel> users;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-    final foreground = selected
-        ? colorScheme.onPrimary
-        : colorScheme.onPrimaryContainer;
-    return Material(
-      color: selected ? colorScheme.primary : colorScheme.primaryContainer,
-      borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
-        onTap: onTap,
-        child: Semantics(
-          button: true,
-          selected: selected,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.spacing12,
-              vertical: AppDimensions.spacing8,
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacing16),
+      sliver: SliverList.list(
+        children: [
+          for (final user in users)
+            UserTile(
+              user: user,
+              onTap: () => context.pushDetail('/profile/${user.id}'),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '#$name',
-                      style: textTheme.titleSmall?.copyWith(
-                        color: foreground,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Text(
-                      AppLocalizations.of(context)!.exploreTagPostCount(count),
-                      style: textTheme.bodySmall?.copyWith(color: foreground),
-                    ),
-                  ],
-                ),
-                if (selected) ...[
-                  const SizedBox(width: AppDimensions.spacing8),
-                  Icon(
-                    Icons.close_rounded,
-                    size: AppDimensions.iconSmall,
-                    color: foreground,
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
+        ],
       ),
     );
   }

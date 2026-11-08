@@ -150,17 +150,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
     _submit(text);
   }
 
-  /// Popüler etiket: sorgu iptal, branş Tümü (notifier'da). Seçili etikete
-  /// tekrar dokunmak seçimi kaldırır ve genel popüler listeye döner.
-  void _onTagTap(String name) {
-    _debounce?.cancel();
-    final deselect = ref.read(searchProvider).isOnlyTag(name);
-    _searchController.text = deselect ? '' : hashtag(name);
-    setState(() => _suggestions = const []);
-    FocusScope.of(context).unfocus();
-    deselect ? _notifier.search('') : _notifier.selectTag(name);
-  }
-
   @override
   Widget build(BuildContext context) {
     ref.listen(searchFocusRequestProvider, (_, _) => _focusNode.requestFocus());
@@ -220,7 +209,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
                     child: AnimatedOpacity(
                       opacity: hideBody ? 0 : 1,
                       duration: duration,
-                      child: ExploreResults(onTagTap: _onTagTap),
+                      child: const ExploreResults(),
                     ),
                   ),
                   AnimatedSwitcher(duration: duration, child: overlay),

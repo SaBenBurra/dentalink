@@ -153,7 +153,10 @@ class _FakePostRepository implements PostRepository {
   }) async => offset == 0 ? _feed : <PostModel>[];
 
   @override
-  Future<List<TagModel>> popularTags({int limit = 5}) async => const [];
+  Future<List<UserModel>> popularUsers({
+    required DateTime now,
+    int limit = 5,
+  }) async => const [];
 
   @override
   Future<List<CaseTreatment>> listTreatments({

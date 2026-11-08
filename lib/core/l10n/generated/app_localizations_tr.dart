@@ -1175,23 +1175,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get reply => 'Yanıtla';
 
   @override
-  String get explorePopularTags => 'Popüler konular';
+  String get explorePopularPeople => 'Popüler kişiler';
 
   @override
   String get explorePopularPosts => 'Popüler gönderiler';
 
   @override
   String get explorePeople => 'Kişiler';
-
-  @override
-  String exploreTagPostCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count paylaşım',
-    );
-    return '$_temp0';
-  }
 
   @override
   String showReplies(int count) {
