@@ -7,6 +7,7 @@ import 'package:dentigo/data/models/user_model.dart';
 import 'package:dentigo/data/providers/repository_providers.dart';
 import 'package:dentigo/data/repositories/comment_repository.dart';
 import 'package:dentigo/features/post/widgets/comments/comment_card.dart';
+import 'package:dentigo/features/post/widgets/comments/comment_thread.dart';
 import 'package:dentigo/features/post/widgets/comments/post_comments.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -125,5 +126,33 @@ void main() {
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('girinti bittikten sonra yanıt "@Ad" ile başlar', (tester) async {
+    Future<void> pump(int depth) => tester.pumpWidget(
+      ProviderScope(
+        overrides: [commentRepositoryProvider.overrideWithValue(_Repo())],
+        child: MaterialApp(
+          locale: const Locale('en'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: CommentThread(
+              comment: _c('r9', 'deep', parentId: 'r8'),
+              isPostOwner: false,
+              allowsBestAnswer: false,
+              onReply: (_, _) {},
+              depth: depth,
+              parentAuthorName: 'Ece',
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await pump(CommentThread.maxIndentDepth);
+    expect(find.text('deep'), findsOneWidget);
+    await pump(CommentThread.maxIndentDepth + 1);
+    expect(find.text('@Ece deep'), findsOneWidget);
   });
 }

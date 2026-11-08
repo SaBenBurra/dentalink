@@ -221,6 +221,9 @@ class CommentCard extends ConsumerWidget {
   final String? postAuthorId;
   final String? authorBadge;
 
+  /// Girinti bittikten sonra yanıtın kime olduğu metnin başında "@Ad" ile gösterilir.
+  final String? replyToName;
+
   const CommentCard({
     super.key,
     required this.comment,
@@ -232,6 +235,7 @@ class CommentCard extends ConsumerWidget {
     this.onReply,
     this.repliesExpanded = false,
     this.onToggleReplies,
+    this.replyToName,
   });
 
   Future<void> _handleMarkBest(BuildContext context, WidgetRef ref) async {
@@ -405,8 +409,20 @@ class CommentCard extends ConsumerWidget {
                     child: _BestAnswerBadge(),
                   ),
                 const SizedBox(height: AppDimensions.spacing2),
-                Text(
-                  comment.content,
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      if (replyToName != null)
+                        TextSpan(
+                          text: '@$replyToName ',
+                          style: TextStyle(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      TextSpan(text: comment.content),
+                    ],
+                  ),
                   style: TextStyle(
                     fontSize: isReply ? 13 : 14,
                     height: 1.45,
