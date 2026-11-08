@@ -60,6 +60,7 @@ class PushController {
   final FirebaseMessaging _messaging;
   final GoRouter _router;
   final _subs = <StreamSubscription<Object?>>[];
+  bool _cancelled = false;
 
   // Push hata verirse uygulama çalışmaya devam eder; yalnızca loglanır.
   Future<void> start() async {
@@ -70,6 +71,11 @@ class PushController {
     try {
       final launch = await initMessageNotifications(_open);
       if (launch != null) _open(launch);
+      // İzin penceresi OTP başarı animasyonunu ve kayıt adımlarını kesmesin.
+      final ready = Completer<void>();
+      _whenReady(ready.complete);
+      await ready.future;
+      if (_cancelled) return;
       final settings = await _messaging.requestPermission();
       if (settings.authorizationStatus != AuthorizationStatus.denied) {
         final token = await _messaging.getToken();
@@ -101,28 +107,34 @@ class PushController {
 
   void _open(Map<String, dynamic> data) {
     final route = pushRoute(data);
-    if (route == null) return;
-    // Soğuk açılışta router önce /login → /feed yönlendirmesini yapar; ondan sonra aç.
+    if (route != null) _whenReady(() => pushDetailOn(_router, route));
+  }
+
+  // Soğuk açılışta ve girişte router önce /splash, /login → /feed yönlendirmesini
+  // yapar; [action] uygulama içi bir sayfaya varınca çalışır.
+  void _whenReady(VoidCallback action) {
     bool ready() => !const {
       '/',
+      '/splash',
       '/login',
       '/register',
       '/auth-error',
     }.contains(_router.routerDelegate.currentConfiguration.uri.path);
     if (ready()) {
-      pushDetailOn(_router, route);
+      action();
       return;
     }
     late final VoidCallback listener;
     listener = () {
       if (!ready()) return;
       _router.routerDelegate.removeListener(listener);
-      pushDetailOn(_router, route);
+      action();
     };
     _router.routerDelegate.addListener(listener);
   }
 
   void cancel() {
+    _cancelled = true;
     for (final s in _subs) {
       s.cancel();
     }
