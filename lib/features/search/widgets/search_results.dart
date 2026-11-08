@@ -36,7 +36,6 @@ class ExploreResults extends ConsumerWidget {
     final notifier = ref.read(searchProvider.notifier);
     final tags = ref.watch(popularTagsProvider);
     final users = state.users.valueOrNull ?? const [];
-    final colorScheme = Theme.of(context).colorScheme;
     final branch = state.branch;
     final text = parseExploreQuery(state.query).text;
     // Yardımcı bölümler: hata postları engellemesin, yenilemede tekrar denenir.
@@ -102,27 +101,28 @@ class ExploreResults extends ConsumerWidget {
             ...tags.when(
               data: (list) => [
                 if (list.isNotEmpty) _SectionHeader(l10n.explorePopularTags),
-                SliverList.list(
-                  children: [
-                    for (final tag in list)
-                      ListTile(
-                        // Seçili etikete tekrar dokunmak seçimi kaldırır.
-                        selected: state.isOnlyTag(tag.name),
-                        selectedTileColor: colorScheme.primaryContainer,
-                        selectedColor: colorScheme.onPrimaryContainer,
-                        title: Text(
-                          '#${tag.name}',
-                          style: const TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                        subtitle: Text(
-                          l10n.exploreTagPostCount(tag.usageCount),
-                        ),
-                        trailing: state.isOnlyTag(tag.name)
-                            ? const Icon(Icons.close_rounded)
-                            : null,
-                        onTap: () => onTagTap(tag.name),
-                      ),
-                  ],
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppDimensions.spacing16,
+                    AppDimensions.spacing8,
+                    AppDimensions.spacing16,
+                    0,
+                  ),
+                  sliver: SliverToBoxAdapter(
+                    child: Wrap(
+                      spacing: AppDimensions.spacing8,
+                      runSpacing: AppDimensions.spacing8,
+                      children: [
+                        for (final tag in list)
+                          _PopularTagCard(
+                            name: tag.name,
+                            count: tag.usageCount,
+                            selected: state.isOnlyTag(tag.name),
+                            onTap: () => onTagTap(tag.name),
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
               loading: () => [const _SectionHeader(null)],
@@ -238,6 +238,79 @@ class _SectionHeader extends StatelessWidget {
                 ),
               ),
             ),
+    );
+  }
+}
+
+/// Popüler etiket: kalın `#ad` ve altında paylaşım sayısı. Seçiliyken dolu
+/// renkte ve çarpılı; tekrar dokunmak seçimi kaldırır.
+class _PopularTagCard extends StatelessWidget {
+  const _PopularTagCard({
+    required this.name,
+    required this.count,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String name;
+  final int count;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final foreground = selected
+        ? colorScheme.onPrimary
+        : colorScheme.onPrimaryContainer;
+    return Material(
+      color: selected ? colorScheme.primary : colorScheme.primaryContainer,
+      borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
+        onTap: onTap,
+        child: Semantics(
+          button: true,
+          selected: selected,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.spacing12,
+              vertical: AppDimensions.spacing8,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '#$name',
+                      style: textTheme.titleSmall?.copyWith(
+                        color: foreground,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      AppLocalizations.of(context)!.exploreTagPostCount(count),
+                      style: textTheme.bodySmall?.copyWith(color: foreground),
+                    ),
+                  ],
+                ),
+                if (selected) ...[
+                  const SizedBox(width: AppDimensions.spacing8),
+                  Icon(
+                    Icons.close_rounded,
+                    size: AppDimensions.iconSmall,
+                    color: foreground,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

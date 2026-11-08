@@ -21,7 +21,9 @@ Future<void> _pump(WidgetTester tester, String query) async {
       overrides: [
         searchProvider.overrideWith(() => _FixedSearch(query)),
         popularTagsProvider.overrideWith(
-          (ref) => const [TagModel(id: '1', name: 'implant', slug: 'implant')],
+          (ref) => const [
+            TagModel(id: '1', name: 'implant', slug: 'implant', usageCount: 12),
+          ],
         ),
       ],
       child: MaterialApp(
@@ -41,6 +43,7 @@ void main() {
   ) async {
     await _pump(tester, '');
     expect(find.text('#implant'), findsOneWidget);
+    expect(find.text('12 paylaşım'), findsOneWidget);
 
     await _pump(tester, 'kanal');
     expect(find.text('#implant'), findsNothing);
