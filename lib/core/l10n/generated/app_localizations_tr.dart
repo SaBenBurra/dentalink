@@ -1543,4 +1543,63 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get mediaOrder => 'Medya sırası';
+
+  @override
+  String get supportTitle => 'Dentigo Destek';
+
+  @override
+  String get supportContact => 'Destek ile iletişim';
+
+  @override
+  String get supportTileHint => 'Sorun, öneri ya da sorunuzu bize yazın';
+
+  @override
+  String get supportStatusOpen => 'Açık';
+
+  @override
+  String get supportStatusAnswered => 'Yanıtlandı';
+
+  @override
+  String get supportStatusResolved => 'Çözüldü';
+
+  @override
+  String get supportIntro =>
+      'Bir sorun ya da öneriniz mi var? Bize yazın, ekibimiz genelde 24 saat içinde yanıt verir.';
+
+  @override
+  String get supportCategoryPrompt => 'Konu';
+
+  @override
+  String get supportCategoryBug => 'Hata';
+
+  @override
+  String get supportCategoryAccount => 'Hesap';
+
+  @override
+  String get supportCategorySuggestion => 'Öneri';
+
+  @override
+  String get supportCategoryComplaint => 'Şikâyet';
+
+  @override
+  String get supportCategoryOther => 'Diğer';
+
+  @override
+  String get supportReceived =>
+      'Mesajınızı aldık. Ekibimiz genelde 24 saat içinde yanıt verir.';
+
+  @override
+  String get supportSeen => 'Destek ekibi okudu';
+
+  @override
+  String get supportResolvedNote =>
+      'Bu talep çözüldü. Yeni bir mesaj yazarsanız yeniden açılır.';
+
+  @override
+  String supportStaffLabel(String name) {
+    return 'Dentigo Destek · $name';
+  }
+
+  @override
+  String get supportLoadError => 'Destek mesajları yüklenemedi.';
 }

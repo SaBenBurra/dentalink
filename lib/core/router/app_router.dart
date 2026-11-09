@@ -22,6 +22,7 @@ import '../../features/post/screens/edit_post_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/followers_screen.dart';
 import '../../features/messaging/screens/chat_screen.dart';
+import '../../features/support/screens/support_screen.dart';
 import '../../features/notifications/screens/notifications_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
 import '../../features/settings/screens/blocked_users_screen.dart';
@@ -168,6 +169,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           final avatar = state.uri.queryParameters['avatar'] ?? '';
           return ChatScreen(userId: userId, userName: name, avatarUrl: avatar);
         },
+      ),
+      GoRoute(
+        path: '/support',
+        builder: (context, state) => const SupportScreen(),
       ),
 
       GoRoute(

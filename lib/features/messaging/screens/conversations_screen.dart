@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/conversation_tile.dart';
 import '../widgets/user_search_delegate.dart';
+import '../../support/widgets/support_tile.dart';
 import '../../search/widgets/search_bar.dart';
 import '../../../providers/message_provider.dart';
 import '../../../shared/widgets/loading_indicator.dart';
@@ -75,6 +76,8 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
             hintText: l10n.messagesSearchHint,
             onChanged: (_) => setState(() {}),
           ),
+          // Destek her zaman en üstte; arama yalnızca kişi sohbetlerini süzer.
+          if (_searchController.text.isEmpty) const SupportTile(),
           Expanded(
             child: conversationsAsync.when(
               loading: () => const DentigoLoadingSpinner(),

@@ -367,6 +367,11 @@ class SettingsScreen extends ConsumerWidget {
       icon: Icons.info_outline_rounded,
       children: [
         SettingsTile(
+          icon: Icons.support_agent_rounded,
+          title: AppLocalizations.of(context)!.supportContact,
+          onTap: () => context.push('/support'),
+        ),
+        SettingsTile(
           icon: Icons.description_outlined,
           title: AppLocalizations.of(context)!.settingsTerms,
           onTap: () => context.push('/legal/terms'),

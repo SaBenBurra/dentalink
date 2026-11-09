@@ -1558,4 +1558,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mediaOrder => 'Media order';
+
+  @override
+  String get supportTitle => 'Dentigo Support';
+
+  @override
+  String get supportContact => 'Contact support';
+
+  @override
+  String get supportTileHint => 'Tell us about a problem, idea or question';
+
+  @override
+  String get supportStatusOpen => 'Open';
+
+  @override
+  String get supportStatusAnswered => 'Answered';
+
+  @override
+  String get supportStatusResolved => 'Resolved';
+
+  @override
+  String get supportIntro =>
+      'Have a problem or an idea? Write to us, our team usually replies within 24 hours.';
+
+  @override
+  String get supportCategoryPrompt => 'Topic';
+
+  @override
+  String get supportCategoryBug => 'Bug';
+
+  @override
+  String get supportCategoryAccount => 'Account';
+
+  @override
+  String get supportCategorySuggestion => 'Suggestion';
+
+  @override
+  String get supportCategoryComplaint => 'Complaint';
+
+  @override
+  String get supportCategoryOther => 'Other';
+
+  @override
+  String get supportReceived =>
+      'We got your message. Our team usually replies within 24 hours.';
+
+  @override
+  String get supportSeen => 'Seen by support';
+
+  @override
+  String get supportResolvedNote =>
+      'This request is resolved. Writing a new message reopens it.';
+
+  @override
+  String supportStaffLabel(String name) {
+    return 'Dentigo Support · $name';
+  }
+
+  @override
+  String get supportLoadError => 'Couldn\'t load support messages.';
 }

@@ -2887,6 +2887,114 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Medya sırası'**
   String get mediaOrder;
+
+  /// No description provided for @supportTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dentigo Destek'**
+  String get supportTitle;
+
+  /// No description provided for @supportContact.
+  ///
+  /// In tr, this message translates to:
+  /// **'Destek ile iletişim'**
+  String get supportContact;
+
+  /// No description provided for @supportTileHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sorun, öneri ya da sorunuzu bize yazın'**
+  String get supportTileHint;
+
+  /// No description provided for @supportStatusOpen.
+  ///
+  /// In tr, this message translates to:
+  /// **'Açık'**
+  String get supportStatusOpen;
+
+  /// No description provided for @supportStatusAnswered.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yanıtlandı'**
+  String get supportStatusAnswered;
+
+  /// No description provided for @supportStatusResolved.
+  ///
+  /// In tr, this message translates to:
+  /// **'Çözüldü'**
+  String get supportStatusResolved;
+
+  /// No description provided for @supportIntro.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bir sorun ya da öneriniz mi var? Bize yazın, ekibimiz genelde 24 saat içinde yanıt verir.'**
+  String get supportIntro;
+
+  /// No description provided for @supportCategoryPrompt.
+  ///
+  /// In tr, this message translates to:
+  /// **'Konu'**
+  String get supportCategoryPrompt;
+
+  /// No description provided for @supportCategoryBug.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hata'**
+  String get supportCategoryBug;
+
+  /// No description provided for @supportCategoryAccount.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesap'**
+  String get supportCategoryAccount;
+
+  /// No description provided for @supportCategorySuggestion.
+  ///
+  /// In tr, this message translates to:
+  /// **'Öneri'**
+  String get supportCategorySuggestion;
+
+  /// No description provided for @supportCategoryComplaint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şikâyet'**
+  String get supportCategoryComplaint;
+
+  /// No description provided for @supportCategoryOther.
+  ///
+  /// In tr, this message translates to:
+  /// **'Diğer'**
+  String get supportCategoryOther;
+
+  /// No description provided for @supportReceived.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mesajınızı aldık. Ekibimiz genelde 24 saat içinde yanıt verir.'**
+  String get supportReceived;
+
+  /// No description provided for @supportSeen.
+  ///
+  /// In tr, this message translates to:
+  /// **'Destek ekibi okudu'**
+  String get supportSeen;
+
+  /// No description provided for @supportResolvedNote.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu talep çözüldü. Yeni bir mesaj yazarsanız yeniden açılır.'**
+  String get supportResolvedNote;
+
+  /// Personel cevabının üstündeki ad
+  ///
+  /// In tr, this message translates to:
+  /// **'Dentigo Destek · {name}'**
+  String supportStaffLabel(String name);
+
+  /// No description provided for @supportLoadError.
+  ///
+  /// In tr, this message translates to:
+  /// **'Destek mesajları yüklenemedi.'**
+  String get supportLoadError;
 }
 
 class _AppLocalizationsDelegate

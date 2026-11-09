@@ -218,11 +218,12 @@
   - **Kapsam dışı (şimdilik):** Google Play yerel in-app update API'si (`in_app_update`; yalnızca Android, iOS karşılığı yok). Gerekirse sonradan Android'de mağazaya gitmek yerine eklenir.
 - [ ] **Destek sohbeti ve personel rolleri.** Kullanıcı destek ekibine Mesajlar'ın en üstündeki sabit "Dentigo Destek" sohbetinden yazar; kullanıcı başına tek, sürekli sohbet (bilet numarası yok). Normal DM değil: sohbet ekibe ait, personel kendi hesabıyla ve adıyla cevaplar. Roller (`support`, `moderator`, `admin`) ileride admin panelinin ve moderasyonun da temeli; panel aynı RPC'leri ve RLS'i kullanır, `service_role` istemciye girmez.
   - [x] Migration 049: `staff` + `has_staff_role`, `support_threads` (durum `open`/`answered`/`resolved`, kategori, `client_info`, atanan, okundu zamanları, `first_response_at`), `support_messages` (`internal` iç not kullanıcıya görünmez). Yazma yalnızca RPC: `send_support_message` (10 dk'da 20 mesaj sınırı), `reply_support`, `set_support_status`, `mark_support_read`. Realtime'a eklendi. Kullanım ve smoke 28–30: `SUPABASE.md` §11. _(2026-11-08; canlıda, smoke 28–30 geçti 2026-11-09)_
-  - [ ] İstemci: `SupportRepository`, `/support` rotası (sohbet balonları yeniden kullanılır), Mesajlar'da sabit satır + durum (Açık/Yanıtlandı/Çözüldü) + "Destek ekibi okudu", ilk mesajda kategori seçimi, sürüm/platform otomatik eklenir, cevap "Dentigo Destek · Ad" olarak görünür, ilk mesajdan sonra otomatik karşılama metni. Giriş noktaları: Ayarlar → "Destek ile iletişim", hata ekranlarında "Sorun bildir". TR+EN.
+  - [x] İstemci: `SupportRepository`, `/support` (sohbet balonları yeniden kullanılır, cevap "Dentigo Destek · Ad"), Mesajlar'ın en üstünde sabit satır (durum Açık/Yanıtlandı/Çözüldü, okunmamış cevap alt menü rozetine de sayılır), son mesajın altında not ("Mesajınızı aldık… 24 saat içinde" / "Destek ekibi okudu" / "Çözüldü"), ilk mesajda isteğe bağlı kategori, platform ve sürüm otomatik eklenir. Giriş: Ayarlar → Hakkında → "Destek ile iletişim". TR+EN. _(2026-11-09)_
+  - [ ] Hata ekranlarında "Sorun bildir" girişi.
   - [ ] Push: personel cevabında kullanıcıya bildirim (027 kalıbı), dokununca `/support`.
-  - [ ] Personel kutusu: `support` rolünde Ayarlar → "Destek kutusu" (açıklar üstte, en eski bekleyen önce), cevap, iç not, durum. Yeni mesajda ekibe haber (Edge Function).
-  - [ ] Sonra: ek (ekran görüntüsü), çözülünce 👍/👎, admin paneli (atama, ilk cevap süresi, moderasyon kuyruğu, diploma onayı).
-  - **Açık karar:** kullanıcıya söylenecek cevap süresi; ekip bildirim kanalı (e-posta / Telegram / Slack).
+  - [ ] Admin paneli (uygulama dışı): destek kutusu (açıklar üstte, en eski bekleyen önce), cevap, iç not, durum, atama, ilk cevap süresi; yeni mesajda ekibe haber panelden. Sonra moderasyon kuyruğu ve diploma onayı. Uygulamaya personel kutusu eklenmez.
+  - [ ] Sonra: ek (ekran görüntüsü), çözülünce 👍/👎.
+  - **Kararlar (2026-11-09):** kullanıcıya söylenen cevap süresi "genelde 24 saat içinde"; destek talepleri ve ekip bildirimleri admin panelinden.
 - [ ] Performans profili (başlatma süresi, jank, bellek)
 - [ ] Beta testi (TestFlight + Play Internal) → mağaza açıklamaları ve ekran görüntüleri → yayın
 

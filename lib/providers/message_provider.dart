@@ -8,6 +8,7 @@ import '../data/models/message_model.dart';
 import '../data/providers/repository_providers.dart';
 import 'auth_provider.dart';
 import 'connectivity_provider.dart';
+import 'support_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Conversations Notifier
@@ -210,8 +211,12 @@ final activeChatProvider = AsyncNotifierProvider.autoDispose
 // Diğer Provider'lar
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// Toplam okunmamış mesaj sayısı — bottom nav badge için.
+/// Toplam okunmamış mesaj sayısı (destek cevabı dahil) — bottom nav badge için.
 final totalUnreadMessagesProvider = Provider.autoDispose<int>((ref) {
   final conversations = ref.watch(conversationsProvider).valueOrNull ?? [];
-  return conversations.fold(0, (sum, c) => sum + c.unreadCount);
+  final support = ref.watch(supportThreadProvider).valueOrNull?.hasUnread;
+  return conversations.fold(
+    support == true ? 1 : 0,
+    (sum, c) => sum + c.unreadCount,
+  );
 });

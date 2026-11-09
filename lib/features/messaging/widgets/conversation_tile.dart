@@ -8,6 +8,9 @@ class ConversationTile extends StatelessWidget {
   final String time;
   final int unreadCount;
   final String avatarUrl;
+
+  /// Kişi avatarı yerine gösterilir (destek satırı).
+  final Widget? avatar;
   final VoidCallback onTap;
 
   const ConversationTile({
@@ -16,7 +19,8 @@ class ConversationTile extends StatelessWidget {
     required this.lastMessage,
     required this.time,
     required this.unreadCount,
-    required this.avatarUrl,
+    this.avatarUrl = '',
+    this.avatar,
     required this.onTap,
   });
 
@@ -35,7 +39,12 @@ class ConversationTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            UserAvatar(name: name, imageUrl: avatarUrl, size: AvatarSize.large),
+            avatar ??
+                UserAvatar(
+                  name: name,
+                  imageUrl: avatarUrl,
+                  size: AvatarSize.large,
+                ),
             const SizedBox(width: AppDimensions.spacing12),
             Expanded(
               child: Column(

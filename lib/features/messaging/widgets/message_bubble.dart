@@ -15,6 +15,9 @@ class MessageBubble extends StatelessWidget {
   /// Karşı tarafın avatarı; grubun son balonunun yanında gösterilir.
   final Widget? avatar;
 
+  /// Grubun ilk balonunun üstündeki gönderici adı (destek cevapları).
+  final String? label;
+
   const MessageBubble({
     super.key,
     required this.text,
@@ -23,6 +26,7 @@ class MessageBubble extends StatelessWidget {
     this.isFirstInGroup = true,
     this.isLastInGroup = true,
     this.avatar,
+    this.label,
   });
 
   @override
@@ -54,6 +58,17 @@ class MessageBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (label != null && isFirstInGroup)
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Text(
+                label!,
+                style: textTheme.labelMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
           Text(
             text,
             style: textTheme.bodyLarge?.copyWith(
