@@ -17,7 +17,7 @@ class SupportAvatar extends StatelessWidget {
       radius: size / 2,
       backgroundColor: colorScheme.primaryContainer,
       child: Icon(
-        Icons.support_agent_rounded,
+        Icons.contact_support_rounded,
         size: size * 0.55,
         color: colorScheme.onPrimaryContainer,
       ),
@@ -53,7 +53,7 @@ class SupportFab extends ConsumerWidget {
         onPressed: () => context.push('/support'),
         child: Badge(
           isLabelVisible: hasUnread,
-          child: const Icon(Icons.support_agent_rounded),
+          child: const Icon(Icons.contact_support_rounded),
         ),
       ),
     );
