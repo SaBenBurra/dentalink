@@ -2900,12 +2900,6 @@ abstract class AppLocalizations {
   /// **'Destek ile iletişim'**
   String get supportContact;
 
-  /// No description provided for @supportTileHint.
-  ///
-  /// In tr, this message translates to:
-  /// **'Sorun, öneri ya da sorunuzu bize yazın'**
-  String get supportTileHint;
-
   /// No description provided for @supportStatusOpen.
   ///
   /// In tr, this message translates to:

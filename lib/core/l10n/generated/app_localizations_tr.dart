@@ -1551,9 +1551,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get supportContact => 'Destek ile iletişim';
 
   @override
-  String get supportTileHint => 'Sorun, öneri ya da sorunuzu bize yazın';
-
-  @override
   String get supportStatusOpen => 'Açık';
 
   @override

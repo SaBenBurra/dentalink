@@ -11,7 +11,7 @@ import '../../../shared/widgets/error_widget.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../messaging/widgets/chat_input.dart';
 import '../../messaging/widgets/message_bubble.dart';
-import '../widgets/support_tile.dart';
+import '../widgets/support_button.dart';
 
 final _timeFormatter = DateFormat('HH:mm');
 

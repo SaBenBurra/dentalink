@@ -1566,9 +1566,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get supportContact => 'Contact support';
 
   @override
-  String get supportTileHint => 'Tell us about a problem, idea or question';
-
-  @override
   String get supportStatusOpen => 'Open';
 
   @override
