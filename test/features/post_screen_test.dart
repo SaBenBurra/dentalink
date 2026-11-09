@@ -8,6 +8,7 @@ import 'package:dentigo/features/post/widgets/detail/detail_states.dart';
 import 'package:dentigo/features/shell/main_shell.dart';
 import 'package:dentigo/data/providers/repository_providers.dart';
 import 'package:dentigo/providers/post_provider.dart';
+import 'package:dentigo/shared/widgets/app_bottom_nav_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -142,7 +143,7 @@ void main() {
     expect(
       tester.getRect(inPage(find.text('Tartışma'))).top,
       moreOrLessEquals(
-        tester.getRect(appBar).bottom + AppDimensions.spacing16,
+        tester.getRect(appBar).bottom + AppDimensions.spacing40,
         epsilon: 1,
       ),
     );
@@ -175,78 +176,72 @@ void main() {
     expect(rect.bottom, lessThanOrEqualTo(tester.getRect(input).top));
   });
 
-  testWidgets('post sayfasında kaydırınca bar gizlenmez, yorum satırı sabit', (
-    tester,
-  ) async {
-    await pumpDentigo(tester);
-    final anchor = tester.element(find.text(seedCase.title));
-    final container = ProviderScope.containerOf(anchor);
-    final repo = container.read(commentRepositoryProvider);
-    for (var i = 0; i < 15; i++) {
-      await repo.addComment(seedCase.id, 'eski yorum $i');
-    }
-    pushDetailOn(GoRouter.of(anchor), '/post/${seedCase.id}');
-    await tester.pumpAndSettle();
-    final bar = container.read(bottomBarControllerProvider);
-
-    final input = inPage(find.byType(TextField)).last;
-    final inputTop = tester.getRect(input).top;
-    // Parmak hareketinin her karesinde: bar gizlenmeye başlamaz, satır kaymaz.
-    final gesture = await tester.startGesture(
-      tester.getCenter(inPage(find.byType(CustomScrollView))),
-    );
-    for (var i = 0; i < 40; i++) {
-      await gesture.moveBy(const Offset(0, -40));
-      await tester.pump(const Duration(milliseconds: 16));
-      expect(bar.isVisible, isTrue);
-      expect(tester.getRect(input).top, inputTop);
-    }
-    await gesture.up();
-    await tester.pumpAndSettle();
-    for (var i = 0; i < 10; i++) {
-      await tester.drag(
-        inPage(find.byType(CustomScrollView)),
-        const Offset(0, -400),
-      );
+  testWidgets(
+    'yorum satırı başlığın altında; tam görününce barın üstüne sabitlenir',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await pumpDentigo(tester);
+      final anchor = tester.element(find.text(seedCase.title));
+      final container = ProviderScope.containerOf(anchor);
+      final repo = container.read(commentRepositoryProvider);
+      for (var i = 0; i < 15; i++) {
+        await repo.addComment(seedCase.id, 'eski yorum $i');
+      }
+      pushDetailOn(GoRouter.of(anchor), '/post/${seedCase.id}');
       await tester.pumpAndSettle();
-    }
-    expect(tester.getRect(input).top, inputTop);
-    expect(
-      tester.getRect(inPage(find.text('eski yorum 14'))).bottom,
-      lessThan(inputTop),
-    );
-  });
+      final bar = container.read(bottomBarControllerProvider);
+      final barTop = tester.getRect(find.byType(AppBottomNavBar)).top;
+      final input = find
+          .descendant(
+            of: find.byType(PostComments, skipOffstage: false),
+            matching: find.byType(TextField, skipOffstage: false),
+            skipOffstage: false,
+          )
+          .last;
+      final list = inPage(find.byType(CustomScrollView));
 
-  testWidgets('yorum satırı yorumlar ekrana gelene kadar gizli', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(800, 360);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    await pumpDentigo(tester);
-    GoRouter.of(
-      tester.element(find.text(seedCase.title)),
-    ).push('/post/${seedCase.id}');
-    await tester.pumpAndSettle();
+      // Açılışta doğal yerinde: başlığın hemen altında, ekranın dışında.
+      final title = find.descendant(
+        of: find.byType(PostComments, skipOffstage: false),
+        matching: find.text('Tartışma', skipOffstage: false),
+        skipOffstage: false,
+      );
+      expect(
+        tester.getRect(input).top,
+        greaterThan(tester.getRect(title).bottom),
+      );
+      expect(tester.getRect(input).bottom, greaterThan(barTop));
 
-    double inputFactor() => tester
-        .widget<AnimatedAlign>(
-          find.descendant(
-            of: find.byType(PostComments),
-            matching: find.byType(AnimatedAlign),
-          ),
-        )
-        .heightFactor!;
-    expect(inputFactor(), 0);
+      // İçerikle birlikte yukarı gelir, barın üstüne değince orada kalır;
+      // geri sıçrama ya da kaybolma yok.
+      var last = tester.getRect(input).top;
+      for (var i = 0; i < 80; i++) {
+        await tester.drag(list, const Offset(0, -20));
+        await tester.pump();
+        final top = tester.getRect(input).top;
+        expect(tester.getRect(input).bottom, greaterThan(barTop - 16));
+        expect(top, lessThanOrEqualTo(last));
+        expect(bar.isVisible, isTrue);
+        last = top;
+      }
+      await tester.pumpAndSettle();
+      final stuck = tester.getRect(input);
+      expect(stuck.bottom, inInclusiveRange(barTop - 16, barTop));
+      // Son yorum sabit satırın arkasında kalmaz.
+      expect(
+        tester.getRect(inPage(find.text('eski yorum 14'))).bottom,
+        lessThanOrEqualTo(stuck.top),
+      );
 
-    await tester.drag(
-      find.descendant(
-        of: find.byType(PostScreen),
-        matching: find.byType(CustomScrollView),
-      ),
-      const Offset(0, -600),
-    );
-    await tester.pumpAndSettle();
-    expect(inputFactor(), 1);
-  });
+      // Biraz geri kaydırınca da sabit kalır; başlığa kadar dönünce yerine iner.
+      await tester.drag(list, const Offset(0, 200));
+      await tester.pumpAndSettle();
+      expect(tester.getRect(input), stuck);
+      await tester.drag(list, const Offset(0, 5000));
+      await tester.pumpAndSettle();
+      expect(tester.getRect(input).bottom, greaterThan(barTop));
+    },
+  );
 }

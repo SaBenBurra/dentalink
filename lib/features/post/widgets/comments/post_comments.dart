@@ -1,12 +1,14 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../data/models/comment_model.dart';
 import '../../../../data/models/enums.dart';
 import '../../../../data/models/post_model.dart';
-import '../../../../data/models/user_model.dart';
 import '../../../../providers/auth_provider.dart';
 import '../../../../providers/comment_provider.dart';
 import '../../../../shared/utils/error_messages.dart';
@@ -17,8 +19,8 @@ import 'comment_card.dart';
 import 'comment_thread.dart';
 
 /// Post sayfasının gövdesi: [header] (post kartı) ve yorumlar birlikte kayar,
-/// giriş alanı altta sabit kalır ama yorum başlığı ekrana gelene (ya da alana
-/// odaklanılana) kadar gizlidir, postu okurken ekranı kapatmaz. Yorumların gösterildiği tek yer burası.
+/// giriş alanı başlığın altındadır, görünür alana girince altta sabit kalır
+/// ([_SliverStickToBottom]). Yorumların gösterildiği tek yer burası.
 class PostComments extends ConsumerStatefulWidget {
   const PostComments({
     super.key,
@@ -56,7 +58,10 @@ class PostCommentsState extends ConsumerState<PostComments> {
   bool _isSubmitting = false;
   late bool _highlightPending = widget.highlightCommentId != null;
   bool _highlightOn = false;
-  bool _commentsInView = false;
+
+  /// Alta sabitlenen yorum satırının yüksekliği; listenin sonunda o kadar boşluk.
+  double _inputHeight = 0;
+  double _bottomInset = 0;
 
   /// Yanıt modunda yanıtlanan yorum ve gönderilince çağrılacak geri bildirim.
   ({CommentModel parent, VoidCallback onSent})? _replyTo;
@@ -67,8 +72,6 @@ class PostCommentsState extends ConsumerState<PostComments> {
   void initState() {
     super.initState();
     _controller.addListener(_saveDraft);
-    _focusNode.addListener(() => setState(() {}));
-    WidgetsBinding.instance.addPostFrameCallback((_) => _checkCommentsInView());
     if (widget.scrollToComments && !_highlightPending) {
       // Yükleme alanı ekran boyu olduğu için yorumları beklemeden, animasyonsuz.
       WidgetsBinding.instance.addPostFrameCallback(
@@ -85,6 +88,12 @@ class PostCommentsState extends ConsumerState<PostComments> {
     super.dispose();
   }
 
+  void _setInputHeight(double height) {
+    if (mounted && height != _inputHeight) {
+      setState(() => _inputHeight = height);
+    }
+  }
+
   void _saveDraft() {
     final text = _controller.text;
     if (text.trim().isEmpty) {
@@ -93,23 +102,6 @@ class PostCommentsState extends ConsumerState<PostComments> {
       _drafts[widget.post.id] = text;
     }
   }
-
-  /// Yorum başlığı görünür alana girdi mi (ya da üstünden geçildi mi)?
-  void _checkCommentsInView() {
-    final title = _titleKey.currentContext?.findRenderObject();
-    if (!mounted || title == null || !_scroll.hasClients) return;
-    final bottomEdge = RenderAbstractViewport.of(
-      title,
-    ).getOffsetToReveal(title, 1).offset;
-    final inView = _scroll.offset >= bottomEdge;
-    if (inView != _commentsInView) setState(() => _commentsInView = inView);
-  }
-
-  bool get _inputShown =>
-      _commentsInView ||
-      _focusNode.hasFocus ||
-      _replyTo != null ||
-      _controller.text.isNotEmpty;
 
   Future<void> _revealComments({
     Duration duration = const Duration(milliseconds: 250),
@@ -178,12 +170,18 @@ class PostCommentsState extends ConsumerState<PostComments> {
       if (!mounted) return;
       target = _findComment(sent.id);
     }
-    if (target == null || !target.mounted) return;
-    await Scrollable.ensureVisible(
-      target,
+    if (target == null || !target.mounted || !_scroll.hasClients) return;
+    // Alt kenar değil, alta sabitlenmiş satırın üstü hedeflenir.
+    final box = target.findRenderObject()!;
+    final end =
+        RenderAbstractViewport.of(box).getOffsetToReveal(box, 1).offset +
+        _inputHeight +
+        _bottomInset;
+    if (_scroll.offset >= end) return;
+    await _scroll.animateTo(
+      math.min(end, _scroll.position.maxScrollExtent),
       duration: _revealDuration,
       curve: Curves.easeOut,
-      alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
     );
   }
 
@@ -267,9 +265,11 @@ class PostCommentsState extends ConsumerState<PostComments> {
           ?widget.header,
           Padding(
             key: _titleKey,
+            // Kartın gölgesi ~10 dp aşağı taşar; başlığın üstünde ondan sonra da
+            // koyu zemin kalsın.
             padding: const EdgeInsets.fromLTRB(
               AppDimensions.spacing16,
-              AppDimensions.spacing16,
+              AppDimensions.spacing40,
               AppDimensions.spacing16,
               0,
             ),
@@ -280,7 +280,6 @@ class PostCommentsState extends ConsumerState<PostComments> {
               ),
             ),
           ),
-          const Divider(height: AppDimensions.spacing24),
         ],
       ),
     );
@@ -363,100 +362,45 @@ class PostCommentsState extends ConsumerState<PostComments> {
       ),
     );
 
-    return Column(
-      children: [
-        Expanded(
-          child: NotificationListener<Notification>(
-            onNotification: (n) {
-              if (n is ScrollNotification || n is ScrollMetricsNotification) {
-                // Bildirim layout sırasında gelebilir; ölçüm kare bitince.
-                WidgetsBinding.instance.addPostFrameCallback(
-                  (_) => _checkCommentsInView(),
-                );
-              }
-              return false;
-            },
-            child: CustomScrollView(
-              controller: _scroll,
-              physics: const AlwaysScrollableScrollPhysics(),
-              slivers: [
-                leading,
-                body,
-                const SliverToBoxAdapter(
-                  child: SizedBox(height: AppDimensions.spacing16),
-                ),
-              ],
-            ),
-          ),
-        ),
-        // Gizliyken de ağaçta kalır: yorum ikonu ve yanıt odak isteyebilir.
-        ClipRect(
-          child: AnimatedAlign(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-            alignment: Alignment.topCenter,
-            heightFactor: _inputShown ? 1 : 0,
-            child: _buildInput(context, me),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInput(BuildContext context, UserModel? me) {
-    final l10n = AppLocalizations.of(context)!;
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Divider(height: 1),
-        if (_replyTo case final replyTo?)
-          Padding(
-            padding: const EdgeInsets.only(left: AppDimensions.spacing16),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.reply_rounded,
-                  size: 16,
-                  color: colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(width: AppDimensions.spacing8),
-                Expanded(
-                  child: Text(
-                    l10n.replyingTo(
-                      replyTo.parent.author?.fullName ?? l10n.deletedUser,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+    final input = ColoredBox(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (_replyTo case final replyTo?)
+            Padding(
+              padding: const EdgeInsets.only(left: AppDimensions.spacing16),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.reply_rounded,
+                    size: 16,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: AppDimensions.spacing8),
+                  Expanded(
+                    child: Text(
+                      l10n.replyingTo(
+                        replyTo.parent.author?.fullName ?? l10n.deletedUser,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                  tooltip: l10n.cancel,
-                  icon: const Icon(Icons.close_rounded, size: 18),
-                  onPressed: _isSubmitting
-                      ? null
-                      : () => setState(() => _replyTo = null),
-                ),
-              ],
-            ),
-          ),
-        // Bar gizlenince giriş alanı da onunla aşağı iner.
-        AnimatedBuilder(
-          animation: ref.watch(bottomBarAnimationProvider),
-          builder: (context, child) => Padding(
-            padding: EdgeInsets.only(
-              bottom: bottomInsetFollowingBar(
-                MediaQuery.of(context),
-                ref.read(bottomBarAnimationProvider).value,
+                  IconButton(
+                    tooltip: l10n.cancel,
+                    icon: const Icon(Icons.close_rounded, size: 18),
+                    onPressed: _isSubmitting
+                        ? null
+                        : () => setState(() => _replyTo = null),
+                  ),
+                ],
               ),
             ),
-            child: child,
-          ),
-          child: Padding(
+          Padding(
             padding: const EdgeInsets.fromLTRB(
               AppDimensions.spacing16,
               AppDimensions.spacing8,
@@ -521,8 +465,126 @@ class PostCommentsState extends ConsumerState<PostComments> {
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
+    );
+
+    // Bar gizlenince alttaki boşluk da onunla değişir.
+    return AnimatedBuilder(
+      animation: ref.watch(bottomBarAnimationProvider),
+      builder: (context, _) {
+        final inset = bottomInsetFollowingBar(
+          MediaQuery.of(context),
+          ref.read(bottomBarAnimationProvider).value,
+        );
+        _bottomInset = inset;
+        return CustomScrollView(
+          controller: _scroll,
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            leading,
+            _SliverStickToBottom(
+              bottomInset: inset,
+              onHeight: _setInputHeight,
+              child: input,
+            ),
+            const SliverToBoxAdapter(
+              child: Divider(height: AppDimensions.spacing24),
+            ),
+            body,
+            // Sona gelince son yorum alta sabitlenmiş satırın arkasında kalmasın.
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: AppDimensions.spacing16 + _inputHeight + inset,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
+}
+
+/// Yorum satırı: akıştaki yeri yorum başlığının altıdır. Bu yer görünür alana
+/// tamamen girdikten sonra satır ekranın altında ([bottomInset] üstünde) kalır;
+/// yer henüz aşağıdaysa satır da oradadır (ekranda görünmez).
+class _SliverStickToBottom extends SingleChildRenderObjectWidget {
+  const _SliverStickToBottom({
+    required this.bottomInset,
+    required this.onHeight,
+    required Widget super.child,
+  });
+
+  final double bottomInset;
+  final ValueChanged<double> onHeight;
+
+  @override
+  _RenderSliverStickToBottom createRenderObject(BuildContext context) =>
+      _RenderSliverStickToBottom(bottomInset, onHeight);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenderSliverStickToBottom renderObject,
+  ) {
+    renderObject
+      ..bottomInset = bottomInset
+      ..onHeight = onHeight;
+  }
+}
+
+class _RenderSliverStickToBottom extends RenderSliverSingleBoxAdapter {
+  _RenderSliverStickToBottom(this._bottomInset, this.onHeight);
+
+  double _bottomInset;
+  set bottomInset(double value) {
+    if (value == _bottomInset) return;
+    _bottomInset = value;
+    markNeedsLayout();
+  }
+
+  ValueChanged<double> onHeight;
+  double? _reportedHeight;
+  bool _stuck = false;
+
+  @override
+  void performLayout() {
+    final c = constraints;
+    child!.layout(c.asBoxConstraints(), parentUsesSize: true);
+    final height = child!.size.height;
+    if (height != _reportedHeight) {
+      _reportedHeight = height;
+      // Layout sırasında setState yapılamaz.
+      SchedulerBinding.instance.addPostFrameCallback((_) => onHeight(height));
+    }
+    // Bu sliver'ın ekranda başladığı yer; satırın doğal üstü bundan scrollOffset
+    // kadar yukarıda.
+    final start = c.viewportMainAxisExtent - c.remainingPaintExtent;
+    final naturalTop = start - c.scrollOffset;
+    final stuckTop = c.viewportMainAxisExtent - _bottomInset - height;
+    _stuck = c.remainingPaintExtent > 0 && naturalTop < stuckTop;
+    // Sabitken akışta yer tutmaz: başlığın altında boşluk kalmaz. Geçiş anında
+    // yer ekranın altında, satırın arkasında olduğundan kayma görünmez.
+    final extent = _stuck ? 0.0 : height;
+    final naturalExtent = calculatePaintOffset(c, from: 0, to: extent);
+    geometry = SliverGeometry(
+      scrollExtent: extent,
+      layoutExtent: naturalExtent,
+      paintOrigin: _stuck ? stuckTop - start : 0,
+      paintExtent: _stuck ? height : naturalExtent,
+      maxPaintExtent: height,
+      hitTestExtent: _stuck ? height : naturalExtent,
+      cacheExtent: calculateCacheOffset(c, from: 0, to: extent),
+      hasVisualOverflow: true,
+    );
+    setChildParentData(child!, c, geometry!);
+    if (_stuck) {
+      (child!.parentData! as SliverPhysicalParentData).paintOffset =
+          Offset.zero;
+    }
+  }
+
+  @override
+  double childMainAxisPosition(RenderBox child) =>
+      _stuck ? 0 : -constraints.scrollOffset;
 }
