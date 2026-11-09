@@ -54,7 +54,9 @@ class _ConversationsScreenState extends ConsumerState<ConversationsScreen> {
     final conversationsAsync = ref.watch(conversationsProvider);
 
     return Scaffold(
-      floatingActionButton: const SupportFab(),
+      floatingActionButton: SupportFab(
+        bottomInset: SupportFab.insetOf(context),
+      ),
       appBar: AppBar(
         centerTitle: false,
         title: Text(

@@ -27,19 +27,34 @@ class SupportAvatar extends StatelessWidget {
 
 /// Mesajlar ekranının sağ altındaki destek butonu; okunmamış cevapta rozet.
 class SupportFab extends ConsumerWidget {
-  const SupportFab({super.key});
+  const SupportFab({super.key, this.bottomInset = 0});
+
+  /// Scaffold FAB'ın padding'ini siler; shell'in yüzen alt barı padding.bottom
+  /// olarak verildiği için yükseklik Scaffold'ın dışında [insetOf] ile ölçülür.
+  final double bottomInset;
+
+  /// Scaffold FAB'ı zaten viewPadding (sistem çubuğu) kadar yukarı koyar; fark bar.
+  static double insetOf(BuildContext context) {
+    final inset =
+        MediaQuery.paddingOf(context).bottom -
+        MediaQuery.viewPaddingOf(context).bottom;
+    return inset > 0 ? inset : 0;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final hasUnread =
         ref.watch(supportThreadProvider).valueOrNull?.hasUnread == true;
-    return FloatingActionButton(
-      heroTag: null,
-      tooltip: AppLocalizations.of(context)!.supportContact,
-      onPressed: () => context.push('/support'),
-      child: Badge(
-        isLabelVisible: hasUnread,
-        child: const Icon(Icons.support_agent_rounded),
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomInset),
+      child: FloatingActionButton(
+        heroTag: null,
+        tooltip: AppLocalizations.of(context)!.supportContact,
+        onPressed: () => context.push('/support'),
+        child: Badge(
+          isLabelVisible: hasUnread,
+          child: const Icon(Icons.support_agent_rounded),
+        ),
       ),
     );
   }
