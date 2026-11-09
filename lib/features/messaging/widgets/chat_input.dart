@@ -84,9 +84,11 @@ class ChatInput extends StatelessWidget {
                           dimension: AppDimensions.iconMedium,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Icon(
+                      // Global iconTheme rengi butonun onPrimary'sini eziyor.
+                      : Icon(
                           Icons.arrow_upward_rounded,
                           size: AppDimensions.iconMedium,
+                          color: canSend ? colorScheme.onPrimary : null,
                         ),
                 );
               },
