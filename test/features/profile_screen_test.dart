@@ -3,6 +3,7 @@ import 'package:dentigo/data/models/enums.dart';
 import 'package:dentigo/data/models/user_model.dart';
 import 'package:dentigo/features/profile/widgets/profile_header.dart';
 import 'package:dentigo/providers/user_provider.dart';
+import 'package:dentigo/providers/search_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dentigo/features/profile/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -122,5 +123,34 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Ali, Veli ve 5 kişi daha takip ediyor'), findsOneWidget);
+  });
+
+  testWidgets('ilk 50 popüler kişideyse profilde sırası görünür', (
+    tester,
+  ) async {
+    Future<void> pump(int? rank) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          key: ValueKey(rank),
+          overrides: [
+            ...fakeRepositoryOverrides(),
+            popularRankProvider(otherUser.id).overrideWith((ref) async => rank),
+          ],
+          child: MaterialApp(
+            locale: const Locale('tr'),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(body: ProfileHeader(user: otherUser)),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    await pump(7);
+    expect(find.text('Popüler #7'), findsOneWidget);
+
+    await pump(null);
+    expect(find.textContaining('Popüler #'), findsNothing);
   });
 }

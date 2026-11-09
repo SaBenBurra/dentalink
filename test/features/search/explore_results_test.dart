@@ -64,6 +64,8 @@ void main() {
       tester.getTopLeft(find.text('Popüler kişiler')).dx,
     );
     expect(tester.getTopLeft(find.byType(UserTile)).dx, greaterThan(0));
+    // Başlığın sağında ilk 50 listesine giden buton.
+    expect(find.text('Tümünü gör'), findsOneWidget);
 
     await _pump(tester, 'kanal');
     expect(find.text('Popüler kişiler'), findsNothing);

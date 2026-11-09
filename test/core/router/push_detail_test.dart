@@ -65,6 +65,10 @@ void main() {
     expect(detailLocationIn('/profile', '/profile/u1'), '/profile/profile/u1');
     expect(detailLocationIn('/feed', '/chat/u1?name=a'), '/chat/u1?name=a');
     expect(detailLocationIn(null, '/post/1'), '/post/1');
+    expect(
+      detailLocationIn('/search', '/popular-people'),
+      '/search/popular-people',
+    );
   });
 
   testWidgets(

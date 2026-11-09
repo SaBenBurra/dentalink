@@ -6,6 +6,9 @@ import '../models/enums.dart';
 import '../models/post_model.dart';
 import '../models/user_model.dart';
 
+/// Popüler kişiler listesindeki kişi ve gerçek sırası.
+typedef RankedUser = ({UserModel user, int rank});
+
 /// Feed odaklı işlemler (Listeleme)
 abstract class IFeedRepository {
   /// Kronolojik, en yeni önce; [before] verilirse sonraki sayfa.
@@ -45,8 +48,12 @@ abstract class ISearchRepository {
   });
 
   /// Son 30 gündeki post ve yorum (düşük ağırlıkla) skorlarının toplamına göre
-  /// (047, 048) en fazla [limit] kişi; [now] skorun hesaplandığı an.
-  Future<List<UserModel>> popularUsers({required DateTime now, int limit = 5});
+  /// genel sıranın ilk [limit]'i (en fazla 50; 050), gerçek sıra numarasıyla.
+  /// Engel olanlar çıkar, numaraları atlanır; [now] skorun hesaplandığı an.
+  Future<List<RankedUser>> popularUsers({required DateTime now, int limit = 5});
+
+  /// Kişinin popüler kişiler genel sırası (050); ilk 50'de değilse null.
+  Future<int?> popularRank(String userId, {required DateTime now});
 }
 
 /// Kaydedilenler işlemleri

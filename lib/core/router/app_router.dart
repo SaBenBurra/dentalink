@@ -29,6 +29,7 @@ import '../../features/settings/screens/blocked_users_screen.dart';
 import '../../features/settings/screens/change_contact_screen.dart';
 import '../../features/settings/screens/legal_screen.dart';
 import '../../features/bookmarks/screens/bookmarks_screen.dart';
+import '../../features/search/screens/popular_people_screen.dart';
 import 'package:dentigo/core/constants/app_dimensions.dart';
 import '../../providers/auth_provider.dart';
 import '../../data/models/post_model.dart';
@@ -342,11 +343,15 @@ List<RouteBase> _detailRoutes({bool root = false}) {
       path: '${p}notifications',
       builder: (context, state) => const NotificationsScreen(),
     ),
+    GoRoute(
+      path: '${p}popular-people',
+      builder: (context, state) => const PopularPeopleScreen(),
+    ),
   ];
 }
 
 final _detailPath = RegExp(
-  r'^/(post|treatment|profile|network|bookmarks|notifications)/?',
+  r'^/(post|treatment|profile|network|bookmarks|notifications|popular-people)/?',
 );
 
 /// [location] bir detay sayfasıysa ve [tabRoot] (`/feed` gibi) verildiyse onu

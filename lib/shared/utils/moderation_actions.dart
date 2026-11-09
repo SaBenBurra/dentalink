@@ -83,6 +83,7 @@ Future<bool> confirmAndBlockUser(
   ref.invalidate(repliesProvider);
   ref.invalidate(treatmentArchiveProvider);
   ref.invalidate(popularUsersProvider);
+  ref.invalidate(topPeopleProvider);
   ref.invalidate(authProvider); // takip sayıları DB'de düştü
   messenger.showSnackBar(SnackBar(content: Text(l10n.userBlocked)));
   return true;

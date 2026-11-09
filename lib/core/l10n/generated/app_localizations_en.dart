@@ -1179,6 +1179,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get explorePopularPeople => 'Popular people';
 
   @override
+  String get explorePopularPeopleAll => 'See all';
+
+  @override
+  String get popularPeopleTitle => 'Popular people · Top 50';
+
+  @override
+  String popularRank(int rank) {
+    return 'Popular #$rank';
+  }
+
+  @override
   String get explorePopularPosts => 'Popular posts';
 
   @override

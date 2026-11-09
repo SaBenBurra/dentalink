@@ -1,11 +1,13 @@
 import 'package:dentigo/core/router/app_router.dart';
 import 'package:dentigo/shared/extensions/user_title_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/l10n/generated/app_localizations.dart';
 import '../../../core/utils/number_formatter.dart';
 import '../../../data/models/user_model.dart';
+import '../../../providers/search_provider.dart';
 import '../../../shared/widgets/follow_button.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import 'mutual_followers_widget.dart';
@@ -90,6 +92,7 @@ class ProfileHeader extends StatelessWidget {
                           fontWeight: i == 0 ? FontWeight.w600 : null,
                         ),
                       ),
+                    _PopularRank(userId: user.id),
                   ],
                 ),
               ),
@@ -270,3 +273,27 @@ ButtonStyle _smallButton(BuildContext context) => ButtonStyle(
   ),
   textStyle: WidgetStatePropertyAll(Theme.of(context).textTheme.labelMedium),
 );
+
+/// İlk 50 popüler kişideyse "Popüler #N"; dokununca listeyi açar. Yüklenirken
+/// ya da hata olursa yer kaplamaz (yardımcı bilgi).
+class _PopularRank extends ConsumerWidget {
+  const _PopularRank({required this.userId});
+
+  final String userId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final rank = ref.watch(popularRankProvider(userId)).valueOrNull;
+    if (rank == null) return const SizedBox.shrink();
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(top: AppDimensions.spacing4),
+      child: ActionChip(
+        avatar: Icon(Icons.trending_up_rounded, color: colorScheme.primary),
+        label: Text(AppLocalizations.of(context)!.popularRank(rank)),
+        visualDensity: VisualDensity.compact,
+        onPressed: () => context.pushDetail('/popular-people'),
+      ),
+    );
+  }
+}

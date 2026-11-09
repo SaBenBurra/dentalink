@@ -99,7 +99,15 @@ class ExploreResults extends ConsumerWidget {
             ...popularUsers.when(
               data: (list) => [
                 if (list.isNotEmpty) ...[
-                  _SectionHeader(l10n.explorePopularPeople),
+                  _SectionHeader(
+                    l10n.explorePopularPeople,
+                    action: TextButton.icon(
+                      iconAlignment: IconAlignment.end,
+                      icon: const Icon(Icons.chevron_right_rounded),
+                      label: Text(l10n.explorePopularPeopleAll),
+                      onPressed: () => context.pushDetail('/popular-people'),
+                    ),
+                  ),
                   _PeopleList(list),
                 ],
               ],
@@ -183,9 +191,12 @@ class ExploreResults extends ConsumerWidget {
 
 class _SectionHeader extends StatelessWidget {
   /// Null ise yüklenirken ince ilerleme çubuğu.
-  const _SectionHeader(this.title);
+  const _SectionHeader(this.title, {this.action});
 
   final String? title;
+
+  /// Başlığın sağındaki isteğe bağlı buton.
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -200,12 +211,19 @@ class _SectionHeader extends StatelessWidget {
                 AppDimensions.spacing16,
                 AppDimensions.spacing4,
               ),
-              child: Semantics(
-                header: true,
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Semantics(
+                      header: true,
+                      child: Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                  ),
+                  ?action,
+                ],
               ),
             ),
     );

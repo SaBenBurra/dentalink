@@ -314,26 +314,46 @@ class SupabasePostRepository implements PostRepository {
   });
 
   @override
-  Future<List<UserModel>> popularUsers({
+  Future<List<RankedUser>> popularUsers({
     required DateTime now,
     int limit = 5,
   }) => guardSupabase(() async {
-    final ids =
-        (await _client.rpc(
-                  'popular_user_ids',
+    final ranks = {
+      for (final r
+          in await _client.rpc(
+                'popular_users_ranked',
+                params: {
+                  'p_now': now.toUtc().toIso8601String(),
+                  'p_limit': limit,
+                },
+              )
+              as List)
+        r['user_id'] as String: r['rank'] as int,
+    };
+    if (ranks.isEmpty) return <RankedUser>[];
+    final rows = await _client
+        .from('users')
+        .select()
+        .inFilter('id', ranks.keys.toList());
+    return [
+      for (final r in rows)
+        (user: UserModel.fromJson(r), rank: ranks[r['id']]!),
+    ]..sort((a, b) => a.rank.compareTo(b.rank));
+  });
+
+  @override
+  Future<int?> popularRank(String userId, {required DateTime now}) =>
+      guardSupabase(
+        () async =>
+            await _client.rpc(
+                  'popular_user_rank',
                   params: {
+                    'p_user': userId,
                     'p_now': now.toUtc().toIso8601String(),
-                    'p_limit': limit,
                   },
                 )
-                as List)
-            .cast<String>();
-    if (ids.isEmpty) return <UserModel>[];
-    // RPC sırası korunur.
-    final rows = await _client.from('users').select().inFilter('id', ids);
-    final byId = {for (final r in rows) r['id'] as String: r};
-    return [for (final id in ids) ?byId[id]].map(UserModel.fromJson).toList();
-  });
+                as int?,
+      );
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  IBookmarkRepository

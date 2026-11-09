@@ -6,6 +6,7 @@ import '../data/models/post_model.dart';
 import 'auth_provider.dart';
 import '../data/models/user_model.dart';
 import '../data/providers/repository_providers.dart';
+import '../data/repositories/post_repository.dart';
 import 'post_toggle.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -273,12 +274,33 @@ final searchProvider =
       () => SearchNotifier(),
     );
 
-/// Keşfet "Tümü"deki "Popüler kişiler"; yenilemede ve engellemede invalidate
-/// edilir. Kişi kendini görmez, bu yüzden hesap değişince yeniden çekilir.
-final popularUsersProvider = FutureProvider.autoDispose<List<UserModel>>((ref) {
+/// Keşfet "Tümü"deki "Popüler kişiler" (sıranın ilk 5'i); yenilemede ve
+/// engellemede invalidate edilir. Engeller kişiye göre, bu yüzden hesap değişince
+/// yeniden çekilir.
+final popularUsersProvider = FutureProvider.autoDispose<List<UserModel>>((
+  ref,
+) async {
   ref.watch(authProvider.select((a) => a.valueOrNull?.id));
-  return ref.watch(searchRepositoryProvider).popularUsers(now: DateTime.now());
+  final ranked = await ref
+      .watch(searchRepositoryProvider)
+      .popularUsers(now: DateTime.now());
+  return [for (final r in ranked) r.user];
 });
+
+/// "Popüler kişiler" başlığından açılan ilk 50 (`/popular-people`, sınır 050).
+final topPeopleProvider = FutureProvider.autoDispose<List<RankedUser>>((ref) {
+  ref.watch(authProvider.select((a) => a.valueOrNull?.id));
+  return ref
+      .watch(searchRepositoryProvider)
+      .popularUsers(now: DateTime.now(), limit: 50);
+});
+
+/// Profildeki "Popüler #N" rozeti; ilk 50'de değilse null.
+final popularRankProvider = FutureProvider.autoDispose.family<int?, String>(
+  (ref, userId) => ref
+      .watch(searchRepositoryProvider)
+      .popularRank(userId, now: DateTime.now()),
+);
 
 /// Feed üst barındaki arama ikonu her dokunuşta artırır; Keşfet sekmesi canlı
 /// kaldığı için `autofocus` yalnızca ilk açılışta çalışır, sonrası bunu dinler.

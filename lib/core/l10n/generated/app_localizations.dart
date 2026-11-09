@@ -2234,6 +2234,24 @@ abstract class AppLocalizations {
   /// **'Popüler kişiler'**
   String get explorePopularPeople;
 
+  /// No description provided for @explorePopularPeopleAll.
+  ///
+  /// In tr, this message translates to:
+  /// **'Tümünü gör'**
+  String get explorePopularPeopleAll;
+
+  /// No description provided for @popularPeopleTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Popüler kişiler · İlk 50'**
+  String get popularPeopleTitle;
+
+  /// Profilde ilk 50 popüler kişi sırası
+  ///
+  /// In tr, this message translates to:
+  /// **'Popüler #{rank}'**
+  String popularRank(int rank);
+
   /// No description provided for @explorePopularPosts.
   ///
   /// In tr, this message translates to:
