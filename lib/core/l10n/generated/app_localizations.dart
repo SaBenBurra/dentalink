@@ -3017,13 +3017,13 @@ abstract class AppLocalizations {
   /// No description provided for @listingPost.
   ///
   /// In tr, this message translates to:
-  /// **'İlan'**
+  /// **'Ticaret'**
   String get listingPost;
 
   /// No description provided for @listingsTabLabelInProfile.
   ///
   /// In tr, this message translates to:
-  /// **'İlanlar'**
+  /// **'Ticaret'**
   String get listingsTabLabelInProfile;
 
   /// No description provided for @feedFilterListings.

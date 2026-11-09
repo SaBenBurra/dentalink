@@ -1615,10 +1615,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get supportLoadError => 'Destek mesajları yüklenemedi.';
 
   @override
-  String get listingPost => 'İlan';
+  String get listingPost => 'Ticaret';
 
   @override
-  String get listingsTabLabelInProfile => 'İlanlar';
+  String get listingsTabLabelInProfile => 'Ticaret';
 
   @override
   String get feedFilterListings => 'Ticaret';

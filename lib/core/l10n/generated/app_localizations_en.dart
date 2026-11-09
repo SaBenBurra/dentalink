@@ -1630,10 +1630,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get supportLoadError => 'Couldn\'t load support messages.';
 
   @override
-  String get listingPost => 'Listing';
+  String get listingPost => 'Market';
 
   @override
-  String get listingsTabLabelInProfile => 'Listings';
+  String get listingsTabLabelInProfile => 'Market';
 
   @override
   String get feedFilterListings => 'Market';
