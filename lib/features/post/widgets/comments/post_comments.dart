@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_dimensions.dart';
 import '../../../../core/l10n/generated/app_localizations.dart';
 import '../../../../data/models/comment_model.dart';
 import '../../../../data/models/enums.dart';
 import '../../../../data/models/post_model.dart';
+import '../../../../data/models/user_model.dart';
 import '../../../../providers/auth_provider.dart';
 import '../../../../providers/comment_provider.dart';
 import '../../../../shared/utils/error_messages.dart';
@@ -15,7 +17,8 @@ import 'comment_card.dart';
 import 'comment_thread.dart';
 
 /// Post sayfasının gövdesi: [header] (post kartı) ve yorumlar birlikte kayar,
-/// giriş alanı altta sabit kalır. Yorumların gösterildiği tek yer burası.
+/// giriş alanı altta sabit kalır ama yorum başlığı ekrana gelene (ya da alana
+/// odaklanılana) kadar gizlidir, postu okurken ekranı kapatmaz. Yorumların gösterildiği tek yer burası.
 class PostComments extends ConsumerStatefulWidget {
   const PostComments({
     super.key,
@@ -53,6 +56,7 @@ class PostCommentsState extends ConsumerState<PostComments> {
   bool _isSubmitting = false;
   late bool _highlightPending = widget.highlightCommentId != null;
   bool _highlightOn = false;
+  bool _commentsInView = false;
 
   /// Yanıt modunda yanıtlanan yorum ve gönderilince çağrılacak geri bildirim.
   ({CommentModel parent, VoidCallback onSent})? _replyTo;
@@ -63,6 +67,8 @@ class PostCommentsState extends ConsumerState<PostComments> {
   void initState() {
     super.initState();
     _controller.addListener(_saveDraft);
+    _focusNode.addListener(() => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkCommentsInView());
     if (widget.scrollToComments && !_highlightPending) {
       // Yükleme alanı ekran boyu olduğu için yorumları beklemeden, animasyonsuz.
       WidgetsBinding.instance.addPostFrameCallback(
@@ -87,6 +93,23 @@ class PostCommentsState extends ConsumerState<PostComments> {
       _drafts[widget.post.id] = text;
     }
   }
+
+  /// Yorum başlığı görünür alana girdi mi (ya da üstünden geçildi mi)?
+  void _checkCommentsInView() {
+    final title = _titleKey.currentContext?.findRenderObject();
+    if (!mounted || title == null || !_scroll.hasClients) return;
+    final bottomEdge = RenderAbstractViewport.of(
+      title,
+    ).getOffsetToReveal(title, 1).offset;
+    final inView = _scroll.offset >= bottomEdge;
+    if (inView != _commentsInView) setState(() => _commentsInView = inView);
+  }
+
+  bool get _inputShown =>
+      _commentsInView ||
+      _focusNode.hasFocus ||
+      _replyTo != null ||
+      _controller.text.isNotEmpty;
 
   Future<void> _revealComments({
     Duration duration = const Duration(milliseconds: 250),
@@ -343,18 +366,50 @@ class PostCommentsState extends ConsumerState<PostComments> {
     return Column(
       children: [
         Expanded(
-          child: CustomScrollView(
-            controller: _scroll,
-            physics: const AlwaysScrollableScrollPhysics(),
-            slivers: [
-              leading,
-              body,
-              const SliverToBoxAdapter(
-                child: SizedBox(height: AppDimensions.spacing16),
-              ),
-            ],
+          child: NotificationListener<Notification>(
+            onNotification: (n) {
+              if (n is ScrollNotification || n is ScrollMetricsNotification) {
+                // Bildirim layout sırasında gelebilir; ölçüm kare bitince.
+                WidgetsBinding.instance.addPostFrameCallback(
+                  (_) => _checkCommentsInView(),
+                );
+              }
+              return false;
+            },
+            child: CustomScrollView(
+              controller: _scroll,
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                leading,
+                body,
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: AppDimensions.spacing16),
+                ),
+              ],
+            ),
           ),
         ),
+        // Gizliyken de ağaçta kalır: yorum ikonu ve yanıt odak isteyebilir.
+        ClipRect(
+          child: AnimatedAlign(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+            alignment: Alignment.topCenter,
+            heightFactor: _inputShown ? 1 : 0,
+            child: _buildInput(context, me),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInput(BuildContext context, UserModel? me) {
+    final l10n = AppLocalizations.of(context)!;
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
         const Divider(height: 1),
         if (_replyTo case final replyTo?)
           Padding(

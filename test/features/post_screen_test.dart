@@ -216,4 +216,37 @@ void main() {
       lessThan(inputTop),
     );
   });
+
+  testWidgets('yorum satırı yorumlar ekrana gelene kadar gizli', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 360);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await pumpDentigo(tester);
+    GoRouter.of(
+      tester.element(find.text(seedCase.title)),
+    ).push('/post/${seedCase.id}');
+    await tester.pumpAndSettle();
+
+    double inputFactor() => tester
+        .widget<AnimatedAlign>(
+          find.descendant(
+            of: find.byType(PostComments),
+            matching: find.byType(AnimatedAlign),
+          ),
+        )
+        .heightFactor!;
+    expect(inputFactor(), 0);
+
+    await tester.drag(
+      find.descendant(
+        of: find.byType(PostScreen),
+        matching: find.byType(CustomScrollView),
+      ),
+      const Offset(0, -600),
+    );
+    await tester.pumpAndSettle();
+    expect(inputFactor(), 1);
+  });
 }
