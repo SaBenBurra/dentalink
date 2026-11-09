@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `045_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `049_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -63,7 +63,7 @@ RLS **hangi satırlara** dokunulabileceğini belirler; GRANT **hangi kolonlara**
 
 ## 4. Realtime
 
-- Yayına eklenen tablolar: `messages`, `conversations` (012), `notifications` (013).
+- Yayına eklenen tablolar: `messages`, `conversations` (012), `notifications` (013), `support_threads`, `support_messages` (049).
 - İstemcide kanal kapatılırken `client.removeChannel(channel)` çağrılır; yalnızca `unsubscribe()` yetmez.
 - Her olayda tüm listeyi yeniden çekme; gelen `payload.newRecord`'u state'e ekle.
 
@@ -416,6 +416,48 @@ select
   '<A>'::uuid in (select public.popular_user_ids(p_limit => 20)) me_listed,
   '<B>'::uuid in (select public.popular_user_ids(p_limit => 20)) b_listed;
 rollback;
+
+-- 28) Destek sohbeti (049) → BEKLENEN: hata yok, a_sees = 2, internal_seen = 0, status = answered
+--     <A> ve <B> personel olmamalı; <S> staff tablosunda 'support' rolüyle olmalı
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select public.send_support_message('Merhaba', 'bug', 'android 1.0.0');
+select set_config('request.jwt.claims', '{"sub":"<S>","role":"authenticated"}', true);
+select public.reply_support((select id from public.support_threads where user_id = '<A>'), 'iç not', true);
+select public.reply_support((select id from public.support_threads where user_id = '<A>'), 'Bakıyoruz');
+-- SQL Editor yalnızca son sonucu gösterir: B'nin kontrolü hata fırlatan blokta
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+do $$ begin
+  if exists (select 1 from public.support_threads where user_id = '<A>') then
+    raise exception 'HATA: B, A''nın destek sohbetini görüyor';
+  end if;
+end $$;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select (select count(*) from public.support_messages) a_sees,
+       (select count(*) from public.support_messages where internal) internal_seen,
+       (select status from public.support_threads) status;
+rollback;
+
+-- 29) Personel olmayan cevap veremez, kendine rol veremez → BEKLENEN: iki blok da permission denied
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select public.reply_support(gen_random_uuid(), 'hack');
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+insert into public.staff (user_id, role) values ('<B>', 'admin');
+rollback;
+
+-- 30) Destek mesajına doğrudan yazılamaz → BEKLENEN: permission denied
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+insert into public.support_messages (thread_id, sender_id, from_staff, content)
+values (gen_random_uuid(), '<A>', true, 'sahte cevap');
+rollback;
 ```
 
 ---
@@ -591,3 +633,29 @@ Doğrula: `+49…` numarayla `POST /auth/v1/otp` ve oturumlu `PUT /auth/v1/user`
 - `sms_test_otp` numaraları sabit kodla girer, hook'a uğramaz. Yayından önce temizle.
 - SMTP olmadan yerleşik gönderici saatte 2 e-posta atar.
 - Kod istemek doğrulanmasa da `auth.users` satırı açar ve Supabase'in mükerrer kontrolü onu da sayar. Profilsiz hesaplar saat başı silinir (044, pg_cron `cleanup-orphan-auth-users`): doğrulanmamış 1 saat, doğrulanmış 24 saat sonra.
+
+---
+
+## 11. Destek ve personel (049)
+
+Kullanıcı başına tek destek sohbeti (`support_threads`, `support_messages`). Kullanıcı `send_support_message` ile yazar (10 dakikada en fazla 20 mesaj). Personel `reply_support` ile cevaplar (iç not için `p_internal => true`, kullanıcı görmez) ve durumu `set_support_status` ile değiştirir. Okundu bilgisi `mark_support_read` ile tutulur. Durum: `open` (ekip bekliyor) → `answered` (kullanıcı bekliyor) → `resolved`; kullanıcı yazınca yeniden `open`. Hesap silinince sohbet de silinir.
+
+Personel rolleri (`support`, `moderator`, `admin`; admin hepsini kapsar) yalnızca SQL Editor'dan verilir:
+
+```sql
+insert into public.staff (user_id, role) values ('<USER>', 'support')
+on conflict (user_id) do update set role = excluded.role;
+delete from public.staff where user_id = '<USER>';   -- yetkiyi al
+```
+
+Bekleyen kuyruk (uygulamada personel kutusu gelene kadar):
+
+```sql
+select t.id, u.full_name, t.category, t.client_info, t.last_message_at,
+       (select content from public.support_messages m
+         where m.thread_id = t.id order by created_at desc limit 1) as last_message
+from public.support_threads t join public.users u on u.id = t.user_id
+where t.status = 'open' order by t.last_message_at;
+```
+
+Smoke: 28–30.
