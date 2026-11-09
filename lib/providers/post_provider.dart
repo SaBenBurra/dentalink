@@ -30,6 +30,9 @@ void patchPostCopies(
   if (ref.exists(feedProvider)) {
     ref.read(feedProvider.notifier).patchPost(postId, update);
   }
+  if (ref.exists(listingFeedProvider)) {
+    ref.read(listingFeedProvider.notifier).patchPost(postId, update);
+  }
   if (ref.exists(searchProvider)) {
     ref.read(searchProvider.notifier).patchPost(postId, update);
   }
@@ -47,6 +50,9 @@ void patchPostCopies(
 void _removePostCopies(Ref ref, String postId, String? authorId) {
   if (ref.exists(feedProvider)) {
     ref.read(feedProvider.notifier).removePost(postId);
+  }
+  if (ref.exists(listingFeedProvider)) {
+    ref.read(listingFeedProvider.notifier).removePost(postId);
   }
   if (ref.exists(searchProvider)) {
     ref.read(searchProvider.notifier).removePost(postId);
@@ -113,6 +119,24 @@ class PostDetailNotifier
   /// Post silindi: açık sayfa "bulunamadı" durumuna geçer (PostScreen kendini kapatır).
   void markDeleted() =>
       state = AsyncError(const NotFoundFailure(), StackTrace.current);
+
+  /// İlanı satıldı ya da yeniden satışta yapar. Satılan ilan Ticaret
+  /// listesinden düşer; geri alınan, liste yeniden çekilince görünür.
+  Future<void> setSold(bool sold) async {
+    final updated = await ref
+        .read(listingRepositoryProvider)
+        .setListingSold(arg, sold: sold);
+    if (_disposed) return;
+    state = AsyncData(updated);
+    patchPostCopies(ref, arg, updated.userId, (_) => updated);
+    if (sold) {
+      if (ref.exists(listingFeedProvider)) {
+        ref.read(listingFeedProvider.notifier).removePost(arg);
+      }
+    } else {
+      ref.invalidate(listingFeedProvider);
+    }
+  }
 
   Future<void> toggleLike() => _toggle(PostToggle.like);
 

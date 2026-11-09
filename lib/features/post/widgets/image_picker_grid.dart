@@ -28,9 +28,13 @@ class ImagePickerGrid extends StatefulWidget {
   final int maxImages;
   final ValueChanged<List<PickedMedia>> onChanged;
 
+  /// Ticaret ilanında kapalı: yalnızca görsel.
+  final bool allowVideo;
+
   const ImagePickerGrid({
     super.key,
     this.maxImages = 10,
+    this.allowVideo = true,
     required this.onChanged,
   });
 
@@ -86,7 +90,7 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
                   _pickImages(ImageSource.camera);
                 },
               ),
-              if (!_hasVideo) ...[
+              if (widget.allowVideo && !_hasVideo) ...[
                 ListTile(
                   leading: const Icon(Icons.video_library_outlined),
                   title: Text(
@@ -249,7 +253,9 @@ class _ImagePickerGridState extends State<ImagePickerGrid> {
       children: [
         FormSectionLabel(
           icon: Icons.photo_library_outlined,
-          label: AppLocalizations.of(context)!.images,
+          label: widget.allowVideo
+              ? AppLocalizations.of(context)!.images
+              : AppLocalizations.of(context)!.listingPhotos,
           trailing: Text(
             '$_count/${widget.maxImages}',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(

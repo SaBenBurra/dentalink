@@ -78,10 +78,17 @@ Future<void> runAppFlow(WidgetTester tester) async {
   await tester.fling(find.text(seedCase.title), const Offset(-400, 0), 1000);
   await tester.pumpAndSettle();
   expect(find.text(seedCase.title), findsNothing);
-  // 4. sekme (İş İlanları) henüz boş: boş durum mesajı.
+  // 4. sekme (Ticaret): ilanlar burada, vaka yok.
+  await tester.fling(find.byType(PageView), const Offset(-400, 0), 1000);
+  await tester.pumpAndSettle();
+  expect(find.text(seedListing.title), findsOneWidget);
+  // 5. sekme (İş İlanları) henüz boş: boş durum mesajı.
   await tester.fling(find.byType(PageView), const Offset(-400, 0), 1000);
   await tester.pumpAndSettle();
   expect(find.text('Henüz iş ilanı yok'), findsOneWidget);
+  // 5 segmentte ray kayar, "Tümü" görünmez olur; segmenti öne alıp dokun.
+  await tester.drag(find.text('Ticaret'), const Offset(400, 0));
+  await tester.pumpAndSettle();
   await _tapAndSettle(tester, find.text('Tümü'));
   expect(find.text(seedCase.title), findsOneWidget);
 

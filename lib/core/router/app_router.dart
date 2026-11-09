@@ -18,6 +18,7 @@ import '../../features/post/screens/post_likers_screen.dart';
 import '../../features/post/screens/post_screen.dart';
 import '../../features/post/screens/create_case_screen.dart';
 import '../../features/post/screens/create_question_screen.dart';
+import '../../features/post/screens/create_listing_screen.dart';
 import '../../features/post/screens/edit_post_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/followers_screen.dart';
@@ -151,6 +152,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const CreateQuestionScreen(),
       ),
       GoRoute(
+        path: '/create-listing',
+        name: 'createListing',
+        builder: (context, state) => const CreateListingScreen(),
+      ),
+      GoRoute(
         path: '/edit-post/:id',
         name: 'editPost',
         builder: (context, state) =>
@@ -168,7 +174,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           final userId = state.pathParameters['userId']!;
           final name = state.uri.queryParameters['name'] ?? '';
           final avatar = state.uri.queryParameters['avatar'] ?? '';
-          return ChatScreen(userId: userId, userName: name, avatarUrl: avatar);
+          return ChatScreen(
+            userId: userId,
+            userName: name,
+            avatarUrl: avatar,
+            initialText: state.uri.queryParameters['text'] ?? '',
+          );
         },
       ),
       GoRoute(

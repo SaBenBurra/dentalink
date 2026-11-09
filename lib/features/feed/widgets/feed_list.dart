@@ -1,6 +1,7 @@
 import 'package:dentigo/core/constants/app_dimensions.dart';
 import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/data/models/post_model.dart';
 import 'package:dentigo/features/feed/widgets/feed_skeleton.dart';
 import 'package:dentigo/providers/feed_provider.dart';
 import 'package:dentigo/shared/widgets/post_card_factory.dart';
@@ -22,6 +23,9 @@ class FeedList extends StatelessWidget {
     required this.l10n,
     required this.colorScheme,
     this.controller,
+    this.provider,
+    this.emptyTitle,
+    this.emptySubtitle,
   });
 
   final WidgetRef ref;
@@ -34,10 +38,18 @@ class FeedList extends StatelessWidget {
   /// Post listesinin kaydırması (logo ile başa dönme).
   final ScrollController? controller;
 
+  /// Varsayılan [feedProvider]; Ticaret sekmesi [listingFeedProvider].
+  final AutoDisposeAsyncNotifierProvider<FeedNotifier, List<PostModel>>?
+  provider;
+
+  final String? emptyTitle;
+  final String? emptySubtitle;
+
   @override
   Widget build(BuildContext context) {
+    final source = provider ?? feedProvider;
     return RefreshIndicator(
-      onRefresh: () => ref.read(feedProvider.notifier).refresh(),
+      onRefresh: () => ref.read(source.notifier).refresh(),
       color: colorScheme.primary,
       child: feedState.when(
         data: (posts) {
@@ -45,7 +57,7 @@ class FeedList extends StatelessWidget {
               ? posts
               : posts.where((post) => post.type == filterType).toList();
 
-          final notifier = ref.read(feedProvider.notifier);
+          final notifier = ref.read(source.notifier);
           final hasMore = notifier.hasMore;
 
           if (filteredPosts.isEmpty && !hasMore) {
@@ -56,10 +68,12 @@ class FeedList extends StatelessWidget {
                   child: Center(
                     child: DentigoEmptyState(
                       icon: Icons.dynamic_feed_outlined,
-                      title: l10n.emptyFeed,
-                      subtitle: filterType != null
-                          ? l10n.feedEmptyFiltered
-                          : l10n.feedEmptyAll,
+                      title: emptyTitle ?? l10n.emptyFeed,
+                      subtitle:
+                          emptySubtitle ??
+                          (filterType != null
+                              ? l10n.feedEmptyFiltered
+                              : l10n.feedEmptyAll),
                     ),
                   ),
                 ),
@@ -88,11 +102,11 @@ class FeedList extends StatelessWidget {
                 post,
                 onLikeToggle: () => runOrShowError(
                   context,
-                  () => ref.read(feedProvider.notifier).toggleLike(post.id),
+                  () => ref.read(source.notifier).toggleLike(post.id),
                 ),
                 onBookmarkToggle: () => runOrShowError(
                   context,
-                  () => ref.read(feedProvider.notifier).toggleBookmark(post.id),
+                  () => ref.read(source.notifier).toggleBookmark(post.id),
                 ),
                 onCommentTap: () => openPost(context, post, comments: true),
                 onTap: () => openPost(context, post),
@@ -110,7 +124,7 @@ class FeedList extends StatelessWidget {
             SliverFillRemaining(
               child: DentigoErrorWidget(
                 message: AppLocalizations.of(context)!.feedLoadError,
-                onRetry: () => ref.read(feedProvider.notifier).refresh(),
+                onRetry: () => ref.read(source.notifier).refresh(),
               ),
             ),
           ],

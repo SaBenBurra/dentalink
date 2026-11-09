@@ -216,3 +216,88 @@ class QuestionPostModel extends PostModel {
     );
   }
 }
+
+/// Ticaret ilanı (052): 2. el malzeme. Uygulama yalnızca ilanı barındırır;
+/// pazarlık ve teslimat DM'de. Etiket, beğeni ve yorum yok.
+class ListingPostModel extends PostModel {
+  final ListingCategory category;
+  final ItemCondition condition;
+  final String city;
+
+  /// TL, tam sayı; null: "Fiyat sorunuz".
+  final int? price;
+
+  /// Satıldı: ana listeden ve Keşfet'ten düşer, linkle açılınca görünür.
+  final bool isSold;
+
+  const ListingPostModel({
+    required super.id,
+    required super.userId,
+    super.type = PostType.listing,
+    required super.title,
+    required super.content,
+    required this.category,
+    required this.condition,
+    required this.city,
+    this.price,
+    this.isSold = false,
+    super.media,
+    super.likeCount,
+    super.commentCount,
+    super.bookmarkCount,
+    super.viewCount,
+    super.isLiked,
+    super.isBookmarked,
+    required super.createdAt,
+    required super.updatedAt,
+    required super.author,
+  });
+
+  @override
+  ListingPostModel copyWith({
+    String? id,
+    String? userId,
+    PostType? type,
+    String? title,
+    String? content,
+    ListingCategory? category,
+    ItemCondition? condition,
+    String? city,
+    int? Function()? price,
+    bool? isSold,
+    List<PostMediaItem>? media,
+    List<TagModel>? tags,
+    int? likeCount,
+    int? commentCount,
+    int? bookmarkCount,
+    int? viewCount,
+    bool? isLiked,
+    bool? isBookmarked,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    UserModel? author,
+  }) {
+    return ListingPostModel(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      type: type ?? this.type,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      category: category ?? this.category,
+      condition: condition ?? this.condition,
+      city: city ?? this.city,
+      price: price != null ? price() : this.price,
+      isSold: isSold ?? this.isSold,
+      media: media ?? this.media,
+      likeCount: likeCount ?? this.likeCount,
+      commentCount: commentCount ?? this.commentCount,
+      bookmarkCount: bookmarkCount ?? this.bookmarkCount,
+      viewCount: viewCount ?? this.viewCount,
+      isLiked: isLiked ?? this.isLiked,
+      isBookmarked: isBookmarked ?? this.isBookmarked,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      author: author ?? this.author,
+    );
+  }
+}

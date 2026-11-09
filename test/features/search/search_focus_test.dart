@@ -60,7 +60,7 @@ void main() {
   testWidgets('odakta sorgu varken sonuçlar görünür', (tester) async {
     await _pump(tester, 'kanal');
     expect(
-      find.text(lookupAppLocalizations(const Locale('tr')).explorePopularPosts),
+      find.text(lookupAppLocalizations(const Locale('tr')).exploreSearchResults),
       findsOneWidget,
     );
   });

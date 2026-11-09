@@ -284,6 +284,20 @@ class _CreatePostSheet extends StatelessWidget {
               context.push('/create-question');
             },
           ),
+          const SizedBox(height: AppDimensions.spacing12),
+
+          // İlan Ver
+          _CreateOptionTile(
+            icon: Icons.storefront_outlined,
+            iconColor: colorScheme.tertiary,
+            iconBg: colorScheme.tertiaryContainer.withValues(alpha: 0.3),
+            title: AppLocalizations.of(context)!.createListing,
+            subtitle: AppLocalizations.of(context)!.createListingSubtitle,
+            onTap: () {
+              Navigator.pop(context);
+              context.push('/create-listing');
+            },
+          ),
           const SizedBox(height: AppDimensions.spacing8),
         ],
       ),

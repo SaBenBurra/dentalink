@@ -236,13 +236,12 @@ void main() {
       });
     });
 
-    test('profileTabs contains both casePost and question', () {
-      // Act
-      final tabs = PostType.profileTabs;
-
-      // Assert
-      expect(tabs, containsAll([PostType.casePost, PostType.question]));
-      expect(tabs.length, equals(2));
+    test('profileTabs: vaka, forum, ilan', () {
+      expect(PostType.profileTabs, [
+        PostType.casePost,
+        PostType.question,
+        PostType.listing,
+      ]);
     });
   });
 
@@ -329,13 +328,14 @@ void main() {
     });
   });
 
-  test('ReportReason dbValue reports CHECK değerleriyle eşleşir (023)', () {
+  test('ReportReason dbValue reports CHECK değerleriyle eşleşir (052)', () {
     expect(ReportReason.values.map((r) => r.dbValue), [
       'spam',
       'harassment',
       'patient_privacy',
       'misinformation',
       'inappropriate',
+      'prohibited_item',
       'other',
     ]);
     expect(ReportTarget.values.map((t) => t.dbValue), [

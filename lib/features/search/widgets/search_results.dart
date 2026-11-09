@@ -119,7 +119,11 @@ class ExploreResults extends ConsumerWidget {
             _SectionHeader(l10n.explorePeople),
             _PeopleList(users.take(maxPeople)),
           ],
-          _SectionHeader(l10n.explorePopularPosts),
+          _SectionHeader(
+            state.query.trim().isEmpty
+                ? l10n.explorePopularPosts
+                : l10n.exploreSearchResults,
+          ),
           ...state.posts.when(
             data: (posts) => [
               if (posts.isEmpty)

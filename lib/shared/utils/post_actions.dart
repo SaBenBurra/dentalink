@@ -14,6 +14,7 @@ import 'error_messages.dart';
 /// post sayısı (authProvider). Yeni post ilk sayfada görünür.
 void invalidateMyPosts(WidgetRef ref) {
   ref.invalidate(feedProvider);
+  ref.invalidate(listingFeedProvider);
   final uid = ref.read(currentUserProvider)?.id;
   if (uid != null) ref.invalidate(userPostsProvider(uid));
   ref.invalidate(authProvider);
@@ -23,6 +24,9 @@ void invalidateMyPosts(WidgetRef ref) {
 void _removeMyPost(WidgetRef ref, String postId) {
   if (ref.exists(feedProvider)) {
     ref.read(feedProvider.notifier).removePost(postId);
+  }
+  if (ref.exists(listingFeedProvider)) {
+    ref.read(listingFeedProvider.notifier).removePost(postId);
   }
   final uid = ref.read(currentUserProvider)?.id;
   if (uid != null && ref.exists(userPostsProvider(uid))) {

@@ -297,5 +297,6 @@ String reportReasonLabel(AppLocalizations l10n, ReportReason reason) =>
       ReportReason.patientPrivacy => l10n.reportReasonPatientPrivacy,
       ReportReason.misinformation => l10n.reportReasonMisinformation,
       ReportReason.inappropriate => l10n.reportReasonInappropriate,
+      ReportReason.prohibitedItem => l10n.reportReasonProhibitedItem,
       ReportReason.other => l10n.reportReasonOther,
     };

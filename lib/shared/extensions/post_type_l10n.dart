@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dentigo/core/l10n/generated/app_localizations.dart'; // Kendi yolunuza göre düzeltin
+import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import '../../../data/models/enums.dart';
 
 extension PostTypeL10n on PostType {
@@ -9,6 +9,7 @@ extension PostTypeL10n on PostType {
     return switch (this) {
       PostType.casePost => l10n.casesTabLabelInProfile,
       PostType.question => l10n.questionsTabLabelInProfile,
+      PostType.listing => l10n.listingsTabLabelInProfile,
     };
   }
 
@@ -17,6 +18,7 @@ extension PostTypeL10n on PostType {
     return switch (this) {
       PostType.casePost => l10n.casePost,
       PostType.question => l10n.questionPost,
+      PostType.listing => l10n.listingPost,
     };
   }
 }

@@ -1,5 +1,6 @@
 import 'package:dentigo/features/feed/widgets/feed_list.dart';
 import 'package:dentigo/features/feed/widgets/feed_screen_app_bar.dart';
+import 'package:dentigo/features/feed/widgets/listings_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,8 +44,8 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
   final _pagePosition = ValueNotifier<double>(0);
   bool _headerPinned = false;
 
-  // Liste sekmelerinin kaydırması (Tümü, Vakalar, Sorular); logo başa döndürür.
-  final _lists = List.generate(3, (_) => ScrollController());
+  // Liste sekmelerinin kaydırması (Tümü, Vakalar, Forum, Ticaret); logo başa döndürür.
+  final _lists = List.generate(4, (_) => ScrollController());
 
   @override
   void initState() {
@@ -124,6 +125,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
       (l10n.feedFilterAll, list(null, 0)),
       (l10n.feedFilterCases, list(PostType.casePost, 1)),
       (l10n.feedFilterQuestions, list(PostType.question, 2)),
+      (l10n.feedFilterListings, ListingsTab(controller: _lists[3])),
       // İş ilanı türü henüz yok (yayın sonrası); sekme boş durum gösterir.
       (
         l10n.feedFilterJobs,

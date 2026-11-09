@@ -2258,6 +2258,12 @@ abstract class AppLocalizations {
   /// **'Popüler gönderiler'**
   String get explorePopularPosts;
 
+  /// No description provided for @exploreSearchResults.
+  ///
+  /// In tr, this message translates to:
+  /// **'Arama sonuçları'**
+  String get exploreSearchResults;
+
   /// No description provided for @explorePeople.
   ///
   /// In tr, this message translates to:
@@ -3007,6 +3013,240 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Destek mesajları yüklenemedi.'**
   String get supportLoadError;
+
+  /// No description provided for @listingPost.
+  ///
+  /// In tr, this message translates to:
+  /// **'İlan'**
+  String get listingPost;
+
+  /// No description provided for @listingsTabLabelInProfile.
+  ///
+  /// In tr, this message translates to:
+  /// **'İlanlar'**
+  String get listingsTabLabelInProfile;
+
+  /// No description provided for @feedFilterListings.
+  ///
+  /// In tr, this message translates to:
+  /// **'Ticaret'**
+  String get feedFilterListings;
+
+  /// No description provided for @createListing.
+  ///
+  /// In tr, this message translates to:
+  /// **'İlan Ver'**
+  String get createListing;
+
+  /// No description provided for @createListingSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanmadığın 2. el malzemeni sat. Pazarlık ve teslimat mesajla, aranızda.'**
+  String get createListingSubtitle;
+
+  /// No description provided for @listingTitleHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Örn. Anguldurva, az kullanılmış'**
+  String get listingTitleHint;
+
+  /// No description provided for @listingContentHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Marka, model, kullanım süresi, kutusu ya da faturası var mı…'**
+  String get listingContentHint;
+
+  /// No description provided for @listingPhotos.
+  ///
+  /// In tr, this message translates to:
+  /// **'Fotoğraflar'**
+  String get listingPhotos;
+
+  /// No description provided for @listingPhotoRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'En az bir fotoğraf ekleyin.'**
+  String get listingPhotoRequired;
+
+  /// No description provided for @listingSectionDetails.
+  ///
+  /// In tr, this message translates to:
+  /// **'İlan bilgileri'**
+  String get listingSectionDetails;
+
+  /// No description provided for @listingCategoryLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kategori'**
+  String get listingCategoryLabel;
+
+  /// No description provided for @listingConditionLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Durum'**
+  String get listingConditionLabel;
+
+  /// No description provided for @listingPriceLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Fiyat (₺, isteğe bağlı)'**
+  String get listingPriceLabel;
+
+  /// No description provided for @listingPriceHelper.
+  ///
+  /// In tr, this message translates to:
+  /// **'Boş bırakırsanız \"Fiyat sorunuz\" yazar.'**
+  String get listingPriceHelper;
+
+  /// No description provided for @listingCityLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Şehir'**
+  String get listingCityLabel;
+
+  /// No description provided for @listingPriceOnRequest.
+  ///
+  /// In tr, this message translates to:
+  /// **'Fiyat sorunuz'**
+  String get listingPriceOnRequest;
+
+  /// İlan fiyatı
+  ///
+  /// In tr, this message translates to:
+  /// **'{price} ₺'**
+  String listingPrice(int price);
+
+  /// No description provided for @listingSold.
+  ///
+  /// In tr, this message translates to:
+  /// **'Satıldı'**
+  String get listingSold;
+
+  /// No description provided for @listingMarkSold.
+  ///
+  /// In tr, this message translates to:
+  /// **'Satıldı olarak işaretle'**
+  String get listingMarkSold;
+
+  /// No description provided for @listingMarkAvailable.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeniden satışa çıkar'**
+  String get listingMarkAvailable;
+
+  /// No description provided for @listingContactSeller.
+  ///
+  /// In tr, this message translates to:
+  /// **'Satıcıya yaz'**
+  String get listingContactSeller;
+
+  /// Satıcıya yaz ile açılan sohbetteki hazır mesaj
+  ///
+  /// In tr, this message translates to:
+  /// **'Merhaba, \"{title}\" ilanınız hakkında yazıyorum.'**
+  String listingChatDraft(String title);
+
+  /// No description provided for @listingDisclaimer.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dentigo yalnızca ilanı barındırır. Ödeme, kargo ve teslimat alıcı ile satıcı arasındadır.'**
+  String get listingDisclaimer;
+
+  /// No description provided for @listingRulesConfirm.
+  ///
+  /// In tr, this message translates to:
+  /// **'Reçeteli ilaç, lokal anestezik, açılmış steril malzeme ya da son kullanma tarihi geçmiş ürün satmıyorum.'**
+  String get listingRulesConfirm;
+
+  /// No description provided for @listingRulesRequired.
+  ///
+  /// In tr, this message translates to:
+  /// **'Devam etmek için ilan kurallarını onaylayın.'**
+  String get listingRulesRequired;
+
+  /// No description provided for @listingShared.
+  ///
+  /// In tr, this message translates to:
+  /// **'İlanınız yayında!'**
+  String get listingShared;
+
+  /// No description provided for @feedListingsEmptyTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Henüz ilan yok'**
+  String get feedListingsEmptyTitle;
+
+  /// No description provided for @feedListingsEmptySubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanmadığın malzemeyi satmak için + ile ilan ver.'**
+  String get feedListingsEmptySubtitle;
+
+  /// No description provided for @listingCategoryHandInstruments.
+  ///
+  /// In tr, this message translates to:
+  /// **'El aletleri'**
+  String get listingCategoryHandInstruments;
+
+  /// No description provided for @listingCategoryRotary.
+  ///
+  /// In tr, this message translates to:
+  /// **'Döner aletler'**
+  String get listingCategoryRotary;
+
+  /// No description provided for @listingCategoryEquipment.
+  ///
+  /// In tr, this message translates to:
+  /// **'Cihaz ve ekipman'**
+  String get listingCategoryEquipment;
+
+  /// No description provided for @listingCategoryConsumables.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sarf malzeme'**
+  String get listingCategoryConsumables;
+
+  /// No description provided for @listingCategoryBooks.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kitap ve not'**
+  String get listingCategoryBooks;
+
+  /// No description provided for @listingCategoryModels.
+  ///
+  /// In tr, this message translates to:
+  /// **'Fantom ve model'**
+  String get listingCategoryModels;
+
+  /// No description provided for @listingCategoryOther.
+  ///
+  /// In tr, this message translates to:
+  /// **'Diğer'**
+  String get listingCategoryOther;
+
+  /// No description provided for @itemConditionNew.
+  ///
+  /// In tr, this message translates to:
+  /// **'Sıfır'**
+  String get itemConditionNew;
+
+  /// No description provided for @itemConditionLikeNew.
+  ///
+  /// In tr, this message translates to:
+  /// **'Az kullanılmış'**
+  String get itemConditionLikeNew;
+
+  /// No description provided for @itemConditionUsed.
+  ///
+  /// In tr, this message translates to:
+  /// **'Kullanılmış'**
+  String get itemConditionUsed;
+
+  /// No description provided for @reportReasonProhibitedItem.
+  ///
+  /// In tr, this message translates to:
+  /// **'Yasaklı ürün ya da dolandırıcılık'**
+  String get reportReasonProhibitedItem;
 }
 
 class _AppLocalizationsDelegate

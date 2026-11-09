@@ -1193,6 +1193,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get explorePopularPosts => 'Popular posts';
 
   @override
+  String get exploreSearchResults => 'Search results';
+
+  @override
   String get explorePeople => 'People';
 
   @override
@@ -1625,4 +1628,134 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get supportLoadError => 'Couldn\'t load support messages.';
+
+  @override
+  String get listingPost => 'Listing';
+
+  @override
+  String get listingsTabLabelInProfile => 'Listings';
+
+  @override
+  String get feedFilterListings => 'Market';
+
+  @override
+  String get createListing => 'Sell an Item';
+
+  @override
+  String get createListingSubtitle =>
+      'Sell second-hand supplies you no longer use. Price and delivery are agreed by message, between you two.';
+
+  @override
+  String get listingTitleHint => 'E.g. Contra-angle handpiece, lightly used';
+
+  @override
+  String get listingContentHint =>
+      'Brand, model, how long it was used, box or invoice included…';
+
+  @override
+  String get listingPhotos => 'Photos';
+
+  @override
+  String get listingPhotoRequired => 'Add at least one photo.';
+
+  @override
+  String get listingSectionDetails => 'Listing details';
+
+  @override
+  String get listingCategoryLabel => 'Category';
+
+  @override
+  String get listingConditionLabel => 'Condition';
+
+  @override
+  String get listingPriceLabel => 'Price (₺, optional)';
+
+  @override
+  String get listingPriceHelper => 'Leave empty to show \"Ask for price\".';
+
+  @override
+  String get listingCityLabel => 'City';
+
+  @override
+  String get listingPriceOnRequest => 'Ask for price';
+
+  @override
+  String listingPrice(int price) {
+    final intl.NumberFormat priceNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String priceString = priceNumberFormat.format(price);
+
+    return '₺$priceString';
+  }
+
+  @override
+  String get listingSold => 'Sold';
+
+  @override
+  String get listingMarkSold => 'Mark as sold';
+
+  @override
+  String get listingMarkAvailable => 'Put back on sale';
+
+  @override
+  String get listingContactSeller => 'Message seller';
+
+  @override
+  String listingChatDraft(String title) {
+    return 'Hi, I\'m writing about your listing \"$title\".';
+  }
+
+  @override
+  String get listingDisclaimer =>
+      'Dentigo only hosts the listing. Payment, shipping and handover are between buyer and seller.';
+
+  @override
+  String get listingRulesConfirm =>
+      'I\'m not selling prescription drugs, local anesthetics, opened sterile supplies or expired products.';
+
+  @override
+  String get listingRulesRequired => 'Confirm the listing rules to continue.';
+
+  @override
+  String get listingShared => 'Your listing is live!';
+
+  @override
+  String get feedListingsEmptyTitle => 'No listings yet';
+
+  @override
+  String get feedListingsEmptySubtitle =>
+      'Tap + to sell supplies you no longer use.';
+
+  @override
+  String get listingCategoryHandInstruments => 'Hand instruments';
+
+  @override
+  String get listingCategoryRotary => 'Handpieces';
+
+  @override
+  String get listingCategoryEquipment => 'Devices and equipment';
+
+  @override
+  String get listingCategoryConsumables => 'Consumables';
+
+  @override
+  String get listingCategoryBooks => 'Books and notes';
+
+  @override
+  String get listingCategoryModels => 'Phantoms and models';
+
+  @override
+  String get listingCategoryOther => 'Other';
+
+  @override
+  String get itemConditionNew => 'New';
+
+  @override
+  String get itemConditionLikeNew => 'Lightly used';
+
+  @override
+  String get itemConditionUsed => 'Used';
+
+  @override
+  String get reportReasonProhibitedItem => 'Prohibited item or scam';
 }

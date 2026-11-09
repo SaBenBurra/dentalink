@@ -305,20 +305,27 @@ enum TreatmentType {
 
 enum PostType {
   casePost,
-  question;
+  question,
+
+  /// Ticaret: 2. el malzeme ilanı (052). Konuşma DM'de, iki kişi arasında.
+  listing;
 
   String get dbValue {
     return switch (this) {
       PostType.casePost => "case",
       PostType.question => "question",
+      PostType.listing => "listing",
     };
   }
 
   /// Post sahibi bir yorumu "En İyi Cevap" seçebilir mi. Forumda (`question`)
   /// soru şartı olmadığından kapalı; özellik ileride başka bir tür için açılabilir.
   bool get allowsBestAnswer => switch (this) {
-    PostType.casePost || PostType.question => false,
+    PostType.casePost || PostType.question || PostType.listing => false,
   };
+
+  /// Beğeni ve yorum. İlanda kapalı (052): pazarlık herkesin önünde olmasın.
+  bool get allowsSocial => this != PostType.listing;
 
   static PostType fromDbValue(String value) {
     for (final e in PostType.values) {
@@ -338,7 +345,40 @@ enum PostType {
   static const List<PostType> profileTabs = [
     PostType.casePost,
     PostType.question,
+    PostType.listing,
   ];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Ticaret ilanı (posts.listing_category / item_condition CHECK'leri, 052)
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum ListingCategory {
+  handInstruments('hand_instruments'),
+  rotary('rotary'),
+  equipment('equipment'),
+  consumables('consumables'),
+  books('books'),
+  models('models'),
+  other('other');
+
+  final String dbValue;
+  const ListingCategory(this.dbValue);
+
+  static ListingCategory fromDbValue(String? value) =>
+      values.firstWhere((e) => e.dbValue == value, orElse: () => other);
+}
+
+enum ItemCondition {
+  brandNew('new'),
+  likeNew('like_new'),
+  used('used');
+
+  final String dbValue;
+  const ItemCondition(this.dbValue);
+
+  static ItemCondition fromDbValue(String? value) =>
+      values.firstWhere((e) => e.dbValue == value, orElse: () => used);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -365,10 +405,12 @@ enum ReportReason {
   patientPrivacy,
   misinformation,
   inappropriate,
+  prohibitedItem,
   other;
 
   String get dbValue => switch (this) {
     ReportReason.patientPrivacy => 'patient_privacy',
+    ReportReason.prohibitedItem => 'prohibited_item',
     _ => name,
   };
 }

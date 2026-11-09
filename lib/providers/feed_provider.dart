@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/error/app_failures.dart';
 import '../core/utils/paging.dart';
+import '../data/models/enums.dart';
 import '../data/models/post_model.dart';
 import '../data/providers/repository_providers.dart';
 import 'connectivity_provider.dart';
@@ -25,20 +26,21 @@ class FeedNotifier extends AutoDisposeAsyncNotifier<List<PostModel>> {
     return _fetchFirst();
   }
 
+  /// Bir sayfa; [ListingFeedNotifier] ilanları çeker.
+  Future<PageResult<PostModel>> fetchPage(PageCursor? before) =>
+      ref.read(feedRepositoryProvider).getFeed(before: before);
+
   Future<List<PostModel>> _fetchFirst() async =>
-      _pager.first(await ref.read(feedRepositoryProvider).getFeed());
+      _pager.first(await fetchPage(null));
 
   Future<void> refresh() async {
     state = await AsyncValue.guard(_fetchFirst);
   }
 
-  Future<void> loadMore() => _pager.loadMore(
-    (before) => ref.read(feedRepositoryProvider).getFeed(before: before),
-    (items) {
-      final posts = state.valueOrNull;
-      if (posts != null) state = AsyncData([...posts, ...items]);
-    },
-  );
+  Future<void> loadMore() => _pager.loadMore(fetchPage, (items) {
+    final posts = state.valueOrNull;
+    if (posts != null) state = AsyncData([...posts, ...items]);
+  });
 
   /// Beğeniyi iyimser olarak çevirir; hata olursa geri alır.
   Future<void> toggleLike(String postId) => _toggle(postId, PostToggle.like);
@@ -100,3 +102,31 @@ final feedProvider =
     AsyncNotifierProvider.autoDispose<FeedNotifier, List<PostModel>>(() {
       return FeedNotifier();
     });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Ticaret sekmesi
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Ticaret sekmesinin kategori filtresi; null: hepsi.
+final listingCategoryProvider = StateProvider.autoDispose<ListingCategory?>(
+  (ref) => null,
+);
+
+/// Satılmamış ilanlar, en yeni önce; kategori değişince baştan çekilir.
+class ListingFeedNotifier extends FeedNotifier {
+  @override
+  Future<List<PostModel>> build() {
+    ref.watch(listingCategoryProvider);
+    return super.build();
+  }
+
+  @override
+  Future<PageResult<PostModel>> fetchPage(PageCursor? before) => ref
+      .read(listingRepositoryProvider)
+      .getListings(category: ref.read(listingCategoryProvider), before: before);
+}
+
+final listingFeedProvider =
+    AsyncNotifierProvider.autoDispose<FeedNotifier, List<PostModel>>(
+      ListingFeedNotifier.new,
+    );

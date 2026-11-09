@@ -49,6 +49,11 @@ class PostBadge extends StatelessWidget {
                 AppColors.primaryContainer,
                 AppColors.primaryDark,
               ),
+      PostType.listing => (
+        colorScheme.tertiaryContainer.withValues(alpha: isDark ? 0.2 : 0.6),
+        colorScheme.tertiary.withValues(alpha: 0.4),
+        isDark ? colorScheme.tertiary : colorScheme.onTertiaryContainer,
+      ),
     };
 
     return Container(

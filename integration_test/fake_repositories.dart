@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dentigo/core/utils/paging.dart';
@@ -52,6 +53,21 @@ final seedCase = CasePostModel(
   author: otherUser,
 );
 
+/// Ticaret sekmesindeki ilan (052); feed'e karışmaz.
+final seedListing = ListingPostModel(
+  id: 'listing1',
+  userId: otherUser.id,
+  title: 'Anguldurva, az kullanılmış',
+  content: 'Kutusuyla birlikte.',
+  category: ListingCategory.rotary,
+  condition: ItemCondition.likeNew,
+  city: 'İzmir',
+  price: 2500,
+  createdAt: DateTime(2024),
+  updatedAt: DateTime(2024),
+  author: otherUser,
+);
+
 final _conversation = ConversationModel(
   id: 'conv1',
   otherUser: otherUser,
@@ -76,6 +92,7 @@ List<Override> fakeRepositoryOverrides({
     searchRepositoryProvider.overrideWithValue(posts),
     postActionRepositoryProvider.overrideWithValue(posts),
     createPostRepositoryProvider.overrideWithValue(posts),
+    listingRepositoryProvider.overrideWithValue(posts),
     commentRepositoryProvider.overrideWithValue(_FakeCommentRepository()),
     messageRepositoryProvider.overrideWithValue(_FakeMessageRepository()),
     notificationRepositoryProvider.overrideWithValue(
@@ -89,11 +106,66 @@ List<Override> fakeRepositoryOverrides({
   ];
 }
 
-class _FakePostRepository implements PostRepository {
+class _FakePostRepository implements PostRepository, IListingRepository {
   _FakePostRepository(this._feed);
 
   final List<PostModel> _feed;
   final _created = <String, PostModel>{};
+
+  /// Ticaret sekmesinin istediği kategoriler, sırayla.
+  final listingRequests = <ListingCategory?>[];
+
+  @override
+  Future<PageResult<PostModel>> getListings({
+    ListingCategory? category,
+    PageCursor? before,
+  }) async {
+    listingRequests.add(category);
+    // Satıldı işaretlenen kopya _created'da; tohum ilanın yerine geçer.
+    final all = {
+      seedListing.id: seedListing,
+      ..._created,
+    }.values.whereType<ListingPostModel>();
+    return (
+      items: [
+        for (final p in all)
+          if (!p.isSold && (category == null || p.category == category)) p,
+      ],
+      next: null,
+    );
+  }
+
+  @override
+  Future<PostModel> createListing({
+    required String title,
+    required String content,
+    required List<File> images,
+    required ListingCategory category,
+    required ItemCondition condition,
+    required String city,
+    int? price,
+  }) async {
+    final post = ListingPostModel(
+      id: 'l${_created.length + 1}',
+      userId: 'mock_test_user_id',
+      title: title,
+      content: content,
+      category: category,
+      condition: condition,
+      city: city,
+      price: price,
+      createdAt: DateTime(2024),
+      updatedAt: DateTime(2024),
+      author: otherUser,
+    );
+    return _created[post.id] = post;
+  }
+
+  @override
+  Future<PostModel> setListingSold(String postId, {required bool sold}) async {
+    final post = await getPostById(postId) as ListingPostModel;
+    return _created[postId] = post.copyWith(isSold: sold);
+  }
 
   @override
   Future<PageResult<UserModel>> getPostLikers(
@@ -125,9 +197,13 @@ class _FakePostRepository implements PostRepository {
       (items: _feed, next: null);
 
   @override
-  Future<PostModel> getPostById(String id) async => id == seedCase.id
-      ? seedCase
-      : _created[id] ?? (throw const NotFoundFailure());
+  Future<PostModel> getPostById(String id) async =>
+      _created[id] ??
+      switch (id) {
+        _ when id == seedCase.id => seedCase,
+        _ when id == seedListing.id => seedListing,
+        _ => throw const NotFoundFailure(),
+      };
 
   @override
   Future<PageResult<PostModel>> getPostsByUser(

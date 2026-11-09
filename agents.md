@@ -74,7 +74,8 @@ lib/
 |---|---|---|
 | **Vaka** | başlık, açıklama, **tedaviler** (1–5, seçim sırasıyla; listedeki `TreatmentType` ya da kullanıcının eklediği ad + branş; ayrı branş alanı yok, branşlar tedavilerden çıkar), etiketler (5, tedaviler sayılmaz), en fazla 10 medya (görsel + en fazla 1 video, ≤60 sn; paylaşırken ve düzenlerken sürükleyerek sıralanır) | Hasta mahremiyeti: yüz ve kimlik bilgisi içermemeli (paylaşırken onay kutusu zorunlu) |
 | **Forum** | başlık, içerik, etiketler, isteğe bağlı en fazla 4 medya (görsel + en fazla 1 video) | Soru şartı yok, serbest paylaşım alanı. Medya eklenirse mahremiyet onayı zorunlu. Kodda ve DB'de adı hâlâ `question`. "En İyi Cevap" (`mark_best_answer` RPC) forumda kapalı: `PostType.allowsBestAnswer`. |
-| İş ilanı, pazar yeri | — | Yayın sonrası |
+| **Ticaret** | başlık, açıklama, 1–6 fotoğraf (video yok), kategori (`ListingCategory`), durum (`ItemCondition`), şehir, isteğe bağlı fiyat (TL) | 2. el malzeme ilanı (052). Uygulama yalnızca barındırır; pazarlık ve teslimat DM'de ("Satıcıya yaz" hazır mesajla açar). Etiket, beğeni ve yorum yok (`PostType.allowsSocial`), kaydetme var. Sahibi "Satıldı" işaretler; satılan ilan Ticaret ve Keşfet'ten düşer. Yasaklı ürün onayı zorunlu. |
+| İş ilanı | — | Yayın sonrası |
 
 **Branşlar** (`DentalBranch`): Pedodonti, Endodonti, Ortodonti, Periodontoloji, Protetik, Çene Cerrahisi, Çene Radyolojisi, Restoratif.
 
@@ -84,14 +85,14 @@ lib/
 - **Tek dokunma kuralı (vaka ve forum aynı):** karta dokun → `/post/:id` ("Devamını oku" hariç: metni kartın içinde açar); yorum ikonu → aynı sayfa, yorumlara kaydırılmış (klavye açılmaz); görsel → tam ekran galeri, anında (çift dokunma beğenisi yok, tek dokunuşu geciktirirdi); galeri yukarı/aşağı sürükleyince kapanır. Yorum için bottom sheet yok, yorumlar yalnızca post sayfasında. Liste kartı sayfaya `extra` ile taşınır (yükleniyor ekranı yok), sayfadaki beğeni/yorum `patchPostCopies` ile tüm listelere yansır. Yardımcı: `openPost` (`lib/shared/utils/post_actions.dart`).
 - **Video:** listede (feed, profil, post sayfası) ekranda en az yarısı görünürken sessiz ve döngüde kendiliğinden oynar, ekrandan çıkınca, üstüne sayfa açılınca ya da sekme değişince durur (`FeedVideo`). Sağ alttaki ses ikonu tüm videoların ortak ayarıdır (`videoMuted`, uygulama açıkken saklanır). Dokununca galeride büyür; orada oynat/duraklat ve ses düğmesi var.
 - **Etiketler:** kartlarda görünmez, yalnızca post sayfasında metnin bir alt satırında, metnin parçası gibi (`PostBody.tags`); dokununca Keşfet o etiketle açılır.
-- Feed sekmeleri: Tümü / Vakalar / Forum. Sıralama kronolojik (algoritmik feed yayından sonra).
+- Feed sekmeleri: Tümü / Vakalar / Forum / Ticaret / İş İlanları (boş). İlanlar yalnızca Ticaret'te (kategori çipleri), "Tümü"ye karışmaz; Keşfet'te yalnızca metin aramasında. Sıralama kronolojik (algoritmik feed yayından sonra).
 - Arama: Türkçe full-text (başlık + içerik), kullanıcı arama, branş ve tür filtresi.
 - Moderasyon: raporla (post, yorum, kullanıcı), engelle (iki yönlü gizler), hesap silme. Kuyruk: `docs/SUPABASE.md` §6.
 
 ### Navigasyon
-Alt menü: **Ana Sayfa** `/feed` · **Keşfet** `/search` · **Oluştur (+)** (vaka/forum seçimi) · **Mesajlar** `/messages` · **Profil** `/profile`.
+Alt menü: **Ana Sayfa** `/feed` · **Keşfet** `/search` · **Oluştur (+)** (vaka/forum/ilan seçimi) · **Mesajlar** `/messages` · **Profil** `/profile`.
 
-Diğer rotalar: `/post/:id` (tek post kartı; bildirim ve deep link hedefi), `/post/:id/likes` (beğenenler), `/treatment/:slug` (tedavi arşivi), `/create-case`, `/create-question`, `/chat/:userId`, `/support` (destek sohbeti; Mesajlar'ın sağ altındaki buton), `/profile/:userId`, `/edit-profile`, `/network/:id`, `/notifications`, `/bookmarks`, `/settings`, `/settings/blocked`, `/settings/contact/email`, `/settings/contact/phone`, `/legal/:doc`, `/login`, `/register`. Tam liste: `lib/core/router/app_router.dart`.
+Diğer rotalar: `/post/:id` (tek post kartı; bildirim ve deep link hedefi), `/post/:id/likes` (beğenenler), `/treatment/:slug` (tedavi arşivi), `/create-case`, `/create-question`, `/create-listing`, `/chat/:userId`, `/support` (destek sohbeti; Mesajlar'ın sağ altındaki buton), `/profile/:userId`, `/edit-profile`, `/network/:id`, `/notifications`, `/bookmarks`, `/settings`, `/settings/blocked`, `/settings/contact/email`, `/settings/contact/phone`, `/legal/:doc`, `/login`, `/register`. Tam liste: `lib/core/router/app_router.dart`.
 
 **Detay sayfaları sekmenin içinde açılır:** post, beğenenler, tedavi arşivi, kullanıcı profili, ağ, kaydedilenler ve bildirimler hangi sekmeden açıldıysa onun altında açılır (`/feed/post/:id`, `/search/treatment/:slug`…). Alt menü görünür kalır, aktif sekmeye dokununca sekmenin köküne tek dokunuşla dönülür. Bunları `context.push` ile değil `context.pushDetail` ile aç (`lib/core/router/app_router.dart`). Sekme dışı bir sayfadan (sohbet, ayarlar) açılınca kökteki aynı rota kullanılır, alt menü gizli olur. Paylaşımdan sonra post `/feed/post/:id` olarak açılır. Klavye açıkken alt menü klavyenin arkasında kalır.
 

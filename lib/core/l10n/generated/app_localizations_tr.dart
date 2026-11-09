@@ -1193,6 +1193,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get explorePopularPosts => 'Popüler gönderiler';
 
   @override
+  String get exploreSearchResults => 'Arama sonuçları';
+
+  @override
   String get explorePeople => 'Kişiler';
 
   @override
@@ -1610,4 +1613,135 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get supportLoadError => 'Destek mesajları yüklenemedi.';
+
+  @override
+  String get listingPost => 'İlan';
+
+  @override
+  String get listingsTabLabelInProfile => 'İlanlar';
+
+  @override
+  String get feedFilterListings => 'Ticaret';
+
+  @override
+  String get createListing => 'İlan Ver';
+
+  @override
+  String get createListingSubtitle =>
+      'Kullanmadığın 2. el malzemeni sat. Pazarlık ve teslimat mesajla, aranızda.';
+
+  @override
+  String get listingTitleHint => 'Örn. Anguldurva, az kullanılmış';
+
+  @override
+  String get listingContentHint =>
+      'Marka, model, kullanım süresi, kutusu ya da faturası var mı…';
+
+  @override
+  String get listingPhotos => 'Fotoğraflar';
+
+  @override
+  String get listingPhotoRequired => 'En az bir fotoğraf ekleyin.';
+
+  @override
+  String get listingSectionDetails => 'İlan bilgileri';
+
+  @override
+  String get listingCategoryLabel => 'Kategori';
+
+  @override
+  String get listingConditionLabel => 'Durum';
+
+  @override
+  String get listingPriceLabel => 'Fiyat (₺, isteğe bağlı)';
+
+  @override
+  String get listingPriceHelper => 'Boş bırakırsanız \"Fiyat sorunuz\" yazar.';
+
+  @override
+  String get listingCityLabel => 'Şehir';
+
+  @override
+  String get listingPriceOnRequest => 'Fiyat sorunuz';
+
+  @override
+  String listingPrice(int price) {
+    final intl.NumberFormat priceNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String priceString = priceNumberFormat.format(price);
+
+    return '$priceString ₺';
+  }
+
+  @override
+  String get listingSold => 'Satıldı';
+
+  @override
+  String get listingMarkSold => 'Satıldı olarak işaretle';
+
+  @override
+  String get listingMarkAvailable => 'Yeniden satışa çıkar';
+
+  @override
+  String get listingContactSeller => 'Satıcıya yaz';
+
+  @override
+  String listingChatDraft(String title) {
+    return 'Merhaba, \"$title\" ilanınız hakkında yazıyorum.';
+  }
+
+  @override
+  String get listingDisclaimer =>
+      'Dentigo yalnızca ilanı barındırır. Ödeme, kargo ve teslimat alıcı ile satıcı arasındadır.';
+
+  @override
+  String get listingRulesConfirm =>
+      'Reçeteli ilaç, lokal anestezik, açılmış steril malzeme ya da son kullanma tarihi geçmiş ürün satmıyorum.';
+
+  @override
+  String get listingRulesRequired =>
+      'Devam etmek için ilan kurallarını onaylayın.';
+
+  @override
+  String get listingShared => 'İlanınız yayında!';
+
+  @override
+  String get feedListingsEmptyTitle => 'Henüz ilan yok';
+
+  @override
+  String get feedListingsEmptySubtitle =>
+      'Kullanmadığın malzemeyi satmak için + ile ilan ver.';
+
+  @override
+  String get listingCategoryHandInstruments => 'El aletleri';
+
+  @override
+  String get listingCategoryRotary => 'Döner aletler';
+
+  @override
+  String get listingCategoryEquipment => 'Cihaz ve ekipman';
+
+  @override
+  String get listingCategoryConsumables => 'Sarf malzeme';
+
+  @override
+  String get listingCategoryBooks => 'Kitap ve not';
+
+  @override
+  String get listingCategoryModels => 'Fantom ve model';
+
+  @override
+  String get listingCategoryOther => 'Diğer';
+
+  @override
+  String get itemConditionNew => 'Sıfır';
+
+  @override
+  String get itemConditionLikeNew => 'Az kullanılmış';
+
+  @override
+  String get itemConditionUsed => 'Kullanılmış';
+
+  @override
+  String get reportReasonProhibitedItem => 'Yasaklı ürün ya da dolandırıcılık';
 }

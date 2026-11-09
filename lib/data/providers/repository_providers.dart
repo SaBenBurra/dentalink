@@ -33,7 +33,7 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 });
 
 // ─── Post (ISP Segregated) ───
-final _basePostRepositoryProvider = Provider<PostRepository>((ref) {
+final _basePostRepositoryProvider = Provider<SupabasePostRepository>((ref) {
   return SupabasePostRepository(ref.watch(supabaseClientProvider));
 });
 
@@ -50,6 +50,9 @@ final postActionRepositoryProvider = Provider<IPostActionRepository>(
   (ref) => ref.watch(_basePostRepositoryProvider),
 );
 final createPostRepositoryProvider = Provider<ICreatePostRepository>(
+  (ref) => ref.watch(_basePostRepositoryProvider),
+);
+final listingRepositoryProvider = Provider<IListingRepository>(
   (ref) => ref.watch(_basePostRepositoryProvider),
 );
 

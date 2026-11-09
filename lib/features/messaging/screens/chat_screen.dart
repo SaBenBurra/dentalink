@@ -31,11 +31,15 @@ class ChatScreen extends ConsumerStatefulWidget {
   final String userName;
   final String avatarUrl;
 
+  /// Kutuda hazır yazılı mesaj (ilandan "Satıcıya yaz"); gönderilmez, düzenlenebilir.
+  final String initialText;
+
   const ChatScreen({
     super.key,
     required this.userId,
     required this.userName,
     this.avatarUrl = '',
+    this.initialText = '',
   });
 
   @override
@@ -43,7 +47,9 @@ class ChatScreen extends ConsumerStatefulWidget {
 }
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
-  final TextEditingController _messageController = TextEditingController();
+  late final _messageController = TextEditingController(
+    text: widget.initialText,
+  );
   bool _isSending = false;
 
   @override

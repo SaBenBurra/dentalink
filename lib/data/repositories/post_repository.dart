@@ -131,3 +131,39 @@ abstract class PostRepository
         IBookmarkRepository,
         IPostActionRepository,
         ICreatePostRepository {}
+
+/// Ticaret ilanları (052). [PostRepository]'den ayrı: beğeni ve yorum yok,
+/// alanlar ve akış başka.
+abstract class IListingRepository {
+  /// Satılmamış ilanlar, en yeni önce; [category] verilirse yalnızca o kategori.
+  Future<PageResult<PostModel>> getListings({
+    ListingCategory? category,
+    PageCursor? before,
+  });
+
+  /// [images] 1–6 görsel, gösterim sırasıyla. [price] TL; null: fiyat yazılmaz.
+  Future<PostModel> createListing({
+    required String title,
+    required String content,
+    required List<File> images,
+    required ListingCategory category,
+    required ItemCondition condition,
+    required String city,
+    int? price,
+  });
+
+  /// Görsel eklenmez/silinmez; [mediaOrder] verilirse yeniden sıralanır.
+  Future<PostModel> updateListing({
+    required String postId,
+    required String title,
+    required String content,
+    required ListingCategory category,
+    required ItemCondition condition,
+    required String city,
+    int? price,
+    List<String>? mediaOrder,
+  });
+
+  /// Yalnızca ilan sahibi; değilse ya da ilan yoksa [NotFoundFailure].
+  Future<PostModel> setListingSold(String postId, {required bool sold});
+}

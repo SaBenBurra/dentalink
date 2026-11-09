@@ -15,6 +15,8 @@ import '../../../providers/post_provider.dart';
 import '../../../shared/utils/error_messages.dart';
 import '../widgets/form_section_label.dart';
 import '../widgets/treatments_field.dart';
+import '../widgets/listing_fields.dart';
+import '../../../data/models/enums.dart';
 import '../widgets/media_reorder_strip.dart';
 import '../widgets/detail/detail_states.dart';
 import '../widgets/tag_input.dart';
@@ -74,6 +76,18 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
     _ => const [],
   };
   late final List<PostMediaItem> _media = [...widget.post.media];
+
+  // İlan alanları (052); başka türde kullanılmaz.
+  late final _listing = switch (widget.post) {
+    ListingPostModel p => p,
+    _ => null,
+  };
+  late ListingCategory? _category = _listing?.category;
+  late ItemCondition? _condition = _listing?.condition;
+  late final _priceController = TextEditingController(
+    text: _listing?.price?.toString() ?? '',
+  );
+  late final _cityController = TextEditingController(text: _listing?.city);
   bool _mediaReordered = false;
   bool _saving = false;
   bool _dirty = false; // UX-2
@@ -82,6 +96,8 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
   void dispose() {
     _titleController.dispose();
     _contentController.dispose();
+    _priceController.dispose();
+    _cityController.dispose();
     super.dispose();
   }
 
@@ -91,17 +107,36 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
     final l10n = AppLocalizations.of(context)!;
     final messenger = ScaffoldMessenger.of(context);
     try {
-      final updated = await ref
-          .read(createPostRepositoryProvider)
-          .updatePost(
-            postId: widget.post.id,
-            title: _titleController.text,
-            content: _contentController.text,
-            treatments: _treatments,
-            tags: _tags,
-            mediaOrder: _mediaReordered ? [for (final m in _media) m.id] : null,
-          );
+      final mediaOrder = _mediaReordered
+          ? [for (final m in _media) m.id]
+          : null;
+      final updated = _listing == null
+          ? await ref
+                .read(createPostRepositoryProvider)
+                .updatePost(
+                  postId: widget.post.id,
+                  title: _titleController.text,
+                  content: _contentController.text,
+                  treatments: _treatments,
+                  tags: _tags,
+                  mediaOrder: mediaOrder,
+                )
+          : await ref
+                .read(listingRepositoryProvider)
+                .updateListing(
+                  postId: widget.post.id,
+                  title: _titleController.text,
+                  content: _contentController.text,
+                  category: _category!,
+                  condition: _condition!,
+                  city: _cityController.text,
+                  price: ListingFields.parsePrice(_priceController.text),
+                  mediaOrder: mediaOrder,
+                );
       ref.read(feedProvider.notifier).replacePost(updated);
+      if (ref.exists(listingFeedProvider)) {
+        ref.read(listingFeedProvider.notifier).replacePost(updated);
+      }
       if (ref.exists(userPostsProvider(updated.userId))) {
         ref
             .read(userPostsProvider(updated.userId).notifier)
@@ -235,14 +270,31 @@ class _EditPostFormState extends ConsumerState<_EditPostForm> {
                 ),
               ],
               const FormSectionDivider(),
-              TagInput(
-                suggest: ref.read(createPostRepositoryProvider).suggestTags,
-                initialTags: _tags,
-                onTagsChanged: (tags) => setState(() {
-                  _tags = tags;
-                  _dirty = true;
-                }),
-              ),
+              // İlanda etiket yok; yerine kategori, durum, fiyat, şehir.
+              if (_listing != null)
+                ListingFields(
+                  category: _category,
+                  condition: _condition,
+                  priceController: _priceController,
+                  cityController: _cityController,
+                  onCategoryChanged: (c) => setState(() {
+                    _category = c;
+                    _dirty = true;
+                  }),
+                  onConditionChanged: (c) => setState(() {
+                    _condition = c;
+                    _dirty = true;
+                  }),
+                )
+              else
+                TagInput(
+                  suggest: ref.read(createPostRepositoryProvider).suggestTags,
+                  initialTags: _tags,
+                  onTagsChanged: (tags) => setState(() {
+                    _tags = tags;
+                    _dirty = true;
+                  }),
+                ),
             ],
           ),
         ),

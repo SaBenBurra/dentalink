@@ -26,7 +26,7 @@ import 'post_repository.dart';
 ///
 /// Sayaçlar (like_count, comment_count, vb.) Supabase trigger'ları
 /// tarafından otomatik güncellenir; bu sınıf sayaç aritmetiği yapmaz.
-class SupabasePostRepository implements PostRepository {
+class SupabasePostRepository implements PostRepository, IListingRepository {
   final SupabaseClient _client;
 
   /// Post, yazar, görseller, etiketler ve oturum açan kullanıcıya ait
@@ -133,6 +133,29 @@ class SupabasePostRepository implements PostRepository {
           updatedAt: updatedAt,
           author: author,
         );
+      case PostType.listing:
+        return ListingPostModel(
+          id: row['id'] as String,
+          userId: row['user_id'] as String,
+          title: row['title'] as String,
+          content: row['content'] as String,
+          category: ListingCategory.fromDbValue(
+            row['listing_category'] as String?,
+          ),
+          condition: ItemCondition.fromDbValue(
+            row['item_condition'] as String?,
+          ),
+          city: row['city'] as String? ?? '',
+          price: row['price'] as int?,
+          isSold: row['is_sold'] as bool? ?? false,
+          media: media,
+          bookmarkCount: row['bookmark_count'] as int? ?? 0,
+          viewCount: row['view_count'] as int? ?? 0,
+          isBookmarked: isBookmarked,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+          author: author,
+        );
     }
   }
 
@@ -215,10 +238,15 @@ class SupabasePostRepository implements PostRepository {
   //  IFeedRepository
   // ═══════════════════════════════════════════════════════════════════════════
 
+  /// İlanlar kendi sekmesinde (Ticaret); mesleki akışa karışmaz.
   @override
   Future<PageResult<PostModel>> getFeed({PageCursor? before}) =>
       guardSupabase(() async {
-        return _toPage(await _basePostQuery().pageBefore(before));
+        return _toPage(
+          await _basePostQuery()
+              .neq('type', PostType.listing.dbValue)
+              .pageBefore(before),
+        );
       });
 
   @override
@@ -641,6 +669,95 @@ class SupabasePostRepository implements PostRepository {
         if (e['video_path'] case final String p) p,
     ]);
   });
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  //  IListingRepository
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  @override
+  Future<PageResult<PostModel>> getListings({
+    ListingCategory? category,
+    PageCursor? before,
+  }) => guardSupabase(() async {
+    var query = _basePostQuery()
+        .eq('type', PostType.listing.dbValue)
+        .eq('is_sold', false);
+    if (category != null) {
+      query = query.eq('listing_category', category.dbValue);
+    }
+    return _toPage(await query.pageBefore(before));
+  });
+
+  @override
+  Future<PostModel> createListing({
+    required String title,
+    required String content,
+    required List<File> images,
+    required ListingCategory category,
+    required ItemCondition condition,
+    required String city,
+    int? price,
+  }) => guardSupabase(() async {
+    final paths = await _upload(_imageBucket, _currentUserId, images);
+    final String postId;
+    try {
+      postId =
+          await _client.rpc(
+                'create_listing',
+                params: {
+                  'p_title': title,
+                  'p_content': content,
+                  'p_image_paths': paths,
+                  'p_category': category.dbValue,
+                  'p_condition': condition.dbValue,
+                  'p_city': city,
+                  'p_price': price,
+                },
+              )
+              as String;
+    } catch (_) {
+      await _remove(_imageBucket, paths);
+      rethrow;
+    }
+    return getPostById(postId);
+  });
+
+  @override
+  Future<PostModel> updateListing({
+    required String postId,
+    required String title,
+    required String content,
+    required ListingCategory category,
+    required ItemCondition condition,
+    required String city,
+    int? price,
+    List<String>? mediaOrder,
+  }) => guardSupabase(() async {
+    await _client.rpc(
+      'update_listing',
+      params: {
+        'p_post_id': postId,
+        'p_title': title,
+        'p_content': content,
+        'p_category': category.dbValue,
+        'p_condition': condition.dbValue,
+        'p_city': city,
+        'p_price': price,
+        'p_media_order': mediaOrder,
+      },
+    );
+    return getPostById(postId);
+  });
+
+  @override
+  Future<PostModel> setListingSold(String postId, {required bool sold}) =>
+      guardSupabase(() async {
+        await _client.rpc(
+          'set_listing_sold',
+          params: {'p_post_id': postId, 'p_sold': sold},
+        );
+        return getPostById(postId);
+      });
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  PRİVATE YARDIMCILAR

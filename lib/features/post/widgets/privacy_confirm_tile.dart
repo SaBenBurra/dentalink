@@ -8,10 +8,14 @@ class PrivacyConfirmTile extends StatelessWidget {
     super.key,
     required this.value,
     required this.onChanged,
+    this.label,
   });
 
   final bool value;
   final ValueChanged<bool> onChanged;
+
+  /// Varsayılan: hasta mahremiyeti. İlanda yasaklı ürün onayı.
+  final String? label;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +31,7 @@ class PrivacyConfirmTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
       ),
       title: Text(
-        AppLocalizations.of(context)!.casePrivacyConfirm,
+        label ?? AppLocalizations.of(context)!.casePrivacyConfirm,
         style: Theme.of(context).textTheme.bodyMedium,
       ),
     );

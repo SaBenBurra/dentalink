@@ -5,6 +5,7 @@ import 'package:dentigo/core/l10n/generated/app_localizations.dart';
 import 'package:dentigo/data/models/post_model.dart';
 import 'package:dentigo/features/post/widgets/comments/post_comments.dart';
 import 'package:dentigo/features/post/widgets/detail/detail_states.dart';
+import 'package:dentigo/features/post/widgets/detail/listing_detail.dart';
 import 'package:dentigo/features/shell/main_shell.dart';
 import 'package:dentigo/providers/comment_provider.dart';
 import 'package:dentigo/providers/post_provider.dart';
@@ -106,27 +107,40 @@ class _PostScreenState extends ConsumerState<PostScreen> {
                     ref.invalidate(commentsProvider(post.id));
                     return ref.refresh(provider.future);
                   },
-                  child: PostComments(
-                    key: _commentsKey,
-                    post: post,
-                    scrollToComments: widget.scrollToComments,
-                    highlightCommentId: widget.highlightCommentId,
-                    header: Padding(
-                      padding: const EdgeInsets.only(
-                        top: AppDimensions.spacing8,
-                      ),
-                      child: PostCardFactory.build(
-                        post,
-                        expanded: true,
-                        onLikeToggle: () =>
-                            runOrShowError(context, notifier.toggleLike),
-                        onBookmarkToggle: () =>
-                            runOrShowError(context, notifier.toggleBookmark),
-                        onCommentTap: () =>
-                            _commentsKey.currentState?.focusInput(),
-                      ),
-                    ),
-                  ),
+                  // İlanda yorum yok (052): konuşma DM'de.
+                  child: post is ListingPostModel
+                      ? ListingDetail(
+                          post: post,
+                          onBookmarkToggle: () =>
+                              runOrShowError(context, notifier.toggleBookmark),
+                          onSoldChanged: (sold) => runOrShowError(
+                            context,
+                            () => notifier.setSold(sold),
+                          ),
+                        )
+                      : PostComments(
+                          key: _commentsKey,
+                          post: post,
+                          scrollToComments: widget.scrollToComments,
+                          highlightCommentId: widget.highlightCommentId,
+                          header: Padding(
+                            padding: const EdgeInsets.only(
+                              top: AppDimensions.spacing8,
+                            ),
+                            child: PostCardFactory.build(
+                              post,
+                              expanded: true,
+                              onLikeToggle: () =>
+                                  runOrShowError(context, notifier.toggleLike),
+                              onBookmarkToggle: () => runOrShowError(
+                                context,
+                                notifier.toggleBookmark,
+                              ),
+                              onCommentTap: () =>
+                                  _commentsKey.currentState?.focusInput(),
+                            ),
+                          ),
+                        ),
                 ),
               ),
             );

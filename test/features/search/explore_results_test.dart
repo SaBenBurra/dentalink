@@ -73,4 +73,17 @@ void main() {
     await _pump(tester, '', branch: DentalBranch.endodonti);
     expect(find.text('Popüler kişiler'), findsNothing);
   });
+
+  testWidgets(
+    'arama varken başlık "Arama sonuçları", yokken "Popüler gönderiler"',
+    (tester) async {
+      await _pump(tester, '');
+      expect(find.text('Popüler gönderiler'), findsOneWidget);
+      expect(find.text('Arama sonuçları'), findsNothing);
+
+      await _pump(tester, 'kanal');
+      expect(find.text('Arama sonuçları'), findsOneWidget);
+      expect(find.text('Popüler gönderiler'), findsNothing);
+    },
+  );
 }
