@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `052_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `053_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -205,8 +205,8 @@ begin;
 update public.posts set like_count = -1 where id = (select id from public.posts limit 1);
 rollback;
 
--- 15) Rapor (023) → BEKLENEN: ilk insert INSERT 0 1; başkası adına insert
---     row-level security hatası; select permission denied
+-- 15) Rapor (023, 053) → BEKLENEN: ilk insert INSERT 0 1; başkası adına insert
+--     row-level security hatası; personel olmayanın select'i 0 satır (053 öncesi permission denied)
 begin;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
@@ -458,13 +458,76 @@ select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', 
 insert into public.support_messages (thread_id, sender_id, from_staff, content)
 values (gen_random_uuid(), '<A>', true, 'sahte cevap');
 rollback;
+
+-- 31) Yetki (053) → BEKLENEN: has_permission false; set_staff_role ve
+--     doğrudan staff_actions insert permission denied (<B> personel değil)
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select public.has_permission('staff.manage');
+select public.set_staff_role('<B>', 'admin');
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+insert into public.staff_actions (action, target_type, target_id) values ('x', 'user', 'x');
+rollback;
+
+-- 32) Son yönetici kendini düşüremez (053) → BEKLENEN: last admin (P0001)
+--     <M> tek staff.manage sahibi olmalı (SQL Editor: select * from staff)
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<M>","role":"authenticated"}', true);
+select public.set_staff_role('<M>', 'support');
+rollback;
+
+-- 33) Gizleyen moderasyon (053) → BEKLENEN: owner_hidden = 0, other_hidden = 0,
+--     mod_sees = 1, restored = 1. <D> 'moderator' rolünde, <A> ve <B> personel değil
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select set_config('t.id', public.create_post('question', 'Gizle', 'içerik')::text, true);
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select public.moderate_content('post', current_setting('t.id')::uuid, true, 'smoke');
+select set_config('t.mod', (select count(*) from public.posts
+  where id = current_setting('t.id')::uuid)::text, true);
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select set_config('t.owner', (select count(*) from public.posts
+  where id = current_setting('t.id')::uuid)::text, true);
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select set_config('t.other', (select count(*) from public.posts
+  where id = current_setting('t.id')::uuid)::text, true);
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select public.moderate_content('post', current_setting('t.id')::uuid, false);
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select current_setting('t.owner') owner_hidden, current_setting('t.other') other_hidden,
+       current_setting('t.mod') mod_sees,
+       (select count(*) from public.posts where id = current_setting('t.id')::uuid) restored;
+rollback;
+
+-- 34) Rapor kuyruğu (053) → BEKLENEN: mod_reads ≥ 1, resolved = mod_reads, still_open = 0, logged = 1
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+insert into public.reports (reporter_id, target_type, target_id, reason)
+values ('<A>', 'user', '<B>', 'spam');
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select set_config('t.r', (select count(*) from public.reports
+  where target_id = '<B>' and status = 'open')::text, true);
+select set_config('t.n', public.resolve_report('user', '<B>', 'dismissed', 'smoke')::text, true);
+reset role;
+select current_setting('t.r') mod_reads, current_setting('t.n') resolved,
+  (select count(*) from public.reports where target_id = '<B>' and status = 'open') still_open,
+  (select count(*) from public.staff_actions
+    where target_id = '<B>' and action = 'report.dismissed' and created_at = now()) logged;
+rollback;
 ```
 
 ---
 
-## 6. Moderasyon kuyruğu (023)
+## 6. Moderasyon kuyruğu (023, 053)
 
-Raporlar istemciye okunmaz; kuyruk Dashboard → SQL Editor'dan yönetilir.
+053'ten sonra raporlar yalnızca `reports.handle` yetkilisine okunur ve kuyruk admin panelinden yönetilir. İçerik silinmez, gizlenir: `moderate_content('post'|'comment', id, true|false, gerekçe)` `removed_at`'i yazar/temizler (geri alınabilir), gizlenen içerik RLS'te süzülür. `resolve_report(target_type, target_id, 'actioned'|'dismissed', gerekçe)` hedefin açık raporlarını kapatır. Her ikisi `staff_actions`'a yazar. Aşağıdaki SQL'ler panel yokken geçerli yoldur.
 
 ```sql
 -- açık raporlar, hedef başına sayı
@@ -640,7 +703,7 @@ Doğrula: `+49…` numarayla `POST /auth/v1/otp` ve oturumlu `PUT /auth/v1/user`
 
 Kullanıcı başına tek destek sohbeti (`support_threads`, `support_messages`). Kullanıcı `send_support_message` ile yazar (10 dakikada en fazla 20 mesaj). Personel `reply_support` ile cevaplar (iç not için `p_internal => true`, kullanıcı görmez) ve durumu `set_support_status` ile değiştirir. Okundu bilgisi `mark_support_read` ile tutulur. Durum: `open` (ekip bekliyor) → `answered` (kullanıcı bekliyor) → `resolved`; kullanıcı yazınca yeniden `open`. Hesap silinince sohbet de silinir.
 
-Personel rolleri (`support`, `moderator`, `admin`; admin hepsini kapsar) yalnızca SQL Editor'dan verilir:
+**053:** Rol = yetki listesi (`staff_roles`); hazır roller `support` (`support.reply`), `moderator` (`reports.handle`, `posts.remove`, `comments.remove`, `users.ban`), `admin` (hepsi). Kontroller `has_permission('<yetki>')` ile; `has_staff_role` 049 uyumluluğu için sarmalayıcıdır. Panelden yönetim: `set_staff_role`, `remove_staff`, `save_staff_role`, `delete_staff_role` (`staff.manage`; son `staff.manage` sahibi düşürülemez → `last admin`). Tüm personel işlemleri `staff_actions`'ta (yalnızca `staff.manage` okur). İlk admin ya da kilitlenince kurtarma SQL Editor'dan:
 
 ```sql
 insert into public.staff (user_id, role) values ('<USER>', 'support')
@@ -658,4 +721,4 @@ from public.support_threads t join public.users u on u.id = t.user_id
 where t.status = 'open' order by t.last_message_at;
 ```
 
-Smoke: 28–30.
+Smoke: 28–34.
