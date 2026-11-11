@@ -474,8 +474,9 @@ insert into public.staff_actions (action, target_type, target_id) values ('x', '
 rollback;
 
 -- 32) Son yönetici kendini düşüremez (053) → BEKLENEN: last admin (P0001)
---     <M> tek staff.manage sahibi olmalı (SQL Editor: select * from staff)
+--     <M> staff.manage sahibi; diğer yöneticiler transaction içinde geçici silinir (rollback geri alır)
 begin;
+delete from public.staff where user_id <> '<M>';
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<M>","role":"authenticated"}', true);
 select public.set_staff_role('<M>', 'support');
