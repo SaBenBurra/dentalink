@@ -223,6 +223,7 @@
   - [ ] Hata ekranlarında "Sorun bildir" girişi.
   - [ ] Push: personel cevabında kullanıcıya bildirim (027 kalıbı), dokununca `/support`.
   - [ ] Admin paneli (uygulama dışı, ayrı repo; React + Vite statik SPA, kendi hosting; devir notu ve plan: [`ADMIN_PANEL.md`](ADMIN_PANEL.md)): destek kutusu (açıklar üstte, en eski bekleyen önce), cevap, iç not, durum, atama, ilk cevap süresi; yeni mesajda ekibe haber panelden. Sonra moderasyon kuyruğu ve diploma onayı. Uygulamaya personel kutusu eklenmez.
+  - [ ] Migration 054: panel girişi kullanıcı adı + şifre, ayrı panel hesabıyla (`<ad>@panel.dentigo.invalid`, `users` satırı `onboarding_completed = false`); `search_user_ids` kaydını bitirmemişleri dışlar. İlk hesap: `SUPABASE.md` §11, smoke 35. Panelde Personel sayfası + `panel-account` Edge Function (hesap açma, şifre). _(2026-11-11; canlıda, panelden giriş denendi; smoke 35 bekliyor)_
   - [ ] Sonra: ek (ekran görüntüsü), çözülünce 👍/👎.
   - **Kararlar (2026-11-09):** kullanıcıya söylenen cevap süresi "genelde 24 saat içinde"; destek talepleri ve ekip bildirimleri admin panelinden.
 - [ ] Performans profili (başlatma süresi, jank, bellek)

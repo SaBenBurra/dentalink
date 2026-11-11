@@ -521,6 +521,13 @@ select current_setting('t.r') mod_reads, current_setting('t.n') resolved,
   (select count(*) from public.staff_actions
     where target_id = '<B>' and action = 'report.dismissed' and created_at = now()) logged;
 rollback;
+
+-- 35) Panel hesabı aramada görünmez (054) → BEKLENEN: 0. <P> panel hesabının id'si, '<P_AD>' onun full_name'i
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select count(*) from public.search_user_ids('<P_AD>') where search_user_ids = '<P>';
+rollback;
 ```
 
 ---
@@ -721,4 +728,15 @@ from public.support_threads t join public.users u on u.id = t.user_id
 where t.status = 'open' order by t.last_message_at;
 ```
 
-Smoke: 28–34.
+**Panel hesabı (054, ADMIN_PANEL.md).** Panele uygulama hesabıyla değil, ayrı bir hesapla, kullanıcı adı + şifreyle girilir. Kullanıcı adı `<ad>@panel.dentigo.invalid` e-postasına çevrilir. İlk admin için (sonrakiler panelde Personel sayfasından, `panel-account` Edge Function): Dashboard → Authentication → Users → Add user → Create new user (e-posta `<ad>@panel.dentigo.invalid`, güçlü şifre, Auto Confirm User açık), sonra:
+
+```sql
+insert into public.users (id, full_name, username)     -- onboarding_completed false kalır: aramada görünmez
+select id, '<Ad Soyad>', 'panel_<ad>' from auth.users where email = '<ad>@panel.dentigo.invalid';
+insert into public.staff (user_id, role)
+select id, 'admin' from auth.users where email = '<ad>@panel.dentigo.invalid';
+```
+
+Şifre panelde Personel sayfasından değişir (Reset password işe yaramaz: `.invalid`e posta gitmez). Fonksiyon yalnızca `@panel.dentigo.invalid` hesaplarına dokunur, her şifre değişikliğini `staff_actions`a yazar (`staff.set_password`). Deploy: `supabase functions deploy panel-account --no-verify-jwt`.
+
+Smoke: 28–35.
