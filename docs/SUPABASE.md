@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `059_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `060_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -682,6 +682,29 @@ set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
 select public.admin_stats();
 rollback;
+
+-- 42) Etiket yönetimi (060) → BEKLENEN: report_ok = true, treatments_ok = true, aliased = true,
+--     curated = true, logged = 2; ardından bir blok: permission denied. <D> tags.manage
+--     yetkili (admin), <B> personel değil. 'smoke-x-etiket' / 'smoke-y-etiket' canlıda olmamalı.
+begin;
+insert into public.tags (name, slug) values ('smoke-x-etiket', 'smoke-x-etiket');
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select count(*) >= 0 report_ok from public.admin_tag_report(10);
+select count(*) >= 0 treatments_ok from public.admin_user_treatments(10);
+select public.admin_curate_tag('smoke-y-etiket', 'smoke');
+select public.admin_add_tag_alias('smoke-x-etiket', 'smoke-y-etiket', 'smoke');
+reset role;
+select public.find_tag('smokexetiket') = (select id from public.tags where slug = 'smoke-y-etiket') aliased,
+  (select is_curated from public.tags where slug = 'smoke-y-etiket') curated,
+  (select count(*) from public.staff_actions where target_type = 'tag'
+    and target_id = 'smoke-y-etiket' and created_at = now()) logged;
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select * from public.admin_tag_report();
+rollback;
 ```
 
 ---
@@ -774,7 +797,7 @@ Kullanıcı istediği etiketi yazabilir; aynı etiketin farklı yazımları sunu
 | Çoğul (`-lar/-ler`) | Kök tanımlıysa köke bağlanır | `implantlar` → `implant` |
 | Yazım hatası | Otomatik birleştirilmez (`kron`/`krom` riski); `suggest_tags` benzer etiketi önerir (pg_trgm), periyodik temizlikte eş anlamlı yapılır | `zirkonyom` yazarken `zirkonyum` önerilir |
 
-Öneri listesi: tanımlı etiketler + en az 3 postta geçen kullanıcı etiketleri; eş anlamlı yazılsa da asıl etiket gösterilir. Fonksiyonlar istemciye kapalı, SQL Editor'dan çalıştırılır:
+Öneri listesi: tanımlı etiketler + en az 3 postta geçen kullanıcı etiketleri; eş anlamlı yazılsa da asıl etiket gösterilir. Fonksiyonlar istemciye kapalı, SQL Editor'dan çalıştırılır. **Panelde (060, `tags.manage`)** Etiketler sayfası aşağıdaki iki raporu gösterir (`admin_tag_report`, `admin_user_treatments`); satırdan "Eş anlamlı yap" (`admin_add_tag_alias`) ve "Tanımlı yap" (`admin_curate_tag`) çalışır, ikisi de loglanır. Tanımlı iki etiketi birleştirme ve `promote_other_treatment` burada kalır:
 
 ```sql
 -- yeni tanımlı etiket(ler); aynı yazımlı kullanıcı etiketi varsa tanımlıya çevrilir

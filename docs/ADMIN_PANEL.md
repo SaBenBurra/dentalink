@@ -26,7 +26,7 @@ Panelin amacı: tüm sistemi tarayıcıdan yönetmek ve moderatör kullanıcıla
 
 ### Migration kuralı (önemli)
 
-- Panel reposunda migration **yazılmaz**. Şema değişikliği `../dentlink/supabase/migrations/` altında, sıradaki numarayla (son: `059_…`) ve `SUPABASE.md` kurallarıyla yazılır.
+- Panel reposunda migration **yazılmaz**. Şema değişikliği `../dentlink/supabase/migrations/` altında, sıradaki numarayla (son: `060_…`) ve `SUPABASE.md` kurallarıyla yazılır.
 - `supabase db push` canlı veritabanına uygular; kullanıcıya sormadan çalıştırma.
 - Mobil uygulama sahada eski sürümlerle çalışıyor: mevcut RPC, kolon veya policy'yi kırma. Önce genişlet, sonra daralt (`../dentlink/docs/ROADMAP.md`, sürüm yönetimi maddesi).
 - Bir migration yazınca `../dentlink/docs/SUPABASE.md` ve `../dentlink/docs/ROADMAP.md`'yi de güncelle.
@@ -77,6 +77,7 @@ Panelin amacı: tüm sistemi tarayıcıdan yönetmek ve moderatör kullanıcıla
 7. **İstatistik `/istatistik` (`stats.view`, migration 059; plandaki 058 numarası ban kontrolüne gitti):** `admin_stats(p_days)`: günlük kayıt, gönderi (türe göre), yorum, rapor; özet: toplam/aktif kullanıcı, açık rapor, açık destek, medyan ilk cevap süresi. KPI kutuları + CSS/SVG çubuk grafik (grafik kütüphanesi yok).
    - _Canlıda (`059_admin_stats.sql`, 2026-11-12); panel kuruldu (`src/pages/Stats.tsx`); smoke 41 geçti (2026-11-12). Tarayıcıda denenmedi._ `admin_stats` tek jsonb döner: `summary` + `daily` (Europe/Istanbul günleri, 1–365 gün). Kullanıcı sayıları yalnızca kaydını bitirmiş hesaplar (panel hesapları sayılmaz). Aktif = dönemde `auth.sessions` kaydı açılmış ya da yenilenmiş; çıkış yapan ya da banlanan hesabın oturumu silindiği için sayılmaz. Medyan ilk cevap dönemde açılan sohbetlerden. Gizlenen içerik günlük sayılarda kalır.
 8. **İçerik yönetimi (yayından sonra, isteğe bağlı):** yeni yetki `tags.manage` (060, `staff_roles` CHECK genişler): etiket benzerlik raporu, `add_tag_alias`/`add_curated_tags`/`merge_tags` sarmalayıcıları; kullanıcı tedavileri raporu (salt okunur; `promote_other_treatment` uygulama sürümü ister, panelden çalıştırılmaz). `app_config` yapılınca sürüm düzenleme (`config.manage`). Toplu duyuru/push yok (ayrı karar).
+   - _Canlıda (`060_admin_tags.sql`, 2026-11-12); panel kuruldu (`src/pages/Tags.tsx`, `/etiketler`). Smoke 42 geçti (2026-11-12, Management API üzerinden tek `DO` bloğunda, sonuç `RAISE` ile döndü ve geri alındı). Tarayıcıda denenmedi._ `admin_tag_report(p_limit)` kullanıcı etiketlerini en çok kullanılan önce, en benzer tanımlı etiketle (pg_trgm) verir; `admin_user_treatments(p_limit)` listede olmayan tedavileri branşa göre sayar (salt okunur). Yazma: `admin_add_tag_alias(p_alias, p_tag, p_reason)` (kullanıcı etiketi postları ve tedavi bağıyla birleşir; listedeki tedaviye birleşen vakanın branşı listedekine eşitlenir; tanımlı etiket eş anlamlı yapılamaz) ve `admin_curate_tag(p_name, p_reason)`. Log `target_type = 'tag'`, `target_id` = hedef slug. `merge_tags` sarmalanmadı: kullanıcı etiketi eş anlamlıyla birleşir, tanımlı iki etiketi birleştirmek SQL Editor'da kalır. `app_config` henüz yok, sürüm düzenleme bekliyor.
 
 Her madde için: migration `SUPABASE.md` kurallarıyla + smoke, `supabase gen types`, `npm run lint` + `npm run build`, mobil ↔ panel uçtan uca deneme, `support` rolündeki hesapla yetkisiz eylemin `42501` aldığı kontrol.
 
