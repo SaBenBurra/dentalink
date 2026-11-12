@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `058_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `059_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -667,6 +667,20 @@ update auth.users set banned_until = now() + interval '1 day' where id = '<A>';
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated","session_id":"00000000-0000-0000-0000-000000000000"}', true);
 select public.check_session();
+rollback;
+
+-- 41) İstatistik (059) → BEKLENEN: days = 7, has_summary = true; ardından bir blok:
+--     permission denied. <D> stats.view yetkili (admin), <B> personel değil
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select jsonb_array_length(s->'daily') days, s->'summary' ? 'active_users' has_summary
+  from public.admin_stats(7) s;
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select public.admin_stats();
 rollback;
 ```
 
