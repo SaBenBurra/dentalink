@@ -272,6 +272,7 @@
   "noLikersYet": "No likes yet.",
 
   "errorAuthRequired": "Your session has expired. Please sign in again.",
+  "accountSuspended": "Your account has been suspended.",
   "errorPermissionDenied": "You are not allowed to do this.",
   "errorNotFound": "Content not found or deleted.",
   "errorValidation": "The content you entered is not valid.",

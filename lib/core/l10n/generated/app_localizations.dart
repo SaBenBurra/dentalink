@@ -1310,6 +1310,12 @@ abstract class AppLocalizations {
   /// **'Oturumunuz sona erdi. Lütfen tekrar giriş yapın.'**
   String get errorAuthRequired;
 
+  /// No description provided for @accountSuspended.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesabınız askıya alındı.'**
+  String get accountSuspended;
+
   /// No description provided for @errorPermissionDenied.
   ///
   /// In tr, this message translates to:

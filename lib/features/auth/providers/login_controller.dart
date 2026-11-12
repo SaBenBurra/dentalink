@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/utils/session_guard_client.dart';
 import '../../../data/repositories/otp_cooldown_exception.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/locale_provider.dart';
@@ -66,7 +67,16 @@ class LoginController extends AutoDisposeNotifier<LoginState> {
       _disposed = true;
       _resendTimer?.cancel();
     });
-    return const LoginState();
+    // Sunucu oturumu kapattıysa (058) sebebi bir kez göster.
+    final reason = forcedSignOutReason.value;
+    if (reason == null) return const LoginState();
+    forcedSignOutReason.value = null;
+    final l10n = ref.read(l10nProvider);
+    return LoginState(
+      errorText: reason == 'user_banned'
+          ? l10n.accountSuspended
+          : l10n.errorAuthRequired,
+    );
   }
 
   void clearError() {

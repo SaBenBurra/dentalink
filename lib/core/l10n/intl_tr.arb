@@ -563,6 +563,7 @@
   "@discardChangesConfirm": { "description": "Kaydedilmemiş formdan çıkışı onaylayan buton" },
 
   "errorAuthRequired": "Oturumunuz sona erdi. Lütfen tekrar giriş yapın.",
+  "accountSuspended": "Hesabınız askıya alındı.",
   "errorPermissionDenied": "Bu işlem için yetkiniz yok.",
   "errorNotFound": "İçerik bulunamadı veya silinmiş.",
   "errorValidation": "Girdiğiniz içerik geçerli değil.",

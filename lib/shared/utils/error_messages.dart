@@ -35,6 +35,8 @@ String getErrorMessage(AppLocalizations l10n, Object e) {
         return l10n.contactTaken;
       case 'sms_send_failed':
         return l10n.whatsappSendFailed;
+      case 'user_banned':
+        return l10n.accountSuspended;
     }
     // send-sms hook'u hata kodu taşıyamaz, sebep mesajdadır.
     if (e.message == 'sms_send_failed') return l10n.whatsappSendFailed;
@@ -62,7 +64,7 @@ bool _isRateLimit(AuthApiException e) =>
 
 /// Kod doğrulama hatası: yalnızca sunucunun reddettiği kod "hatalı" sayılır.
 String getOtpErrorMessage(AppLocalizations l10n, Object e) =>
-    e is AuthApiException && !_isRateLimit(e)
+    e is AuthApiException && !_isRateLimit(e) && e.code != 'user_banned'
     ? l10n.otpInvalid
     : getErrorMessage(l10n, e);
 

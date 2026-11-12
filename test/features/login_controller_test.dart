@@ -1,4 +1,5 @@
 import 'package:dentigo/core/l10n/generated/app_localizations.dart';
+import 'package:dentigo/core/utils/session_guard_client.dart';
 import 'package:dentigo/data/models/user_model.dart';
 import 'package:dentigo/data/providers/repository_providers.dart';
 import 'package:dentigo/data/repositories/otp_cooldown_exception.dart';
@@ -143,4 +144,38 @@ void main() {
       expect(c.read(loginControllerProvider).resendCountdown, 60);
     },
   );
+
+  test('banlı hesabın kodu "hatalı" değil askıya alındı der', () async {
+    final auth = _ThrowingAuth()
+      ..verifyError = const AuthApiException(
+        'User is banned',
+        statusCode: '403',
+        code: 'user_banned',
+      );
+    final c = _container(auth);
+
+    await c.read(loginControllerProvider.notifier).verifyOtp('a@b.co', '1');
+    expect(
+      c.read(loginControllerProvider).errorText,
+      'Hesabınız askıya alındı.',
+    );
+  });
+
+  test('sunucu oturumu kapattıysa sebep bir kez gösterilir (058)', () {
+    addTearDown(() => forcedSignOutReason.value = null);
+    forcedSignOutReason.value = 'user_banned';
+    final c = _container(_ThrowingAuth());
+    expect(
+      c.read(loginControllerProvider).errorText,
+      'Hesabınız askıya alındı.',
+    );
+    expect(forcedSignOutReason.value, isNull);
+
+    forcedSignOutReason.value = 'session_revoked';
+    final c2 = _container(_ThrowingAuth());
+    expect(
+      c2.read(loginControllerProvider).errorText,
+      'Oturumunuz sona erdi. Lütfen tekrar giriş yapın.',
+    );
+  });
 }

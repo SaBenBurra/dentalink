@@ -33,6 +33,8 @@ AppFailure _mapPostgrest(PostgrestException e) {
     case '23503': // foreign key violation
       return const NotFoundFailure();
     case 'PGRST301':
+    case 'session_revoked': // 058: oturum sunucuda kapatıldı
+    case 'user_banned':
       return const AuthRequiredFailure();
     case '23505': // unique violation
       return ConflictFailure(e.message);

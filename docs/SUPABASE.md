@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `056_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `058_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -588,6 +588,86 @@ set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
 select * from public.report_queue();
 rollback;
+
+-- 38) Ban (057) → BEKLENEN: banned = true, sessions = 0, tokens = 0, logged = 2, unbanned = true;
+--     ardından iki blok: target is staff (P0001) ve permission denied.
+--     <D> users.ban yetkili (moderator ya da admin), <A> ve <B> personel değil
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select public.set_user_ban('<A>', true, 1, 'smoke');
+reset role;
+select set_config('t.banned', (select (banned_until > now())::text from auth.users where id = '<A>'), true);
+select set_config('t.s', (select count(*) from auth.sessions where user_id = '<A>')::text, true);
+select set_config('t.p', (select count(*) from public.push_tokens where user_id = '<A>')::text, true);
+set local role authenticated;
+select public.set_user_ban('<A>', false);
+reset role;
+select current_setting('t.banned') banned, current_setting('t.s') sessions, current_setting('t.p') tokens,
+  (select count(*) from public.staff_actions where target_id = '<A>'
+    and action in ('user.ban', 'user.unban') and created_at = now()) logged,
+  (select banned_until is null from auth.users where id = '<A>') unbanned;
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select public.set_user_ban('<D>', true);
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select public.set_user_ban('<A>', true);
+rollback;
+
+-- 39) Kullanıcı detayı, iletişim, doğrulama (057) → BEKLENEN: masked = true, contact_logged = 1,
+--     verified = true; ardından bir blok: permission denied. <D> admin, <A> ve <B> personel değil
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select set_config('t.d', public.admin_user_detail('<A>')::text, true);
+select public.admin_user_contact('<A>');
+select public.set_user_verified('<A>', true, 'smoke');
+reset role;
+select coalesce(current_setting('t.d')::jsonb->>'email', current_setting('t.d')::jsonb->>'phone') like '%***%' masked,
+  (select count(*) from public.staff_actions where target_id = '<A>'
+    and action = 'user.view_contact' and created_at = now()) contact_logged,
+  (select is_verified from public.users where id = '<A>') verified;
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select public.admin_user_detail('<A>');
+rollback;
+
+-- 40) Her istekte oturum kontrolü (058). Dört blok, BEKLENEN sırayla:
+--     (a) ok: session_id yok (anon, service_role), geçer
+--     (b) ok: gerçek oturum geçer
+--     (c) PGRST: {"code":"session_revoked"…}, DETAIL status 401 + X-Session-Revoked
+--     (d) PGRST: {"code":"user_banned"…}
+--     Canlı ayar: select rolconfig from pg_roles where rolname = 'authenticator'
+--     içinde pgrst.db_pre_request=public.check_session olmalı.
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select public.check_session() as ok;
+rollback;
+begin;
+select set_config('request.jwt.claims', json_build_object('sub', user_id, 'role', 'authenticated',
+  'session_id', id)::text, true) is not null from auth.sessions order by created_at desc limit 1;
+set local role authenticated;
+select public.check_session() as ok;
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated","session_id":"00000000-0000-0000-0000-000000000000"}', true);
+select public.check_session();
+rollback;
+begin;
+update auth.users set banned_until = now() + interval '1 day' where id = '<A>';
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated","session_id":"00000000-0000-0000-0000-000000000000"}', true);
+select public.check_session();
+rollback;
 ```
 
 ---
@@ -611,7 +691,7 @@ update public.reports set status = 'actioned' where target_id = '<POST>';
 update public.reports set status = 'dismissed' where target_id = '<ID>';
 ```
 
-Kullanıcıyı kapatmak için Dashboard → Authentication → kullanıcı → Ban user. Hesap silme (024, `delete_account`) `auth.users` satırını siler; public verisi cascade ile gider. Bilinen sınır: karşı kullanıcının sohbet geçmişi de silinir. Storage dosyalarını istemci RPC'den önce siler.
+Kullanıcıyı kapatmak için panelde Kullanıcılar → Banla (`set_user_ban`, 057; oturumları ve push token'ları da siler). Ban anında etkilidir: PostgREST her istekten önce `check_session`'ı çalıştırır (058, `db_pre_request`), oturumu silinmiş token'ın isteği `401` + `X-Session-Revoked` ile reddedilir, uygulama ilk böyle yanıtta çıkış yapar. Storage ve Realtime kapsanmaz. Kontrol API'yi kilitlerse geri alma: `ALTER ROLE authenticator RESET pgrst.db_pre_request; NOTIFY pgrst, 'reload config';`. Panel yoksa Dashboard → Authentication → kullanıcı → Ban user (bu da oturumları siler). Hesap silme (024, `delete_account`) `auth.users` satırını siler; public verisi cascade ile gider. Bilinen sınır: karşı kullanıcının sohbet geçmişi de silinir. Storage dosyalarını istemci RPC'den önce siler.
 
 ---
 
@@ -801,4 +881,4 @@ select id, 'admin' from auth.users where email = '<ad>@panel.dentigo.invalid';
 
 **Destek kutusu (055).** Panelde `/destek`. `waiting_since`: sohbetin cevap beklemeye başladığı an (ilk cevapsız kullanıcı mesajı). Kuyruk buna göre sıralanır, kullanıcı üst üste yazınca sırası geriye düşmez; herkese açık cevap ya da `open` dışı durum onu NULL yapar. Atama `assign_support_thread(p_thread_id, p_assignee_id)` (NULL kaldırır; atanan `support.reply` yetkili olmalı, değilse `assignee not support`), `staff_actions`'a `support.assign` yazar. 049 policy'leri ve `mark_support_read` artık `has_permission('support.reply')` kullanır.
 
-Smoke: 28–37.
+Smoke: 28–40.

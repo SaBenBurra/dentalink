@@ -3,12 +3,14 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/l10n/generated/app_localizations.dart';
 import 'core/push/message_notifications.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/utils/session_guard_client.dart';
 import 'providers/locale_provider.dart';
 import 'providers/push_provider.dart';
 import 'providers/theme_provider.dart';
@@ -24,6 +26,7 @@ Future<void> main() async {
   await Supabase.initialize(
     url: 'https://lknvufbxekceevdblgmq.supabase.co',
     publishableKey: 'sb_publishable_CGm0mMqcvUubeXazytJr-w_WK6CLfS5',
+    httpClient: SessionGuardClient(http.Client(), onRevoked: _onSessionRevoked),
   );
   // Firebase yapılandırma dosyaları yoksa (henüz kurulmadı) push kapalı çalışır.
   var firebaseReady = false;
@@ -82,4 +85,14 @@ class MainApp extends ConsumerWidget {
       ],
     );
   }
+}
+
+/// Sunucu oturumu kapattı (ban, 058): yerel çıkış. signedOut olayı authProvider'ı
+/// null yapar, router giriş ekranına götürür (AUTH-5). Aynı anda dönen diğer
+/// istekler oturum zaten silindiği için bir şey yapmaz.
+void _onSessionRevoked(String reason) {
+  final auth = Supabase.instance.client.auth;
+  if (auth.currentSession == null) return;
+  forcedSignOutReason.value = reason;
+  auth.signOut();
 }

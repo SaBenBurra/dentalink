@@ -660,6 +660,9 @@ class AppLocalizationsTr extends AppLocalizations {
       'Oturumunuz sona erdi. Lütfen tekrar giriş yapın.';
 
   @override
+  String get accountSuspended => 'Hesabınız askıya alındı.';
+
+  @override
   String get errorPermissionDenied => 'Bu işlem için yetkiniz yok.';
 
   @override

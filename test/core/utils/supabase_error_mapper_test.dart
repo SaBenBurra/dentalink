@@ -25,6 +25,17 @@ void main() {
     expect((f as ConflictFailure).message, contains('username'));
   });
 
+  test('sunucunun kapattığı oturum AuthRequiredFailure olur (058)', () async {
+    for (final code in ['session_revoked', 'user_banned']) {
+      expect(
+        await failureOf(
+          PostgrestException(message: 'session revoked', code: code),
+        ),
+        isA<AuthRequiredFailure>(),
+      );
+    }
+  });
+
   test('StorageException durum koduna göre eşlenir', () async {
     expect(
       await failureOf(const StorageException('big', statusCode: '413')),

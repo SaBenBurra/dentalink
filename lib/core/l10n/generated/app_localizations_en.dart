@@ -661,6 +661,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your session has expired. Please sign in again.';
 
   @override
+  String get accountSuspended => 'Your account has been suspended.';
+
+  @override
   String get errorPermissionDenied => 'You are not allowed to do this.';
 
   @override
