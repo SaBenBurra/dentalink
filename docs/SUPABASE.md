@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `055_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `056_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -561,13 +561,40 @@ set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
 select public.assign_support_thread(gen_random_uuid(), '<B>');
 rollback;
+
+-- 37) Moderasyon kuyruğu (056) → BEKLENEN: queued = 1, title = Kuyruk, hidden = true, history = 2;
+--     ardından bir blok: permission denied. <D> 'moderator' rolünde, <A> ve <B> personel değil
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select set_config('t.id', public.create_post('question', 'Kuyruk', 'içerik')::text, true);
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+insert into public.reports (reporter_id, target_type, target_id, reason)
+values ('<B>', 'post', current_setting('t.id')::uuid, 'spam');
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select set_config('t.q', (select count(*) from public.report_queue('open', 100)
+  where target_id = current_setting('t.id')::uuid and report_count = 1)::text, true);
+select set_config('t.title', (select target->>'title' from public.report_queue('open', 100)
+  where target_id = current_setting('t.id')::uuid), true);
+select public.moderate_content('post', current_setting('t.id')::uuid, true, 'smoke');
+select public.resolve_report('post', current_setting('t.id')::uuid, 'actioned', 'smoke');
+select current_setting('t.q') queued, current_setting('t.title') title,
+  (select target->>'removed_at' is not null from public.report_queue('actioned', 100)
+    where target_id = current_setting('t.id')::uuid) hidden,
+  (select count(*) from public.target_history('post', current_setting('t.id')::uuid)) history;
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select * from public.report_queue();
+rollback;
 ```
 
 ---
 
 ## 6. Moderasyon kuyruğu (023, 053)
 
-053'ten sonra raporlar yalnızca `reports.handle` yetkilisine okunur ve kuyruk admin panelinden yönetilir. İçerik silinmez, gizlenir: `moderate_content('post'|'comment', id, true|false, gerekçe)` `removed_at`'i yazar/temizler (geri alınabilir), gizlenen içerik RLS'te süzülür. `resolve_report(target_type, target_id, 'actioned'|'dismissed', gerekçe)` hedefin açık raporlarını kapatır. Her ikisi `staff_actions`'a yazar. Aşağıdaki SQL'ler panel yokken geçerli yoldur.
+053'ten sonra raporlar yalnızca `reports.handle` yetkilisine okunur ve kuyruk admin panelinden yönetilir. İçerik silinmez, gizlenir: `moderate_content('post'|'comment', id, true|false, gerekçe)` `removed_at`'i yazar/temizler (geri alınabilir), gizlenen içerik RLS'te süzülür. `resolve_report(target_type, target_id, 'actioned'|'dismissed', gerekçe)` hedefin açık raporlarını kapatır. Her ikisi `staff_actions`'a yazar. 056: panel kuyruğu `report_queue(p_status, p_limit, p_offset)` (hedef başına gruplu, önizlemeli) ve `target_history(p_target_type, p_target_id)` ile okur (ikisi de `reports.handle`). Aşağıdaki SQL'ler panel yokken geçerli yoldur.
 
 ```sql
 -- açık raporlar, hedef başına sayı
@@ -774,4 +801,4 @@ select id, 'admin' from auth.users where email = '<ad>@panel.dentigo.invalid';
 
 **Destek kutusu (055).** Panelde `/destek`. `waiting_since`: sohbetin cevap beklemeye başladığı an (ilk cevapsız kullanıcı mesajı). Kuyruk buna göre sıralanır, kullanıcı üst üste yazınca sırası geriye düşmez; herkese açık cevap ya da `open` dışı durum onu NULL yapar. Atama `assign_support_thread(p_thread_id, p_assignee_id)` (NULL kaldırır; atanan `support.reply` yetkili olmalı, değilse `assignee not support`), `staff_actions`'a `support.assign` yazar. 049 policy'leri ve `mark_support_read` artık `has_permission('support.reply')` kullanır.
 
-Smoke: 28–36.
+Smoke: 28–37.
