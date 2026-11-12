@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `053_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `055_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -529,6 +529,38 @@ set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
 select count(*) from public.search_user_ids('<P_AD>') where search_user_ids = '<P>';
 rollback;
+
+-- 36) Destek kutusu (055) → BEKLENEN: kept = true, cleared = true, logged = 1; ardından iki blok:
+--     assignee not support (22023) ve permission denied. <S> 'support' rolünde, <A> ve <B> personel değil
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select set_config('t.th', (public.send_support_message('smoke 1')).thread_id::text, true);
+select set_config('t.w1', (select waiting_since from public.support_threads
+  where id = current_setting('t.th')::uuid)::text, true);
+select public.send_support_message('smoke 2');
+select set_config('t.w2', (select waiting_since from public.support_threads
+  where id = current_setting('t.th')::uuid)::text, true);
+select set_config('request.jwt.claims', '{"sub":"<S>","role":"authenticated"}', true);
+select public.assign_support_thread(current_setting('t.th')::uuid, '<S>');
+select public.reply_support(current_setting('t.th')::uuid, 'smoke cevap');
+reset role;
+select current_setting('t.w1') = current_setting('t.w2') kept,
+  (select waiting_since is null from public.support_threads
+    where id = current_setting('t.th')::uuid) cleared,
+  (select count(*) from public.staff_actions
+    where target_id = current_setting('t.th') and action = 'support.assign' and created_at = now()) logged;
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<S>","role":"authenticated"}', true);
+select public.assign_support_thread((select id from public.support_threads limit 1), '<B>');
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select public.assign_support_thread(gen_random_uuid(), '<B>');
+rollback;
 ```
 
 ---
@@ -740,4 +772,6 @@ select id, 'admin' from auth.users where email = '<ad>@panel.dentigo.invalid';
 
 Şifre panelde Personel sayfasından değişir (Reset password işe yaramaz: `.invalid`e posta gitmez). Fonksiyon yalnızca `@panel.dentigo.invalid` hesaplarına dokunur, her şifre değişikliğini `staff_actions`a yazar (`staff.set_password`). Deploy: `supabase functions deploy panel-account --no-verify-jwt`.
 
-Smoke: 28–35.
+**Destek kutusu (055).** Panelde `/destek`. `waiting_since`: sohbetin cevap beklemeye başladığı an (ilk cevapsız kullanıcı mesajı). Kuyruk buna göre sıralanır, kullanıcı üst üste yazınca sırası geriye düşmez; herkese açık cevap ya da `open` dışı durum onu NULL yapar. Atama `assign_support_thread(p_thread_id, p_assignee_id)` (NULL kaldırır; atanan `support.reply` yetkili olmalı, değilse `assignee not support`), `staff_actions`'a `support.assign` yazar. 049 policy'leri ve `mark_support_read` artık `has_permission('support.reply')` kullanır.
+
+Smoke: 28–36.
