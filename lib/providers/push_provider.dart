@@ -168,24 +168,42 @@ class PushController {
     final context = _router.routerDelegate.navigatorKey.currentContext;
     if (notification == null || context == null) return;
     final route = pushRoute(message.data);
+    final l10n = AppLocalizations.of(context)!;
+    // SnackBar zemini iki temada da koyu; aksiyon rengi onun üstünde okunur.
+    final accent = Theme.of(context).snackBarTheme.actionTextColor;
     ScaffoldMessenger.maybeOf(context)?.showSnackBar(
       SnackBar(
         duration: const Duration(seconds: 8),
-        content: Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(
-                text: notification.title ?? '',
-                style: const TextStyle(fontWeight: FontWeight.w600),
+        content: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.campaign_outlined, color: accent),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '${l10n.announcementLabel}\n',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.labelMedium?.copyWith(color: accent),
+                    ),
+                    TextSpan(
+                      text: notification.title ?? '',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    TextSpan(text: '\n${notification.body ?? ''}'),
+                  ],
+                ),
               ),
-              TextSpan(text: '\n${notification.body ?? ''}'),
-            ],
-          ),
+            ),
+          ],
         ),
         action: route == null
             ? null
             : SnackBarAction(
-                label: AppLocalizations.of(context)!.announcementOpen,
+                label: l10n.announcementOpen,
                 onPressed: () => pushDetailOn(_router, route),
               ),
       ),

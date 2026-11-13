@@ -1988,6 +1988,12 @@ abstract class AppLocalizations {
   /// **'Aç'**
   String get announcementOpen;
 
+  /// No description provided for @announcementLabel.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dentigo duyurusu'**
+  String get announcementLabel;
+
   /// No description provided for @settingsTerms.
   ///
   /// In tr, this message translates to:

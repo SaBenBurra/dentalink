@@ -1036,6 +1036,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get announcementOpen => 'Aç';
 
   @override
+  String get announcementLabel => 'Dentigo duyurusu';
+
+  @override
   String get settingsTerms => 'Kullanım Koşulları';
 
   @override

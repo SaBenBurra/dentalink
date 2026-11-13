@@ -243,6 +243,8 @@ ThemeData buildLightTheme() {
 
     // ── Snackbar ──
     snackBarTheme: SnackBarThemeData(
+      // Zemin iki temada da koyu; vurgu (aksiyon, duyuru etiketi) açık mint.
+      actionTextColor: AppColors.primarySurface,
       backgroundColor: AppColors.darkSurfaceVariant,
       contentTextStyle: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
       shape: RoundedRectangleBorder(
