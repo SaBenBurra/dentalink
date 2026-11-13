@@ -1034,6 +1034,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'News and important updates from Dentigo';
 
   @override
+  String get announcementOpen => 'Open';
+
+  @override
   String get settingsTerms => 'Terms of Use';
 
   @override

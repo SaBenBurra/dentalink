@@ -5,11 +5,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../core/l10n/generated/app_localizations.dart';
 import '../core/push/message_notifications.dart';
 import '../core/router/app_router.dart';
 import '../core/router/notification_route.dart';
@@ -150,11 +151,45 @@ class PushController {
 
   // Uygulama açıkken: DM bildirimi, o sohbet ekranında değilsek gösterilir.
   void _onForeground(RemoteMessage message) {
+    if (message.data['type'] == 'announcement') {
+      _showAnnouncement(message);
+      return;
+    }
     final path = _router.routerDelegate.currentConfiguration.uri.path;
     if (path == '/chat/${message.data['actor_id']}') return;
     showMessageNotification(
       message.data,
     ).catchError((Object e) => debugPrint('push foreground: $e'));
+  }
+
+  // Sistem uygulama açıkken duyuruyu göstermez; uygulama içinde gösterilir.
+  void _showAnnouncement(RemoteMessage message) {
+    final notification = message.notification;
+    final context = _router.routerDelegate.navigatorKey.currentContext;
+    if (notification == null || context == null) return;
+    final route = pushRoute(message.data);
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 8),
+        content: Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                text: notification.title ?? '',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              TextSpan(text: '\n${notification.body ?? ''}'),
+            ],
+          ),
+        ),
+        action: route == null
+            ? null
+            : SnackBarAction(
+                label: AppLocalizations.of(context)!.announcementOpen,
+                onPressed: () => pushDetailOn(_router, route),
+              ),
+      ),
+    );
   }
 
   void _open(Map<String, dynamic> data) {

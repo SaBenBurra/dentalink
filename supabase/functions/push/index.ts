@@ -210,6 +210,8 @@ async function sendBroadcast(id: string): Promise<void> {
         topic: ANNOUNCEMENTS_TOPIC,
         notification: { title: b.title, body: b.body },
         data,
+        // Normal öncelik Android'de Doze'da bekletilir (dakikalarca gecikme); send() ile aynı.
+        android: { priority: 'high' },
         apns: { payload: { aps: { sound: 'default' } } },
       });
       if (!res.ok) failure = `fcm ${res.status}: ${await res.text()}`;

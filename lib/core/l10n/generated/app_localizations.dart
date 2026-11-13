@@ -1982,6 +1982,12 @@ abstract class AppLocalizations {
   /// **'Dentigo\'dan yenilikler ve önemli bilgiler'**
   String get settingsAnnouncementsSubtitle;
 
+  /// No description provided for @announcementOpen.
+  ///
+  /// In tr, this message translates to:
+  /// **'Aç'**
+  String get announcementOpen;
+
   /// No description provided for @settingsTerms.
   ///
   /// In tr, this message translates to:
