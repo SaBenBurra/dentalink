@@ -1026,6 +1026,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get settingsAbout => 'Hakkında';
 
   @override
+  String get settingsAnnouncements => 'Duyurular';
+
+  @override
+  String get settingsAnnouncementsSubtitle =>
+      'Dentigo\'dan yenilikler ve önemli bilgiler';
+
+  @override
   String get settingsTerms => 'Kullanım Koşulları';
 
   @override

@@ -62,6 +62,12 @@ void main() {
       );
     });
 
+    test('duyuru: gönderiye bağlıysa gönderi, değilse rota yok', () {
+      expect(pushRoute({'type': 'announcement', 'post_id': 'p1'}), '/post/p1');
+      expect(pushRoute({'type': 'announcement', 'post_id': ''}), isNull);
+      expect(pushRoute({'type': 'announcement'}), isNull);
+    });
+
     test('bilinmeyen tür yok sayılır', () {
       expect(pushRoute({'type': 'new_kind', 'post_id': 'p1'}), isNull);
       expect(pushRoute({}), isNull);

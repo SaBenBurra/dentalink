@@ -3,6 +3,9 @@
 // Migration 027'deki trigger, notifications/messages INSERT'inde
 // { kind: 'notification' | 'message', id } gönderir. Fonksiyon satırı okur,
 // alıcının cihazlarına FCM HTTP v1 ile push atar, geçersiz token'ları siler.
+// 061: broadcasts INSERT'inde { kind: 'broadcast', id }: duyuru 'announcements'
+// topic'ine (test ise yalnızca test kullanıcısının cihazlarına) gider, sonuç
+// satırın sent_at / error alanına yazılır.
 //
 // Sırlar (supabase secrets set):
 //   PUSH_WEBHOOK_SECRET       Vault'taki push_webhook_
@@ -149,12 +152,19 @@ async function accessToken(): Promise<string> {
   return cached.token;
 }
 
+async function fcm(message: Record<string, unknown>): Promise<Response> {
+  return fetch(`https://fcm.googleapis.com/v1/projects/${sa.project_id}/messages:send`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${await accessToken()}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message }),
+  });
+}
+
 async function send(push: Push): Promise<void> {
   const { data: tokens, error } = await db.from('push_tokens').select('token, platform').eq('user_id', push.userId);
   if (error) throw error;
   if (!tokens?.length) return;
 
-  const auth = await accessToken();
   await Promise.all(tokens.map(async ({ token, platform }) => {
     const dataOnly = platform === 'android' && push.data.type === 'message';
     const message = dataOnly
@@ -166,11 +176,7 @@ async function send(push: Push): Promise<void> {
           android: { priority: 'high' },
           apns: { payload: { aps: { sound: 'default', ...(push.threadId && { 'thread-id': push.threadId }) } } },
         };
-    const res = await fetch(`https://fcm.googleapis.com/v1/projects/${sa.project_id}/messages:send`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${auth}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message }),
-    });
+    const res = await fcm(message);
     if (res.ok) return;
     const text = await res.text();
     // Uygulama silinmiş ya da token yenilenmiş: satırı temizle.
@@ -182,15 +188,55 @@ async function send(push: Push): Promise<void> {
   }));
 }
 
+// Uygulama abone olur (push_provider.dart), Ayarlar'dan kapatınca çıkar.
+const ANNOUNCEMENTS_TOPIC = 'announcements';
+
+async function sendBroadcast(id: string): Promise<void> {
+  const { data: b, error } = await db
+    .from('broadcasts')
+    .select('title, body, post_id, test_user_id, is_test')
+    .eq('id', id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!b) return;
+  const data = { type: 'announcement', post_id: b.post_id ?? '' };
+  let failure: string | null = null;
+  try {
+    if (b.is_test) {
+      if (!b.test_user_id) failure = 'test user deleted';
+      else await send({ userId: b.test_user_id, title: b.title, body: b.body, data });
+    } else {
+      const res = await fcm({
+        topic: ANNOUNCEMENTS_TOPIC,
+        notification: { title: b.title, body: b.body },
+        data,
+        apns: { payload: { aps: { sound: 'default' } } },
+      });
+      if (!res.ok) failure = `fcm ${res.status}: ${await res.text()}`;
+    }
+  } catch (e) {
+    failure = String(e);
+  }
+  const { error: updateError } = await db
+    .from('broadcasts')
+    .update(failure ? { error: failure.slice(0, 500) } : { sent_at: new Date().toISOString() })
+    .eq('id', id);
+  if (updateError) throw updateError;
+}
+
 Deno.serve(async (req) => {
   if (req.headers.get('x-push-secret') !== Deno.env.get('PUSH_WEBHOOK_SECRET')) {
     return new Response('forbidden', { status: 403 });
   }
   const { kind, id } = await req.json();
-  if ((kind !== 'notification' && kind !== 'message') || typeof id !== 'string') {
+  if (!['notification', 'message', 'broadcast'].includes(kind) || typeof id !== 'string') {
     return new Response('bad request', { status: 400 });
   }
   try {
+    if (kind === 'broadcast') {
+      await sendBroadcast(id);
+      return new Response('ok');
+    }
     const push = await load(kind, id);
     if (push) await send(push);
     return new Response('ok');

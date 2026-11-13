@@ -8,6 +8,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/push/message_notifications.dart';
 import '../core/router/app_router.dart';
@@ -31,14 +32,45 @@ final pushProvider = Provider<PushController?>((ref) {
     ref.read(pushRepositoryProvider),
     FirebaseMessaging.instance,
     ref.read(routerProvider),
+    () => ref.read(announcementsEnabledProvider),
   )..start();
   ref.onDispose(controller.cancel);
   return controller;
 });
 
+/// Panel duyuruları (061) bu FCM topic'ine gider.
+const announcementsTopic = 'announcements';
+
+/// Panel duyurularını alma tercihi (cihaz ayarı, varsayılan açık). Kapatınca
+/// topic aboneliği kalkar; çıkışta `deleteToken` aboneliği zaten siler.
+/// `main` [SharedPreferences] ile override eder (testlerde yalnızca bellekte).
+final announcementsEnabledProvider =
+    NotifierProvider<AnnouncementsNotifier, bool>(AnnouncementsNotifier.new);
+
+class AnnouncementsNotifier extends Notifier<bool> {
+  AnnouncementsNotifier([this._prefs]);
+
+  final SharedPreferences? _prefs;
+  static const _key = 'announcements_enabled';
+
+  @override
+  bool build() => _prefs?.getBool(_key) ?? true;
+
+  void set(bool value) {
+    state = value;
+    _prefs?.setBool(_key, value);
+    ref.read(pushProvider)?.syncAnnouncements(value);
+  }
+}
+
 /// Push verisinden (Edge Function `push`) açılacak rota.
 String? pushRoute(Map<String, dynamic> data) {
   final String? type = data['type'];
+  // Duyuru: gönderiye bağlıysa gönderi, değilse yalnızca uygulama açılır.
+  if (type == 'announcement') {
+    final String? postId = data['post_id'];
+    return postId == null || postId.isEmpty ? null : '/post/$postId';
+  }
   final notificationType = NotificationType.values
       .where((e) => e.dbValue == type)
       .firstOrNull;
@@ -54,11 +86,17 @@ String? pushRoute(Map<String, dynamic> data) {
 }
 
 class PushController {
-  PushController(this._repo, this._messaging, this._router);
+  PushController(
+    this._repo,
+    this._messaging,
+    this._router,
+    this._announcementsEnabled,
+  );
 
   final PushRepository _repo;
   final FirebaseMessaging _messaging;
   final GoRouter _router;
+  final bool Function() _announcementsEnabled;
   final _subs = <StreamSubscription<Object?>>[];
   bool _cancelled = false;
 
@@ -93,6 +131,20 @@ class PushController {
       await _repo.register(token, Platform.isIOS ? 'ios' : 'android');
     } catch (e) {
       debugPrint('push register: $e');
+    }
+    await syncAnnouncements(_announcementsEnabled());
+  }
+
+  Future<void> syncAnnouncements(bool enabled) async {
+    if (_cancelled) return;
+    try {
+      if (enabled) {
+        await _messaging.subscribeToTopic(announcementsTopic);
+      } else {
+        await _messaging.unsubscribeFromTopic(announcementsTopic);
+      }
+    } catch (e) {
+      debugPrint('push announcements: $e');
     }
   }
 

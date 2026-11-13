@@ -390,6 +390,8 @@
   "settingsChooseLanguage": "Choose Language",
   "settingsBlocked": "Blocked Users",
   "settingsAbout": "About",
+  "settingsAnnouncements": "Announcements",
+  "settingsAnnouncementsSubtitle": "News and important updates from Dentigo",
   "settingsTerms": "Terms of Use",
   "settingsPrivacyPolicy": "Privacy Policy",
   "settingsAppVersion": "App Version",

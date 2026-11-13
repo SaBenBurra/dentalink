@@ -44,6 +44,9 @@ Future<void> main() async {
       overrides: [
         themeModeProvider.overrideWith(() => ThemeModeNotifier(prefs)),
         localeModeProvider.overrideWith(() => LocaleModeNotifier(prefs)),
+        announcementsEnabledProvider.overrideWith(
+          () => AnnouncementsNotifier(prefs),
+        ),
         firebaseReadyProvider.overrideWithValue(firebaseReady),
       ],
       child: const MainApp(),

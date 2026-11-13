@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `060_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `061_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -705,6 +705,29 @@ set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
 select * from public.admin_tag_report();
 rollback;
+
+-- 43) Duyuru (061) → BEKLENEN: is_test = true, logged = 1 (push isteği rollback ile
+--     kuyruktan da düşer); ardından iki blok: invalid broadcast, permission denied.
+--     <D> broadcast.send yetkili (admin), <A> ve <B> personel değil
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select set_config('t.id', public.send_broadcast('smoke', 'smoke', null, '<A>')::text, true);
+reset role;
+select is_test, (select count(*) from public.staff_actions where action = 'broadcast.test'
+    and target_id = current_setting('t.id')) logged
+  from public.broadcasts where id = current_setting('t.id')::uuid;
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select public.send_broadcast('  ', 'smoke');
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select public.send_broadcast('smoke', 'smoke', null, '<A>');
+rollback;
 ```
 
 ---
@@ -762,7 +785,7 @@ select id, public from storage.buckets;
 
 ## 8. Push bildirim kurulumu (027, REL-6)
 
-Akış: `notifications`/`messages` INSERT → trigger (`trigger_push`, pg_net) → Edge Function `push` → FCM HTTP v1 → cihaz. İstemci token'ını `register_push_token` ile kaydeder, çıkışta `unregister_push_token` + `deleteToken`. Firebase dosyaları yokken uygulama push'suz çalışır; trigger da Vault sırları yokken hiçbir şey yapmaz.
+Akış: `notifications`/`messages` (061'den beri `broadcasts`) INSERT → trigger (`trigger_push`, pg_net) → Edge Function `push` → FCM HTTP v1 → cihaz. İstemci token'ını `register_push_token` ile kaydeder, çıkışta `unregister_push_token` + `deleteToken`. Firebase dosyaları yokken uygulama push'suz çalışır; trigger da Vault sırları yokken hiçbir şey yapmaz.
 
 1. **Firebase projesi** oluştur; Android ve iOS uygulamalarını `com.atlas.dentlink` ile ekle (Flutter simgesi değil, platform simgeleri). Kimlik değişirse Firebase'e yeni uygulama eklenir. _(Proje: `dentlink-ea0f2`)_
 2. `android/app/google-services.json` ve `ios/Runner/GoogleService-Info.plist` dosyalarını koy (plist'i Xcode'da Runner hedefine ekle). İkisi de gizli değil ama repo dışı tutmak istersen `.gitignore`'a ekle.

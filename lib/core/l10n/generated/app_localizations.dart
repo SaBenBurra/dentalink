@@ -1970,6 +1970,18 @@ abstract class AppLocalizations {
   /// **'Hakkında'**
   String get settingsAbout;
 
+  /// No description provided for @settingsAnnouncements.
+  ///
+  /// In tr, this message translates to:
+  /// **'Duyurular'**
+  String get settingsAnnouncements;
+
+  /// No description provided for @settingsAnnouncementsSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dentigo\'dan yenilikler ve önemli bilgiler'**
+  String get settingsAnnouncementsSubtitle;
+
   /// No description provided for @settingsTerms.
   ///
   /// In tr, this message translates to:

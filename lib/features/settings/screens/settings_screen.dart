@@ -8,6 +8,7 @@ import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/locale_provider.dart';
+import '../../../providers/push_provider.dart';
 import '../../../providers/theme_provider.dart';
 import '../widgets/settings_section.dart';
 import '../widgets/delete_account_dialog.dart';
@@ -58,6 +59,9 @@ class SettingsScreen extends ConsumerWidget {
     return [
       _buildAppearanceSection(context, ref, isDark),
       _buildLanguageSection(context, ref, isDark),
+      // Firebase yokken push kapalı: anahtar ölü kalmasın diye gizlenir.
+      if (ref.watch(firebaseReadyProvider))
+        _buildNotificationsSection(context, ref),
       _buildAccountSection(context, ref, isDark),
       _buildAboutSection(context, ref, isDark),
     ];
@@ -354,6 +358,25 @@ class SettingsScreen extends ConsumerWidget {
             barrierDismissible: false,
             builder: (_) => const DeleteAccountDialog(),
           ),
+        ),
+      ],
+    );
+  }
+
+  // ─── Bildirimler ───────────────────────────────────────────────────────
+
+  Widget _buildNotificationsSection(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    return SettingsSection(
+      title: l10n.settingsNotifications,
+      icon: Icons.notifications_outlined,
+      children: [
+        SettingsTile.toggle(
+          icon: Icons.campaign_outlined,
+          title: l10n.settingsAnnouncements,
+          subtitle: l10n.settingsAnnouncementsSubtitle,
+          value: ref.watch(announcementsEnabledProvider),
+          onToggle: ref.read(announcementsEnabledProvider.notifier).set,
         ),
       ],
     );

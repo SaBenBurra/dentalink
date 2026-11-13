@@ -1027,6 +1027,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsAbout => 'About';
 
   @override
+  String get settingsAnnouncements => 'Announcements';
+
+  @override
+  String get settingsAnnouncementsSubtitle =>
+      'News and important updates from Dentigo';
+
+  @override
   String get settingsTerms => 'Terms of Use';
 
   @override
