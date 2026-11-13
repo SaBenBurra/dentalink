@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `061_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `063_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -759,6 +759,29 @@ set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
 select public.set_app_config('android', '0.1.0', '0.1.0');
 rollback;
+
+-- 45) İçerik (063) → BEKLENEN: found = true, comments_ok = true, history = 1; ardından iki blok:
+--     permission denied (search), permission denied (comments).
+--     <D> posts.remove yetkili (admin), <B> personel değil, <POST> yorumu olan bir gönderi
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select public.moderate_content('post', '<POST>', true, 'smoke');
+select exists (select 1 from public.admin_search_posts(null, null, true, null, null, null, 100)
+                where id = '<POST>') found,
+  (select count(*) >= 0 from public.admin_post_comments('<POST>')) comments_ok,
+  (select count(*) from public.target_history('post', '<POST>') where reason = 'smoke') history;
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select * from public.admin_search_posts();
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select * from public.admin_post_comments('<POST>');
+rollback;
 ```
 
 ### Sürüm yayın akışı (062)
@@ -775,7 +798,7 @@ rollback;
 
 ## 6. Moderasyon kuyruğu (023, 053)
 
-053'ten sonra raporlar yalnızca `reports.handle` yetkilisine okunur ve kuyruk admin panelinden yönetilir. İçerik silinmez, gizlenir: `moderate_content('post'|'comment', id, true|false, gerekçe)` `removed_at`'i yazar/temizler (geri alınabilir), gizlenen içerik RLS'te süzülür. `resolve_report(target_type, target_id, 'actioned'|'dismissed', gerekçe)` hedefin açık raporlarını kapatır. Her ikisi `staff_actions`'a yazar. 056: panel kuyruğu `report_queue(p_status, p_limit, p_offset)` (hedef başına gruplu, önizlemeli) ve `target_history(p_target_type, p_target_id)` ile okur (ikisi de `reports.handle`). Aşağıdaki SQL'ler panel yokken geçerli yoldur.
+053'ten sonra raporlar yalnızca `reports.handle` yetkilisine okunur ve kuyruk admin panelinden yönetilir. İçerik silinmez, gizlenir: `moderate_content('post'|'comment', id, true|false, gerekçe)` `removed_at`'i yazar/temizler (geri alınabilir), gizlenen içerik RLS'te süzülür. `resolve_report(target_type, target_id, 'actioned'|'dismissed', gerekçe)` hedefin açık raporlarını kapatır. Her ikisi `staff_actions`'a yazar. 056: panel kuyruğu `report_queue(p_status, p_limit, p_offset)` (hedef başına gruplu, önizlemeli) ve `target_history(p_target_type, p_target_id)` ile okur (ikisi de `reports.handle`). 063: panel `/icerik` rapor beklemeden `admin_search_posts` (arama, tür, gizliler, yazar, ilan kategorisi ve şehir) ve `admin_post_comments` (gizliler dahil) ile okur, `moderate_content` ile gizler (`posts.remove` | `comments.remove`; `target_history` de bu yetkilere açıldı). Aşağıdaki SQL'ler panel yokken geçerli yoldur.
 
 ```sql
 -- açık raporlar, hedef başına sayı

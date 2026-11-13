@@ -26,7 +26,7 @@ Panelin amacı: tüm sistemi tarayıcıdan yönetmek ve moderatör kullanıcıla
 
 ### Migration kuralı (önemli)
 
-- Panel reposunda migration **yazılmaz**. Şema değişikliği `../dentlink/supabase/migrations/` altında, sıradaki numarayla (son: `062_…`) ve `SUPABASE.md` kurallarıyla yazılır.
+- Panel reposunda migration **yazılmaz**. Şema değişikliği `../dentlink/supabase/migrations/` altında, sıradaki numarayla (son: `063_…`) ve `SUPABASE.md` kurallarıyla yazılır.
 - `supabase db push` canlı veritabanına uygular; kullanıcıya sormadan çalıştırma.
 - Mobil uygulama sahada eski sürümlerle çalışıyor: mevcut RPC, kolon veya policy'yi kırma. Önce genişlet, sonra daralt (`../dentlink/docs/ROADMAP.md`, sürüm yönetimi maddesi).
 - Bir migration yazınca `../dentlink/docs/SUPABASE.md` ve `../dentlink/docs/ROADMAP.md`'yi de güncelle.
@@ -81,7 +81,7 @@ Panelin amacı: tüm sistemi tarayıcıdan yönetmek ve moderatör kullanıcıla
 
 ### Sonraki plan (2026-11-12)
 
-Sıra: 9 yayından önce şart; 10 ve 12 yalnızca panel + migration; 11 bitti; 13 karar bekliyor. Migration numaraları sırayla verilir (aşağıdakiler tahmini). Her yeni yetki `staff_roles` CHECK'ini genişletir, `admin` rolüne eklenir ve `Staff.tsx` `permissions` listesine girer (060 kalıbı).
+Sıra: 9, 10 ve 11 bitti; 12 yalnızca panel + migration; 13 karar bekliyor. Migration numaraları sırayla verilir (aşağıdakiler tahmini). Her yeni yetki `staff_roles` CHECK'ini genişletir, `admin` rolüne eklenir ve `Staff.tsx` `permissions` listesine girer (060 kalıbı).
 
 9. **Sürüm yönetimi `/surum` (`config.manage`, migration 062 + uygulama):** ROADMAP Faz 5 "Sürüm kontrolü ve zorunlu güncelleme" maddesinin sunucu ve panel tarafı; ikisi birlikte yapılır, uygulama tarafı olmadan panel bir şey değiştirmez.
    - `app_config` ROADMAP'teki gibi (platform başına satır: `min_supported_version`, `latest_version`, `store_url`, `updated_at`; `anon`/`authenticated` yalnızca SELECT). ROADMAP'ten sapma: yazma Dashboard yerine `set_app_config(p_platform, p_min, p_latest, p_store_url, p_reason)` (definer, `config.manage`, `x.y.z` CHECK, `min ≤ latest`, eski/yeni değer `staff_actions` detail'ında).
@@ -95,6 +95,7 @@ Sıra: 9 yayından önce şart; 10 ve 12 yalnızca panel + migration; 11 bitti; 
     - Ticaret sekmesi: kategori ve şehir filtresi, satıcının diğer ilanları (yasaklı ürün ve dolandırıcılık en çok burada).
     - Post detayında yorumlar (gizliler dahil) ve tek tek gizleme. Yazma için yeni RPC yok: `moderate_content` (053) ve `target_history` (056).
     - Smoke 45: yetkisiz 42501; gizli post `p_hidden` ile gelir.
+    - _Canlıda (`063_admin_content.sql`, 2026-11-13); smoke 45 geçti (2026-11-13, Management API üzerinden tek `DO` bloğunda, rollback; id ile arama ve yetkisiz `42501` de denendi). Tarayıcıda denenmedi. Panel `src/pages/Content.tsx` (`/icerik`); medya önizlemesi `src/components/PostMedia.tsx`'e taşındı (Moderasyon da kullanır). Plandan sapmalar: yorumlar için okuma RPC'si `admin_post_comments` eklendi (yalnızca `posts.remove` yetkilisi RLS'te gizli yorumu göremezdi; ilk 500, sayfalama yok); `target_history` `posts.remove` | `comments.remove`'a da açıldı; arama gönderi id'sini de bulur; "satıcının diğer ilanları" `p_user_id` filtresiyle, her türde "yazarın diğer gönderileri" olarak da var. Gizlemek açık raporları kapatmaz (moderasyon kuyruğunun işi)._
 
 11. **Toplu duyuru (push) `/duyuru` (`broadcast.send`, migration 061 + `push` fonksiyonu + uygulama sürümü):** tüm kullanıcılara bildirim.
     - _Canlıda (`061_broadcasts.sql` ve `push` deploy, 2026-11-12); smoke 43 geçti (2026-11-12, DO bloklarıyla, rollback; trigger isteği kuyruğa yazıyor). Tarayıcıda ve cihazda denendi (2026-11-13; duyuru cihaza düşüyor). Kararlar: yalnızca bilgilendirme; kullanıcı Ayarlar → Bildirimler → Duyurular'dan kapatır (cihaz ayarı, `announcements_enabled`); yalnızca push. Plandan sapma: ayrı `broadcast` Edge Function yok, `send_broadcast` satırı yazar, 027'deki `trigger_push('broadcast')` mevcut `push` fonksiyonunu çağırır (topic ya da test kullanıcısının token'ları), sonuç `sent_at`/`error`. Gönderiye bağlanabilir (`post_id`, dokununca açılır), serbest rota yok. Uygulama açıkken gelen duyuru uygulama içinde SnackBar olarak gösterilir (8 sn, gönderiye bağlıysa "Aç"; 2026-11-13, yeni sürümle). Topic mesajı ilk deploy'da Android önceliksizdi, Doze'da dakikalarca bekledi; `android.priority: high` eklendi (2026-11-13). Panel `src/pages/Broadcast.tsx`; uygulama `push_provider.dart` (`announcementsEnabledProvider`, `syncAnnouncements`). Smoke 43._
