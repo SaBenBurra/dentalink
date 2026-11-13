@@ -3277,6 +3277,42 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Yasaklı ürün ya da dolandırıcılık'**
   String get reportReasonProhibitedItem;
+
+  /// Desteklenmeyen sürümde açılan kilit ekranının başlığı (062)
+  ///
+  /// In tr, this message translates to:
+  /// **'Güncelleme gerekli'**
+  String get updateRequiredTitle;
+
+  /// No description provided for @updateRequiredBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Bu sürüm artık desteklenmiyor. Dentigo\'yu kullanmaya devam etmek için uygulamayı güncelle.'**
+  String get updateRequiredBody;
+
+  /// Platformun mağaza bağlantısı henüz yokken
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni sürüm yakında mağazada olacak. Biraz sonra tekrar dene.'**
+  String get updateRequiredNoStore;
+
+  /// No description provided for @updateGoToStore.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mağazaya git'**
+  String get updateGoToStore;
+
+  /// Feed üstündeki kapatılabilir güncelleme şeridi
+  ///
+  /// In tr, this message translates to:
+  /// **'Yeni sürüm var'**
+  String get updateAvailableBanner;
+
+  /// No description provided for @updateAvailableAction.
+  ///
+  /// In tr, this message translates to:
+  /// **'Güncelle'**
+  String get updateAvailableAction;
 }
 
 class _AppLocalizationsDelegate

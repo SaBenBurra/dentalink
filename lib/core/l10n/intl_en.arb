@@ -615,5 +615,11 @@
   "itemConditionNew": "New",
   "itemConditionLikeNew": "Lightly used",
   "itemConditionUsed": "Used",
-  "reportReasonProhibitedItem": "Prohibited item or scam"
+  "reportReasonProhibitedItem": "Prohibited item or scam",
+  "updateRequiredTitle": "Update required",
+  "updateRequiredBody": "This version is no longer supported. Update the app to keep using Dentigo.",
+  "updateRequiredNoStore": "The new version will be in the store soon. Please try again later.",
+  "updateGoToStore": "Go to store",
+  "updateAvailableBanner": "A new version is available",
+  "updateAvailableAction": "Update"
 }

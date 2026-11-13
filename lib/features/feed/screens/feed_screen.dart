@@ -11,6 +11,7 @@ import '../../../data/models/enums.dart';
 import '../../../providers/feed_provider.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../shell/main_shell.dart';
+import '../../update/widgets/update_banner.dart';
 
 class FeedScreen extends ConsumerStatefulWidget {
   const FeedScreen({super.key});
@@ -154,6 +155,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen>
             position: _pagePosition,
             onLogoTap: _scrollToTop,
           ),
+          const UpdateBanner(),
           Expanded(
             // Durum çubuğu payını üst bar aldı; listeler tekrar eklemesin.
             child: MediaQuery.removePadding(

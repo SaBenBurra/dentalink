@@ -728,7 +728,48 @@ set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
 select public.send_broadcast('smoke', 'smoke', null, '<A>');
 rollback;
+
+-- 44) Sürüm (062) → BEKLENEN: anon_rows = 2, latest = '9.9.9', logged = 1; ardından üç blok:
+--     permission denied (anon UPDATE), min above latest, permission denied.
+--     <D> config.manage yetkili (admin), <B> personel değil
+begin;
+set local role anon;
+select count(*) anon_rows from public.app_config;
+reset role;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select public.set_app_config('android', '0.1.0', '9.9.9',
+  'https://play.google.com/store/apps/details?id=com.atlas.dentlink', 'smoke');
+reset role;
+select latest_version latest, (select count(*) from public.staff_actions where action = 'config.update'
+    and target_id = 'android' and created_at = now()) logged
+  from public.app_config where platform = 'android';
+rollback;
+begin;
+set local role anon;
+update public.app_config set min_supported_version = '9.9.9';
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select public.set_app_config('android', '2.0.0', '1.10.0');
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select public.set_app_config('android', '0.1.0', '0.1.0');
+rollback;
 ```
+
+### Sürüm yayın akışı (062)
+
+`app_config` platform başına `min_supported_version` ve `latest_version` tutar; panel `/surum` (`config.manage`) yazar. Uygulama açılışta ve arka plandan dönünce okur. Sürüm `x.y.z`, build no karşılaştırılmaz. Okunamazsa uygulama güncel sayılır (kimse kilitlenmez).
+
+1. **Normal sürüm:** mağazada yayınlanıp kademeli dağıtım bitince yalnızca `latest_version` artırılır. Eski sürümde feed üstünde kapatılabilir "Yeni sürüm var" banner'ı çıkar.
+2. **Şema değişikliği (expand/contract):** önce eskiyi bozmayan migration (yeni kolon/RPC eklenir, eskisi kalır) → yeni sürüm yayılır (1–2 hafta, eski sürüm kullanımı ~%5 altına inene kadar) → `min_supported_version` artırılır → eski kolon/RPC'yi silen contract migration.
+3. **Acil güvenlik açığı:** düzeltilmiş sürüm mağazada onaylanınca `min_supported_version` hemen artırılır.
+
+`min_supported_version` altındaki uygulama yalnızca "Güncelleme gerekli" ekranını gösterir. iOS `store_url` App Store kaydı açılana kadar boştur; o zaman ekranda mağaza butonu yerine açıklama çıkar.
 
 ---
 

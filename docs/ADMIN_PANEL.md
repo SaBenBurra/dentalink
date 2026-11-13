@@ -26,7 +26,7 @@ Panelin amacı: tüm sistemi tarayıcıdan yönetmek ve moderatör kullanıcıla
 
 ### Migration kuralı (önemli)
 
-- Panel reposunda migration **yazılmaz**. Şema değişikliği `../dentlink/supabase/migrations/` altında, sıradaki numarayla (son: `061_…`) ve `SUPABASE.md` kurallarıyla yazılır.
+- Panel reposunda migration **yazılmaz**. Şema değişikliği `../dentlink/supabase/migrations/` altında, sıradaki numarayla (son: `062_…`) ve `SUPABASE.md` kurallarıyla yazılır.
 - `supabase db push` canlı veritabanına uygular; kullanıcıya sormadan çalıştırma.
 - Mobil uygulama sahada eski sürümlerle çalışıyor: mevcut RPC, kolon veya policy'yi kırma. Önce genişlet, sonra daralt (`../dentlink/docs/ROADMAP.md`, sürüm yönetimi maddesi).
 - Bir migration yazınca `../dentlink/docs/SUPABASE.md` ve `../dentlink/docs/ROADMAP.md`'yi de güncelle.
@@ -87,6 +87,7 @@ Sıra: 9 yayından önce şart; 10 ve 12 yalnızca panel + migration; 11 bitti; 
    - `app_config` ROADMAP'teki gibi (platform başına satır: `min_supported_version`, `latest_version`, `store_url`, `updated_at`; `anon`/`authenticated` yalnızca SELECT). ROADMAP'ten sapma: yazma Dashboard yerine `set_app_config(p_platform, p_min, p_latest, p_store_url, p_reason)` (definer, `config.manage`, `x.y.z` CHECK, `min ≤ latest`, eski/yeni değer `staff_actions` detail'ında).
    - Panel: Android ve iOS kartı, mevcut değerler, düzenleme. `min_supported_version` artınca onay penceresi uyarır: "Bu sürümden eski herkes uygulamayı kullanamaz"; o platformdaki eski sürüm sayısı bilinmiyor (sürüm istemciden raporlanmıyor), uyarı bunu da söyler.
    - Uygulama: ROADMAP maddesindeki `AppConfigRepository`, `/update-required`, banner, testler. **1.0'dan önce bitmeli.**
+   - _Canlıda (`062_app_config.sql`, 2026-11-13), smoke 44 geçti (2026-11-13, DO bloğu, rollback; `SUPABASE.md` §5), yayın akışı §5 sonunda. Panel `src/pages/Version.tsx` (Android ve iOS kartı; kaydetme onaylı, isteğe bağlı gerekçeli; en düşük sürüm artınca kilit uyarısı). Uygulama `lib/providers/app_version_provider.dart` (`versionCheckProvider`, açılışta ve ön plana dönünce), `resolveVersionRedirect` (auth guard'dan önce), `UpdateRequiredScreen`, feed'de `UpdateBanner`; `url_launcher` eklendi. Başlangıç değerleri `0.1.0`; iOS `store_url` App Store kaydına kadar NULL (ekranda buton yerine açıklama). Logda işlem `config.update`, hedef `app_config` / platform._
    - Smoke 44: anon okur, yazamaz; `config.manage`'sız `set_app_config` 42501; `min > latest` 22023.
 
 10. **İçerik `/icerik` (`posts.remove` | `comments.remove`, migration 063):** rapor beklemeden içerik bulma ve gizleme.

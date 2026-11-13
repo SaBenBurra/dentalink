@@ -12,6 +12,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/utils/session_guard_client.dart';
 import 'providers/locale_provider.dart';
+import 'providers/app_version_provider.dart';
 import 'providers/push_provider.dart';
 import 'providers/theme_provider.dart';
 import 'shared/widgets/offline_banner.dart';
@@ -46,6 +47,9 @@ Future<void> main() async {
         localeModeProvider.overrideWith(() => LocaleModeNotifier(prefs)),
         announcementsEnabledProvider.overrideWith(
           () => AnnouncementsNotifier(prefs),
+        ),
+        dismissedUpdateProvider.overrideWith(
+          () => DismissedUpdateNotifier(prefs),
         ),
         firebaseReadyProvider.overrideWithValue(firebaseReady),
       ],

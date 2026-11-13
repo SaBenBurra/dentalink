@@ -1760,4 +1760,24 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get reportReasonProhibitedItem => 'Yasaklı ürün ya da dolandırıcılık';
+
+  @override
+  String get updateRequiredTitle => 'Güncelleme gerekli';
+
+  @override
+  String get updateRequiredBody =>
+      'Bu sürüm artık desteklenmiyor. Dentigo\'yu kullanmaya devam etmek için uygulamayı güncelle.';
+
+  @override
+  String get updateRequiredNoStore =>
+      'Yeni sürüm yakında mağazada olacak. Biraz sonra tekrar dene.';
+
+  @override
+  String get updateGoToStore => 'Mağazaya git';
+
+  @override
+  String get updateAvailableBanner => 'Yeni sürüm var';
+
+  @override
+  String get updateAvailableAction => 'Güncelle';
 }

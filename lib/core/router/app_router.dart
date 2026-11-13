@@ -33,6 +33,8 @@ import '../../features/bookmarks/screens/bookmarks_screen.dart';
 import '../../features/search/screens/popular_people_screen.dart';
 import 'package:dentigo/core/constants/app_dimensions.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/app_version_provider.dart';
+import '../../features/update/screens/update_required_screen.dart';
 import '../../data/models/post_model.dart';
 import '../../data/models/user_model.dart';
 
@@ -79,6 +81,18 @@ String? resolveAuthRedirect({
   return isAuthRoute ? '/feed' : null;
 }
 
+/// Sürüm kilidi (062; test: test/core/router/version_redirect_test.dart).
+/// Auth guard'dan önce çalışır: [required] iken her rota (hukuk metinleri dahil)
+/// `/update-required`'a gider; kilit kalkınca açılış akışına (`/splash`) dönülür.
+String? resolveVersionRedirect({
+  required String location,
+  required bool required,
+}) {
+  const lock = '/update-required';
+  if (required) return location == lock ? null : lock;
+  return location == lock ? '/splash' : null;
+}
+
 /// Dentigo uygulama router'ı.
 ///
 /// Navigasyon yapısı:
@@ -104,21 +118,33 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.onDispose(refresh.dispose);
   ref.listen(authProvider, (prev, next) => refresh.ping());
   ref.listen(authRedirectHoldProvider, (prev, next) => refresh.ping());
+  ref.listen(appVersionStatusProvider, (prev, next) => refresh.ping());
 
   return GoRouter(
     initialLocation: '/splash',
     debugLogDiagnostics: false,
     refreshListenable: refresh,
 
-    // ── Auth Redirect ─────────────────────────────────────────────────
-    redirect: (context, state) => resolveAuthRedirect(
-      location: state.matchedLocation,
-      hasSession: ref.read(authRepositoryProvider).hasSession,
-      hold: ref.read(authRedirectHoldProvider),
-      auth: ref.read(authProvider),
-    ),
+    // ── Sürüm + Auth Redirect ─────────────────────────────────────────
+    redirect: (context, state) =>
+        resolveVersionRedirect(
+          location: state.matchedLocation,
+          required:
+              ref.read(appVersionStatusProvider) ==
+              AppVersionStatus.updateRequired,
+        ) ??
+        resolveAuthRedirect(
+          location: state.matchedLocation,
+          hasSession: ref.read(authRepositoryProvider).hasSession,
+          hold: ref.read(authRedirectHoldProvider),
+          auth: ref.read(authProvider),
+        ),
 
     routes: [
+      GoRoute(
+        path: '/update-required',
+        builder: (context, state) => const UpdateRequiredScreen(),
+      ),
       // ── Auth ──────────────────────────────────────────────
       GoRoute(path: '/', redirect: (context, state) => '/feed'),
       GoRoute(

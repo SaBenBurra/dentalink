@@ -921,5 +921,15 @@
   "itemConditionNew": "Sıfır",
   "itemConditionLikeNew": "Az kullanılmış",
   "itemConditionUsed": "Kullanılmış",
-  "reportReasonProhibitedItem": "Yasaklı ürün ya da dolandırıcılık"
+  "reportReasonProhibitedItem": "Yasaklı ürün ya da dolandırıcılık",
+
+  "updateRequiredTitle": "Güncelleme gerekli",
+  "@updateRequiredTitle": { "description": "Desteklenmeyen sürümde açılan kilit ekranının başlığı (062)" },
+  "updateRequiredBody": "Bu sürüm artık desteklenmiyor. Dentigo'yu kullanmaya devam etmek için uygulamayı güncelle.",
+  "updateRequiredNoStore": "Yeni sürüm yakında mağazada olacak. Biraz sonra tekrar dene.",
+  "@updateRequiredNoStore": { "description": "Platformun mağaza bağlantısı henüz yokken" },
+  "updateGoToStore": "Mağazaya git",
+  "updateAvailableBanner": "Yeni sürüm var",
+  "@updateAvailableBanner": { "description": "Feed üstündeki kapatılabilir güncelleme şeridi" },
+  "updateAvailableAction": "Güncelle"
 }

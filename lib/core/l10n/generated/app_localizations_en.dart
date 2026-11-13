@@ -1774,4 +1774,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reportReasonProhibitedItem => 'Prohibited item or scam';
+
+  @override
+  String get updateRequiredTitle => 'Update required';
+
+  @override
+  String get updateRequiredBody =>
+      'This version is no longer supported. Update the app to keep using Dentigo.';
+
+  @override
+  String get updateRequiredNoStore =>
+      'The new version will be in the store soon. Please try again later.';
+
+  @override
+  String get updateGoToStore => 'Go to store';
+
+  @override
+  String get updateAvailableBanner => 'A new version is available';
+
+  @override
+  String get updateAvailableAction => 'Update';
 }
