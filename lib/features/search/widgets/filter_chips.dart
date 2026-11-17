@@ -7,8 +7,54 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/models/enums.dart';
 import '../../../providers/search_provider.dart';
 
+/// Keşfet sekmeleri: Tümü, Kişiler, Vakalar, Forum, Ticaret. Vakalar seçiliyken
+/// altında branş satırı açılır.
+class ExploreFilterChips extends ConsumerWidget {
+  const ExploreFilterChips({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final selected = ref.watch(searchProvider.select((s) => s.tab));
+    final notifier = ref.read(searchProvider.notifier);
+    String label(ExploreTab tab) => switch (tab) {
+      ExploreTab.all => l10n.feedFilterAll,
+      ExploreTab.people => l10n.explorePeople,
+      ExploreTab.cases => l10n.feedFilterCases,
+      ExploreTab.forum => l10n.feedFilterQuestions,
+      ExploreTab.listings => l10n.feedFilterListings,
+    };
+
+    return Column(
+      children: [
+        _FadingChipRow(
+          children: [
+            for (final tab in ExploreTab.values)
+              Padding(
+                padding: const EdgeInsets.only(right: AppDimensions.spacing8),
+                child: ChoiceChip(
+                  label: Text(label(tab)),
+                  selected: selected == tab,
+                  showCheckmark: false,
+                  onSelected: (_) => notifier.setTab(tab),
+                ),
+              ),
+          ],
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 200),
+          alignment: Alignment.topCenter,
+          child: selected == ExploreTab.cases
+              ? const BranchFilterChips()
+              : const SizedBox(width: double.infinity),
+        ),
+      ],
+    );
+  }
+}
+
 /// Yatay branş seçimi: başta "Tümü", ardından kısa adlarla alfabetik branşlar
-/// (tam ad tooltip'te). Seçilen çip görünür alana kayar; devamı olan kenar solar.
+/// (tam ad tooltip'te). Seçilen çip görünür alana kayar.
 class BranchFilterChips extends ConsumerStatefulWidget {
   const BranchFilterChips({super.key});
 
@@ -21,25 +67,11 @@ class _BranchFilterChipsState extends ConsumerState<BranchFilterChips> {
   final _keys = {
     for (final b in [null, ...DentalBranch.values]) b: GlobalKey(),
   };
-  bool _fadeLeft = false;
-  bool _fadeRight = false;
-
-  bool _updateFades(ScrollMetrics m) {
-    final left = m.pixels > 0;
-    final right = m.pixels < m.maxScrollExtent;
-    if (left != _fadeLeft || right != _fadeRight) {
-      setState(() {
-        _fadeLeft = left;
-        _fadeRight = right;
-      });
-    }
-    return false;
-  }
 
   @override
   Widget build(BuildContext context) {
     final selected = ref.watch(searchProvider.select((s) => s.branch));
-    // Popüler etiket seçimi branşı Tümü'ye çektiğinde de görünür olsun.
+    // Branş linkiyle seçildiğinde de görünür olsun.
     ref.listen(searchProvider.select((s) => s.branch), (_, next) {
       final chip = _keys[next]!.currentContext;
       if (chip != null) {
@@ -72,6 +104,40 @@ class _BranchFilterChipsState extends ConsumerState<BranchFilterChips> {
       ),
     );
 
+    return _FadingChipRow(
+      children: [chip(null), for (final b in branches) chip(b)],
+    );
+  }
+}
+
+/// Yana kayan çip satırı; devamı olan kenar solar.
+class _FadingChipRow extends StatefulWidget {
+  const _FadingChipRow({required this.children});
+
+  final List<Widget> children;
+
+  @override
+  State<_FadingChipRow> createState() => _FadingChipRowState();
+}
+
+class _FadingChipRowState extends State<_FadingChipRow> {
+  bool _fadeLeft = false;
+  bool _fadeRight = false;
+
+  bool _updateFades(ScrollMetrics m) {
+    final left = m.pixels > 0;
+    final right = m.pixels < m.maxScrollExtent;
+    if (left != _fadeLeft || right != _fadeRight) {
+      setState(() {
+        _fadeLeft = left;
+        _fadeRight = right;
+      });
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final w = constraints.maxWidth;
@@ -97,9 +163,7 @@ class _BranchFilterChipsState extends ConsumerState<BranchFilterChips> {
                   horizontal: AppDimensions.spacing16,
                   vertical: AppDimensions.spacing4,
                 ),
-                child: Row(
-                  children: [chip(null), for (final b in branches) chip(b)],
-                ),
+                child: Row(children: widget.children),
               ),
             ),
           ),

@@ -233,6 +233,7 @@ class _FakePostRepository implements PostRepository, IListingRepository {
     DentalBranch? branch,
     String? treatment,
     bool recent = false,
+    PostType? type,
     required DateTime now,
     int offset = 0,
   }) async => offset == 0 ? _feed : <PostModel>[];

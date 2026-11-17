@@ -14,8 +14,12 @@ class _FixedSearch extends SearchNotifier {
   final DentalBranch? branch;
 
   @override
-  SearchState build() =>
-      SearchState(query: query, branch: branch, posts: const AsyncData([]));
+  SearchState build() => SearchState(
+    query: query,
+    tab: branch == null ? ExploreTab.all : ExploreTab.cases,
+    branch: branch,
+    posts: const AsyncData([]),
+  );
 }
 
 Future<void> _pump(

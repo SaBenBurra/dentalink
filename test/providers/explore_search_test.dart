@@ -32,6 +32,7 @@ typedef _Call = ({
   String query,
   List<String> tags,
   DentalBranch? branch,
+  PostType? type,
   int offset,
 });
 
@@ -46,10 +47,17 @@ class _Repo implements PostRepository {
     DentalBranch? branch,
     String? treatment,
     bool recent = false,
+    PostType? type,
     required DateTime now,
     int offset = 0,
   }) async {
-    calls.add((query: query, tags: tags, branch: branch, offset: offset));
+    calls.add((
+      query: query,
+      tags: tags,
+      branch: branch,
+      type: type,
+      offset: offset,
+    ));
     return offset == 0
         ? [for (var i = 0; i < pageSize; i++) _post('p$i')]
         : [_post('p0'), _post('last')];
@@ -145,7 +153,7 @@ void main() {
     });
 
     test(
-      'arama ve branş birlikte uygulanır; kişi araması yalnızca metinle',
+      'arama ve branş birlikte uygulanır; Vakalar\'da kişi aranmaz',
       () async {
         notifier().setBranch(DentalBranch.endodonti);
         notifier().search('kanal #eğe');
@@ -154,8 +162,8 @@ void main() {
         expect(last.query, 'kanal');
         expect(last.tags, ['eğe']);
         expect(last.branch, DentalBranch.endodonti);
-        expect(users.queries, ['kanal']);
-        expect(state().users.value, hasLength(1));
+        expect(users.queries, isEmpty);
+        expect(state().users.value, isEmpty);
       },
     );
 
@@ -171,6 +179,39 @@ void main() {
       expect((last.query, last.branch, last.offset), ('', null, 0));
       expect(last.tags, ['şeffaf_plak']);
       expect(state().users.value, isEmpty);
+    });
+
+    test('sekme türü süzer; sekme değişince branş Tümü olur', () async {
+      notifier().setBranch(DentalBranch.endodonti);
+      await pumpEventQueue();
+      expect(state().tab, ExploreTab.cases);
+      expect(
+        (repo.calls.last.type, repo.calls.last.branch),
+        (PostType.casePost, DentalBranch.endodonti),
+      );
+
+      notifier().setTab(ExploreTab.listings);
+      await pumpEventQueue();
+      expect(state().branch, isNull);
+      expect(
+        (repo.calls.last.type, repo.calls.last.branch),
+        (PostType.listing, null),
+      );
+    });
+
+    test('Kişiler: post çekilmez, yalnızca kişi aranır', () async {
+      notifier().setTab(ExploreTab.people);
+      notifier().search('ayşe');
+      await pumpEventQueue();
+      expect(repo.calls, hasLength(1)); // açılıştaki çağrı
+      expect(state().posts.value, isEmpty);
+      expect(users.queries, ['ayşe']);
+
+      // Forumda kişi aranmaz.
+      notifier().setTab(ExploreTab.forum);
+      await pumpEventQueue();
+      expect(repo.calls.last.type, PostType.question);
+      expect(users.queries, ['ayşe']);
     });
 
     test(

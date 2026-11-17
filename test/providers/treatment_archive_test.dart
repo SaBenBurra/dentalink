@@ -38,6 +38,7 @@ class _Repo implements PostRepository {
     DentalBranch? branch,
     String? treatment,
     bool recent = false,
+    PostType? type,
     required DateTime now,
     int offset = 0,
   }) async {

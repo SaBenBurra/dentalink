@@ -10,7 +10,7 @@ import '../widgets/search_bar.dart';
 import '../widgets/filter_chips.dart';
 import '../widgets/search_results.dart';
 
-/// Keşfet: arama satırı (metin ve `#etiket`), branşlar, popüler konular ve gönderiler.
+/// Keşfet: arama satırı (metin ve `#etiket`), sekmeler (Vakalar'da branşlar), popüler konular ve gönderiler.
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({
     super.key,
@@ -197,7 +197,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen>
               autofocus: widget.autofocus,
               hintText: AppLocalizations.of(context)!.searchHint,
             ),
-            const BranchFilterChips(),
+            const ExploreFilterChips(),
             Expanded(
               child: Stack(
                 fit: StackFit.expand,

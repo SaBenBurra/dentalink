@@ -281,6 +281,7 @@ class SupabasePostRepository implements PostRepository, IListingRepository {
     DentalBranch? branch,
     String? treatment,
     bool recent = false,
+    PostType? type,
     required DateTime now,
     int offset = 0,
   }) => guardSupabase(() async {
@@ -296,6 +297,7 @@ class SupabasePostRepository implements PostRepository, IListingRepository {
                     'p_offset': offset,
                     'p_treatment': treatment,
                     'p_recent': recent,
+                    'p_type': type?.dbValue,
                   },
                 )
                 as List)

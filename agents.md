@@ -85,8 +85,9 @@ lib/
 - **Tek dokunma kuralı (vaka ve forum aynı):** karta dokun → `/post/:id` ("Devamını oku" hariç: metni kartın içinde açar); yorum ikonu → aynı sayfa, yorumlara kaydırılmış (klavye açılmaz); görsel → tam ekran galeri, anında (çift dokunma beğenisi yok, tek dokunuşu geciktirirdi); galeri yukarı/aşağı sürükleyince kapanır. Yorum için bottom sheet yok, yorumlar yalnızca post sayfasında. Liste kartı sayfaya `extra` ile taşınır (yükleniyor ekranı yok), sayfadaki beğeni/yorum `patchPostCopies` ile tüm listelere yansır. Yardımcı: `openPost` (`lib/shared/utils/post_actions.dart`).
 - **Video:** listede (feed, profil, post sayfası) ekranda en az yarısı görünürken sessiz ve döngüde kendiliğinden oynar, ekrandan çıkınca, üstüne sayfa açılınca ya da sekme değişince durur (`FeedVideo`). Sağ alttaki ses ikonu tüm videoların ortak ayarıdır (`videoMuted`, uygulama açıkken saklanır). Dokununca galeride büyür; orada oynat/duraklat ve ses düğmesi var.
 - **Etiketler:** kartlarda görünmez, yalnızca post sayfasında metnin bir alt satırında, metnin parçası gibi (`PostBody.tags`); dokununca Keşfet o etiketle açılır.
-- Feed sekmeleri: Tümü / Vakalar / Forum / Ticaret / İş İlanları (boş). İlanlar yalnızca Ticaret'te (kategori çipleri), "Tümü"ye karışmaz; Keşfet'te yalnızca metin aramasında. Sıralama kronolojik (algoritmik feed yayından sonra).
+- Feed sekmeleri: Tümü / Vakalar / Forum / Ticaret / İş İlanları (boş). İlanlar yalnızca Ticaret'te (kategori çipleri), "Tümü"ye karışmaz; Keşfet'te Tümü'de yalnızca metin aramasında, Ticaret sekmesinde hep (satılmamışlar). Sıralama kronolojik (algoritmik feed yayından sonra).
 - Arama: Türkçe full-text (başlık + içerik), kullanıcı arama, branş ve tür filtresi.
+- Keşfet sekmeleri (069): Tümü / Kişiler / Vakalar / Forum / Ticaret. Vakalar seçilince altında branş satırı (Tümü + kısa adlar) açılır; branş linki Keşfet'i Vakalar'da o branşla açar. Kişiler'de post yok: arama yokken popüler ilk 50, aranınca bulunan kişiler.
 - Moderasyon: raporla (post, yorum, kullanıcı), engelle (iki yönlü gizler), hesap silme. Kuyruk: `docs/SUPABASE.md` §6.
 
 ### Navigasyon

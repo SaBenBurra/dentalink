@@ -25,7 +25,8 @@ abstract class ISearchRepository {
   /// Popülerlik sırasıyla (035, `post_hot_score`) en fazla [pageSize] post.
   /// [query] metni, [tags] (hepsi bulunmalı), [branch] (vakanın herhangi bir
   /// tedavisinin branşı) ve [treatment] (tedavinin slug'ı, 040) ile filtreler;
-  /// [recent] ise en yeni önce. [now] sayfalar boyunca aynı kalmalı;
+  /// [recent] ise en yeni önce. [type] verilirse yalnızca o tür (069; ilan
+  /// metin aranmadan da gelir). [now] sayfalar boyunca aynı kalmalı;
   /// [offset] atlanacak post sayısı.
   Future<List<PostModel>> popularPosts({
     String query = '',
@@ -33,6 +34,7 @@ abstract class ISearchRepository {
     DentalBranch? branch,
     String? treatment,
     bool recent = false,
+    PostType? type,
     required DateTime now,
     int offset = 0,
   });

@@ -44,9 +44,26 @@ String? typingTag(String raw) {
 // Search State
 // ─────────────────────────────────────────────────────────────────────────────
 
+/// Keşfet sekmeleri; branş seçimi yalnızca Vakalar'da.
+enum ExploreTab {
+  all(null),
+  people(null),
+  cases(PostType.casePost),
+  forum(PostType.question),
+  listings(PostType.listing);
+
+  const ExploreTab(this.postType);
+
+  /// Postlar bu türe süzülür; null ise tür filtresi yok.
+  final PostType? postType;
+}
+
 class SearchState {
   /// Arama satırı, ham hali (`#etiket` dahil).
   final String query;
+  final ExploreTab tab;
+
+  /// Yalnızca [ExploreTab.cases] seçiliyken dolu olabilir.
   final DentalBranch? branch;
   final AsyncValue<List<PostModel>> posts;
 
@@ -56,6 +73,7 @@ class SearchState {
 
   const SearchState({
     this.query = '',
+    this.tab = ExploreTab.all,
     this.branch,
     this.posts = const AsyncLoading(),
     this.users = const AsyncData([]),
@@ -64,6 +82,7 @@ class SearchState {
 
   SearchState copyWith({
     String? query,
+    ExploreTab? tab,
     // ValueGetter: branşı null'a (Tümü) çekebilmek için; '??' ile mümkün değil.
     DentalBranch? Function()? branch,
     AsyncValue<List<PostModel>>? posts,
@@ -72,6 +91,7 @@ class SearchState {
   }) {
     return SearchState(
       query: query ?? this.query,
+      tab: tab ?? this.tab,
       branch: branch != null ? branch() : this.branch,
       posts: posts ?? this.posts,
       users: users ?? this.users,
@@ -107,21 +127,37 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
     _reload();
   }
 
+  /// Sekme değişince branş Tümü'ye döner.
+  void setTab(ExploreTab tab) {
+    if (tab == state.tab) return;
+    state = state.copyWith(tab: tab, branch: () => null);
+    _reload();
+  }
+
+  /// Vakalar sekmesinin branş satırı.
   void setBranch(DentalBranch? branch) {
     if (branch == state.branch) return;
-    state = state.copyWith(branch: () => branch);
+    state = state.copyWith(tab: ExploreTab.cases, branch: () => branch);
     _reload();
   }
 
-  /// Branş linki (post sayfası, arşiv): arama temizlenir, branş seçilir.
+  /// Branş linki (post sayfası, arşiv): arama temizlenir, Vakalar'da branş seçilir.
   void selectBranch(DentalBranch branch) {
-    state = state.copyWith(query: '', branch: () => branch);
+    state = state.copyWith(
+      query: '',
+      tab: ExploreTab.cases,
+      branch: () => branch,
+    );
     _reload();
   }
 
-  /// Etiket linki (post sayfası): sorgu yalnızca etiket olur, branş Tümü'ye döner.
+  /// Etiket linki (post sayfası): sorgu yalnızca etiket olur, sekme Tümü'ye döner.
   void selectTag(String name) {
-    state = state.copyWith(query: hashtag(name), branch: () => null);
+    state = state.copyWith(
+      query: hashtag(name),
+      tab: ExploreTab.all,
+      branch: () => null,
+    );
     _reload();
   }
 
@@ -134,15 +170,24 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
     _loadingMore = null;
     final parsed = parseExploreQuery(state.query);
     final branch = state.branch;
+    final tab = state.tab;
+    // Kişiler sekmesinde post yok; kişi araması yalnızca Tümü ve Kişiler'de.
+    final wantsUsers =
+        parsed.text.isNotEmpty &&
+        (tab == ExploreTab.all || tab == ExploreTab.people);
     state = state.copyWith(
-      posts: const AsyncLoading(),
-      users: parsed.text.isEmpty ? const AsyncData([]) : const AsyncLoading(),
+      posts: tab == ExploreTab.people
+          ? const AsyncData([])
+          : const AsyncLoading(),
+      users: wantsUsers ? const AsyncLoading() : const AsyncData([]),
       hasMore: false,
     );
 
     // Post ve kullanıcı paralel; biri hata verse de diğeri gösterilir.
-    final postsFuture = AsyncValue.guard(() => _fetch(parsed, branch, 0));
-    final usersFuture = parsed.text.isEmpty
+    final postsFuture = tab == ExploreTab.people
+        ? Future.value(const AsyncData(<PostModel>[]))
+        : AsyncValue.guard(() => _fetch(parsed, tab, branch, 0));
+    final usersFuture = !wantsUsers
         ? Future.value(const AsyncData(<UserModel>[]))
         : AsyncValue.guard(
             () => ref.read(userRepositoryProvider).searchUsers(parsed.text),
@@ -161,6 +206,7 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
 
   Future<List<PostModel>> _fetch(
     ({String text, List<String> tags}) parsed,
+    ExploreTab tab,
     DentalBranch? branch,
     int offset,
   ) => ref
@@ -169,6 +215,7 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
         query: parsed.text,
         tags: parsed.tags,
         branch: branch,
+        type: tab.postType,
         now: _now,
         offset: offset,
       );
@@ -184,6 +231,7 @@ class SearchNotifier extends AutoDisposeNotifier<SearchState> {
     try {
       final items = await _fetch(
         parseExploreQuery(state.query),
+        state.tab,
         state.branch,
         _offset,
       );

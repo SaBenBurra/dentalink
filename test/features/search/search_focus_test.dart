@@ -46,9 +46,9 @@ Future<void> _pump(WidgetTester tester, String query) async {
 }
 
 void main() {
-  testWidgets('odakta sorgu boşken yalnızca branşlar kalır', (tester) async {
+  testWidgets('odakta sorgu boşken yalnızca sekmeler kalır', (tester) async {
     await _pump(tester, '');
-    expect(find.byType(BranchFilterChips), findsOneWidget);
+    expect(find.byType(ExploreFilterChips), findsOneWidget);
     expect(find.text('Ayşe Hekim').hitTestable(), findsNothing);
 
     // Boş alana dokunmak odağı bırakır, keşfet içeriği geri gelir.
@@ -60,7 +60,9 @@ void main() {
   testWidgets('odakta sorgu varken sonuçlar görünür', (tester) async {
     await _pump(tester, 'kanal');
     expect(
-      find.text(lookupAppLocalizations(const Locale('tr')).exploreSearchResults),
+      find.text(
+        lookupAppLocalizations(const Locale('tr')).exploreSearchResults,
+      ),
       findsOneWidget,
     );
   });

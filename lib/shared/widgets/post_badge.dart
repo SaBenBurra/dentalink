@@ -42,17 +42,21 @@ class PostBadge extends StatelessWidget {
             ? (
                 colorScheme.primaryContainer.withValues(alpha: 0.2),
                 colorScheme.primary.withValues(alpha: 0.3),
-                colorScheme.primaryContainer,
+                colorScheme.primary,
               )
             : (
                 AppColors.primaryContainer.withValues(alpha: 0.4),
                 AppColors.primaryContainer,
                 AppColors.primaryDark,
               ),
+      // Açık temada koyu kahve yazı açık zeminde; açık şeftali yazı koyu
+      // turuncu zeminde okunmuyordu.
       PostType.listing => (
-        colorScheme.tertiaryContainer.withValues(alpha: isDark ? 0.2 : 0.6),
+        isDark
+            ? colorScheme.tertiaryContainer.withValues(alpha: 0.2)
+            : colorScheme.tertiary.withValues(alpha: 0.1),
         colorScheme.tertiary.withValues(alpha: 0.4),
-        isDark ? colorScheme.tertiary : colorScheme.onTertiaryContainer,
+        colorScheme.tertiary,
       ),
     };
 

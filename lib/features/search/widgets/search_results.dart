@@ -35,14 +35,18 @@ class ExploreResults extends ConsumerWidget {
     final popularUsers = ref.watch(popularUsersProvider);
     final users = state.users.valueOrNull ?? const [];
     final branch = state.branch;
+    final tab = state.tab;
     final text = parseExploreQuery(state.query).text;
     // Yardımcı bölümler: hata postları engellemesin, yenilemede tekrar denenir.
     final branchTreatments = branch == null || state.query.trim().isNotEmpty
         ? const <CaseTreatment>[]
         : ref.watch(branchTreatmentsProvider(branch)).valueOrNull ?? const [];
-    final treatments = text.isEmpty
+    final treatments =
+        text.isEmpty || (tab != ExploreTab.all && tab != ExploreTab.cases)
         ? const <CaseTreatment>[]
         : ref.watch(treatmentSearchProvider(text)).valueOrNull ?? const [];
+
+    if (tab == ExploreTab.people) return _PeopleTab(text: text);
 
     return RefreshIndicator(
       onRefresh: () {
@@ -95,7 +99,7 @@ class ExploreResults extends ConsumerWidget {
               ],
             ),
           // Yalnızca Tümü'de ve arama yokken; sonuçları aşağı itmesin.
-          if (branch == null && state.query.trim().isEmpty)
+          if (tab == ExploreTab.all && state.query.trim().isEmpty)
             ...popularUsers.when(
               data: (list) => [
                 if (list.isNotEmpty) ...[
@@ -177,6 +181,73 @@ class ExploreResults extends ConsumerWidget {
                 child: DentigoErrorWidget(
                   message: getErrorMessage(l10n, err),
                   onRetry: notifier.refresh,
+                ),
+              ),
+            ],
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height:
+                  AppDimensions.spacing8 + MediaQuery.paddingOf(context).bottom,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Kişiler sekmesi: metin aranıyorsa bulunan kişiler, yoksa popüler ilk 50.
+class _PeopleTab extends ConsumerWidget {
+  const _PeopleTab({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final AsyncValue<List<UserModel>> users = text.isEmpty
+        ? ref
+              .watch(topPeopleProvider)
+              .whenData((list) => [for (final r in list) r.user])
+        : ref.watch(searchProvider.select((s) => s.users));
+    Future<void> refresh() => text.isEmpty
+        ? ref.refresh(topPeopleProvider.future)
+        : ref.read(searchProvider.notifier).refresh();
+
+    return RefreshIndicator(
+      onRefresh: refresh,
+      child: CustomScrollView(
+        slivers: [
+          _SectionHeader(
+            text.isEmpty ? l10n.explorePopularPeople : l10n.explorePeople,
+          ),
+          ...users.when(
+            data: (list) => [
+              if (list.isEmpty)
+                SliverToBoxAdapter(
+                  child: DentigoEmptyState(
+                    icon: Icons.person_search_outlined,
+                    title: l10n.searchNoResultsTitle,
+                    subtitle: l10n.searchNoUsers,
+                  ),
+                )
+              else
+                _PeopleList(list),
+            ],
+            loading: () => const [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.all(AppDimensions.spacing32),
+                  child: DentigoLoadingSpinner(),
+                ),
+              ),
+            ],
+            error: (err, _) => [
+              SliverToBoxAdapter(
+                child: DentigoErrorWidget(
+                  message: getErrorMessage(l10n, err),
+                  onRetry: refresh,
                 ),
               ),
             ],
