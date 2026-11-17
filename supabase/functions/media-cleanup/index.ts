@@ -5,7 +5,7 @@
 // 100'lük grup silinmeden hemen önce yeniden listelenir, arada bağlanan dosya
 // silinmez. Silme Storage API ile (service_role); adet ve boyut loglanır.
 //
-//   { bucket: 'post-images' | 'post-videos' | 'avatars' } → { count, bytes, done }
+//   { bucket: 'post-images' | 'post-videos' | 'avatars' | 'verification-docs' } → { count, bytes, done }
 // done false: süre sınırı yüzünden durdu, tekrar çağrılabilir.
 // Hata: { error: '<kod>' } (panel src/lib/errors.ts'te Türkçeye çevirir).
 //
@@ -18,7 +18,7 @@ const url = Deno.env.get('SUPABASE_URL')!;
 const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 const admin = createClient(url, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
 
-const buckets = ['post-images', 'post-videos', 'avatars'];
+const buckets = ['post-images', 'post-videos', 'avatars', 'verification-docs'];
 // Edge Function süre sınırının (150 sn) altında kalsın diye.
 const maxBatches = 20;
 

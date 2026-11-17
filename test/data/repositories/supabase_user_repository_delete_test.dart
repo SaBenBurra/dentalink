@@ -13,6 +13,7 @@ void main() {
   late MockStorageFileApi avatars;
   late MockStorageFileApi postImages;
   late MockStorageFileApi postVideos;
+  late MockStorageFileApi docs;
   late SupabaseUserRepository repo;
 
   setUp(() {
@@ -23,6 +24,7 @@ void main() {
     avatars = MockStorageFileApi();
     postImages = MockStorageFileApi();
     postVideos = MockStorageFileApi();
+    docs = MockStorageFileApi();
     when(user.id).thenReturn('me');
     when(auth.currentUser).thenReturn(user);
     when(client.auth).thenReturn(auth);
@@ -30,12 +32,13 @@ void main() {
     when(storage.from('avatars')).thenReturn(avatars);
     when(storage.from('post-images')).thenReturn(postImages);
     when(storage.from('post-videos')).thenReturn(postVideos);
+    when(storage.from('verification-docs')).thenReturn(docs);
     // RPC'ye ulaşıldığını bu hatayla anlarız (builder mock'u gerekmez).
     when(client.rpc('delete_account')).thenThrow(StateError('rpc reached'));
     repo = SupabaseUserRepository(client: client);
   });
 
-  test('önce üç klasör sayfa sayfa boşaltılır, sonra RPC çağrılır', () async {
+  test('önce dört klasör sayfa sayfa boşaltılır, sonra RPC çağrılır', () async {
     final avatarPages = [
       [_file('a.webp')],
       <FileObject>[],
@@ -74,12 +77,25 @@ void main() {
       ],
     );
 
+    final docPages = [
+      [_file('graduation_certificate_1.jpg')],
+      <FileObject>[],
+    ];
+    when(
+      docs.list(path: 'me', searchOptions: anyNamed('searchOptions')),
+    ).thenAnswer((_) async => docPages.removeAt(0));
+    when(docs.remove(any)).thenAnswer(
+      (inv) async => [
+        for (final p in inv.positionalArguments[0] as List<String>) _file(p),
+      ],
+    );
     await expectLater(repo.deleteAccount(), throwsA(isA<StateError>()));
 
     verify(avatars.remove(['me/a.webp'])).called(1);
     verify(postImages.remove(['me/1.webp', 'me/2.webp'])).called(1);
     verify(postImages.remove(['me/3.webp'])).called(1);
     verify(postVideos.remove(['me/v.mp4'])).called(1);
+    verify(docs.remove(['me/graduation_certificate_1.jpg'])).called(1);
   });
 
   test('dosyalar silinemezse hesaba dokunulmaz', () async {

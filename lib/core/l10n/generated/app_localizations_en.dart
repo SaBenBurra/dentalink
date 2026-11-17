@@ -1794,4 +1794,66 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get updateAvailableAction => 'Update';
+
+  @override
+  String get verificationTitle => 'Account verification';
+
+  @override
+  String get verificationSettingsSubtitle =>
+      'Upload your graduation certificate to get the verified badge';
+
+  @override
+  String get verificationSettingsSubtitleStudent =>
+      'Upload your student certificate to get the verified badge';
+
+  @override
+  String get verificationIntro =>
+      'Upload your graduation certificate: the PDF from e-Devlet or a photo of the certificate. Diplomas are not accepted. Make sure your name and the document details are readable. If our team approves it, the verified badge appears on your profile.';
+
+  @override
+  String get verificationIntroStudent =>
+      'Upload your student certificate: the PDF from e-Devlet or a photo of the certificate. Student ID cards are not accepted. Make sure your name and the document details are readable. If our team approves it, the verified badge appears on your profile.';
+
+  @override
+  String get verificationPrivacy =>
+      'Only the verification team sees your document, and it is deleted after verification.';
+
+  @override
+  String get verificationGateTitle => 'One last step';
+
+  @override
+  String get verificationGateBody =>
+      'Dentigo is only for dentists and dental students. Your account opens once your document is approved.';
+
+  @override
+  String get verificationPickPdf => 'Choose PDF';
+
+  @override
+  String get verificationFileTooLarge => 'The file cannot be larger than 5 MB.';
+
+  @override
+  String get verificationFileInvalid =>
+      'The file could not be read. Choose a valid photo or PDF.';
+
+  @override
+  String get verificationSubmit => 'Submit for verification';
+
+  @override
+  String get verificationSent => 'Your document was sent';
+
+  @override
+  String get verificationPendingTitle => 'Your document is under review';
+
+  @override
+  String verificationPendingBody(String date) {
+    return 'You sent it on $date. You will get a notification when a decision is made.';
+  }
+
+  @override
+  String get verificationApprovedBody =>
+      'The verified badge now appears on your profile.';
+
+  @override
+  String get verificationRejectedTitle =>
+      'Your previous document was not approved';
 }

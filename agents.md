@@ -67,7 +67,7 @@ lib/
 ### Kullanıcılar
 - **Giriş:** e-posta veya WhatsApp numarası (yalnızca Türkiye, +90 5xx) + 6 haneli OTP (şifresiz, Twilio üzerinden; `docs/SUPABASE.md` §10). Giriş ve kayıt aynı ekrandır. E-posta ve numara Ayarlar → Hesap'tan eklenir ya da değiştirilir, kod yeni adrese gider; ikisi de aynı hesaba girer. İlk girişte 3 adımlı kayıt: (1) ad + unvan, (2) üniversite, şehir, klinik, deneyim, (3) avatar + biyografi.
 - **Unvanlar** (`UserTitle`): Öğrenci, Diş Hekimi, Endodontist, Ortodontist, Periodontolog, Protez Uzmanı, Pedodontist, Cerrah, Radyolog, Restoratif Uzmanı.
-- `is_verified` yalnızca admin onayıyla değişir (Faz 4: diploma doğrulama).
+- **Uygulama yalnızca doğrulanmış hesaplara açık** (066). Kayıttan sonra "Son bir adım" ekranı (`/verify`): mezuniyet belgesi (öğrencide öğrenci belgesi), fotoğraf ya da PDF. Onaylanana kadar yalnızca doğrulama ekranı, destek sohbeti, çıkış ve hesap silme açık; sunucu da diğer her isteği reddeder, push yalnızca doğrulama kararı. `is_verified` yalnızca panelde personel onayıyla değişir (`docs/SUPABASE.md` §11).
 
 ### İçerik
 | Tür | Alanlar | Not |
@@ -92,7 +92,7 @@ lib/
 ### Navigasyon
 Alt menü: **Ana Sayfa** `/feed` · **Keşfet** `/search` · **Oluştur (+)** (vaka/forum/ilan seçimi) · **Mesajlar** `/messages` · **Profil** `/profile`.
 
-Diğer rotalar: `/post/:id` (tek post kartı; bildirim ve deep link hedefi), `/post/:id/likes` (beğenenler), `/treatment/:slug` (tedavi arşivi), `/create-case`, `/create-question`, `/create-listing`, `/chat/:userId`, `/support` (destek sohbeti; Mesajlar'ın sağ altındaki buton), `/profile/:userId`, `/edit-profile`, `/network/:id`, `/notifications`, `/bookmarks`, `/settings`, `/settings/blocked`, `/settings/contact/email`, `/settings/contact/phone`, `/legal/:doc`, `/login`, `/register`. Tam liste: `lib/core/router/app_router.dart`.
+Diğer rotalar: `/post/:id` (tek post kartı; bildirim ve deep link hedefi), `/post/:id/likes` (beğenenler), `/treatment/:slug` (tedavi arşivi), `/create-case`, `/create-question`, `/create-listing`, `/chat/:userId`, `/support` (destek sohbeti; Mesajlar'ın sağ altındaki buton), `/profile/:userId`, `/edit-profile`, `/network/:id`, `/notifications`, `/bookmarks`, `/settings`, `/settings/blocked`, `/settings/contact/email`, `/settings/contact/phone`, `/settings/verification`, `/verify` (doğrulanmamış hesabın tek ekranı), `/legal/:doc`, `/login`, `/register`. Tam liste: `lib/core/router/app_router.dart`.
 
 **Detay sayfaları sekmenin içinde açılır:** post, beğenenler, tedavi arşivi, kullanıcı profili, ağ, kaydedilenler ve bildirimler hangi sekmeden açıldıysa onun altında açılır (`/feed/post/:id`, `/search/treatment/:slug`…). Alt menü görünür kalır, aktif sekmeye dokununca sekmenin köküne tek dokunuşla dönülür. Bunları `context.push` ile değil `context.pushDetail` ile aç (`lib/core/router/app_router.dart`). Sekme dışı bir sayfadan (sohbet, ayarlar) açılınca kökteki aynı rota kullanılır, alt menü gizli olur. Paylaşımdan sonra post `/feed/post/:id` olarak açılır. Klavye açıkken alt menü klavyenin arkasında kalır.
 

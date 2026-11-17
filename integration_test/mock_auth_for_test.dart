@@ -7,7 +7,7 @@ import 'package:dentigo/data/repositories/auth_repository.dart';
 class MockAuthForTest implements AuthRepository {
   UserModel? _currentUser;
 
-  MockAuthForTest() {
+  MockAuthForTest({bool verified = true}) {
     _currentUser = UserModel(
       id: 'mock_test_user_id',
       email: 'test@example.com',
@@ -15,6 +15,8 @@ class MockAuthForTest implements AuthRepository {
       username: 'testuser',
       title: UserTitle.ogrenci,
       onboardingCompleted: true,
+      // 066: mevcut hesaplar doğrulanmış sayılır; kilit testleri ayrı kullanıcı kurar.
+      isVerified: verified,
       createdAt: DateTime.now(),
     );
   }

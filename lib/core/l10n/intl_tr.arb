@@ -931,5 +931,30 @@
   "updateGoToStore": "Mağazaya git",
   "updateAvailableBanner": "Yeni sürüm var",
   "@updateAvailableBanner": { "description": "Feed üstündeki kapatılabilir güncelleme şeridi" },
-  "updateAvailableAction": "Güncelle"
+  "updateAvailableAction": "Güncelle",
+
+  "verificationTitle": "Hesap doğrulama",
+  "@verificationTitle": { "description": "Ayarlar satırı ve belge yükleme ekranının başlığı" },
+  "verificationSettingsSubtitle": "Mezuniyet belgeni yükle, doğrulanmış rozeti al",
+  "verificationSettingsSubtitleStudent": "Öğrenci belgeni yükle, doğrulanmış rozeti al",
+  "verificationIntro": "Mezuniyet belgeni yükle: e-Devlet'ten aldığın PDF ya da belgenin fotoğrafı. Diploma kabul edilmez. Adın ve belgedeki bilgiler okunaklı olsun. Ekibimiz inceleyip onaylarsa profilinde doğrulanmış rozeti görünür.",
+  "verificationIntroStudent": "Öğrenci belgeni yükle: e-Devlet'ten aldığın PDF ya da belgenin fotoğrafı. Öğrenci kimlik kartı kabul edilmez. Adın ve belgedeki bilgiler okunaklı olsun. Ekibimiz inceleyip onaylarsa profilinde doğrulanmış rozeti görünür.",
+  "verificationPrivacy": "Belgen yalnızca doğrulama ekibine görünür ve doğrulamanın ardından silinir.",
+  "@verificationPrivacy": { "description": "Yükleme ve bekleme ekranında gösterilen KVKK notu" },
+  "verificationGateTitle": "Son bir adım",
+  "verificationGateBody": "Dentigo yalnızca diş hekimleri ve diş hekimliği öğrencileri için. Belgen onaylanınca hesabın açılır.",
+  "@verificationGateBody": { "description": "Kayıttan sonra, doğrulanmamış hesabın kilit ekranında" },
+  "verificationPickPdf": "PDF seç",
+  "verificationFileTooLarge": "Dosya 5 MB'tan büyük olamaz.",
+  "verificationFileInvalid": "Dosya okunamadı. Geçerli bir fotoğraf ya da PDF seç.",
+  "verificationSubmit": "Doğrulamaya gönder",
+  "verificationSent": "Belgen gönderildi",
+  "verificationPendingTitle": "Belgen inceleniyor",
+  "verificationPendingBody": "{date} tarihinde gönderdin. Karar verilince bildirim alacaksın.",
+  "@verificationPendingBody": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "verificationApprovedBody": "Profilinde doğrulanmış rozeti görünüyor.",
+  "verificationRejectedTitle": "Önceki belgen onaylanmadı",
+  "@verificationRejectedTitle": { "description": "Altında ekibin ret gerekçesi gösterilir" }
 }

@@ -68,6 +68,13 @@ void main() {
       expect(pushRoute({'type': 'announcement'}), isNull);
     });
 
+    test('doğrulama kararı doğrulama ekranını açar', () {
+      expect(
+        pushRoute({'type': 'verification', 'status': 'rejected'}),
+        '/settings/verification',
+      );
+    });
+
     test('bilinmeyen tür yok sayılır', () {
       expect(pushRoute({'type': 'new_kind', 'post_id': 'p1'}), isNull);
       expect(pushRoute({}), isNull);

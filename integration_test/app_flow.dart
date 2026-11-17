@@ -110,7 +110,8 @@ Future<void> runAppFlow(WidgetTester tester) async {
 
   // Profil → ayarlar → geri → profili düzenle → geri.
   await _tapAndSettle(tester, find.text('Profil'));
-  expect(find.text('Test User'), findsWidgets);
+  // Doğrulanmış rozeti adın sonuna yer tutucu ekler.
+  expect(find.textContaining('Test User'), findsWidgets);
   await _tapAndSettle(tester, find.byTooltip('Ayarlar'));
   await _goBack(tester);
   await _tapAndSettle(tester, find.text('Profili Düzenle'));

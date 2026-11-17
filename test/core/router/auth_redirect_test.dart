@@ -10,8 +10,10 @@ void main() {
     fullName: 'Test',
     username: 'test',
     title: UserTitle.ogrenci,
+    isVerified: true,
     createdAt: DateTime(2026),
   );
+  final unverified = user.copyWith(isVerified: false);
 
   String? go(
     String location, {
@@ -82,6 +84,25 @@ void main() {
         expect(go('/profile/abc', auth: AsyncData(user)), isNull);
       },
     );
+
+    test(
+      'doğrulanmamış hesap yalnızca doğrulama ve destek ekranını açar (066)',
+      () {
+        expect(go('/splash', auth: AsyncData(unverified)), '/verify');
+        expect(go('/feed', auth: AsyncData(unverified)), '/verify');
+        expect(go('/register', auth: AsyncData(unverified)), '/verify');
+        expect(go('/settings', auth: AsyncData(unverified)), '/verify');
+        expect(go('/post/p1', auth: AsyncData(unverified)), '/verify');
+        expect(go('/verify', auth: AsyncData(unverified)), isNull);
+        expect(go('/support', auth: AsyncData(unverified)), isNull);
+        expect(go('/legal/kvkk', auth: AsyncData(unverified)), isNull);
+      },
+    );
+
+    test("onaylanınca kilit ekranından /feed'e", () {
+      expect(go('/verify', auth: AsyncData(user)), '/feed');
+      expect(go('/settings/verification', auth: AsyncData(user)), isNull);
+    });
 
     test('hukuk metinleri oturumsuz ve kayıt sırasında da açılır', () {
       expect(

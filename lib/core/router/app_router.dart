@@ -29,6 +29,7 @@ import '../../features/settings/screens/settings_screen.dart';
 import '../../features/settings/screens/blocked_users_screen.dart';
 import '../../features/settings/screens/change_contact_screen.dart';
 import '../../features/settings/screens/legal_screen.dart';
+import '../../features/settings/screens/verification_screen.dart';
 import '../../features/bookmarks/screens/bookmarks_screen.dart';
 import '../../features/search/screens/popular_people_screen.dart';
 import 'package:dentigo/core/constants/app_dimensions.dart';
@@ -42,6 +43,9 @@ import '../../data/models/user_model.dart';
 class _AuthRefreshNotifier extends ChangeNotifier {
   void ping() => notifyListeners();
 }
+
+/// Doğrulanmamış hesabın tek ekranı (066).
+const verifyGate = '/verify';
 
 /// Auth guard kararı (saf fonksiyon; test: test/core/router/auth_redirect_test.dart).
 ///
@@ -75,10 +79,17 @@ String? resolveAuthRedirect({
   if (auth.hasError) return (isRegister || isAuthError) ? null : '/auth-error';
 
   // Oturum var ama public.users satırı yok → kayıt tamamlanmamış.
-  if (auth.valueOrNull == null) return isRegister ? null : '/register';
+  final user = auth.valueOrNull;
+  if (user == null) return isRegister ? null : '/register';
+
+  // 066: doğrulanmamış hesap yalnızca doğrulama ekranını ve destek sohbetini
+  // açar (sunucu da diğer her isteği reddeder).
+  if (!user.isVerified) {
+    return location == verifyGate || location == '/support' ? null : verifyGate;
+  }
 
   // Tam kayıtlı kullanıcı login/register/hata ekranında kalmasın.
-  return isAuthRoute ? '/feed' : null;
+  return isAuthRoute || location == verifyGate ? '/feed' : null;
 }
 
 /// Sürüm kilidi (062; test: test/core/router/version_redirect_test.dart).
@@ -221,6 +232,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/settings/blocked',
         builder: (context, state) => const BlockedUsersScreen(),
+      ),
+      GoRoute(
+        path: verifyGate,
+        builder: (context, state) => const VerificationScreen(gate: true),
+      ),
+      GoRoute(
+        path: '/settings/verification',
+        builder: (context, state) => const VerificationScreen(),
       ),
       GoRoute(
         path: '/settings/contact/email',

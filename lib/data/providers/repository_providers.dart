@@ -23,6 +23,8 @@ import '../repositories/support_repository.dart';
 import '../repositories/supabase_support_repository.dart';
 import '../repositories/app_config_repository.dart';
 import '../repositories/supabase_app_config_repository.dart';
+import '../repositories/verification_repository.dart';
+import '../repositories/supabase_verification_repository.dart';
 
 // ─── Supabase ───
 final supabaseClientProvider = Provider<SupabaseClient>((ref) {
@@ -100,6 +102,13 @@ final pushRepositoryProvider = Provider<PushRepository>((ref) {
 // ─── Support ───
 final supportRepositoryProvider = Provider<SupportRepository>((ref) {
   return SupabaseSupportRepository(client: ref.watch(supabaseClientProvider));
+});
+
+// ─── Doğrulama (mezuniyet / öğrenci belgesi) ───
+final verificationRepositoryProvider = Provider<VerificationRepository>((ref) {
+  return SupabaseVerificationRepository(
+    client: ref.watch(supabaseClientProvider),
+  );
 });
 
 // ─── App config (sürüm kontrolü) ───

@@ -6,6 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../data/models/enums.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/locale_provider.dart';
 import '../../../providers/push_provider.dart';
@@ -333,6 +334,18 @@ class SettingsScreen extends ConsumerWidget {
           title: AppLocalizations.of(context)!.editProfile,
           onTap: () => context.push('/edit-profile'),
         ),
+        // Öğrenci öğrenci belgesiyle, diğerleri mezuniyet belgesiyle doğrulanır.
+        if (user != null)
+          SettingsTile(
+            icon: Icons.verified_outlined,
+            title: l10n.verificationTitle,
+            subtitle: user.isVerified
+                ? l10n.verifiedAccount
+                : user.title == UserTitle.ogrenci
+                ? l10n.verificationSettingsSubtitleStudent
+                : l10n.verificationSettingsSubtitle,
+            onTap: () => context.push('/settings/verification'),
+          ),
         SettingsTile(
           icon: Icons.alternate_email_rounded,
           title: l10n.email,

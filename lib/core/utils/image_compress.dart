@@ -23,6 +23,16 @@ Future<List<File>> compressToWebp(
   }),
 );
 
+/// Doğrulama belgesi (065): bucket yalnızca JPEG kabul eder; HEIC/PNG de çevrilir,
+/// EXIF/konum atılır. Boyutlandırmayı picker yapar.
+Future<Uint8List?> encodeJpeg(String path) =>
+    FlutterImageCompress.compressWithFile(
+      path,
+      minWidth: 2048,
+      minHeight: 2048,
+      quality: 85,
+    );
+
 // Boyutlandırmayı picker yapar (uzun kenar 2048); min boyutlar burada küçültmeyi kapatır.
 Future<Uint8List?> _encodeWebp(String path) =>
     FlutterImageCompress.compressWithFile(

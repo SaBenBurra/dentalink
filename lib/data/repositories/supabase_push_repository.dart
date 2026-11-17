@@ -22,4 +22,12 @@ class SupabasePushRepository implements PushRepository {
   Future<void> unregister(String token) => guardSupabase(
     () => _client.rpc('unregister_push_token', params: {'p_token': token}),
   );
+
+  @override
+  Future<void> setAnnouncements(String token, bool enabled) => guardSupabase(
+    () => _client.rpc(
+      'set_push_announcements',
+      params: {'p_token': token, 'p_enabled': enabled},
+    ),
+  );
 }

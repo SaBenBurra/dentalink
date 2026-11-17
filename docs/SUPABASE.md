@@ -18,7 +18,7 @@ supabase db push                                   # uygula
 supabase migration list                            # local == remote olmalı
 ```
 
-- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `063_…`).
+- **Dosya adı:** Dosyalar `001_…` biçiminde sıralı; yeni dosya bir sonraki numarayı alır (son: `067_…`).
 - **Idempotent yaz:**
   - `CREATE OR REPLACE FUNCTION`
   - `DROP POLICY IF EXISTS …;` ardından `CREATE POLICY …`
@@ -45,6 +45,7 @@ RLS **hangi satırlara** dokunulabileceğini belirler; GRANT **hangi kolonlara**
 | `users.email` ve `users.phone` istemciye **okunmaz**. | KVKK. |
 | `service_role`'ün public tablolarında **varsayılan yetkisi yok** (bu projede). Edge Function bir tabloya dokunacaksa migration'da kolon bazlı `GRANT … TO service_role` ver (028). | Aksi halde fonksiyon `42501 permission denied` ile düşer. |
 | Sorgularda `select('*')` / `users(*)` kullanma; gereken kolonları listele. | Yeni kolonlar istemeden sızmasın. |
+| Uygulama yalnızca üyelere açık (066): `is_app_member()` = `is_verified` ya da personel. Doğrulanmamış hesaba açılması gereken yeni bir tablo/RPC olursa `check_session` izin listesine eklenir; Realtime'a eklenen yeni tablonun SELECT policy'si `is_app_member()` ister. | `check_session` her PostgREST isteğini süzer ama Realtime ve Storage ondan geçmez. |
 
 ---
 
@@ -55,6 +56,7 @@ RLS **hangi satırlara** dokunulabileceğini belirler; GRANT **hangi kolonlara**
 | `avatars` | public read | `{auth.uid()}/…` | 012'de tanımlandı; 2MB limit (019) |
 | `post-images` | **private**, okuma yalnızca `authenticated` (020) | `{auth.uid()}/…` | 2MB limit (019), istemci WebP yükler; görseller 1 günlük signed URL ile gösterilir (SEC-9) |
 | `post-videos` | **private**, okuma yalnızca `authenticated` (046) | `{auth.uid()}/…` | 50MB, yalnızca `video/mp4`; istemci 720p'ye sıkıştırır. Video bir `post_images` satırıdır: kapak `image_url`'de (`post-images`), video `video_path`'te. Signed URL 1 gün |
+| `verification-docs` | **private**, okuma ve silme sahibine ve `users.verify` yetkilisine (065) | `{auth.uid()}/…` | 5MB, `image/jpeg` (istemci fotoğrafı çevirir, EXIF atılır) ya da `application/pdf` (istemci `%PDF` imzasına bakar). Mezuniyet ya da öğrenci belgesi; karar verilince panel siler. Panel 60 sn'lik signed URL'yi `open_verification_doc` (loglu) ile aldığı yoldan üretir |
 
 - Yazma ve silme policy'si: `(storage.foldername(name))[1] = auth.uid()::text`.
 - **Sıra:** önce yeni dosyayı yükle, DB'yi güncelle, **en son** eski dosyayı sil. Tersi veri kaybına yol açar (AUDIT `DATA-7`, `DATA-8`).
@@ -782,6 +784,68 @@ set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
 select * from public.admin_post_comments('<POST>');
 rollback;
+
+-- 47) Doğrulama (065) → BEKLENEN: own_pending = 1, opened = true, returned = true,
+--     verified = true, doc_cleared = true, logged = 2; ardından dört blok: document not found,
+--     invalid value (belge türü), reason required, permission denied.
+--     <A> doğrulanmamış kullanıcı, <D> users.verify yetkili (admin), <B> personel değil. (46, 064 için ayrıldı.)
+begin;
+insert into storage.objects (bucket_id, name) values ('verification-docs', '<A>/smoke.jpg');
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select set_config('t.id', public.submit_verification('<A>/smoke.jpg', 'student_certificate')::text, true);
+select count(*) own_pending from public.verification_requests where status = 'pending';
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select public.open_verification_doc(current_setting('t.id')::uuid) = '<A>/smoke.jpg' opened;
+select public.review_verification(current_setting('t.id')::uuid, true) = '<A>/smoke.jpg' returned;
+reset role;
+select (select is_verified from public.users where id = '<A>') verified,
+  (select doc_path is null from public.verification_requests
+    where id = current_setting('t.id')::uuid) doc_cleared,
+  (select count(*) from public.staff_actions where target_id = '<A>'
+    and action like 'verification.%' and created_at = now()) logged;
+rollback;
+begin;
+insert into storage.objects (bucket_id, name) values ('verification-docs', '<A>/smoke.jpg');
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select public.submit_verification('<A>/smoke.jpg', 'graduation_certificate');
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select public.submit_verification('<A>/smoke.pdf', 'passport');
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select public.review_verification(gen_random_uuid(), false, '  ');
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<B>","role":"authenticated"}', true);
+select * from public.admin_verification_queue();
+rollback;
+
+-- 48) Yalnızca doğrulanmış hesaplar (066) → BEKLENEN: member = false, own_only = 1,
+--     msgs = 0, notifs = 0, imgs = 0; ikinci blokta member_d = true.
+--     <A> herhangi bir kullanıcı (blokta doğrulanmamış yapılır), <D> personel.
+--     İstek öncesi izin listesi SQL'den denenemez (request.path yok): doğrulanmamış
+--     bir test hesabının token'ıyla GET /rest/v1/posts → 403 not_verified,
+--     GET /rest/v1/users → yalnızca kendi satırı, GET /rest/v1/support_threads → 200.
+begin;
+update public.users set is_verified = false where id = '<A>';
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<A>","role":"authenticated"}', true);
+select public.is_app_member() member, (select count(*) from public.users) own_only,
+  (select count(*) from public.messages) msgs, (select count(*) from public.notifications) notifs,
+  (select count(*) from storage.objects where bucket_id = 'post-images') imgs;
+rollback;
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"<D>","role":"authenticated"}', true);
+select public.is_app_member() member_d;
+rollback;
 ```
 
 ### Sürüm yayın akışı (062)
@@ -849,7 +913,7 @@ select id, public from storage.buckets;
 
 ## 8. Push bildirim kurulumu (027, REL-6)
 
-Akış: `notifications`/`messages` (061'den beri `broadcasts`) INSERT → trigger (`trigger_push`, pg_net) → Edge Function `push` → FCM HTTP v1 → cihaz. İstemci token'ını `register_push_token` ile kaydeder, çıkışta `unregister_push_token` + `deleteToken`. Firebase dosyaları yokken uygulama push'suz çalışır; trigger da Vault sırları yokken hiçbir şey yapmaz.
+Akış: `notifications`/`messages` (061'den beri `broadcasts`, 065'ten beri `verification_requests` kararı) INSERT; duyuru 067'den beri topic yerine `broadcast_push_tokens` cihazlarına gider → trigger (`trigger_push`, pg_net) → Edge Function `push` → FCM HTTP v1 → cihaz. İstemci token'ını `register_push_token` ile kaydeder, çıkışta `unregister_push_token` + `deleteToken`. Firebase dosyaları yokken uygulama push'suz çalışır; trigger da Vault sırları yokken hiçbir şey yapmaz.
 
 1. **Firebase projesi** oluştur; Android ve iOS uygulamalarını `com.atlas.dentlink` ile ekle (Flutter simgesi değil, platform simgeleri). Kimlik değişirse Firebase'e yeni uygulama eklenir. _(Proje: `dentlink-ea0f2`)_
 2. `android/app/google-services.json` ve `ios/Runner/GoogleService-Info.plist` dosyalarını koy (plist'i Xcode'da Runner hedefine ekle). İkisi de gizli değil ama repo dışı tutmak istersen `.gitignore`'a ekle.
@@ -1006,3 +1070,7 @@ select id, 'admin' from auth.users where email = '<ad>@panel.dentigo.invalid';
 **Destek kutusu (055).** Panelde `/destek`. `waiting_since`: sohbetin cevap beklemeye başladığı an (ilk cevapsız kullanıcı mesajı). Kuyruk buna göre sıralanır, kullanıcı üst üste yazınca sırası geriye düşmez; herkese açık cevap ya da `open` dışı durum onu NULL yapar. Atama `assign_support_thread(p_thread_id, p_assignee_id)` (NULL kaldırır; atanan `support.reply` yetkili olmalı, değilse `assignee not support`), `staff_actions`'a `support.assign` yazar. 049 policy'leri ve `mark_support_read` artık `has_permission('support.reply')` kullanır.
 
 Smoke: 28–40.
+
+**Mezuniyet ve öğrenci belgesi doğrulama (065).** Kullanıcı Ayarlar → Hesap → Hesap doğrulama'dan belgesinin fotoğrafını ya da PDF'ini yükler (`verification-docs`, §3) ve `submit_verification(p_doc_path, p_doc_type)` ile istek açar; tür unvandan gelir (öğrenci → `student_certificate`, diğerleri → `graduation_certificate`; diploma ve öğrenci kimlik kartı kabul edilmez). Kullanıcı başına tek bekleyen istek, doğrulanmış hesap açamaz. Panel `/dogrulama` (`users.verify`): `admin_verification_queue`, belgeyi `open_verification_doc` ile açar (`verification.view_doc` loglanır), `review_verification` onaylar (`users.is_verified = true`) ya da gerekçeyle reddeder; `doc_path` NULL olur ve panel dosyayı siler. Karar push'la gider (`trigger_push('verification')`, `push` fonksiyonu), dokununca doğrulama ekranı açılır. Silinemeyen ya da hiç gönderilmeyen belge `media-cleanup` ile temizlenir (bekleyen isteğinki bağlı sayılır). Bilinen sınır: yetkili Storage API'den belgeyi loglanmadan da imzalayabilir. Smoke 47.
+
+**Yalnızca doğrulanmış hesaplar (066).** Uygulama doğrulanmış hesaba ve personele açık (`is_app_member()`). Kayıttan sonra kullanıcı "Son bir adım" ekranında (`/verify`) belge yükler; onaylanana kadar yalnızca kendi profili, doğrulama isteği, destek sohbeti, `app_config`, push token kaydı ve hesap silme açık. Sunucu katmanları: `check_session` (058) her PostgREST isteğini izin listesine göre süzer, dışındaki istek `403 not_verified` (oturumu kapatmaz); `users` SELECT'i üye olmayana yalnızca kendi satırını gösterir; `messages`, `conversations`, `notifications` SELECT policy'leri (Realtime) ve `post-images`/`post-videos` okuma/yükleme üyelik ister; `push` fonksiyonu üye olmayana yalnızca doğrulama kararını yollar. 066 anında kaydını tamamlamış hesaplar doğrulanmış sayıldı (karar 2026-11-17). **067:** doğrulanmamış hesap aramada, önerilerde ve popüler kişilerde görünmez; duyurular FCM topic'i yerine `broadcast_push_tokens` cihazlarına gider (yalnızca üye ve duyuruyu kapatmamış; tercih `push_tokens.announcements`, `set_push_announcements`), uygulama eski topic aboneliğinden çıkar. Bilinen sınır: `avatars` public bucket. _Canlıda (064–067, 2026-11-17); smoke 47–48 ve 067 kontrolleri geçti (Management API, tek DO bloğu, rollback); istek öncesi izin listesi SQL'de `request.method`/`request.path` ayarlanarak denendi, gerçek bir doğrulanmamış hesapla HTTP üzerinden denenmedi._ **Yayın:** 066 eski uygulamada doğrulanmamış yeni hesabı her istekte 403'e düşürür (kilit ekranı yok). Yeni sürüm mağazaya çıkınca `min_supported_version` aynı gün artırılır. Smoke 48.

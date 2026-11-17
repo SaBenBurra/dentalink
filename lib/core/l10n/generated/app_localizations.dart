@@ -3313,6 +3313,108 @@ abstract class AppLocalizations {
   /// In tr, this message translates to:
   /// **'Güncelle'**
   String get updateAvailableAction;
+
+  /// Ayarlar satırı ve belge yükleme ekranının başlığı
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesap doğrulama'**
+  String get verificationTitle;
+
+  /// No description provided for @verificationSettingsSubtitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mezuniyet belgeni yükle, doğrulanmış rozeti al'**
+  String get verificationSettingsSubtitle;
+
+  /// No description provided for @verificationSettingsSubtitleStudent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Öğrenci belgeni yükle, doğrulanmış rozeti al'**
+  String get verificationSettingsSubtitleStudent;
+
+  /// No description provided for @verificationIntro.
+  ///
+  /// In tr, this message translates to:
+  /// **'Mezuniyet belgeni yükle: e-Devlet\'ten aldığın PDF ya da belgenin fotoğrafı. Diploma kabul edilmez. Adın ve belgedeki bilgiler okunaklı olsun. Ekibimiz inceleyip onaylarsa profilinde doğrulanmış rozeti görünür.'**
+  String get verificationIntro;
+
+  /// No description provided for @verificationIntroStudent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Öğrenci belgeni yükle: e-Devlet\'ten aldığın PDF ya da belgenin fotoğrafı. Öğrenci kimlik kartı kabul edilmez. Adın ve belgedeki bilgiler okunaklı olsun. Ekibimiz inceleyip onaylarsa profilinde doğrulanmış rozeti görünür.'**
+  String get verificationIntroStudent;
+
+  /// Yükleme ve bekleme ekranında gösterilen KVKK notu
+  ///
+  /// In tr, this message translates to:
+  /// **'Belgen yalnızca doğrulama ekibine görünür ve doğrulamanın ardından silinir.'**
+  String get verificationPrivacy;
+
+  /// No description provided for @verificationGateTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Son bir adım'**
+  String get verificationGateTitle;
+
+  /// Kayıttan sonra, doğrulanmamış hesabın kilit ekranında
+  ///
+  /// In tr, this message translates to:
+  /// **'Dentigo yalnızca diş hekimleri ve diş hekimliği öğrencileri için. Belgen onaylanınca hesabın açılır.'**
+  String get verificationGateBody;
+
+  /// No description provided for @verificationPickPdf.
+  ///
+  /// In tr, this message translates to:
+  /// **'PDF seç'**
+  String get verificationPickPdf;
+
+  /// No description provided for @verificationFileTooLarge.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dosya 5 MB\'tan büyük olamaz.'**
+  String get verificationFileTooLarge;
+
+  /// No description provided for @verificationFileInvalid.
+  ///
+  /// In tr, this message translates to:
+  /// **'Dosya okunamadı. Geçerli bir fotoğraf ya da PDF seç.'**
+  String get verificationFileInvalid;
+
+  /// No description provided for @verificationSubmit.
+  ///
+  /// In tr, this message translates to:
+  /// **'Doğrulamaya gönder'**
+  String get verificationSubmit;
+
+  /// No description provided for @verificationSent.
+  ///
+  /// In tr, this message translates to:
+  /// **'Belgen gönderildi'**
+  String get verificationSent;
+
+  /// No description provided for @verificationPendingTitle.
+  ///
+  /// In tr, this message translates to:
+  /// **'Belgen inceleniyor'**
+  String get verificationPendingTitle;
+
+  /// No description provided for @verificationPendingBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'{date} tarihinde gönderdin. Karar verilince bildirim alacaksın.'**
+  String verificationPendingBody(String date);
+
+  /// No description provided for @verificationApprovedBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Profilinde doğrulanmış rozeti görünüyor.'**
+  String get verificationApprovedBody;
+
+  /// Altında ekibin ret gerekçesi gösterilir
+  ///
+  /// In tr, this message translates to:
+  /// **'Önceki belgen onaylanmadı'**
+  String get verificationRejectedTitle;
 }
 
 class _AppLocalizationsDelegate

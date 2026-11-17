@@ -3,9 +3,13 @@
 // Migration 027'deki trigger, notifications/messages INSERT'inde
 // { kind: 'notification' | 'message', id } gönderir. Fonksiyon satırı okur,
 // alıcının cihazlarına FCM HTTP v1 ile push atar, geçersiz token'ları siler.
-// 061: broadcasts INSERT'inde { kind: 'broadcast', id }: duyuru 'announcements'
-// topic'ine (test ise yalnızca test kullanıcısının cihazlarına) gider, sonuç
-// satırın sent_at / error alanına yazılır.
+// 061: broadcasts INSERT'inde { kind: 'broadcast', id }: duyuru gider (test ise
+// yalnızca test kullanıcısının cihazlarına), sonuç satırın sent_at / error
+// alanına yazılır. 067: topic yerine broadcast_push_tokens (yalnızca üyelerin
+// duyuruyu kapatmamış cihazları).
+// 065: verification_requests kararında { kind: 'verification', id }: kullanıcıya
+// onay ya da gerekçeli ret gider, dokununca doğrulama ekranı açılır.
+// 066: alıcı üye değilse (doğrulanmamış, personel değil) yalnızca bu gider.
 //
 // Sırlar (supabase secrets set):
 //   PUSH_WEBHOOK_SECRET       Vault'taki push_webhook_
@@ -56,6 +60,20 @@ type Push = { userId: string; title: string; body: string; data: Record<string, 
 const MAX_GROUPED = 8;
 
 async function load(kind: string, id: string): Promise<Push | null> {
+  if (kind === 'verification') {
+    const { data, error } = await db.from('verification_requests').select('user_id, status, reason').eq('id', id).maybeSingle();
+    if (error) throw error;
+    if (!data || data.status === 'pending') return null;
+    const approved = data.status === 'approved';
+    return {
+      userId: data.user_id,
+      title: approved ? 'Hesabın doğrulandı' : 'Belgen doğrulanamadı',
+      body: approved
+        ? 'Profilinde artık doğrulanmış rozeti görünüyor.'
+        : `${snippet(data.reason ?? '', 140)} Yeni bir belgeyle tekrar gönderebilirsin.`,
+      data: { type: 'verification', status: data.status },
+    };
+  }
   if (kind === 'message') {
     const { data, error } = await db
       .from('messages')
@@ -160,36 +178,53 @@ async function fcm(message: Record<string, unknown>): Promise<Response> {
   });
 }
 
-async function send(push: Push): Promise<void> {
-  const { data: tokens, error } = await db.from('push_tokens').select('token, platform').eq('user_id', push.userId);
-  if (error) throw error;
-  if (!tokens?.length) return;
+type Device = { token: string; platform: string };
 
-  await Promise.all(tokens.map(async ({ token, platform }) => {
-    const dataOnly = platform === 'android' && push.data.type === 'message';
-    const message = dataOnly
-      ? { token, data: push.data, android: { priority: 'high' } }
-      : {
-          token,
-          notification: { title: push.title, body: push.body },
-          data: push.data,
-          android: { priority: 'high' },
-          apns: { payload: { aps: { sound: 'default', ...(push.threadId && { 'thread-id': push.threadId }) } } },
-        };
-    const res = await fcm(message);
-    if (res.ok) return;
-    const text = await res.text();
-    // Uygulama silinmiş ya da token yenilenmiş: satırı temizle.
-    if (res.status === 404 || text.includes('UNREGISTERED') || text.includes('INVALID_ARGUMENT')) {
-      await db.from('push_tokens').delete().eq('token', token);
-    } else {
-      console.error('fcm', res.status, text);
-    }
-  }));
+/** Cihazlara gönderir; ulaşılan cihaz sayısını döner. Geçersiz token'lar silinir. */
+async function deliver(devices: Device[], push: Omit<Push, 'userId'>): Promise<number> {
+  let delivered = 0;
+  // shortcut: 100'lük gruplarla tek tek gönderim; binlerce cihazda FCM batch/topic'e geç.
+  for (let i = 0; i < devices.length; i += 100) {
+    await Promise.all(devices.slice(i, i + 100).map(async ({ token, platform }) => {
+      const dataOnly = platform === 'android' && push.data.type === 'message';
+      const message = dataOnly
+        ? { token, data: push.data, android: { priority: 'high' } }
+        : {
+            token,
+            notification: { title: push.title, body: push.body },
+            data: push.data,
+            // Normal öncelik Android'de Doze'da bekletilir (dakikalarca gecikme).
+            android: { priority: 'high' },
+            apns: { payload: { aps: { sound: 'default', ...(push.threadId && { 'thread-id': push.threadId }) } } },
+          };
+      const res = await fcm(message);
+      if (res.ok) {
+        delivered++;
+        return;
+      }
+      const text = await res.text();
+      // Uygulama silinmiş ya da token yenilenmiş: satırı temizle.
+      if (res.status === 404 || text.includes('UNREGISTERED') || text.includes('INVALID_ARGUMENT')) {
+        await db.from('push_tokens').delete().eq('token', token);
+      } else {
+        console.error('fcm', res.status, text);
+      }
+    }));
+  }
+  return delivered;
 }
 
-// Uygulama abone olur (push_provider.dart), Ayarlar'dan kapatınca çıkar.
-const ANNOUNCEMENTS_TOPIC = 'announcements';
+async function send(push: Push): Promise<void> {
+  // 066: doğrulanmamış hesaba yalnızca doğrulama kararı gider.
+  if (push.data.type !== 'verification') {
+    const { data: member, error: memberError } = await db.rpc('is_app_member', { p_user_id: push.userId });
+    if (memberError) throw memberError;
+    if (!member) return;
+  }
+  const { data: tokens, error } = await db.from('push_tokens').select('token, platform').eq('user_id', push.userId);
+  if (error) throw error;
+  if (tokens?.length) await deliver(tokens, push);
+}
 
 async function sendBroadcast(id: string): Promise<void> {
   const { data: b, error } = await db
@@ -206,15 +241,11 @@ async function sendBroadcast(id: string): Promise<void> {
       if (!b.test_user_id) failure = 'test user deleted';
       else await send({ userId: b.test_user_id, title: b.title, body: b.body, data });
     } else {
-      const res = await fcm({
-        topic: ANNOUNCEMENTS_TOPIC,
-        notification: { title: b.title, body: b.body },
-        data,
-        // Normal öncelik Android'de Doze'da bekletilir (dakikalarca gecikme); send() ile aynı.
-        android: { priority: 'high' },
-        apns: { payload: { aps: { sound: 'default' } } },
-      });
-      if (!res.ok) failure = `fcm ${res.status}: ${await res.text()}`;
+      // 067: topic yerine üyelerin duyuruyu kapatmamış cihazları (sunucu süzer).
+      const { data: devices, error: devicesError } = await db.rpc('broadcast_push_tokens');
+      if (devicesError) throw devicesError;
+      const delivered = await deliver(devices ?? [], { title: b.title, body: b.body, data });
+      if (devices?.length && delivered === 0) failure = 'no device reached';
     }
   } catch (e) {
     failure = String(e);
@@ -231,7 +262,7 @@ Deno.serve(async (req) => {
     return new Response('forbidden', { status: 403 });
   }
   const { kind, id } = await req.json();
-  if (!['notification', 'message', 'broadcast'].includes(kind) || typeof id !== 'string') {
+  if (!['notification', 'message', 'broadcast', 'verification'].includes(kind) || typeof id !== 'string') {
     return new Response('bad request', { status: 400 });
   }
   try {

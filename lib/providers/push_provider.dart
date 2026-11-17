@@ -17,6 +17,7 @@ import '../core/router/notification_route.dart';
 import '../data/models/enums.dart';
 import '../data/providers/repository_providers.dart';
 import '../data/repositories/push_repository.dart';
+import '../features/settings/providers/verification_provider.dart';
 import 'auth_provider.dart';
 
 /// main.dart'ta Firebase başlatılabildiyse true ile override edilir. Firebase
@@ -29,21 +30,29 @@ final pushProvider = Provider<PushController?>((ref) {
   if (!ref.watch(firebaseReadyProvider)) return null;
   final uid = ref.watch(currentUserProvider.select((u) => u?.id));
   if (uid == null) return null;
+  // 066: doğrulanmamışken duyuru tercihi yazılmaz (sunucu kilitli); onaylanınca
+  // yeniden kurulur ve tercih yazılır.
+  final verified = ref.watch(
+    currentUserProvider.select((u) => u?.isVerified ?? false),
+  );
   final controller = PushController(
     ref.read(pushRepositoryProvider),
     FirebaseMessaging.instance,
     ref.read(routerProvider),
     () => ref.read(announcementsEnabledProvider),
+    verified: verified,
+    onVerificationDecision: () => ref.invalidate(verificationProvider),
   )..start();
   ref.onDispose(controller.cancel);
   return controller;
 });
 
-/// Panel duyuruları (061) bu FCM topic'ine gider.
+/// 061'de duyurular bu FCM topic'ine gidiyordu; 067'den beri cihaz token'larına
+/// gider. Eski abonelik açılışta kaldırılır.
 const announcementsTopic = 'announcements';
 
-/// Panel duyurularını alma tercihi (cihaz ayarı, varsayılan açık). Kapatınca
-/// topic aboneliği kalkar; çıkışta `deleteToken` aboneliği zaten siler.
+/// Panel duyurularını alma tercihi (cihaz ayarı, varsayılan açık). Sunucuda
+/// bu cihazın token'ına yazılır (067); çıkışta token zaten silinir.
 /// `main` [SharedPreferences] ile override eder (testlerde yalnızca bellekte).
 final announcementsEnabledProvider =
     NotifierProvider<AnnouncementsNotifier, bool>(AnnouncementsNotifier.new);
@@ -72,6 +81,8 @@ String? pushRoute(Map<String, dynamic> data) {
     final String? postId = data['post_id'];
     return postId == null || postId.isEmpty ? null : '/post/$postId';
   }
+  // Belge doğrulama kararı (065).
+  if (type == 'verification') return '/settings/verification';
   final notificationType = NotificationType.values
       .where((e) => e.dbValue == type)
       .firstOrNull;
@@ -91,13 +102,21 @@ class PushController {
     this._repo,
     this._messaging,
     this._router,
-    this._announcementsEnabled,
-  );
+    this._announcementsEnabled, {
+    required this.verified,
+    required this.onVerificationDecision,
+  });
 
   final PushRepository _repo;
   final FirebaseMessaging _messaging;
   final GoRouter _router;
   final bool Function() _announcementsEnabled;
+
+  /// Doğrulanmamış hesapta sunucu tercih RPC'sini reddeder (066).
+  final bool verified;
+
+  /// Doğrulama kararı uygulama açıkken geldi: ekran durumu yeniden okusun.
+  final VoidCallback onVerificationDecision;
   final _subs = <StreamSubscription<Object?>>[];
   bool _cancelled = false;
 
@@ -139,11 +158,11 @@ class PushController {
   Future<void> syncAnnouncements(bool enabled) async {
     if (_cancelled) return;
     try {
-      if (enabled) {
-        await _messaging.subscribeToTopic(announcementsTopic);
-      } else {
-        await _messaging.unsubscribeFromTopic(announcementsTopic);
-      }
+      // 061 sürümünün abone ettiği topic'e artık gönderilmiyor; temizlik.
+      await _messaging.unsubscribeFromTopic(announcementsTopic);
+      if (!verified) return;
+      final token = await _messaging.getToken();
+      if (token != null) await _repo.setAnnouncements(token, enabled);
     } catch (e) {
       debugPrint('push announcements: $e');
     }
@@ -153,6 +172,10 @@ class PushController {
   void _onForeground(RemoteMessage message) {
     if (message.data['type'] == 'announcement') {
       _showAnnouncement(message);
+      return;
+    }
+    if (message.data['type'] == 'verification') {
+      onVerificationDecision();
       return;
     }
     final path = _router.routerDelegate.currentConfiguration.uri.path;

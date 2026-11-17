@@ -65,6 +65,14 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
     if (user != null) state = AsyncData(user);
   }
 
+  /// Doğrulama panelde onaylandı (065): profil yeniden çekilmeden rozet görünsün.
+  void markVerified() {
+    final user = state.valueOrNull;
+    if (user != null && !user.isVerified) {
+      state = AsyncData(user.copyWith(isVerified: true));
+    }
+  }
+
   Future<void> completeRegistration({
     required String fullName,
     required UserTitle title,

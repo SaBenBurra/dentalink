@@ -1780,4 +1780,65 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get updateAvailableAction => 'Güncelle';
+
+  @override
+  String get verificationTitle => 'Hesap doğrulama';
+
+  @override
+  String get verificationSettingsSubtitle =>
+      'Mezuniyet belgeni yükle, doğrulanmış rozeti al';
+
+  @override
+  String get verificationSettingsSubtitleStudent =>
+      'Öğrenci belgeni yükle, doğrulanmış rozeti al';
+
+  @override
+  String get verificationIntro =>
+      'Mezuniyet belgeni yükle: e-Devlet\'ten aldığın PDF ya da belgenin fotoğrafı. Diploma kabul edilmez. Adın ve belgedeki bilgiler okunaklı olsun. Ekibimiz inceleyip onaylarsa profilinde doğrulanmış rozeti görünür.';
+
+  @override
+  String get verificationIntroStudent =>
+      'Öğrenci belgeni yükle: e-Devlet\'ten aldığın PDF ya da belgenin fotoğrafı. Öğrenci kimlik kartı kabul edilmez. Adın ve belgedeki bilgiler okunaklı olsun. Ekibimiz inceleyip onaylarsa profilinde doğrulanmış rozeti görünür.';
+
+  @override
+  String get verificationPrivacy =>
+      'Belgen yalnızca doğrulama ekibine görünür ve doğrulamanın ardından silinir.';
+
+  @override
+  String get verificationGateTitle => 'Son bir adım';
+
+  @override
+  String get verificationGateBody =>
+      'Dentigo yalnızca diş hekimleri ve diş hekimliği öğrencileri için. Belgen onaylanınca hesabın açılır.';
+
+  @override
+  String get verificationPickPdf => 'PDF seç';
+
+  @override
+  String get verificationFileTooLarge => 'Dosya 5 MB\'tan büyük olamaz.';
+
+  @override
+  String get verificationFileInvalid =>
+      'Dosya okunamadı. Geçerli bir fotoğraf ya da PDF seç.';
+
+  @override
+  String get verificationSubmit => 'Doğrulamaya gönder';
+
+  @override
+  String get verificationSent => 'Belgen gönderildi';
+
+  @override
+  String get verificationPendingTitle => 'Belgen inceleniyor';
+
+  @override
+  String verificationPendingBody(String date) {
+    return '$date tarihinde gönderdin. Karar verilince bildirim alacaksın.';
+  }
+
+  @override
+  String get verificationApprovedBody =>
+      'Profilinde doğrulanmış rozeti görünüyor.';
+
+  @override
+  String get verificationRejectedTitle => 'Önceki belgen onaylanmadı';
 }
