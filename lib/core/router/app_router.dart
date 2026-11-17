@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/providers/repository_providers.dart';
+import '../../providers/welcome_provider.dart';
 import '../../features/auth/screens/auth_error_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
@@ -50,10 +51,12 @@ const verifyGate = '/verify';
 /// Auth guard kararı (saf fonksiyon; test: test/core/router/auth_redirect_test.dart).
 ///
 /// [hold]: OTP başarı animasyonu sürerken yönlendirme bekletilir.
+/// [welcomed]: kullanıcı onay sonrası "Hoş geldin" ekranını gördü mü.
 String? resolveAuthRedirect({
   required String location,
   required bool hasSession,
   required bool hold,
+  required bool Function(String uid) welcomed,
   required AsyncValue<UserModel?> auth,
 }) {
   final isLogin = location == '/login';
@@ -87,6 +90,9 @@ String? resolveAuthRedirect({
   if (!user.isVerified) {
     return location == verifyGate || location == '/support' ? null : verifyGate;
   }
+
+  // Onaydan sonra bir kez "Hoş geldin" (doğrulama ekranında); butonla /feed.
+  if (!welcomed(user.id)) return location == verifyGate ? null : verifyGate;
 
   // Tam kayıtlı kullanıcı login/register/hata ekranında kalmasın.
   return isAuthRoute || location == verifyGate ? '/feed' : null;
@@ -130,6 +136,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.listen(authProvider, (prev, next) => refresh.ping());
   ref.listen(authRedirectHoldProvider, (prev, next) => refresh.ping());
   ref.listen(appVersionStatusProvider, (prev, next) => refresh.ping());
+  ref.listen(welcomedUsersProvider, (prev, next) => refresh.ping());
 
   return GoRouter(
     initialLocation: '/splash',
@@ -148,6 +155,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           location: state.matchedLocation,
           hasSession: ref.read(authRepositoryProvider).hasSession,
           hold: ref.read(authRedirectHoldProvider),
+          welcomed: ref.read(welcomedUsersProvider).contains,
           auth: ref.read(authProvider),
         ),
 

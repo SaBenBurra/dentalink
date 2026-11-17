@@ -81,8 +81,9 @@ String? pushRoute(Map<String, dynamic> data) {
     final String? postId = data['post_id'];
     return postId == null || postId.isEmpty ? null : '/post/$postId';
   }
-  // Belge doğrulama kararı (065).
-  if (type == 'verification') return '/settings/verification';
+  // Belge doğrulama kararı (065): router onayda kutlamaya (ilk kez) ya da
+  // ana sayfaya, retde belge formuna götürür; ayarlar sayfası (app bar) açılmaz.
+  if (type == 'verification') return verifyGate;
   final notificationType = NotificationType.values
       .where((e) => e.dbValue == type)
       .firstOrNull;
@@ -235,7 +236,13 @@ class PushController {
 
   void _open(Map<String, dynamic> data) {
     final route = pushRoute(data);
-    if (route != null) _whenReady(() => pushDetailOn(_router, route));
+    if (route == null) return;
+    // Doğrulama ekranı yığının yerine geçer: kutlamadan geri dönülmez.
+    _whenReady(
+      () => route == verifyGate
+          ? _router.go(route)
+          : pushDetailOn(_router, route),
+    );
   }
 
   // Soğuk açılışta ve girişte router önce /splash, /login → /feed yönlendirmesini

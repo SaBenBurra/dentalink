@@ -23,7 +23,7 @@ class SupabaseVerificationRepository implements VerificationRepository {
     final row = await _client
         .from('verification_requests')
         .select('id, status, reason, created_at, reviewed_at')
-        .eq('user_id', _uid)
+        // user_id'ye kolon izni yok (065); RLS zaten yalnızca kendi satırlarını döner.
         .order('created_at', ascending: false)
         .limit(1)
         .maybeSingle();

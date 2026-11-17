@@ -14,11 +14,12 @@ Future<void> pumpDentigo(
   WidgetTester tester, {
   AuthRepository? auth,
   List<PostModel>? feed,
+  bool welcomed = true,
 }) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        ...fakeRepositoryOverrides(auth: auth, feed: feed),
+        ...fakeRepositoryOverrides(auth: auth, feed: feed, welcomed: welcomed),
         // Metinler cihaz dilinden bağımsız olsun (emülatör TR, headless EN açılır).
         localeModeProvider.overrideWith(_TurkishLocale.new),
       ],

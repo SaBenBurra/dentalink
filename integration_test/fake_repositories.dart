@@ -23,6 +23,7 @@ import 'package:dentigo/data/models/comment_model.dart';
 import 'package:dentigo/data/models/enums.dart';
 import 'package:dentigo/data/repositories/comment_repository.dart';
 import 'package:dentigo/providers/connectivity_provider.dart';
+import 'package:dentigo/providers/welcome_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'mock_auth_for_test.dart';
@@ -79,6 +80,7 @@ final _conversation = ConversationModel(
 List<Override> fakeRepositoryOverrides({
   AuthRepository? auth,
   List<PostModel>? feed,
+  bool welcomed = true,
 }) {
   final posts = _FakePostRepository(feed ?? [seedCase]);
   return [
@@ -103,7 +105,14 @@ List<Override> fakeRepositoryOverrides({
     connectivityProvider.overrideWith(
       (_) => Stream.value([ConnectivityResult.wifi]),
     ),
+    // Varsayılan: test kullanıcısı onay sonrası "Hoş geldin" ekranını görmüş.
+    if (welcomed) welcomedUsersProvider.overrideWith(_WelcomedTestUser.new),
   ];
+}
+
+class _WelcomedTestUser extends WelcomedUsersNotifier {
+  @override
+  Set<String> build() => {'mock_test_user_id'};
 }
 
 class _FakePostRepository implements PostRepository, IListingRepository {

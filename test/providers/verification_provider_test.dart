@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:dentigo/core/utils/session_guard_client.dart';
 import 'package:dentigo/data/models/enums.dart';
+import 'package:dentigo/data/models/user_model.dart';
 import 'package:dentigo/data/models/verification_model.dart';
 import 'package:dentigo/data/providers/repository_providers.dart';
 import 'package:dentigo/data/repositories/verification_repository.dart';
@@ -35,6 +37,21 @@ class _Repo implements VerificationRepository {
   }
 }
 
+/// İlk okuma (oturum açılışı) doğrulanmamış; sonraki okumalar sunucudaki
+/// güncel durum ([serverVerified]).
+class _ServerAuth extends MockAuthForTest {
+  _ServerAuth({required this.serverVerified}) : super(verified: false);
+
+  final bool serverVerified;
+  var _reads = 0;
+
+  @override
+  Future<UserModel?> getCurrentUser() async {
+    final user = await super.getCurrentUser();
+    return _reads++ == 0 ? user : user?.copyWith(isVerified: serverVerified);
+  }
+}
+
 VerificationRequest _request(VerificationStatus status, {String? reason}) =>
     VerificationRequest(
       id: 'r1',
@@ -44,10 +61,15 @@ VerificationRequest _request(VerificationStatus status, {String? reason}) =>
     );
 
 void main() {
-  Future<ProviderContainer> start(_Repo repo) async {
+  Future<ProviderContainer> start(
+    _Repo repo, {
+    bool serverVerified = false,
+  }) async {
     final container = ProviderContainer(
       overrides: [
-        authRepositoryProvider.overrideWithValue(MockAuthForTest(verified: false)),
+        authRepositoryProvider.overrideWithValue(
+          _ServerAuth(serverVerified: serverVerified),
+        ),
         verificationRepositoryProvider.overrideWithValue(repo),
       ],
     );
@@ -80,10 +102,43 @@ void main() {
     );
   });
 
-  test('onaylı istek oturumdaki profili doğrulanmış yapar', () async {
-    final container = await start(_Repo(_request(VerificationStatus.approved)));
-    expect(container.read(currentUserProvider)?.isVerified, isTrue);
-  });
+  test(
+    'onaylı istek profili sunucudan yeniden okur: onaylıysa açılır',
+    () async {
+      final container = await start(
+        _Repo(_request(VerificationStatus.approved)),
+        serverVerified: true,
+      );
+      expect(container.read(currentUserProvider)?.isVerified, isTrue);
+    },
+  );
+
+  test(
+    'doğrulaması sonradan kaldırılan hesap eski onaylı istekle açılmaz (068)',
+    () async {
+      final container = await start(
+        _Repo(_request(VerificationStatus.approved)),
+      );
+      expect(container.read(currentUserProvider)?.isVerified, isFalse);
+    },
+  );
+
+  test(
+    'X-Not-Verified sinyali oturumdaki profili doğrulanmamış yapar',
+    () async {
+      final container = ProviderContainer(
+        overrides: [
+          authRepositoryProvider.overrideWithValue(MockAuthForTest()),
+        ],
+      );
+      addTearDown(container.dispose);
+      await container.read(authProvider.future);
+      expect(container.read(currentUserProvider)?.isVerified, isTrue);
+
+      notVerifiedSignal.value++;
+      expect(container.read(currentUserProvider)?.isVerified, isFalse);
+    },
+  );
 
   test('ret profili değiştirmez', () async {
     final container = await start(

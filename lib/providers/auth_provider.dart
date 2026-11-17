@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/error/app_failures.dart';
+import '../core/utils/session_guard_client.dart';
 import '../core/utils/string_utils.dart';
 import '../data/models/enums.dart';
 import '../data/models/user_model.dart';
@@ -20,6 +21,11 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
     // kullanıcıya özel provider'lar temizlenir (AUTH-5).
     final sub = repo.signedOut.listen((_) => state = const AsyncData(null));
     ref.onDispose(sub.cancel);
+
+    // Doğrulama sonradan kaldırıldı (068): sunucu her isteği reddeder;
+    // profil doğrulanmamış olur, router doğrulama ekranına alır.
+    notVerifiedSignal.addListener(_markUnverified);
+    ref.onDispose(() => notVerifiedSignal.removeListener(_markUnverified));
 
     // Uygulama başlatıldığında mevcut oturumu kontrol et
     return repo.getCurrentUser();
@@ -65,11 +71,17 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
     if (user != null) state = AsyncData(user);
   }
 
-  /// Doğrulama panelde onaylandı (065): profil yeniden çekilmeden rozet görünsün.
-  void markVerified() {
+  /// Profili sunucudan yeniden okur; yükleniyor durumuna geçmez (router
+  /// ekranı yenilemesin). Panelde verilen doğrulama kararı (065) buradan gelir.
+  Future<void> refreshProfile() async {
+    final user = await ref.read(authRepositoryProvider).getCurrentUser();
+    if (user != null) state = AsyncData(user);
+  }
+
+  void _markUnverified() {
     final user = state.valueOrNull;
-    if (user != null && !user.isVerified) {
-      state = AsyncData(user.copyWith(isVerified: true));
+    if (user != null && user.isVerified) {
+      state = AsyncData(user.copyWith(isVerified: false));
     }
   }
 

@@ -1785,31 +1785,34 @@ class AppLocalizationsTr extends AppLocalizations {
   String get verificationTitle => 'Hesap doğrulama';
 
   @override
-  String get verificationSettingsSubtitle =>
-      'Mezuniyet belgeni yükle, doğrulanmış rozeti al';
+  String get verificationSettingsSubtitle => 'Mezuniyet belgeni yükle';
 
   @override
-  String get verificationSettingsSubtitleStudent =>
-      'Öğrenci belgeni yükle, doğrulanmış rozeti al';
+  String get verificationSettingsSubtitleStudent => 'Öğrenci belgeni yükle';
 
   @override
   String get verificationIntro =>
-      'Mezuniyet belgeni yükle: e-Devlet\'ten aldığın PDF ya da belgenin fotoğrafı. Diploma kabul edilmez. Adın ve belgedeki bilgiler okunaklı olsun. Ekibimiz inceleyip onaylarsa profilinde doğrulanmış rozeti görünür.';
+      'e-Devlet\'ten aldığın mezuniyet belgesi yeterli. 🙂';
 
   @override
   String get verificationIntroStudent =>
-      'Öğrenci belgeni yükle: e-Devlet\'ten aldığın PDF ya da belgenin fotoğrafı. Öğrenci kimlik kartı kabul edilmez. Adın ve belgedeki bilgiler okunaklı olsun. Ekibimiz inceleyip onaylarsa profilinde doğrulanmış rozeti görünür.';
+      'e-Devlet\'ten aldığın öğrenci belgesi yeterli. 🙂';
 
   @override
   String get verificationPrivacy =>
-      'Belgen yalnızca doğrulama ekibine görünür ve doğrulamanın ardından silinir.';
+      'Belgeni yalnızca ekibimiz görür, onaydan sonra sileriz.';
 
   @override
-  String get verificationGateTitle => 'Son bir adım';
+  String get verificationGateTitle => 'Son bir adım 🎓';
 
   @override
-  String get verificationGateBody =>
-      'Dentigo yalnızca diş hekimleri ve diş hekimliği öğrencileri için. Belgen onaylanınca hesabın açılır.';
+  String get verificationAddDoc => 'Belgeni ekle';
+
+  @override
+  String get verificationAddDocHint => 'Fotoğraf ya da PDF';
+
+  @override
+  String get verificationChangeDoc => 'Değiştir';
 
   @override
   String get verificationPickPdf => 'PDF seç';
@@ -1822,22 +1825,27 @@ class AppLocalizationsTr extends AppLocalizations {
       'Dosya okunamadı. Geçerli bir fotoğraf ya da PDF seç.';
 
   @override
-  String get verificationSubmit => 'Doğrulamaya gönder';
+  String get verificationSubmit => 'Gönder';
 
   @override
   String get verificationSent => 'Belgen gönderildi';
 
   @override
-  String get verificationPendingTitle => 'Belgen inceleniyor';
+  String get verificationPendingTitle => 'İnceliyoruz ☕';
 
   @override
-  String verificationPendingBody(String date) {
-    return '$date tarihinde gönderdin. Karar verilince bildirim alacaksın.';
+  String get verificationPendingBody => 'Karar verince haber vereceğiz.';
+
+  @override
+  String welcomeTitle(String name) {
+    return 'Dentigo\'ya hoş geldin, $name! 🎉';
   }
 
   @override
-  String get verificationApprovedBody =>
-      'Profilinde doğrulanmış rozeti görünüyor.';
+  String get welcomeBody => 'Hesabın onaylandı. Meslektaşların seni bekliyor.';
+
+  @override
+  String get welcomeEnter => 'Hadi başlayalım';
 
   @override
   String get verificationRejectedTitle => 'Önceki belgen onaylanmadı';

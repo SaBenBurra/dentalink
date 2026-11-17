@@ -15,6 +15,7 @@ import 'providers/locale_provider.dart';
 import 'providers/app_version_provider.dart';
 import 'providers/push_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/welcome_provider.dart';
 import 'shared/widgets/offline_banner.dart';
 
 Future<void> main() async {
@@ -27,7 +28,11 @@ Future<void> main() async {
   await Supabase.initialize(
     url: 'https://lknvufbxekceevdblgmq.supabase.co',
     publishableKey: 'sb_publishable_CGm0mMqcvUubeXazytJr-w_WK6CLfS5',
-    httpClient: SessionGuardClient(http.Client(), onRevoked: _onSessionRevoked),
+    httpClient: SessionGuardClient(
+      http.Client(),
+      onRevoked: _onSessionRevoked,
+      onNotVerified: () => notVerifiedSignal.value++,
+    ),
   );
   // Firebase yapılandırma dosyaları yoksa (henüz kurulmadı) push kapalı çalışır.
   var firebaseReady = false;
@@ -51,6 +56,7 @@ Future<void> main() async {
         dismissedUpdateProvider.overrideWith(
           () => DismissedUpdateNotifier(prefs),
         ),
+        welcomedUsersProvider.overrideWith(() => WelcomedUsersNotifier(prefs)),
         firebaseReadyProvider.overrideWithValue(firebaseReady),
       ],
       child: const MainApp(),

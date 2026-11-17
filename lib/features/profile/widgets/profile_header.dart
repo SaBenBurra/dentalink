@@ -54,27 +54,8 @@ class ProfileHeader extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text.rich(
-                      TextSpan(
-                        text: user.fullName,
-                        children: [
-                          if (user.isVerified)
-                            WidgetSpan(
-                              alignment: PlaceholderAlignment.middle,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: AppDimensions.spacing4,
-                                ),
-                                child: Icon(
-                                  Icons.verified_rounded,
-                                  size: 18,
-                                  color: colorScheme.primary,
-                                  semanticLabel: l10n.verifiedAccount,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
+                    Text(
+                      user.fullName,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.titleMedium?.copyWith(

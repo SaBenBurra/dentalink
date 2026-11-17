@@ -13,9 +13,11 @@ class VerificationNotifier
     final uid = ref.watch(authProvider.select((s) => s.valueOrNull?.id));
     if (uid == null) return null;
     final latest = await ref.read(verificationRepositoryProvider).getLatest();
-    // Onay uygulama açıkken geldiyse oturumdaki profil eski kalır.
-    if (latest?.status == VerificationStatus.approved) {
-      ref.read(authProvider.notifier).markVerified();
+    // Onay uygulama açıkken geldiyse oturumdaki profil eski kalır. İsteğe değil
+    // profile bakılır: doğrulama sonradan kaldırılırsa (068) istek yine onaylıdır.
+    if (latest?.status == VerificationStatus.approved &&
+        !(ref.read(currentUserProvider)?.isVerified ?? false)) {
+      await ref.read(authProvider.notifier).refreshProfile();
     }
     return latest;
   }

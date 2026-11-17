@@ -3323,44 +3323,56 @@ abstract class AppLocalizations {
   /// No description provided for @verificationSettingsSubtitle.
   ///
   /// In tr, this message translates to:
-  /// **'Mezuniyet belgeni yükle, doğrulanmış rozeti al'**
+  /// **'Mezuniyet belgeni yükle'**
   String get verificationSettingsSubtitle;
 
   /// No description provided for @verificationSettingsSubtitleStudent.
   ///
   /// In tr, this message translates to:
-  /// **'Öğrenci belgeni yükle, doğrulanmış rozeti al'**
+  /// **'Öğrenci belgeni yükle'**
   String get verificationSettingsSubtitleStudent;
 
   /// No description provided for @verificationIntro.
   ///
   /// In tr, this message translates to:
-  /// **'Mezuniyet belgeni yükle: e-Devlet\'ten aldığın PDF ya da belgenin fotoğrafı. Diploma kabul edilmez. Adın ve belgedeki bilgiler okunaklı olsun. Ekibimiz inceleyip onaylarsa profilinde doğrulanmış rozeti görünür.'**
+  /// **'e-Devlet\'ten aldığın mezuniyet belgesi yeterli. 🙂'**
   String get verificationIntro;
 
   /// No description provided for @verificationIntroStudent.
   ///
   /// In tr, this message translates to:
-  /// **'Öğrenci belgeni yükle: e-Devlet\'ten aldığın PDF ya da belgenin fotoğrafı. Öğrenci kimlik kartı kabul edilmez. Adın ve belgedeki bilgiler okunaklı olsun. Ekibimiz inceleyip onaylarsa profilinde doğrulanmış rozeti görünür.'**
+  /// **'e-Devlet\'ten aldığın öğrenci belgesi yeterli. 🙂'**
   String get verificationIntroStudent;
 
   /// Yükleme ve bekleme ekranında gösterilen KVKK notu
   ///
   /// In tr, this message translates to:
-  /// **'Belgen yalnızca doğrulama ekibine görünür ve doğrulamanın ardından silinir.'**
+  /// **'Belgeni yalnızca ekibimiz görür, onaydan sonra sileriz.'**
   String get verificationPrivacy;
 
   /// No description provided for @verificationGateTitle.
   ///
   /// In tr, this message translates to:
-  /// **'Son bir adım'**
+  /// **'Son bir adım 🎓'**
   String get verificationGateTitle;
 
-  /// Kayıttan sonra, doğrulanmamış hesabın kilit ekranında
+  /// Dokununca kamera / galeri / PDF seçimi açan kart
   ///
   /// In tr, this message translates to:
-  /// **'Dentigo yalnızca diş hekimleri ve diş hekimliği öğrencileri için. Belgen onaylanınca hesabın açılır.'**
-  String get verificationGateBody;
+  /// **'Belgeni ekle'**
+  String get verificationAddDoc;
+
+  /// No description provided for @verificationAddDocHint.
+  ///
+  /// In tr, this message translates to:
+  /// **'Fotoğraf ya da PDF'**
+  String get verificationAddDocHint;
+
+  /// No description provided for @verificationChangeDoc.
+  ///
+  /// In tr, this message translates to:
+  /// **'Değiştir'**
+  String get verificationChangeDoc;
 
   /// No description provided for @verificationPickPdf.
   ///
@@ -3383,7 +3395,7 @@ abstract class AppLocalizations {
   /// No description provided for @verificationSubmit.
   ///
   /// In tr, this message translates to:
-  /// **'Doğrulamaya gönder'**
+  /// **'Gönder'**
   String get verificationSubmit;
 
   /// No description provided for @verificationSent.
@@ -3395,20 +3407,32 @@ abstract class AppLocalizations {
   /// No description provided for @verificationPendingTitle.
   ///
   /// In tr, this message translates to:
-  /// **'Belgen inceleniyor'**
+  /// **'İnceliyoruz ☕'**
   String get verificationPendingTitle;
 
   /// No description provided for @verificationPendingBody.
   ///
   /// In tr, this message translates to:
-  /// **'{date} tarihinde gönderdin. Karar verilince bildirim alacaksın.'**
-  String verificationPendingBody(String date);
+  /// **'Karar verince haber vereceğiz.'**
+  String get verificationPendingBody;
 
-  /// No description provided for @verificationApprovedBody.
+  /// Doğrulama onaylanınca bir kez gösterilen ekran
   ///
   /// In tr, this message translates to:
-  /// **'Profilinde doğrulanmış rozeti görünüyor.'**
-  String get verificationApprovedBody;
+  /// **'Dentigo\'ya hoş geldin, {name}! 🎉'**
+  String welcomeTitle(String name);
+
+  /// No description provided for @welcomeBody.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hesabın onaylandı. Meslektaşların seni bekliyor.'**
+  String get welcomeBody;
+
+  /// No description provided for @welcomeEnter.
+  ///
+  /// In tr, this message translates to:
+  /// **'Hadi başlayalım'**
+  String get welcomeEnter;
 
   /// Altında ekibin ret gerekçesi gösterilir
   ///

@@ -68,10 +68,10 @@ void main() {
       expect(pushRoute({'type': 'announcement'}), isNull);
     });
 
-    test('doğrulama kararı doğrulama ekranını açar', () {
+    test('doğrulama kararı /verify açar, ayarlar sayfası değil', () {
       expect(
         pushRoute({'type': 'verification', 'status': 'rejected'}),
-        '/settings/verification',
+        '/verify',
       );
     });
 

@@ -67,9 +67,9 @@ async function load(kind: string, id: string): Promise<Push | null> {
     const approved = data.status === 'approved';
     return {
       userId: data.user_id,
-      title: approved ? 'Hesabın doğrulandı' : 'Belgen doğrulanamadı',
+      title: approved ? 'Hesabın doğrulandı 🎉' : 'Belgen doğrulanamadı',
       body: approved
-        ? 'Profilinde artık doğrulanmış rozeti görünüyor.'
+        ? "Aramıza hoş geldin! Dentigo'ya girip keşfetmeye başlayabilirsin."
         : `${snippet(data.reason ?? '', 140)} Yeni bir belgeyle tekrar gönderebilirsin.`,
       data: { type: 'verification', status: data.status },
     };

@@ -1800,30 +1800,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get verificationSettingsSubtitle =>
-      'Upload your graduation certificate to get the verified badge';
+      'Upload your graduation certificate';
 
   @override
   String get verificationSettingsSubtitleStudent =>
-      'Upload your student certificate to get the verified badge';
+      'Upload your student certificate';
 
   @override
   String get verificationIntro =>
-      'Upload your graduation certificate: the PDF from e-Devlet or a photo of the certificate. Diplomas are not accepted. Make sure your name and the document details are readable. If our team approves it, the verified badge appears on your profile.';
+      'Your graduation certificate from e-Devlet is all we need. 🙂';
 
   @override
   String get verificationIntroStudent =>
-      'Upload your student certificate: the PDF from e-Devlet or a photo of the certificate. Student ID cards are not accepted. Make sure your name and the document details are readable. If our team approves it, the verified badge appears on your profile.';
+      'Your student certificate from e-Devlet is all we need. 🙂';
 
   @override
   String get verificationPrivacy =>
-      'Only the verification team sees your document, and it is deleted after verification.';
+      'Only our team sees it, and we delete it after approval.';
 
   @override
-  String get verificationGateTitle => 'One last step';
+  String get verificationGateTitle => 'One last step 🎓';
 
   @override
-  String get verificationGateBody =>
-      'Dentigo is only for dentists and dental students. Your account opens once your document is approved.';
+  String get verificationAddDoc => 'Add your document';
+
+  @override
+  String get verificationAddDocHint => 'Photo or PDF';
+
+  @override
+  String get verificationChangeDoc => 'Change';
 
   @override
   String get verificationPickPdf => 'Choose PDF';
@@ -1836,22 +1841,28 @@ class AppLocalizationsEn extends AppLocalizations {
       'The file could not be read. Choose a valid photo or PDF.';
 
   @override
-  String get verificationSubmit => 'Submit for verification';
+  String get verificationSubmit => 'Send';
 
   @override
   String get verificationSent => 'Your document was sent';
 
   @override
-  String get verificationPendingTitle => 'Your document is under review';
+  String get verificationPendingTitle => 'We\'re on it ☕';
 
   @override
-  String verificationPendingBody(String date) {
-    return 'You sent it on $date. You will get a notification when a decision is made.';
+  String get verificationPendingBody => 'We\'ll let you know once we decide.';
+
+  @override
+  String welcomeTitle(String name) {
+    return 'Welcome to Dentigo, $name! 🎉';
   }
 
   @override
-  String get verificationApprovedBody =>
-      'The verified badge now appears on your profile.';
+  String get welcomeBody =>
+      'Your account is approved. Your colleagues are waiting.';
+
+  @override
+  String get welcomeEnter => 'Let\'s go';
 
   @override
   String get verificationRejectedTitle =>

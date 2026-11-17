@@ -19,11 +19,13 @@ void main() {
     String location, {
     bool session = true,
     bool hold = false,
+    bool welcomed = true,
     required AsyncValue<UserModel?> auth,
   }) => resolveAuthRedirect(
     location: location,
     hasSession: session,
     hold: hold,
+    welcomed: (_) => welcomed,
     auth: auth,
   );
 
@@ -98,6 +100,12 @@ void main() {
         expect(go('/legal/kvkk', auth: AsyncData(unverified)), isNull);
       },
     );
+
+    test('onaylanınca bir kez "Hoş geldin" ekranı, sonra geri dönülmez', () {
+      expect(go('/verify', welcomed: false, auth: AsyncData(user)), isNull);
+      expect(go('/splash', welcomed: false, auth: AsyncData(user)), '/verify');
+      expect(go('/feed', welcomed: false, auth: AsyncData(user)), '/verify');
+    });
 
     test("onaylanınca kilit ekranından /feed'e", () {
       expect(go('/verify', auth: AsyncData(user)), '/feed');
