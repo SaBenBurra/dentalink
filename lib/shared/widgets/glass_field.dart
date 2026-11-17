@@ -53,7 +53,7 @@ class GlassField extends StatelessWidget {
       );
     }
 
-    return AnimatedContainer(
+    final field = AnimatedContainer(
       duration: AppDimensions.animFast,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
@@ -105,6 +105,27 @@ class GlassField extends StatelessWidget {
           ),
         ),
       ),
+    );
+    if (!hasError) return field;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        field,
+        Padding(
+          padding: const EdgeInsets.only(
+            top: AppDimensions.spacing4,
+            left: AppDimensions.spacing12,
+          ),
+          child: Semantics(
+            liveRegion: true,
+            child: Text(
+              errorText!,
+              style: AppTextStyles.bodySmall.copyWith(color: AppColors.error),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

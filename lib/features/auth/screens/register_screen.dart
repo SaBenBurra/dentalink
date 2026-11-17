@@ -82,41 +82,40 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   void _nextStep() {
     FocusScope.of(context).unfocus();
     final state = ref.read(registerControllerProvider);
-
-    if (state.currentStep == 0 && state.selectedTitle == null) {
-      // Validate first step title
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.validationTitleRequired),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    } else if (state.currentStep == 0 && !state.acceptedTerms) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.validationTermsRequired),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
+    final l10n = AppLocalizations.of(context)!;
 
     try {
       ref
           .read(registerControllerProvider.notifier)
           .nextStep(_nameController.text);
-      final newState = ref.read(registerControllerProvider);
+    } on StateError {
+      // Ad tamam, unvan ya da sözleşme onayı eksik.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            state.selectedTitle == null
+                ? l10n.validationTitleRequired
+                : l10n.validationTermsRequired,
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+    final newState = ref.read(registerControllerProvider);
 
-      if (newState.currentStep > state.currentStep) {
-        _pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      } else if (state.currentStep == _totalSteps - 1 &&
-          newState.nameError == null) {
-        _completeRegistration();
-      }
-    } catch (e) {
-      // Exception thrown for missing title or name
+    if (newState.nameError != null) {
+      // Alan ekranın üstünde kalmış olabilir; odak onu görünür kaydırır.
+      _nameFocusNode.requestFocus();
+      return;
+    }
+    if (newState.currentStep > state.currentStep) {
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } else if (state.currentStep == _totalSteps - 1) {
+      _completeRegistration();
     }
   }
 
